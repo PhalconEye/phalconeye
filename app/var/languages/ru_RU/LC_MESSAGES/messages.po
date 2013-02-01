@@ -1,0 +1,2 @@
+msgid "Users"
+msgstr "Пользователи"

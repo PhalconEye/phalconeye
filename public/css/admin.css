@@ -1,0 +1,385 @@
+body {
+    padding-top: 60px;
+}
+
+#footer {
+    margin-top: 10px;
+    text-align: center;
+}
+
+.admin-sidenav {
+    width: 228px;
+    padding: 0;
+    background-color: #fff;
+    border-radius: 6px;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, .065);
+}
+
+.admin-sidenav > li > a {
+    display: block;
+    width: 190px      \9;
+    margin: 0 0 -1px;
+    padding: 8px 14px;
+    border: 1px solid #e5e5e5;
+}
+
+.admin-sidenav > li:first-child > a {
+    border-radius: 6px 6px 0 0;
+}
+
+.admin-sidenav > li:last-child > a {
+    border-radius: 0 0 6px 6px;
+}
+
+.admin-sidenav > .active > a {
+    position: relative;
+    z-index: 2;
+    padding: 9px 15px;
+    border: 0;
+    text-shadow: 0 1px 0 rgba(0, 0, 0, .15);
+    box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1), inset -1px 0 0 rgba(0, 0, 0, .1);
+}
+
+.container .row-fluid {
+    background-color: #f5f5f5;
+    border-radius: 6px;
+    padding: 0 10px 10px 10px;
+    border: 1px solid #e5e5e5;
+}
+
+/*** TABLES ***/
+.admin_table {
+    width: 100%;
+    border: 1px solid black;
+}
+
+.admin_table thead {
+    background-color: black;
+    color: white;
+}
+
+.admin_table thead tr th {
+    background-color: black;
+    text-align: left;
+    padding: 0 5px;
+}
+
+.admin_table tr td {
+    padding: 0 5px;
+}
+
+.admin_table tr:nth-child(odd) {
+    background-color: #eee;
+}
+
+.admin_table tr:nth-child(even) {
+    background-color: #fff;
+}
+
+/*** PAGINATION CONTROL ***/
+.pagination {
+    text-align: center;
+}
+
+.pagination li {
+    list-style: none;
+    display: inline;
+}
+
+.pagination li.pagination_content {
+    margin: 0 10px;
+}
+
+.pagination a {
+
+}
+
+.pagination a.active {
+    cursor: default;
+    color: black;
+}
+
+.pagination a.active:hover {
+    text-decoration: none;
+}
+
+/*** PAGES EDITION CSS ***/
+
+.admin_pages_browse_form label {
+    width: auto;
+}
+
+.admin_pages_browse_form #form_page {
+    color: black;
+}
+
+.admin_pages_browse_form select {
+    width: 713px;
+}
+
+.widgets {
+    overflow: auto !important;
+    height: 600px;
+    margin: 0px;
+}
+
+.ui-draggable-dragging {
+    width: 100px !important;
+}
+
+.ui-sortable-placeholder {
+    border: 1px dotted black;
+    background: #3F8FBA !important;
+    visibility: visible !important;
+    height: 20px !important;
+}
+
+.ui-sortable-placeholder * {
+    visibility: hidden;
+}
+
+.admin_pages_widgets {
+    float: left;
+    background: #cccccc;
+    width: 200px;
+    height: 600px;
+    border: 1px solid black;
+}
+
+.layout_header {
+    width: 734px !important;
+    height: auto !important;
+    border: 3px solid black !important;
+    background-image: url('/public/img/admin/content/placeholder.png') !important;
+    background-repeat: repeat;
+    overflow: hidden !important;
+}
+
+.layout_footer {
+    width: 734px !important;
+    height: auto !important;
+    border: 3px solid black !important;
+    background-image: url('/public/img/admin/content/placeholder.png') !important;
+    background-repeat: repeat;
+    overflow: hidden !important;
+}
+
+.layout_header span, .layout_footer span {
+    background: white;
+    color: black;
+    margin: 10px;
+    padding: 5px;
+    display: inline-block;
+}
+
+.layout_top {
+    width: 734px !important;
+    height: auto !important;
+    min-height: 70px;
+    border: 3px solid black !important;
+}
+
+.layout_bottom {
+    width: 734px !important;
+    height: auto !important;
+    min-height: 70px;
+    border: 3px solid black !important;
+}
+
+.layout_left {
+    float: right !important;
+    width: 178px !important;
+    height: auto !important;
+    min-height: 400px;
+    border: 3px solid black !important;
+}
+
+.layout_right {
+    float: right !important;
+    width: 178px !important;
+    height: auto !important;
+    min-height: 400px;
+    border: 3px solid black !important;
+}
+
+.layout_middle {
+    width: 390px !important;
+    height: auto !important;
+    min-height: 400px;
+    border: 3px solid black !important;
+}
+
+#widgets_container_special {
+    width: 759px !important;
+}
+
+.admin_pages_layout {
+    float: right;
+    background: #cccccc;
+    width: 756px;
+    height: 600px;
+    border: 1px solid black;
+    overflow-y: scroll;
+    overflow-x: hidden;
+    margin: 0px !important;
+}
+
+.widget_seperator {
+    background: #3F8FBA !important;
+    cursor: auto !important;
+    color: white !important;
+}
+
+.widgets li {
+    padding: 5px;
+    margin: 2px;
+    background: white;
+    cursor: move;
+}
+
+.widgets li:hover {
+    background: #ECECEC;
+}
+
+.delete_widget {
+    float: right;
+    cursor: pointer;
+    display: none;
+    margin-right: 5px;
+}
+
+.widget_options_panel {
+    float: right;
+    height: 40px;
+    margin-top: 15px;
+}
+
+.widget_options_panel .dropdown-menu{
+    margin-left: -214px;
+}
+
+#layout_select_block {
+    background: white;
+    border-radius: 3px;
+}
+
+.admin_layoutbox_menu_columnchoices_instructions {
+    margin: 0 0 10px 10px !important;
+}
+
+
+ul.admin_layoutbox_menu_columnchoices_thumbs {
+    overflow: hidden;
+    margin: 0 10px 0 10px !important;
+}
+
+ul.admin_layoutbox_menu_columnchoices_thumbs > li {
+    float: left;
+    overflow: hidden;
+    margin: 0px 6px 6px 0px;
+}
+
+html[dir="rtl"] ul.admin_layoutbox_menu_columnchoices_thumbs > li {
+    float: right;
+    margin: 0px 0px 6px 6px;
+}
+
+ul.admin_layoutbox_menu_columnchoices_thumbs > li:last-child {
+    margin-right: 0px;
+}
+
+html[dir="rtl"] ul.admin_layoutbox_menu_columnchoices_thumbs > li:last-child {
+    margin-left: 0px;
+}
+
+ul.admin_layoutbox_menu_columnchoices_thumbs img {
+    border: 1px solid transparent;
+}
+
+ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
+    border: 1px solid #777;
+}
+
+.admin_layoutbox_menu_columnchoices_cancel {
+    margin-top: 3px;
+}
+
+.admin_layoutbox_menu_columnchoices img {
+    cursor: pointer;
+}
+
+.manage_page_header_label > h3{
+    margin-bottom: 0px;
+}
+
+.manage_page_header_label{
+    width: 700px;
+    float: left;
+    min-height: 80px;
+}
+
+
+/*** FORMS ***/
+
+form .form_header > h3{
+    margin-bottom: 0;
+}
+
+form .form_header > p{
+    color: #969696;
+}
+
+form .form_elements > div {
+    min-height: 30px;
+    clear: both;
+    padding-top: 10px;
+}
+
+form .form_elements .form_label {
+    width: 200px;
+    float: left;
+    margin-right: 50px;
+}
+
+form .form_elements .form_label > label{
+    margin-bottom: 0;
+    color:#08c;
+    font-weight: bold;
+}
+
+form .form_elements .form_label > p {
+    font-size: 11px;
+    color: #969696;
+}
+
+form .form_elements .form_element {
+    float: left;
+    max-width: 450px;
+}
+form .form_elements .form_element textarea {
+    max-width: 430px;
+    width: 400px;
+    height: 100px;
+}
+
+
+form .form_footer{
+    float: left;
+    clear: both;
+    margin: 20px 0 20px 240px;
+}
+
+form .form_footer button{
+    margin-left: 10px;
+}
+
+.form_errors,
+.form_notices {
+    margin: 0;
+}
+
+.form_errors li,
+.form_notices li {
+    list-style: none;
+    margin-bottom: 10px;
+}
