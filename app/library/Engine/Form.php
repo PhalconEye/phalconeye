@@ -70,7 +70,7 @@ class Form
     {
         $this->_di = Phalcon\DI::getDefault();
         $this->_trans = $this->_di->get('trans');
-        $this->_action = substr(preg_replace('/\?.*/', '', $this->_di->get('request')->get('_url')), 1);
+        $this->_action = substr($_SERVER['REQUEST_URI'], 1);
         $this->_model = $model;
         if ($this->_model !== null) {
             $this->_generateModelElements();
@@ -312,6 +312,19 @@ class Form
         return $this->_data;
     }
 
+    public function setData($data)
+    {
+        if (!empty($this->_elements)) {
+            foreach ($data as $key => $value) {
+                if (!empty($this->_elements[$key]))
+                    $this->_elements[$key]['params']['value'] = $value;
+
+            }
+        }
+
+        return $this;
+    }
+
 
     public function render()
     {
@@ -379,7 +392,7 @@ class Form
                     $button['params']['class'] = 'btn';
                 }
 
-                if ($button['is_submit'] === true){
+                if ($button['is_submit'] === true) {
                     $button['params']['class'] .= ' btn-primary';
                 }
 

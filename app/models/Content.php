@@ -38,12 +38,6 @@ class Content extends \Phalcon\Mvc\Model
      * @var string
      *
      */
-    protected $name;
-
-    /**
-     * @var string
-     *
-     */
     protected $params;
 
 
@@ -98,23 +92,18 @@ class Content extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
      * Method to set the value of field params
      *
      * @param string $params
+     * @param string $encode
      */
-    public function setParams($params)
+    public function setParams($params, $encode = true)
     {
-        $this->params = $params;
+        if ($encode)
+            $this->params = json_encode($params);
+        else{
+            $this->params = $params;
+        }
     }
 
 
@@ -169,23 +158,13 @@ class Content extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
      * Returns the value of field params
      *
      * @return string
      */
     public function getParams()
     {
-        return $this->params;
+        return (array)json_decode($this->params);
     }
 
     public function getSource()

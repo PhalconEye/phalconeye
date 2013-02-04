@@ -1,6 +1,6 @@
 <?php
 
-class Pages extends \Phalcon\Mvc\Model 
+class Page extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -214,6 +214,79 @@ class Pages extends \Phalcon\Mvc\Model
     public function getViewCount()
     {
         return $this->view_count;
+    }
+
+    public function setWidgets($widgets = array())
+    {
+        if (!$widgets)
+            $widgets = array();
+
+        // updating
+        $existing_widgets = $this->getContent();
+        $widgets_ids_to_remove = array(); // widgets that we need to remove
+        // looping all exisitng widgets and looping new widgets
+        // looking for new, changed, and deleted actions
+        /** @var Content $ex_widget  */
+        foreach ($existing_widgets as $ex_widget) {
+            $founded = false; // indicates if widgets founded in new array
+            $orders = array();
+
+            foreach ($widgets as $item) {
+                if (empty($orders[$item["layout"]]))
+                    $orders[$item["layout"]] = 1;
+                else
+                    $orders[$item["layout"]]++;
+
+                if ($ex_widget->getId() == $item["id"]) {
+                    $ex_widget->setLayout($item["layout"]);
+                    $ex_widget->setWidgetOrder($orders[$item["layout"]]);
+                    $ex_widget->setParams($item["params"], false);
+                    $ex_widget->save();
+                    $founded = true;
+                }
+            }
+
+            if (!$founded) {
+                $widgets_ids_to_remove[] = $ex_widget->getId();
+            }
+        }
+
+        // inserting
+        $orders = array();
+        foreach ($widgets as $item) {
+            if (empty($orders[$item["layout"]]))
+                $orders[$item["layout"]] = 1;
+            else
+                $orders[$item["layout"]]++;
+
+            if ($item["id"] == 0) { // need to be inserted
+                $content = new Content();
+                $content->setPageId($this->id);
+                $content->setWidgetId($item["widget_id"]);
+                $content->setLayout($item["layout"]);
+                $content->setParams($item["params"], false);
+                $content->setWidgetOrder($orders[$item["layout"]]);
+                $content->save();
+            }
+        }
+
+        // removing
+        $phql = "DELETE FROM Content WHERE Content.id IN (:ids:)";
+        $this->_modelsManager->executeQuery(
+            $phql,
+            array(
+                'ids' => implode(', ', $widgets_ids_to_remove)
+            )
+        );
+
+    }
+
+    public function getContent()
+    {
+        return Content::find(array(
+            "page_id = '{$this->id}'",
+            "order" => "widget_order"
+        ));
     }
 
     public function getSource()

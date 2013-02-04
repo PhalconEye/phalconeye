@@ -47,6 +47,7 @@ body {
     border: 1px solid #e5e5e5;
 }
 
+
 /*** TABLES ***/
 .admin_table {
     width: 100%;
@@ -129,7 +130,7 @@ body {
 
 .ui-sortable-placeholder {
     border: 1px dotted black;
-    background: #3F8FBA !important;
+    background: #006dcc !important;
     visibility: visible !important;
     height: 20px !important;
 }
@@ -225,7 +226,7 @@ body {
 }
 
 .widget_seperator {
-    background: #3F8FBA !important;
+    background: #006dcc !important;
     cursor: auto !important;
     color: white !important;
 }
@@ -235,6 +236,7 @@ body {
     margin: 2px;
     background: white;
     cursor: move;
+    list-style: none;
 }
 
 .widgets li:hover {
@@ -313,11 +315,14 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
 }
 
 .manage_page_header_label{
-    width: 700px;
+    width: 600px;
     float: left;
     min-height: 80px;
 }
 
+.modal-body form .form_element{
+    float: right !important;
+}
 
 /*** FORMS ***/
 

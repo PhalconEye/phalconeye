@@ -21,8 +21,8 @@
         }
 
         window.onbeforeunload = function () {
-            if (notSaved)
-                return "{{ "Page not saved! Dou you want to leave?" | trans}}";
+            {#if (notSaved)#}
+            {#return "{{ "Page not saved! Dou you want to leave?" | trans}}";#}
         };
 
         buildWidgetsList();
@@ -47,51 +47,53 @@
     };
 
     var defaultWidgetControl = function (widget) {
-        var path = '/admin/pages/options?id=widget_id&name=widget_name&page_id=widget_page_id';
-        path = path.replace("widget_id", widget.id).replace("widget_name", widget.name).replace("widget_page_id", currentPageId);
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href="' + path + '" onclick="if ($(\'#widget_editing\')) $(\'#widget_editing\').attr(\'id\', \'\'); $(this).parent().parent().attr(\'id\', \'widget_editing\');"  data-toggle="modal">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="$(this).parent().parent().remove(); changePageState(true);">X</a></div>';
+        var path = '/admin/pages/widgetOptions?id=content_id&widget_id=widget_current_id&page_id=widget_page_id&params=widget_params';
+        path = path.replace("content_id", widget.id).replace("widget_current_id", widget.widget_id).replace("widget_params", JSON.stringify(widget.params)).replace("widget_page_id", currentPageId);
+        return   '<div style="display: block;" class="delete_widget to_remove"><a href=\'' + path + '\' onclick="if ($(\'#widget_editing\')) $(\'#widget_editing\').attr(\'id\', \'\'); $(this).parent().parent().attr(\'id\', \'widget_editing\');"  data-toggle="modal">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="$(this).parent().parent().remove(); changePageState(true);">X</a></div>';
     }
 
     var buildWidgetsList = function () {
         $.each(bundlesWidgetsMetadata, function (i, l) {
             $("#widget_list ul").append('<li class="widget_seperator">' + i + '</li>');
             $.each(l, function (i, l) {
-                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widgetid="0" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
+                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widgetid="0" widget_object_id="' + l.widget_id + '" params="{}" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
             });
             $("#widget_list ul").find('.delete_widget').css('display', 'none');
         });
     }
 
-    var setEditedWidgetId = function (id) {
-        $("#widget_editing").attr("widgetid", id);
+    var setEditedWidgetParams = function (params) {
+        $("#widget_editing").attr("params", params);
 
-        var href = $("#widget_editing").find(".thickbox").attr("href");
-        href = href.replace("undefined", id);
-        $("#widget_editing").find(".thickbox").attr("href", href);
+        var href = $("#widget_editing").find('[data-toggle="modal"]').attr("href");
+        href = href.replace(/\&params=(.*)/, '&params='+params);
+        $("#widget_editing").find('[data-toggle="modal"]').attr("href", href);
 
         $("#widget_editing").attr("id", "");
+        changePageState(true);
     }
 
     var savePage = function () {
         if (!notSaved) return;
+        changePageState(false);
 
         $.getJSON("/admin/pages/save-layout/{{currentPage.getId()}}",
                 {
                     format:"json",
                     layout:currentLayoutType,
                     items:getWidgetsList(true)
-                },
-                function (data) {
-                    changePageState(false);
+                }, function(){
+                    $('#save_button').button('reset');
+                    alert('{{ 'Changes saved!' |trans }}');
                 });
     }
 
 
     var changePageState = function (state) {
         if (state)
-            $('#save_button').val("{{"Save (NOT  SAVED)" | trans}}");
+            $('#save_button').html("{{"Save (NOT  SAVED)" | trans}}");
         else
-            $('#save_button').val("{{"Save" | trans}}");
+            $('#save_button').html("{{"Save" | trans}}");
         notSaved = state;
     }
 
@@ -119,7 +121,8 @@
                 items.push({
                     "content":(!$no_content ? $(this).html().trim() : ''),
                     "id":$(this).attr("widgetid"),
-                    "name":$(this).attr("widget"),
+                    "widget_id":$(this).attr("widget_object_id"),
+                    "params":$(this).attr("params"),
                     "layout":$(this).parent().attr("layout")
                 });
             });
@@ -134,7 +137,7 @@
 
             $.each(list, function (i, l) {
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget="' + l.name + '">' + l.content + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '" params=\'' + l.params + '\'>' + l.content + '</div>');
                 }
                 else hasRemove = true;
             });
@@ -146,11 +149,11 @@
             $.each(list, function (i, l) {
                 if ($("#widgets_container_" + l.layout).length > 0) {
                     // get widget real title
-                    if (widgetsListData[l.name])
-                        var title = widgetsListData[l.name].title;
+                    if (widgetsListData[l.widget_id])
+                        var title = widgetsListData[l.widget_id].name;
                     else
                         var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
-                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget="' + l.name + '">' + title + defaultWidgetControl(l) + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '" params=\'' + JSON.stringify(l.params) + '\'>' + title + defaultWidgetControl(l) + '</div>');
                 }
             });
         }
@@ -330,7 +333,7 @@
                         </li>
                     </ul>
                 </div>
-                <button type="button" class="btn btn-primary button-loading" data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
+                <button id="save_button" onclick="savePage();" type="button" class="btn btn-primary button-loading" data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
             </div>
         </div>
         <div class="clearfix"></div>

@@ -11,8 +11,27 @@ class AdminIndexController extends Controller
         if (!is_array($admin_id))
             $admin_id = array($admin_id);
 
-        if (!$action)
+        if (!$action){
             $action = 'index';
+        }
+        else{
+            // split action
+            if (strpos($action, '-') != -1){
+                $actionPath = explode('-', $action);
+                $flag = false;
+                $action = '';
+                foreach($actionPath as $path){
+                    if ($flag){
+                        $action .= ucfirst($path);
+                    }
+                    else{
+                        $action .= $path;
+                        $flag = true;
+                    }
+                }
+
+            }
+        }
 
         if ($controller && $action) {
             $this->dispatcher->forward(array(

@@ -1,6 +1,6 @@
 <?php
 
-class Users extends \Phalcon\Mvc\Model 
+class User extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -33,6 +33,18 @@ class Users extends \Phalcon\Mvc\Model
      */
     protected $creation_date;
 
+
+    public function initialize()
+    {
+        $this->addBehavior(new \Phalcon\Mvc\Model\Behavior\Timestampable(
+            array(
+                'beforeCreate' => array(
+                    'field' => 'creation_date',
+                    'format' => 'Y-m-d H:i:s'
+                )
+            )
+        ));
+    }
 
     /**
      * Method to set the value of field id

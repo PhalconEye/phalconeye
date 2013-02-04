@@ -11,7 +11,7 @@ class Form_Admin_Pages_Create extends Form
         ;
 
         if ($model === null){
-            $model = new Pages();
+            $model = new Page();
         }
 
         parent::__construct($model);

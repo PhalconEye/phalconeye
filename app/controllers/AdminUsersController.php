@@ -27,7 +27,7 @@ class AdminUsersController extends Controller
         $currentPage = $this->request->getQuery('page', 'int', 1);
         if ($currentPage < 1) $currentPage = 1;
 
-        $users = Users::find();
+        $users = User::find();
 
         $paginator = new \Phalcon\Paginator\Adapter\Model(
             array(

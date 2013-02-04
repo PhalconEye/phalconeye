@@ -1,7 +1,7 @@
 <?php
 
 
-class Widgets extends \Phalcon\Mvc\Model 
+class Widget extends \Phalcon\Mvc\Model
 {
 
     /**
@@ -45,7 +45,6 @@ class Widgets extends \Phalcon\Mvc\Model
      *
      */
     protected $admin_form;
-
 
     /**
      * Method to set the value of field id
