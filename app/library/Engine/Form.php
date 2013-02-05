@@ -45,7 +45,8 @@ class Form
      */
     private $_requiredFields = array();
 
-    private $_di = null;
+    public $di = null;
+
     private $_trans = null;
     private $_elements = array();
     private $_buttons = array();
@@ -54,6 +55,7 @@ class Form
     private $_currentOrder = 1;
     private $_errors = array();
     private $_notices = array();
+    private $_useToken = true;
 
 
     private $_action = '';
@@ -68,8 +70,8 @@ class Form
      */
     public function __construct(\Phalcon\Mvc\Model $model = null)
     {
-        $this->_di = Phalcon\DI::getDefault();
-        $this->_trans = $this->_di->get('trans');
+        $this->di = Phalcon\DI::getDefault();
+        $this->_trans = $this->di->get('trans');
         $this->_action = substr($_SERVER['REQUEST_URI'], 1);
         $this->_model = $model;
         if ($this->_model !== null) {
@@ -238,6 +240,12 @@ class Form
      */
     public function isValid($request)
     {
+        if ($this->_useToken && !$this->di->get('security')->checkToken()) {
+            $this->addError('Token is not valid!');
+            return false;
+        }
+
+
         $isValid = true;
         if ($this->_model !== null) {
             $modelClass = new ReflectionClass($this->_model);
@@ -263,7 +271,7 @@ class Form
                 $isValid = $this->_model->save();
                 if (!$isValid) {
                     foreach ($this->_model->getMessages() as $message) {
-                        $this->addError($this->_trans->_($message));
+                        $this->addError($message);
                     }
                 }
             }
@@ -375,12 +383,19 @@ class Form
                 if (!empty($element['params']['value']))
                     $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['value'])));
             } else {
+                unset($element['params']['validators']); // Phalcon elements doesn't like this
                 $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($element['params']));
             }
             $body .= '</div>';
         }
 
         $body .= '</div>';
+
+        if ($this->_useToken) {
+            $tokenKey = $this->di->get('security')->getTokenKey();
+            $token = $this->di->get('security')->getToken();
+            $body .= sprintf('<input type="hidden" name="%s" value="%s">', $tokenKey, $token);
+        }
 
         if (!empty($this->_buttons)) {
             $body .= '<div class="form_footer">';

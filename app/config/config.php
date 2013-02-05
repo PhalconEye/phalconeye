@@ -68,6 +68,21 @@ return new \Phalcon\Config(array(
             'action' => 'index',
             'url' => 1,
             'name' => 'custom_page',
-        )
+        ),
+        '/login' => array(
+            'controller' => 'auth',
+            'action' => 'login',
+            'name' => 'login',
+        ),
+        '/logout' => array(
+            'controller' => 'auth',
+            'action' => 'logout',
+            'name' => 'logout',
+        ),
+        '/register' => array(
+            'controller' => 'auth',
+            'action' => 'register',
+            'name' => 'register',
+        ),
     )
 ));

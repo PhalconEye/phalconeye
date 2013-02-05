@@ -33,6 +33,13 @@ class User extends \Phalcon\Mvc\Model
      */
     protected $creation_date;
 
+    /**
+     * Current viewer
+     *
+     * @var User null
+     */
+    private static $_viewer = null;
+
 
     public function initialize()
     {
@@ -148,11 +155,31 @@ class User extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Get current user
+     * If user logged in this function will return user object with data
+     * If user isn't logged in this function will return empty user object with ID = 0
+     *
+     * @return null|Phalcon\Mvc\Model\ResultsetInterface|User
+     */
+    public static function getViewer(){
+        if (null === self::$_viewer) {
+            $identity = Phalcon\DI::getDefault()->get('auth')->getIdentity();
+            self::$_viewer = self::findFirst($identity);
+            if (!self::$_viewer){
+                self::$_viewer = new User();
+                self::$_viewer->setId(0);
+            }
+        }
+
+        return self::$_viewer;
+    }
+
+    /**
      * Validations and business logic 
      */
     public function validation()
     {        
-        $this->validate(new Email(array(
+        $this->validate(new \Phalcon\Mvc\Model\Validator\Email(array(
             "field" => "email",
             "required" => true
         )));

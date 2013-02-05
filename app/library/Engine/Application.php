@@ -58,7 +58,8 @@ class Application
             'logger',
             'database',
             'session',
-            'flash'
+            'flash',
+            'engine'
         );
         foreach ($loaders as $service) {
             $this->{'init' . $service}($this->_config);
@@ -385,4 +386,17 @@ class Application
     }
 
 
+    /**
+     * Initializes engine services
+     *
+     * @param \stdClass $config
+     */
+    protected function initEngine($config)
+    {
+        $di = $this->_di;
+
+        $this->_di->set('auth', function () use ($di) {
+            return new Api_Auth($di->get('session')->get('identity', 0));
+        });
+    }
 }
