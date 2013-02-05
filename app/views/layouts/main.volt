@@ -5,8 +5,8 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
+    <link rel="stylesheet" href="/css/main.css"/>
 
     {% block head %}
 
@@ -19,9 +19,15 @@
         {% block header %}
         {% endblock %}
     </div>
-    <div id="content">
-        {% block content %}
-        {% endblock %}
+    <div class="container">
+        <div class="row">
+            {{ content() }}
+        </div><!--/row-->
+
+        <div class="row">
+            {% block content %}
+            {% endblock %}
+        </div><!--/row-->
     </div>
     <div id="footer">
         {% block footer %}

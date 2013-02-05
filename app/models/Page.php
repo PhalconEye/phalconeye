@@ -222,11 +222,11 @@ class Page extends \Phalcon\Mvc\Model
             $widgets = array();
 
         // updating
-        $existing_widgets = $this->getContent();
+        $existing_widgets = $this->getWidgets();
         $widgets_ids_to_remove = array(); // widgets that we need to remove
         // looping all exisitng widgets and looping new widgets
         // looking for new, changed, and deleted actions
-        /** @var Content $ex_widget  */
+        /** @var Content $ex_widget */
         foreach ($existing_widgets as $ex_widget) {
             $founded = false; // indicates if widgets founded in new array
             $orders = array();
@@ -240,7 +240,7 @@ class Page extends \Phalcon\Mvc\Model
                 if ($ex_widget->getId() == $item["id"]) {
                     $ex_widget->setLayout($item["layout"]);
                     $ex_widget->setWidgetOrder($orders[$item["layout"]]);
-                    $ex_widget->setParams($item["params"], false);
+                    $ex_widget->setParams($item["params"]);
                     $ex_widget->save();
                     $founded = true;
                 }
@@ -264,29 +264,40 @@ class Page extends \Phalcon\Mvc\Model
                 $content->setPageId($this->id);
                 $content->setWidgetId($item["widget_id"]);
                 $content->setLayout($item["layout"]);
-                $content->setParams($item["params"], false);
+                $content->setParams($item["params"]);
                 $content->setWidgetOrder($orders[$item["layout"]]);
                 $content->save();
             }
         }
 
-        // removing
-        $phql = "DELETE FROM Content WHERE Content.id IN (:ids:)";
-        $this->_modelsManager->executeQuery(
-            $phql,
-            array(
-                'ids' => implode(', ', $widgets_ids_to_remove)
-            )
-        );
+        if (!empty($widgets_ids_to_remove)) {
+            $rowsToRemove = Content::find("id IN (" . implode(',', $widgets_ids_to_remove).")");
+            $rowsToRemove->delete();
+        }
+
+
+
 
     }
 
-    public function getContent()
+    public function getWidgets($cache = true)
     {
-        return Content::find(array(
+        $config = $this->getDI()->get('config');
+
+        $data = array(
             "page_id = '{$this->id}'",
-            "order" => "widget_order"
-        ));
+            "order" => "widget_order",
+
+        );
+
+        if ($cache){
+            $data['cache'] = array(
+                'key' => "page_{$this->id}_widgets.cache",
+                'lifetime' => ($config->application->debug ? 0 : 86400) // 1 day
+            );
+        }
+
+        return Content::find($data);
     }
 
     public function getSource()

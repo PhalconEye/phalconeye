@@ -100,16 +100,30 @@ class Application
         $di->set('dispatcher', function () use ($di, $config) {
             $evtManager = $di->getShared('eventsManager');
             if (!$config->application->debug) {
+
+
                 $evtManager->attach(
                     "dispatch:beforeException", function ($event, $dispatcher, $exception) {
-                    switch ($exception->getCode()) {
-                        case \Phalcon\Mvc\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-                        case \Phalcon\Mvc\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                            $dispatcher->forward(array(
-                                'controller' => 'error',
-                                'action' => 'show404'
-                            ));
-                            return false;
+                    //The controller exists but the action not
+                    if ($event->getType() == 'beforeNotFoundAction') {
+                        $dispatcher->forward(array(
+                            'controller' => 'error',
+                            'action' => 'show404'
+                        ));
+                        return false;
+                    }
+
+                    //Alternative way, controller or action doesn't exist
+                    if ($event->getType() == 'beforeException') {
+                        switch ($exception->getCode()) {
+                            case Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+                            case Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+                                $dispatcher->forward(array(
+                                    'controller' => 'error',
+                                    'action' => 'show404'
+                                ));
+                                return false;
+                        }
                     }
                 });
             }
@@ -239,7 +253,7 @@ class Application
     {
         if ($config->application->logger->enabled) {
             $this->_di->set('logger', function () use ($config) {
-                $logger = new PhLogger(ROOT_PATH . $config->application->logger->file);
+                $logger = new PhLogger($config->application->logger->path . "main.log");
                 $logger->setFormat($config->application->logger->format);
                 return $logger;
             });
@@ -261,6 +275,21 @@ class Application
                 "dbname" => $config->database->name,
             ));
 
+            if ($config->application->debug || true){
+                $eventsManager = new Phalcon\Events\Manager();
+
+                $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "db.log");
+
+                //Listen all the database events
+                $eventsManager->attach('db', function($event, $connection) use ($logger) {
+                    if ($event->getType() == 'beforeQuery') {
+                        $logger->log($connection->getSQLStatement(), \Phalcon\Logger::INFO);
+                    }
+                });
+
+                $connection->setEventsManager($eventsManager);
+            }
+
             return $connection;
         });
 
@@ -276,6 +305,7 @@ class Application
                 return new PhMetadataMemory();
             }
         }, true);
+
     }
 
     /**
@@ -302,7 +332,7 @@ class Application
             $lifetime = $config->application->cache->lifetime;
             $cacheDir = $config->application->cache->cacheDir;
             $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = array('cacheDir' => ROOT_PATH . $cacheDir);
+            $backEndOptions = array('cacheDir' => $cacheDir);
 
             $frontCache = new PhCacheFront\Output($frontEndOptions);
             $cache = new PhCacheBack\File($frontCache, $backEndOptions);
@@ -315,7 +345,20 @@ class Application
             $lifetime = $config->application->cache->lifetime;
             $cacheDir = $config->application->cache->cacheDir;
             $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = array('cacheDir' => ROOT_PATH . $cacheDir);
+            $backEndOptions = array('cacheDir' => $cacheDir);
+
+            $frontCache = new PhCacheFront\Data($frontEndOptions);
+            $cache = new PhCacheBack\File($frontCache, $backEndOptions);
+
+            return $cache;
+        });
+
+        $this->_di->set('modelsCache', function () use ($config) {
+            // Get the parameters
+            $lifetime = $config->application->cache->lifetime;
+            $cacheDir = $config->application->cache->cacheDir;
+            $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
+            $backEndOptions = array('cacheDir' => $cacheDir);
 
             $frontCache = new PhCacheFront\Data($frontEndOptions);
             $cache = new PhCacheBack\File($frontCache, $backEndOptions);

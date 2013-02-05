@@ -116,7 +116,7 @@ class AdminPagesController extends Controller
             $bundlesWidgetsMetadata[$key] = $widgetsMeta;
         }
 
-        $content = $page->getContent();
+        $content = $page->getWidgets(false);
         $currentPageWidgets = array();
         foreach ($content as $widget)
             $currentPageWidgets[] = array(
@@ -167,7 +167,7 @@ class AdminPagesController extends Controller
 
         // set form values
         if (!empty($widgetParams))
-            $form->setData(json_decode($widgetParams));
+            $form->setData($widgetParams);
 
         if (!$this->request->isPost() || !$form->isValid($this->request)) {
             $this->view->setVar('form', $form);
@@ -179,6 +179,7 @@ class AdminPagesController extends Controller
         }
 
 
+        $d = json_encode($form->getData());
         $this->view->setVar('params', json_encode($form->getData()));
 
 

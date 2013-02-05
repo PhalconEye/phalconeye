@@ -22,7 +22,7 @@ return new \Phalcon\Config(array(
         ),
         'logger' => array(
             'enabled' => true,
-            'file' => '/app/var/logs/main.log',
+            'path' => ROOT_PATH . '/app/var/logs/',
             'format' => '[%date%][%type%] %message%'
         ),
         'view' => array(
@@ -62,6 +62,12 @@ return new \Phalcon\Config(array(
             'action' => 'index',
             'name' => 'admin_router',
             'params' => 1
+        ),
+        '/page/([a-z\-]+)' => array(
+            'controller' => 'page',
+            'action' => 'index',
+            'url' => 1,
+            'name' => 'custom_page',
         )
     )
 ));

@@ -1,0 +1,63 @@
+/*** CUSTOM PAGE LAYOUT ***/
+
+#general-content{
+    min-height: 200px;
+}
+
+#general-content-left{
+    width: 250px;
+    min-height: 200px;
+    float: left;
+}
+
+#general-content-right{
+    width: 250px;
+    min-height: 200px;
+    float: right;
+}
+
+#general-content-wrapper{
+    width: 960px;
+    margin: 0px auto 0 auto;
+    background:  white;
+    box-shadow: 0 0 10px grey;
+    min-height: 400px;
+}
+
+#general-content-column-left{
+    float: left;
+    width: 706px;
+    min-height: 200px;
+}
+
+#general-content-column-right{
+    float: right;
+    width: 706px;
+    min-height: 200px;
+}
+
+#general-content-full-top, #general-content-full-bottom{
+    min-height: 10px;
+    clear: both;
+}
+
+#content-left-left{
+    height: 452px;
+    width: 505px;
+    float:left;
+}
+
+#content-left-right{
+    background-position: 10px 120px;
+    height: 415px;
+    width: 25px;
+    float:left;
+}
+
+.general_container{
+
+}
+
+.row > div{
+border:1px solid black;
+}

@@ -9,7 +9,7 @@
     {% if params is defined %}
         <script type="text/javascript">
 
-            setEditedWidgetParams('{{params}}');
+            setEditedWidgetParams({{params}});
             $('#modal').modal('hide');
 
         </script>

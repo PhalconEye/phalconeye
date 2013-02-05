@@ -10,6 +10,8 @@
     var notSaved = false;
     var bundlesWidgetsMetadata = [];
     var widgetsListData = [];
+    var widgetsParams = [];
+    var elementIdCounter = 1;
 
     window.onload = function () {
         bundlesWidgetsMetadata = $.parseJSON('{{bundlesWidgetsMetadata}}');
@@ -21,8 +23,8 @@
         }
 
         window.onbeforeunload = function () {
-            {#if (notSaved)#}
-            {#return "{{ "Page not saved! Dou you want to leave?" | trans}}";#}
+            if (notSaved)
+                return "{{ "Page not saved! Dou you want to leave?" | trans}}";
         };
 
         buildWidgetsList();
@@ -34,8 +36,7 @@
 
 
         changeCurrentLayoutType(currentLayoutType);
-        setWidgetsList('{{currentPageWidgets}}', true);
-        admin.modal.init('.admin_pages_layout [data-toggle="modal"]');
+        setWidgetsList({{currentPageWidgets}}, true);
 
         $(".widget_tooltip").tooltip({
             position:"center left"
@@ -47,27 +48,21 @@
     };
 
     var defaultWidgetControl = function (widget) {
-        var path = '/admin/pages/widgetOptions?id=content_id&widget_id=widget_current_id&page_id=widget_page_id&params=widget_params';
-        path = path.replace("content_id", widget.id).replace("widget_current_id", widget.widget_id).replace("widget_params", JSON.stringify(widget.params)).replace("widget_page_id", currentPageId);
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href=\'' + path + '\' onclick="if ($(\'#widget_editing\')) $(\'#widget_editing\').attr(\'id\', \'\'); $(this).parent().parent().attr(\'id\', \'widget_editing\');"  data-toggle="modal">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="$(this).parent().parent().remove(); changePageState(true);">X</a></div>';
+        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" content_id="'+widget.id+'" widget_current_id="'+widget.widget_id+'" widget_page_id="'+currentPageId+'">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
     }
 
     var buildWidgetsList = function () {
         $.each(bundlesWidgetsMetadata, function (i, l) {
             $("#widget_list ul").append('<li class="widget_seperator">' + i + '</li>');
             $.each(l, function (i, l) {
-                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widgetid="0" widget_object_id="' + l.widget_id + '" params="{}" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
+                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widgetid="0" widget_object_id="' + l.widget_id + '" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
             });
             $("#widget_list ul").find('.delete_widget').css('display', 'none');
         });
     }
 
     var setEditedWidgetParams = function (params) {
-        $("#widget_editing").attr("params", params);
-
-        var href = $("#widget_editing").find('[data-toggle="modal"]').attr("href");
-        href = href.replace(/\&params=(.*)/, '&params='+params);
-        $("#widget_editing").find('[data-toggle="modal"]').attr("href", href);
+        widgetsParams[$("#widget_editing").attr('element_id')] = JSON.parse(JSON.stringify(params));
 
         $("#widget_editing").attr("id", "");
         changePageState(true);
@@ -75,7 +70,6 @@
 
     var savePage = function () {
         if (!notSaved) return;
-        changePageState(false);
 
         $.getJSON("/admin/pages/save-layout/{{currentPage.getId()}}",
                 {
@@ -83,17 +77,45 @@
                     layout:currentLayoutType,
                     items:getWidgetsList(true)
                 }, function(){
-                    $('#save_button').button('reset');
+                    changePageState(false);
                     alert('{{ 'Changes saved!' |trans }}');
-                });
+                    window.location.reload();
+                }).error(function() { changePageState(true); alert("{{ 'Error while saving...' |trans }}"); });
     }
 
+    var editAction = function(element){
+        if ($('#widget_editing'))
+            $('#widget_editing').attr('id', '');
+
+        element.parent().parent().attr('id', 'widget_editing');
+
+        var url = '/admin/pages/widgetOptions';
+        var data = {
+            'id': element.attr('content_id'),
+            'widget_id': element.attr('widget_current_id'),
+            'page_id': element.attr('widget_page_id'),
+            'params': widgetsParams[element.parent().parent().attr('element_id')]
+        };
+
+        modal.open(url, data);
+    }
+
+    var removeAction = function(element){
+        element.parent().parent().remove();
+        changePageState(true);
+    }
 
     var changePageState = function (state) {
-        if (state)
+
+        if (state){
+            $('#save_button').attr("disabled", null);
             $('#save_button').html("{{"Save (NOT  SAVED)" | trans}}");
-        else
+        }
+        else{
+            $('#save_button').attr("disabled", "disabled");
             $('#save_button').html("{{"Save" | trans}}");
+        }
+        $('#save_button').button('reset')
         notSaved = state;
     }
 
@@ -105,7 +127,6 @@
             },
             receive:function (event, ui) {
                 $(".admin_pages_layout").find('.delete_widget').css('display', 'block');
-                admin.modal.init('.admin_pages_layout [data-toggle="modal"]');
                 updateLayoutPanelsHeight();
             }
         });
@@ -122,7 +143,7 @@
                     "content":(!$no_content ? $(this).html().trim() : ''),
                     "id":$(this).attr("widgetid"),
                     "widget_id":$(this).attr("widget_object_id"),
-                    "params":$(this).attr("params"),
+                    "params":widgetsParams[$(this).attr('element_id')],
                     "layout":$(this).parent().attr("layout")
                 });
             });
@@ -136,8 +157,10 @@
             var hasRemove = false;
 
             $.each(list, function (i, l) {
+                widgetsParams[elementIdCounter] = l.params;
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '" params=\'' + l.params + '\'>' + l.content + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="'+elementIdCounter+'" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + l.content + '</div>');
+                    elementIdCounter++;
                 }
                 else hasRemove = true;
             });
@@ -145,15 +168,17 @@
             return hasRemove;
         }
         else {
-            list = $.parseJSON(list);
+            list = JSON.parse(JSON.stringify(list));
             $.each(list, function (i, l) {
+                widgetsParams[elementIdCounter] = l.params;
                 if ($("#widgets_container_" + l.layout).length > 0) {
                     // get widget real title
                     if (widgetsListData[l.widget_id])
                         var title = widgetsListData[l.widget_id].name;
                     else
                         var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
-                    $("#widgets_container_" + l.layout).append('<li class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '" params=\'' + JSON.stringify(l.params) + '\'>' + title + defaultWidgetControl(l) + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="'+elementIdCounter+'" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
+                    elementIdCounter++;
                 }
             });
         }
@@ -244,7 +269,6 @@
             changePageState(true);
             currentLayoutType = type;
         }
-        admin.modal.init('.admin_pages_layout [data-toggle="modal"]');
     }
 
 
@@ -333,7 +357,7 @@
                         </li>
                     </ul>
                 </div>
-                <button id="save_button" onclick="savePage();" type="button" class="btn btn-primary button-loading" data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
+                <button id="save_button" disabled="disabled" onclick="savePage();" type="button" class="btn btn-primary button-loading" data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
             </div>
         </div>
         <div class="clearfix"></div>

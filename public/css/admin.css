@@ -320,8 +320,18 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
     min-height: 80px;
 }
 
+.modal-body form .form_label{
+    width: 140px !important;
+    margin-right: 10px !important;
+}
+
 .modal-body form .form_element{
     float: right !important;
+}
+
+.modal-body form .form_elements .form_element textarea{
+    max-width: 360px !important;
+    width: 360px !important;
 }
 
 /*** FORMS ***/
