@@ -1,12 +1,12 @@
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Users'|trans }}}{% endblock %}
+{% block title %}{{ 'Roles'|trans }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this user?" | trans}}')) {
-                window.location.href = '/admin/users/delete/' + id;
+            if (confirm('{{ "Are you really want to delete this role?" | trans}}')) {
+                window.location.href = '/admin/users/roles-delete/' + id;
             }
         }
     </script>
@@ -21,15 +21,14 @@
 
     <div class="span9">
         <div class="row-fluid">
-            <h1>{{ 'Users' | trans }}</h1>
+            <h1>{{ 'Roles' | trans }}</h1>
             <table class="admin_table">
                 <thead>
                 <tr>
                     <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Username' | trans }}</th>
-                    <th>{{ 'Email' | trans }}</th>
-                    <th>{{ 'Role' | trans }}</th>
-                    <th>{{ 'Creation Date' | trans }}</th>
+                    <th>{{ 'Name' | trans }}</th>
+                    <th>{{ 'Description' | trans }}</th>
+                    <th>{{ 'Is default?' | trans }}</th>
                     <th>{{ 'Options' | trans }}</th>
                 </tr>
                 </thead>
@@ -40,20 +39,23 @@
                             {{ item.getId() }}
                         </td>
                         <td>
-                            {{ item.getUsername() }}
+                            {{ item.getName() }}
                         </td>
                         <td>
-                            {{ item.getEmail() }}
+                            {{ item.getDescription() }}
                         </td>
                         <td>
-                            {{ item.getRole().getName() }}
+                            {% if item.getIsDefault() %}
+                            {{ 'Yes' |trans }}
+                            {% else %}
+                            {{ 'No' |trans }}
+                            {% endif %}
                         </td>
                         <td>
-                            {{ item.getCreationDate() }}
-                        </td>
-                        <td>
-                            {{ link_to("admin/users/edit/" ~ item.getId(), 'Edit' | trans) }}
+                            {{ link_to("admin/users/roles-edit/" ~ item.getId(), 'Edit' | trans) }}
+                            {% if not item.getUndeletable() %}
                             {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

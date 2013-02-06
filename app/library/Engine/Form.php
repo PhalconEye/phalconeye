@@ -97,7 +97,12 @@ class Form
                 $elementData['required'] = true;
             }
 
-            $this->addElement($this->_getModelFieldType($property), $property->getName(), $elementData);
+            $fieldType = $this->_getModelFieldType($property);
+            if ($fieldType == 'checkField' && !empty($elementData['value'])){
+                $elementData['checked'] = true;
+            }
+
+            $this->addElement($fieldType, $property->getName(), $elementData);
         }
 
     }
@@ -258,6 +263,9 @@ class Form
                     if (empty($value) && $this->_model->readAttribute($element['name']) === null) {
                         $value = $this->_model->readAttribute($element['name']);
                     }
+                    if ($element['type'] == 'checkField'){
+                        $value = $request->get($element['name']);
+                    }
                     $this->_model->writeAttribute($element['name'], $value);
 
                     $this->_data[$element['name']] = $value;
@@ -267,12 +275,10 @@ class Form
             }
 
             // validate model data
-            if ($modelClass->hasMethod('validation')) {
-                $isValid = $this->_model->save();
-                if (!$isValid) {
-                    foreach ($this->_model->getMessages() as $message) {
-                        $this->addError($message);
-                    }
+            $isValid = $this->_model->save();
+            if (!$isValid) {
+                foreach ($this->_model->getMessages() as $message) {
+                    $this->addError($message);
                 }
             }
         } else {
@@ -384,6 +390,8 @@ class Form
                     $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['value'])));
             } else {
                 unset($element['params']['validators']); // Phalcon elements doesn't like this
+                unset($element['params']['filter']);
+
                 $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($element['params']));
             }
             $body .= '</div>';

@@ -2,6 +2,7 @@
 
 class Controller extends \Phalcon\Mvc\Controller
 {
+
     /**
      * Initializes the controller
      */

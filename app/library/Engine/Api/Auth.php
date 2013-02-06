@@ -3,15 +3,16 @@
 /**
  * Provides small layer between session and services
  */
-class Api_Auth{
+class Api_Auth extends \Phalcon\Mvc\User\Plugin{
 
     private $_identity = 0;
 
     /**
      * @param $identity Current session identity
      */
-    public function __construct($identity){
-        $this->_identity = $identity;
+    public function __construct($di){
+        $this->_dependencyInjector = $di;
+        $this->_identity = $this->session->get('identity', 0);
     }
 
     /**
@@ -22,14 +23,16 @@ class Api_Auth{
      * @return bool
      */
     public function authenticate($identity){
-        $_SESSION['identity'] = $this->_identity = $identity;
+        $this->_identity = $identity;
+        $this->session->set('identity', $identity);
     }
 
     /**
      * Clear identity, logout
      */
     public function clearAuth(){
-        $_SESSION['identity'] = $this->_identity = 0;
+        $this->_identity = 0;
+        $this->session->set('identity', 0);
     }
 
     /**

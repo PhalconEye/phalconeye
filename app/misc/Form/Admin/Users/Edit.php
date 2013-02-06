@@ -14,7 +14,7 @@ class Form_Admin_Users_Edit extends Form_Admin_Users_Create
 
         $this->addButton('Save', true);
         $this->addButton('Cancel', false, array(
-            'onclick' => 'history.go(-1); return false;'
+            'onclick' => "window.location.href='/admin/users'; return false;"
         ));
 
     }

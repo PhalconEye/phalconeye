@@ -49,7 +49,6 @@ class Application
     {
         $loaders = array(
             'loader',
-            'dispatcher',
             'environment',
             'url',
             'cache',
@@ -58,6 +57,8 @@ class Application
             'logger',
             'database',
             'session',
+            'acl',
+            'dispatcher',
             'flash',
             'engine'
         );
@@ -93,46 +94,6 @@ class Application
         ))
             ->register();
 
-    }
-
-    protected function initDispatcher($config)
-    {
-        $di = $this->_di;
-        $di->set('dispatcher', function () use ($di, $config) {
-            $evtManager = $di->getShared('eventsManager');
-            if (!$config->application->debug) {
-
-
-                $evtManager->attach(
-                    "dispatch:beforeException", function ($event, $dispatcher, $exception) {
-                    //The controller exists but the action not
-                    if ($event->getType() == 'beforeNotFoundAction') {
-                        $dispatcher->forward(array(
-                            'controller' => 'error',
-                            'action' => 'show404'
-                        ));
-                        return false;
-                    }
-
-                    //Alternative way, controller or action doesn't exist
-                    if ($event->getType() == 'beforeException') {
-                        switch ($exception->getCode()) {
-                            case Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-                            case Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                                $dispatcher->forward(array(
-                                    'controller' => 'error',
-                                    'action' => 'show404'
-                                ));
-                                return false;
-                        }
-                    }
-                });
-            }
-
-            $dispatcher = new \Phalcon\Mvc\Dispatcher();
-            $dispatcher->setEventsManager($evtManager);
-            return $dispatcher;
-        });
     }
 
     /**
@@ -222,18 +183,18 @@ class Application
                     $compiler = $volt->getCompiler();
 
                     //register helper
-                    $compiler->addFunction('helper', function($resolvedArgs, $exprArgs) {
+                    $compiler->addFunction('helper', function ($resolvedArgs, $exprArgs) {
                         $name = $exprArgs[0]['expr']['value'];
 
                         $resolvedArgs = explode(', ', $resolvedArgs);
                         unset($resolvedArgs[0]);
                         $resolvedArgs = implode(', ', $resolvedArgs);
-                        return 'Helper_'.ucfirst($name).'::_('.$resolvedArgs.')';
+                        return 'Helper_' . ucfirst($name) . '::_(' . $resolvedArgs . ')';
                     });
 
                     // register main filter
-                    $compiler->addFilter('trans', function($resolvedArgs) {
-                        return 'Helper_Translate::_('.$resolvedArgs.')';
+                    $compiler->addFilter('trans', function ($resolvedArgs) {
+                        return 'Helper_Translate::_(' . $resolvedArgs . ')';
                     });
 
 
@@ -276,13 +237,13 @@ class Application
                 "dbname" => $config->database->name,
             ));
 
-            if ($config->application->debug || true){
+            if ($config->application->debug || true) {
                 $eventsManager = new Phalcon\Events\Manager();
 
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "db.log");
 
                 //Listen all the database events
-                $eventsManager->attach('db', function($event, $connection) use ($logger) {
+                $eventsManager->attach('db', function ($event, $connection) use ($logger) {
                     if ($event->getType() == 'beforeQuery') {
                         $logger->log($connection->getSQLStatement(), \Phalcon\Logger::INFO);
                     }
@@ -320,6 +281,60 @@ class Application
             return $session;
         }, true);
     }
+
+    protected function initAcl($config){
+        $di = $this->_di;
+        $di->set('acl', function () use ($di) {
+            return new Api_Acl($di);
+        });
+    }
+
+
+    protected function initDispatcher($config)
+    {
+        $di = $this->_di;
+        $di->set('dispatcher', function () use ($di, $config) {
+            $evtManager = $di->getShared('eventsManager');
+            if (!$config->application->debug) {
+                $evtManager->attach(
+                    "dispatch:beforeException", function ($event, $dispatcher, $exception) {
+                    //The controller exists but the action not
+                    if ($event->getType() == 'beforeNotFoundAction') {
+                        $dispatcher->forward(array(
+                            'controller' => 'error',
+                            'action' => 'show404'
+                        ));
+                        return false;
+                    }
+
+                    //Alternative way, controller or action doesn't exist
+                    if ($event->getType() == 'beforeException') {
+                        switch ($exception->getCode()) {
+                            case Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
+                            case Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
+                                $dispatcher->forward(array(
+                                    'controller' => 'error',
+                                    'action' => 'show404'
+                                ));
+                                return false;
+                        }
+                    }
+                });
+            }
+
+            /**
+             * Listening to events in the dispatcher using the
+             * Acl plugin
+             */
+            $evtManager->attach('dispatch', $di->get('acl'));
+
+            // Create dispatcher
+            $dispatcher = new \Phalcon\Mvc\Dispatcher();
+            $dispatcher->setEventsManager($evtManager);
+            return $dispatcher;
+        });
+    }
+
 
     /**
      * Initializes the cache
@@ -394,9 +409,8 @@ class Application
     protected function initEngine($config)
     {
         $di = $this->_di;
-
         $this->_di->set('auth', function () use ($di) {
-            return new Api_Auth($di->get('session')->get('identity', 0));
+            return new Api_Auth($di);
         });
     }
 }

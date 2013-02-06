@@ -10,6 +10,12 @@ class User extends \Phalcon\Mvc\Model
     protected $id;
 
     /**
+     * @var int
+     *
+     */
+    protected $role_id;
+
+    /**
      * @var string
      *
      */
@@ -52,7 +58,10 @@ class User extends \Phalcon\Mvc\Model
                 )
             )
         ));
+
+        $this->belongsTo("role_id", "Role", "id");
     }
+
 
     /**
      * Method to set the value of field id
@@ -62,6 +71,16 @@ class User extends \Phalcon\Mvc\Model
     public function setId($id)
     {
         $this->id = $id;
+    }
+
+    /**
+     * Method to set the value of field role_id
+     *
+     * @param int $role_id
+     */
+    public function setRoleId($role_id)
+    {
+        $this->role_id = $role_id;
     }
 
     /**
@@ -113,6 +132,16 @@ class User extends \Phalcon\Mvc\Model
     public function getId()
     {
         return $this->id;
+    }
+
+    /**
+     * Returns the value of field role_id
+     *
+     * @return int
+     */
+    public function getRoleId()
+    {
+        return $this->role_id;
     }
 
     /**
@@ -169,6 +198,7 @@ class User extends \Phalcon\Mvc\Model
             if (!self::$_viewer){
                 self::$_viewer = new User();
                 self::$_viewer->setId(0);
+                self::$_viewer->setRoleId(Role::getRoleByType(Api_Acl::ROLE_TYPE_GUEST)->getId());
             }
         }
 

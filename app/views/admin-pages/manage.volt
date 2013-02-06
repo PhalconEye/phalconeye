@@ -281,7 +281,7 @@
         <div class="manage_page_header">
             <div class="manage_page_header_label">
                 <h3><a href="/admin/pages">{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
-                <a href="/{{ currentPage.getUrl() }}" target="_blank">{{ currentPage.getTitle() }}</a>
+                <a href="/page/{{ currentPage.getUrl() }}" target="_blank">{{ currentPage.getTitle() }}</a>
             </div>
 
             <div class="widget_options_panel">

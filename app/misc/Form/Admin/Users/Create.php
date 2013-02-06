@@ -6,8 +6,7 @@ class Form_Admin_Users_Create extends Form
     public function __construct($model = null)
     {
         $this
-            ->addIgnored('view_count')
-            ->addIgnored('layout')
+            ->addIgnored('role_id')
         ;
 
         if ($model === null){
@@ -26,7 +25,7 @@ class Form_Admin_Users_Create extends Form
 
         $this->addButton('Create', true);
         $this->addButton('Cancel', false, array(
-            'onclick' => 'history.go(-1); return false;'
+            'onclick' => "window.location.href='/admin/users'; return false;"
         ));
 
     }

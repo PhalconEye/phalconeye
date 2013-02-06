@@ -35,9 +35,7 @@ return new \Phalcon\Config(array(
             'adapter' => 'Memory'
         )
     ),
-//    'modules' => array(
-//
-//    ),
+    'modules' => false,
     'router' => array(
         '/admin' => array(
             'controller' => 'admin-index',
@@ -48,19 +46,19 @@ return new \Phalcon\Config(array(
         '/admin/{admin_controller}/:params' => array(
             'controller' => 'admin-index',
             'action' => 'index',
-            'name' => 'admin_router',
+            'name' => 'admin',
             'params' => 1
         ),
         '/admin/{admin_controller}/{admin_action}/:params' => array(
             'controller' => 'admin-index',
             'action' => 'index',
-            'name' => 'admin_router',
+            'name' => 'admin',
             'params' => 1
         ),
         '/admin/{admin_controller}/{admin_action}/{admin_id}/:params' => array(
             'controller' => 'admin-index',
             'action' => 'index',
-            'name' => 'admin_router',
+            'name' => 'admin',
             'params' => 1
         ),
         '/page/([a-z\-]+)' => array(

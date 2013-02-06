@@ -3,7 +3,9 @@
 {% block title %}{{ "User Editing"|trans }}{% endblock %}
 {% block content %}
     <div class="span3 admin-sidebar">
-        {{ navigation.render() }}
+        {{ navigationMain.render() }}
+        <br/>
+        {{ navigationCreation.render() }}
     </div>
 
     <div class="span9">

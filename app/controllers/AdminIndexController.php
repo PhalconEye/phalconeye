@@ -4,6 +4,14 @@ class AdminIndexController extends Controller
 {
     public function init()
     {
+        $viewer = User::getViewer();
+        if ($this->acl->_()->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+            return  $this->dispatcher->forward(array(
+                "controller" => 'error',
+                "action" => 'show404'
+            ));
+        }
+
         // dispatch admin routes
         $controller = $this->dispatcher->getParam('admin_controller');
         $action = $this->dispatcher->getParam('admin_action');
