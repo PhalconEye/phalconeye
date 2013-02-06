@@ -45,7 +45,52 @@ class AdminUsersController extends Controller
 
     public function createAction()
     {
+        $form = new Form_Admin_Users_Create();
+        $this->view->setVar('form', $form);
 
+        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+            return;
+        }
+
+        $user = $form->getData();
+        $user->setPassword($this->security->hash($user->getPassword()));
+        $user->save();
+
+        $this->response->redirect("admin/users");
+    }
+
+    public function editAction($id)
+    {
+        $item = User::findFirst($id);
+        if (!$item)
+            return $this->response->redirect("admin/users");
+
+
+        $form = new Form_Admin_Users_Edit($item);
+        $this->view->setVar('form', $form);
+
+        $lastPassword = $item->getPassword();
+
+        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+            return;
+        }
+
+        $user = $form->getData();
+        if ($lastPassword != $item->getPassword()){
+            $user->setPassword($this->security->hash($user->getPassword()));
+            $user->save();
+        }
+
+        $this->response->redirect("admin/users");
+    }
+
+    public function deleteAction($id)
+    {
+        $item = User::findFirst($id);
+        if ($item)
+            $item->delete();
+
+        return $this->response->redirect("admin/users");
     }
 }
 

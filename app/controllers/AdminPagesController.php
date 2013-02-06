@@ -75,10 +75,8 @@ class AdminPagesController extends Controller
     public function deleteAction($id)
     {
         $page = Page::findFirst($id);
-        if (!$page)
-            return $this->response->redirect("admin/pages");
-
-        $page->delete();
+        if ($page)
+            $page->delete();
 
         return $this->response->redirect("admin/pages");
     }

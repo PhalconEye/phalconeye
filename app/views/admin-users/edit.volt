@@ -1,6 +1,6 @@
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "User Creation"|trans }}{% endblock %}
+{% block title %}{{ "User Editing"|trans }}{% endblock %}
 {% block content %}
     <div class="span3 admin-sidebar">
         {{ navigation.render() }}

@@ -1,13 +1,14 @@
 <?php
 
-class Form_Admin_Pages_Edit extends Form_Admin_Pages_Create
+class Form_Admin_Users_Edit extends Form_Admin_Users_Create
 {
 
     public function init()
     {
         $this
-            ->setOption('title', "Edit Page")
-            ->setOption('description', "Edit this page.");
+            ->setOption('title', "Edit User")
+            ->setOption('description', "Edit this user.");
+
 
 
 

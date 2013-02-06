@@ -1,6 +1,17 @@
 {% extends "layouts/admin.volt" %}
 
 {% block title %}Users{% endblock %}
+
+{% block head %}
+    <script type="text/javascript">
+        var deleteItem = function (id) {
+            if (confirm('{{ "Are you really want to delete this user?" | trans}}')) {
+                window.location.href = '/admin/users/delete/' + id;
+            }
+        }
+    </script>
+{% endblock %}
+
 {% block content %}
     <div class="span3 admin-sidebar">
         {{ navigation.render() }}
@@ -36,7 +47,7 @@
                         </td>
                         <td>
                             {{ link_to("admin/users/edit/" ~ item.getId(), 'Edit' | trans) }}
-                            {{ link_to("admin/users/delete/" ~ item.getId(), 'Delete' | trans) }}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
                         </td>
                     </tr>
                 {% endfor %}

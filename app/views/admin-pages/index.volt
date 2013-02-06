@@ -4,8 +4,8 @@
 
 {% block head %}
     <script type="text/javascript">
-        var deletePage = function (id) {
-            if (confirm('{{ "Are you really want to delete this page?" }}')) {
+        var deleteItem = function (id) {
+            if (confirm('{{ "Are you really want to delete this page?" | trans }}')) {
                 window.location.href = '/admin/pages/delete/' + id;
             }
         }
@@ -52,7 +52,7 @@
                         <td>
                             {{ link_to("admin/pages/manage/" ~ item.getId(), 'Manage' | trans) }}
                             {{ link_to("admin/pages/edit/" ~ item.getId(), 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deletePage('~ item.getId() ~');return false;') }}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
                         </td>
                     </tr>
                 {% endfor %}

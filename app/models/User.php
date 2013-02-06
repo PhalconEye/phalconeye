@@ -17,6 +17,7 @@ class User extends \Phalcon\Mvc\Model
 
     /**
      * @var string
+     * @form_type passwordField
      *
      */
     protected $password;
@@ -178,11 +179,25 @@ class User extends \Phalcon\Mvc\Model
      * Validations and business logic 
      */
     public function validation()
-    {        
+    {
+        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+            "field" => "username"
+        )));
+
+        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+            "field" => "email"
+        )));
+
         $this->validate(new \Phalcon\Mvc\Model\Validator\Email(array(
             "field" => "email",
             "required" => true
         )));
+
+        $this->validate(new \Phalcon\Mvc\Model\Validator\StringLength(array(
+            "field" => "password",
+            "min" => 6
+        )));
+
         if ($this->validationHasFailed() == true) {
             return false;
         }
