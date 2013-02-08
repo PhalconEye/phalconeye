@@ -1,6 +1,6 @@
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Users'|trans }}}{% endblock %}
+{% block title %}{{ 'Users'|trans }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">

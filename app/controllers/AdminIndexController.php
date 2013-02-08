@@ -4,13 +4,14 @@ class AdminIndexController extends Controller
 {
     public function init()
     {
-        $viewer = User::getViewer();
-        if ($this->acl->_()->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
-            return  $this->dispatcher->forward(array(
-                "controller" => 'error',
-                "action" => 'show404'
-            ));
-        }
+        // temporary disable, until dev
+//        $viewer = User::getViewer();
+//        if ($this->acl->_()->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+//            return  $this->dispatcher->forward(array(
+//                "controller" => 'error',
+//                "action" => 'show404'
+//            ));
+//        }
 
         // dispatch admin routes
         $controller = $this->dispatcher->getParam('admin_controller');
@@ -74,12 +75,12 @@ class AdminIndexController extends Controller
                 'title' => 'Settings',
                 'items' => array(
                     1 => 'Main settings',
-                    'admin/1' => 'Menu item 1',
-                    'admin/2' => 'Menu item 2',
-                    2 => 'divider',
-                    3 => 'Other settings',
-                    'admin/3' => 'Menu item 3',
-                    'admin/4' => 'Menu item 4',
+                    'admin/settings/index' => 'System',
+//                    'admin/2' => 'Menu item 2',
+//                    2 => 'divider',
+//                    3 => 'Other settings',
+//                    'admin/3' => 'Menu item 3',
+//                    'admin/4' => 'Menu item 4',
                 )
             )))
             ->setActiveItem($activeItem);

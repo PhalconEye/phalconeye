@@ -386,8 +386,10 @@ class Form
                 $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
             }
             if ($element['type'] == "select" || $element['type'] == "selectStatic") {
-                if (!empty($element['params']['value']))
-                    $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['value'])));
+                if (!empty($element['params']['options'])){
+                    $value = (!empty($element['params']['value'])?$element['params']['value']:null);
+                    $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
+                }
             } else {
                 unset($element['params']['validators']); // Phalcon elements doesn't like this
                 unset($element['params']['filter']);
