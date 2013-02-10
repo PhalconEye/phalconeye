@@ -2,6 +2,7 @@
 
 #general-content{
     min-height: 200px;
+    overflow: hidden;
 }
 
 #general-content-left{

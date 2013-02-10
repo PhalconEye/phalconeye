@@ -59,6 +59,11 @@ class Settings extends \Phalcon\Mvc\Model
         return $this->value;
     }
 
+    public function getSource()
+    {
+        return "settings";
+    }
+
     /**
      * @param $name
      * @param null $default

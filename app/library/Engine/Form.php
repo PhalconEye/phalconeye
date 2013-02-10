@@ -98,7 +98,7 @@ class Form
             }
 
             $fieldType = $this->_getModelFieldType($property);
-            if ($fieldType == 'checkField' && !empty($elementData['value'])){
+            if ($fieldType == 'checkField' && !empty($elementData['value'])) {
                 $elementData['checked'] = true;
             }
 
@@ -122,6 +122,9 @@ class Form
     {
         preg_match_all('/@var\s+([^\s]+)/', $property->getDocComment(), $propData);
         $type = (count($propData) == 2 && !empty($propData[1][0]) ? $propData[1][0] : null);
+
+        if ($type == 'integer')
+            return 'int';
 
         if ($type !== null)
             return $type;
@@ -154,9 +157,22 @@ class Form
     public function addButton($name, $isSubmit = false, $params = array())
     {
         $this->_buttons[$name] = array(
-            "name" => $name,
-            "is_submit" => $isSubmit,
-            "params" => $params
+            'name' => $name,
+            'is_submit' => $isSubmit,
+            'params' => $params
+        );
+
+        return $this;
+    }
+
+    public function addButtonLink($name, $href = 'javascript:;', $params = array())
+    {
+        $this->_buttons[$name] = array(
+            'name' => $name,
+            'href' => $href,
+            'is_submit' => false,
+            'is_link' => true,
+            'params' => $params
         );
 
         return $this;
@@ -263,7 +279,7 @@ class Form
                     if (empty($value) && $this->_model->readAttribute($element['name']) === null) {
                         $value = $this->_model->readAttribute($element['name']);
                     }
-                    if ($element['type'] == 'checkField'){
+                    if ($element['type'] == 'checkField') {
                         $value = $request->get($element['name']);
                     }
                     $this->_model->writeAttribute($element['name'], $value);
@@ -376,9 +392,13 @@ class Form
         }
 
         $body .= '<div class="form_elements">';
-
+        $hiddenFields = array(); // push hidden to the end of form
         foreach ($this->_elements as $element) {
             if (!$tagReflection->hasMethod($element['type'])) continue;
+            if ($element['type'] == 'hiddenField') {
+                $hiddenFields[] = $element;
+                continue;
+            }
             $body .= '<div>';
             if (!empty($element['params']['label']) || !empty($element['params']['description'])) {
                 $label = (!empty($element['params']['label']) ? sprintf('<label for="%s">%s</label>', $element['name'], $element['params']['label']) : '');
@@ -386,9 +406,25 @@ class Form
                 $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
             }
             if ($element['type'] == "select" || $element['type'] == "selectStatic") {
-                if (!empty($element['params']['options'])){
-                    $value = (!empty($element['params']['value'])?$element['params']['value']:null);
+                if (!empty($element['params']['options'])) {
+                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
                     $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
+                }
+            } elseif ($element['type'] == "radioField") {
+                if (!empty($element['params']['options']) && is_array($element['params']['options'])) {
+                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
+                    $optionsBody = '';
+                    foreach ($element['params']['options'] as $key => $option) {
+                        $radioOptions = array(
+                            $element['name'],
+                            'value' => $key
+                        );
+                        if ($value == $key)
+                            $radioOptions['checked'] = '';
+                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($radioOptions), $option);
+                    }
+
+                    $body .= sprintf('<div class="form_element">%s</div>', $optionsBody);
                 }
             } else {
                 unset($element['params']['validators']); // Phalcon elements doesn't like this
@@ -400,6 +436,11 @@ class Form
         }
 
         $body .= '</div>';
+
+        // render hidden fields
+        foreach ($hiddenFields as $hidden) {
+            $body .= sprintf('<input type="hidden" id="%s" name="%s" value="%s">', $hidden['name'], $hidden['name'], (!empty($hidden['params']['value']) ? $hidden['params']['value'] : ''));
+        }
 
         if ($this->_useToken) {
             $tokenKey = $this->di->get('security')->getTokenKey();
@@ -426,7 +467,11 @@ class Form
                     $attribs .= ' ' . $key . '="' . $param . '"';
                 }
 
-                $body .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
+                if (!empty($button['is_link']) && $button['is_link'] == true) {
+                    $body .= sprintf('<a href="%s" %s>%s</a>', $button['href'], $attribs, $this->_trans->_($button['name']));
+                } else {
+                    $body .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
+                }
 
             }
             $body .= '</div>';

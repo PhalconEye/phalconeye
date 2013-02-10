@@ -97,7 +97,7 @@
             'params': widgetsParams[element.parent().parent().attr('element_id')]
         };
 
-        modal.open(url, data);
+        PE.modal.open(url, data);
     }
 
     var removeAction = function(element){
@@ -280,7 +280,7 @@
     <div class="row-fluid">
         <div class="manage_page_header">
             <div class="manage_page_header_label">
-                <h3><a href="/admin/pages">{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
+                <h3><a href="/admin/pages" class='btn'>{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
                 <a href="/page/{{ currentPage.getUrl() }}" target="_blank">{{ currentPage.getTitle() }}</a>
             </div>
 

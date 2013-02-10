@@ -1,12 +1,12 @@
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Pages' | trans }}{% endblock %}
+{% block title %}{{ "Menus"|trans }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this page?" | trans }}')) {
-                window.location.href = '/admin/pages/delete/' + id;
+            if (confirm('{{ "Are you really want to delete this menu?" | trans }}')) {
+                window.location.href = '/admin/menus/delete/' + id;
             }
         }
     </script>
@@ -25,9 +25,7 @@
                 <tr>
                     <th>{{ 'Id' | trans }}</th>
                     <th>{{ 'Title' | trans }}</th>
-                    <th>{{ 'Url' | trans }}</th>
-                    <th>{{ 'Layout' | trans }}</th>
-                    <th>{{ 'Controller' | trans }}</th>
+                    <th>{{ 'Menu items' | trans }}</th>
                     <th>{{ 'Options' | trans }}</th>
                 </tr>
                 </thead>
@@ -38,20 +36,14 @@
                             {{ item.getId() }}
                         </td>
                         <td>
-                            {{ item.getTitle() }}
+                            {{ item.getName() }}
                         </td>
                         <td>
-                            {{ item.getUrl() }}
+                            {{ item.getMenuItem().count() }}
                         </td>
                         <td>
-                            {{ item.getLayout() }}
-                        </td>
-                        <td>
-                            {{ item.getController() }}
-                        </td>
-                        <td>
-                            {{ link_to("admin/pages/manage/" ~ item.getId(), 'Manage' | trans) }}
-                            {{ link_to("admin/pages/edit/" ~ item.getId(), 'Edit' | trans) }}
+                            {{ link_to("admin/menus/manage/" ~ item.getId(), 'Manage' | trans) }}
+                            {{ link_to("admin/menus/edit/" ~ item.getId(), 'Edit' | trans) }}
                             {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
                         </td>
                     </tr>

@@ -61,7 +61,7 @@ return new \Phalcon\Config(array(
             'name' => 'admin',
             'params' => 1
         ),
-        '/page/([a-z\-]+)' => array(
+        '/page/([a-z\-|0-9]+)' => array(
             'controller' => 'page',
             'action' => 'index',
             'url' => 1,

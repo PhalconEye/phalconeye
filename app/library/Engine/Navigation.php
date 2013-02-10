@@ -24,6 +24,9 @@ class Navigation
     /** @var string Class of dropdown item title */
     protected $_dropDownItemMenuClass = "dropdown-menu";
 
+    /** @var string Class of dropdown item title */
+    protected $_dropDownSubItemMenuClass = "dropdown-submenu";
+
     /** @var string Class of dropdown item switcher */
     protected $_dropDownItemToggleClass = "dropdown-toggle";
 
@@ -129,23 +132,39 @@ class Navigation
         $lt = $this->_listTag;
         $lit = $this->_listItemTag;
         $lc = $this->_listClass;
+
+        $content = "<{$lt} class='{$lc}'>";
+        $content .= $this->_renderItems($this->_items);
+        $content .= "</{$lt}>";
+        return $content;
+    }
+
+    private function _renderItems($items, $isSubMenu = false)
+    {
+
+        $content = '';
+
+        // short names
+        $lt = $this->_listTag;
+        $lit = $this->_listItemTag;
+        $lc = $this->_listClass;
         $pc = $this->_itemPrependContent;
         $ac = $this->_itemAppendContent;
-        $ddic = $this->_dropDownItemClass;
+        $ddic = ($isSubMenu ? $this->_dropDownSubItemMenuClass : $this->_dropDownItemClass);
+        $ddmc = ($isSubMenu ? '' : '<b class="caret"></b>');
         $ddimc = $this->_dropDownItemMenuClass;
         $dditc = $this->_dropDownItemToggleClass;
         $ddihc = $this->_dropDownItemHeaderClass;
         $ddidc = $this->_dropDownItemDividerClass;
 
-        $content = "<{$lt} class='{$lc}'>";
-        foreach ($this->_items as $name => $item) {
+        foreach ($items as $name => $item) {
             if (isset($item['items']) && !empty($item['items'])) { // dropdown menu item
                 $active = ($name == $this->_activeItem || array_key_exists($this->_activeItem, $item['items']) ? ' active' : '');
                 $content .= "<{$lit} class='{$ddic}{$active}'>";
-                $content .= sprintf('<a href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s<b class="caret"></b></a>', $dditc, $pc, $this->_di->get('trans')->query($item['title']), $ac);
+                $content .= sprintf('<a href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s</a>', $dditc, $pc, $this->_di->get('trans')->query($item['title']), $ac, $ddmc);
                 $content .= "<{$lt} class='{$ddimc}'>";
                 foreach ($item['items'] as $key => $subitem) {
-                    if (is_numeric($key)) {
+                    if (is_numeric($key) && !is_array($subitem)) {
                         if ($subitem == 'divider') {
                             $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
                         } else {
@@ -153,8 +172,10 @@ class Navigation
                             $content .= $this->_di->get('trans')->query($subitem);
                             $content .= "</{$lit}>";
                         }
+                    } elseif (is_array($subitem)) {
+                        $content .= $this->_renderItems(array(1 => $subitem), true);
                     } else {
-                        $itemLink = $this->_di->get('url')->get($key);
+                        $itemLink = (strpos($key, 'javascript:') !== false || $key == "#" ? $key : $this->_di->get('url')->get($key));
                         $content .= "<{$lit}>";
                         $content .= sprintf('<a href="%s">%s%s%s</a>', $itemLink, $pc, $this->_di->get('trans')->query($subitem), $ac);
                         $content .= "</{$lit}>";
@@ -165,14 +186,13 @@ class Navigation
                 $content .= "</{$lit}>";
             } else { // normal item
                 $active = ($name == $this->_activeItem || $item['href'] == $this->_activeItem ? ' class="active"' : '');
-                $itemLink = $this->_di->get('url')->get($item['href']);
+                $itemLink = (strpos($item['href'], 'javascript:') !== false || $item['href'] == "#" ? $item['href'] : $this->_di->get('url')->get($item['href']));
 
                 $content .= "<{$lit}{$active}>";
                 $content .= sprintf('<a href="%s">%s%s%s</a>', $itemLink, $pc, $this->_di->get('trans')->query($item['title']), $ac);
                 $content .= "</{$lit}>";
             }
         }
-        $content .= "</{$lt}>";
 
         return $content;
     }

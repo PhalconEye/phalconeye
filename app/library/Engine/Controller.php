@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @property \Phalcon\Db\Adapter\Pdo $db
+ */
 class Controller extends \Phalcon\Mvc\Controller
 {
 

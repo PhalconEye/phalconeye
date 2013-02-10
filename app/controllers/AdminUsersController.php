@@ -61,7 +61,7 @@ class AdminUsersController extends Controller
         // Get the paginated results
         $page = $paginator->getPaginate();
 
-        $this->view->setVar('page', $page);
+        $this->view->setVar('paginator', $page);
     }
 
     public function createAction()
@@ -132,7 +132,7 @@ class AdminUsersController extends Controller
         // Get the paginated results
         $page = $paginator->getPaginate();
 
-        $this->view->setVar('page', $page);
+        $this->view->setVar('paginator', $page);
     }
 
     public function rolesCreateAction()

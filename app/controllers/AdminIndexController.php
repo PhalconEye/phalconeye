@@ -68,7 +68,8 @@ class AdminIndexController extends Controller
                 'title' => 'Manage',
                 'items' => array( // type - dropdown
                     'admin/users' => 'Users',
-                    'admin/pages' => 'Pages'
+                    'admin/pages' => 'Pages',
+                    'admin/menus' => 'Menus',
                 )
             ),
             'settings' => array( // type - dropdown

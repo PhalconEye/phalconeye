@@ -40,7 +40,7 @@ class AdminPagesController extends Controller
         // Get the paginated results
         $page = $paginator->getPaginate();
 
-        $this->view->setVar('page', $page);
+        $this->view->setVar('paginator', $page);
     }
 
     public function createAction()
@@ -202,6 +202,33 @@ class AdminPagesController extends Controller
         $page->save();
 
         return $response->send();
+    }
+
+    public function suggestAction(){
+        $this->view->disable();
+        $query = $this->request->get('query');
+        if (!$query){
+            $this->response->setContent('[]')->send();
+            return;
+        }
+
+
+        $results = Page::find(
+            array(
+                "conditions" => "title LIKE ?1",
+                "bind"       => array(1 => '%'.$query.'%')
+            )
+        );
+
+        $data = array();
+        foreach($results as $result){
+            $data[] = array(
+                'id' => $result->getId(),
+                'label' => $result->getTitle()
+            );
+        }
+
+        $this->response->setContent(json_encode($data))->send();
     }
 
 }

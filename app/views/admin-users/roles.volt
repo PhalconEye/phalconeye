@@ -33,7 +33,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                {% for item in page.items %}
+                {% for item in paginator.items %}
                     <tr>
                         <td>
                             {{ item.getId() }}

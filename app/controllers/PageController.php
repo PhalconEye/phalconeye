@@ -4,9 +4,17 @@ class PageController extends Controller
 {
     public function indexAction($url)
     {
-        $page = Page::findFirst("url='{$url}' OR url='/{$url}'");
+        $page = Page::query()
+            ->where('url=:url: OR url=:url1: OR id = :url:')
+            ->bind(array(
+            "url" => $url,
+            "url1" => '/' . $url
+        ))
+            ->limit(1)
+            ->execute()
+            ->getFirst();
 
-        if (!$page){
+        if (!$page) {
             return $this->dispatcher->forward(array(
                 'controller' => 'error',
                 'action' => 'show404'

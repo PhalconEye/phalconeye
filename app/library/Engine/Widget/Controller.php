@@ -28,6 +28,8 @@ class Widget_Controller extends \Phalcon\Mvc\Controller
     public function initialize($widgetName = null, $params = array())
     {
         $this->di = Phalcon\DI::getDefault();
+        $this->dispatcher = $this->di->get('dispatcher');
+        $this->cacheData = $this->di->get('cacheData');
         $this->_params = $params;
 
         if ($widgetName !== null) {

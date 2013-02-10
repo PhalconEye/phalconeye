@@ -108,14 +108,6 @@ class Application
             register_shutdown_function(array('Error', 'shutdown'));
             set_exception_handler(array('Error', 'exception'));
         }
-
-        $translate = new Translation_GetText(array(
-            'locale' => 'ru_RU',
-            'file' => 'messages',
-            'directory' => ROOT_PATH . '/app/var/languages'
-        ));
-
-        $this->_di->set('trans', $translate);
     }
 
     /**
@@ -412,5 +404,13 @@ class Application
         $this->_di->set('auth', function () use ($di) {
             return new Api_Auth($di);
         });
+
+        $translate = new Translation_GetText(array(
+            'locale' => 'ru_RU',
+            'file' => 'messages',
+            'directory' => ROOT_PATH . '/app/var/languages'
+        ));
+
+        $this->_di->set('trans', $translate);
     }
 }
