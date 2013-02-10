@@ -405,26 +405,37 @@ class Form
                 $description = (!empty($element['params']['description']) ? sprintf('<p>%s</p>', $element['params']['description']) : '');
                 $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
             }
-            if ($element['type'] == "select" || $element['type'] == "selectStatic") {
+            if ($element['type'] == "select" || $element['type'] == "selectStatic" ) {
                 if (!empty($element['params']['options'])) {
                     $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
                     $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
                 }
-            } elseif ($element['type'] == "radioField") {
+            } elseif ($element['type'] == "radioField" || $element['type'] == "checkField") {
                 if (!empty($element['params']['options']) && is_array($element['params']['options'])) {
                     $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
                     $optionsBody = '';
                     foreach ($element['params']['options'] as $key => $option) {
-                        $radioOptions = array(
+                        $allOptions = array(
                             $element['name'],
                             'value' => $key
                         );
                         if ($value == $key)
-                            $radioOptions['checked'] = '';
-                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($radioOptions), $option);
+                            $allOptions['checked'] = '';
+                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($allOptions), $option);
                     }
 
                     $body .= sprintf('<div class="form_element">%s</div>', $optionsBody);
+                }
+                elseif (!empty($element['params']['options'])){
+                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
+                    $allOptions = array(
+                        $element['name'],
+                        'value' => $element['params']['options']
+                    );
+                    if ($value == $element['params']['options'])
+                        $allOptions['checked'] = '';
+
+                    $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($allOptions));
                 }
             } else {
                 unset($element['params']['validators']); // Phalcon elements doesn't like this

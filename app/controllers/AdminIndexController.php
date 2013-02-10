@@ -77,7 +77,7 @@ class AdminIndexController extends Controller
                 'items' => array(
                     1 => 'Main settings',
                     'admin/settings/index' => 'System',
-//                    'admin/2' => 'Menu item 2',
+                    'admin/settings/performance' => 'Performance',
 //                    2 => 'divider',
 //                    3 => 'Other settings',
 //                    'admin/3' => 'Menu item 3',
