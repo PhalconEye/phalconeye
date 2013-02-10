@@ -92,7 +92,14 @@ class AdminIndexController extends Controller
 
     public function indexAction()
     {
+        $this->view->setVar('debug', $this->config->application->debug);
+    }
 
+    public function modeAction(){
+        $this->view->disable();
+
+        $this->config->application->debug = (bool)$this->request->get('debug', null, true);
+        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php ".PHP_EOL.PHP_EOL."return new \\Phalcon\\Config(" . var_export($this->config->toArray(), true) .");");
     }
 }
 

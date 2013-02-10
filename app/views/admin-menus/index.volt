@@ -20,7 +20,7 @@
     <div class="span9">
         <div class="row-fluid">
             <h1>{{ 'Pages' | trans }}</h1>
-            <table class="admin_table">
+            <table class="table">
                 <thead>
                 <tr>
                     <th>{{ 'Id' | trans }}</th>
