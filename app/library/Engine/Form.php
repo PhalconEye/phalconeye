@@ -394,6 +394,10 @@ class Form
         $body .= '<div class="form_elements">';
         $hiddenFields = array(); // push hidden to the end of form
         foreach ($this->_elements as $element) {
+            if ($element['type'] == 'html' && !empty($element['params']['html'])){
+                $body .= $element['params']['html'];
+                continue;
+            }
             if (!$tagReflection->hasMethod($element['type'])) continue;
             if ($element['type'] == 'hiddenField') {
                 $hiddenFields[] = $element;

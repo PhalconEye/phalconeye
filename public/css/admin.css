@@ -290,6 +290,11 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
     width: 360px !important;
 }
 
+.modal{
+    width: 750px;
+    margin-left:-375px;
+}
+
 /*** FORMS ***/
 
 form .form_header > h3{
@@ -325,10 +330,10 @@ form .form_elements .form_label > p {
 
 form .form_elements .form_element {
     float: left;
-    max-width: 450px;
+    max-width: 550px;
 }
 form .form_elements .form_element textarea {
-    max-width: 430px;
+    max-width: 530px;
     width: 400px;
     height: 100px;
 }

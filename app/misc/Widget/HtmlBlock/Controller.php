@@ -14,6 +14,7 @@ class Widget_HtmlBlock_Controller extends Widget_Controller{
 
     public function adminAction(){
         $form = new Form();
+//        $form->setAttrib('style', 'width: 700px;');
 
         $form->addElement('textField', 'title', array(
             'label' => $this->di->get('trans')->_('Title')
@@ -22,6 +23,11 @@ class Widget_HtmlBlock_Controller extends Widget_Controller{
         $form->addElement('textArea', 'html', array(
             'label' => $this->di->get('trans')->_('HTML block')
         ));
+
+        $form->addElement('html', 'ckeditor',
+            array(
+                'html' => '<script type="text/javascript">$(document).ready(function () {CKEDITOR.replace("html");});</script>'
+            ), 1000);
 
         return $form;
     }

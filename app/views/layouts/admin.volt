@@ -57,6 +57,7 @@
 {{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
 {{ javascript_include("js/jquery/jquery-ui-1.9.0.custom.min.js") }}
 {{ javascript_include("js/bootstrap/bootstrap.min.js") }}
+{{ javascript_include("js/ckeditor/ckeditor.js") }}
 {{ javascript_include("js/phalconeye/core.js") }}
 {{ javascript_include("js/phalconeye/admin.js") }}
 {{ javascript_include("js/phalconeye/modal.js") }}
