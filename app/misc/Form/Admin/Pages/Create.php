@@ -8,6 +8,7 @@ class Form_Admin_Pages_Create extends Form
         $this
             ->addIgnored('view_count')
             ->addIgnored('layout')
+            ->addIgnored('type')
         ;
 
         if ($model === null){

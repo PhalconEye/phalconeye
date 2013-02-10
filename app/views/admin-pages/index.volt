@@ -51,8 +51,10 @@
                         </td>
                         <td>
                             {{ link_to("admin/pages/manage/" ~ item.getId(), 'Manage' | trans) }}
-                            {{ link_to("admin/pages/edit/" ~ item.getId(), 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {% if item.getType() is null %}
+                                {{ link_to("admin/pages/edit/" ~ item.getId(), 'Edit' | trans) }}
+                                {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

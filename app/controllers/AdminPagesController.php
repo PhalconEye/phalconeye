@@ -24,6 +24,7 @@ class AdminPagesController extends Controller
 
     public function indexAction()
     {
+        // index page logic
         $currentPage = $this->request->getQuery('page', 'int', 1);
         if ($currentPage < 1) $currentPage = 1;
 
@@ -52,12 +53,14 @@ class AdminPagesController extends Controller
             return;
         }
 
-        $this->response->redirect("admin/pages/manage?id=" . $form->getData()->getId());
+        $this->response->redirect("admin/pages/manage/" . $form->getData()->getId());
     }
 
     public function editAction($id)
     {
-        $page = Page::findFirst($id);
+        $page = null;
+        if ($id)
+            $page = Page::findFirst($id);
         if (!$page)
             return $this->response->redirect("admin/pages");
 
@@ -74,7 +77,9 @@ class AdminPagesController extends Controller
 
     public function deleteAction($id)
     {
-        $page = Page::findFirst($id);
+        $page = null;
+        if ($id)
+            $page = Page::findFirst($id);
         if ($page)
             $page->delete();
 
@@ -84,7 +89,9 @@ class AdminPagesController extends Controller
 
     public function manageAction($id)
     {
-        $page = Page::findFirst($id);
+        $page = null;
+        if ($id)
+            $page = Page::find($id)->getFirst();
         if (!$page)
             return $this->response->redirect("admin/pages");
 
@@ -204,10 +211,11 @@ class AdminPagesController extends Controller
         return $response->send();
     }
 
-    public function suggestAction(){
+    public function suggestAction()
+    {
         $this->view->disable();
         $query = $this->request->get('query');
-        if (!$query){
+        if (!$query) {
             $this->response->setContent('[]')->send();
             return;
         }
@@ -216,12 +224,12 @@ class AdminPagesController extends Controller
         $results = Page::find(
             array(
                 "conditions" => "title LIKE ?1",
-                "bind"       => array(1 => '%'.$query.'%')
+                "bind" => array(1 => '%' . $query . '%')
             )
         );
 
         $data = array();
-        foreach($results as $result){
+        foreach ($results as $result) {
             $data[] = array(
                 'id' => $result->getId(),
                 'label' => $result->getTitle()

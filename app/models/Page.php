@@ -19,6 +19,12 @@ class Page extends \Phalcon\Mvc\Model
      * @var string
      *
      */
+    protected $type = null;
+
+    /**
+     * @var string
+     *
+     */
     protected $url;
 
     /**
@@ -157,6 +163,16 @@ class Page extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Get type of the special page, like Header and Footer
+     *
+     * @return null|string
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
      * Returns the value of field url
      *
      * @return string
@@ -271,11 +287,9 @@ class Page extends \Phalcon\Mvc\Model
         }
 
         if (!empty($widgets_ids_to_remove)) {
-            $rowsToRemove = Content::find("id IN (" . implode(',', $widgets_ids_to_remove).")");
+            $rowsToRemove = Content::find("id IN (" . implode(',', $widgets_ids_to_remove) . ")");
             $rowsToRemove->delete();
         }
-
-
 
 
     }
@@ -290,7 +304,7 @@ class Page extends \Phalcon\Mvc\Model
 
         );
 
-        if ($cache){
+        if ($cache) {
             $data['cache'] = array(
                 'key' => "page_{$this->id}_widgets.cache",
                 'lifetime' => ($config->application->debug ? 0 : 86400) // 1 day
@@ -307,10 +321,12 @@ class Page extends \Phalcon\Mvc\Model
 
     public function validation()
     {
-        $this->validate(new \Phalcon\Mvc\Model\Validator\StringLength(array(
-            "field" => "url",
-            'min' => 1
-        )));
+        if ($this->url !== null) {
+            $this->validate(new \Phalcon\Mvc\Model\Validator\StringLength(array(
+                "field" => "url",
+                'min' => 1
+            )));
+        }
 
         $this->validate(new \Phalcon\Mvc\Model\Validator\PresenceOf(array(
             'field' => 'title'
