@@ -87,22 +87,7 @@ body {
     display: inline;
 }
 
-.pagination li.pagination_content {
-    margin: 0 10px;
-}
 
-.pagination a {
-
-}
-
-.pagination a.active {
-    cursor: default;
-    color: black;
-}
-
-.pagination a.active:hover {
-    text-decoration: none;
-}
 
 /*** PAGES EDITION CSS ***/
 
