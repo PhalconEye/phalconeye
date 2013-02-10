@@ -1,6 +1,6 @@
 {% extends "layouts/main.volt" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}{{ page.getTitle() |trans }}{% endblock %}
 
 {% block header %}
 

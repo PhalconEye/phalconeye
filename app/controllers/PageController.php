@@ -39,6 +39,7 @@ class PageController extends Controller
         $this->view->setVar('content', $content);
         $this->view->setVar('header', $header->getWidgets());
         $this->view->setVar('footer', $footer->getWidgets());
+        $this->view->setVar('page', $page);
 
     }
 }
