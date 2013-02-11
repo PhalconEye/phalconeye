@@ -1,7 +1,8 @@
 <?php
 
-namespace Engine;
-
+///////////////////////////////////////
+/// UNUSED UNTIL MODELS IMPLEMENTATION
+///////////////////////////////////////
 abstract class Bootstrap
 {
     protected $_moduleName = "";

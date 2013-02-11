@@ -17,8 +17,8 @@ return new \Phalcon\Config(array(
         'viewsDir' => ROOT_PATH . '/app/views/',
         'miscDir' => ROOT_PATH . '/app/misc/',
         'cache' => array(
-            'cacheAdapter' => 'File',
-            'cacheDir' => ROOT_PATH . '/app/var/cache/',
+            'adapter' => 'File',
+            'path' => ROOT_PATH . '/app/var/cache/',
             'lifetime' => 86400
         ),
         'logger' => array(

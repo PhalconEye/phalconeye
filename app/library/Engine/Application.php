@@ -208,7 +208,8 @@ class Application
         if ($config->application->logger->enabled) {
             $this->_di->set('logger', function () use ($config) {
                 $logger = new PhLogger($config->application->logger->path . "main.log");
-                $logger->setFormat($config->application->logger->format);
+                $formatter = new Phalcon\Logger\Formatter\Line($config->application->logger->format);
+                $logger->setFormatter($formatter);
                 return $logger;
             });
         }
@@ -338,12 +339,15 @@ class Application
         $this->_di->set('cacheOutput', function () use ($config) {
             // Get the parameters
             $lifetime = $config->application->cache->lifetime;
-            $cacheDir = $config->application->cache->cacheDir;
+            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+
             $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = array('cacheDir' => $cacheDir);
+            $backEndOptions = $config->application->cache->toArray();
+            unset($backEndOptions['lifetime']);
+            unset($backEndOptions['adapter']);
 
             $frontCache = new PhCacheFront\Output($frontEndOptions);
-            $cache = new PhCacheBack\File($frontCache, $backEndOptions);
+            $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
             return $cache;
         });
@@ -351,12 +355,15 @@ class Application
         $this->_di->set('cacheData', function () use ($config) {
             // Get the parameters
             $lifetime = $config->application->cache->lifetime;
-            $cacheDir = $config->application->cache->cacheDir;
+            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+
             $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = array('cacheDir' => $cacheDir);
+            $backEndOptions = $config->application->cache->toArray();
+            unset($backEndOptions['lifetime']);
+            unset($backEndOptions['adapter']);
 
             $frontCache = new PhCacheFront\Data($frontEndOptions);
-            $cache = new PhCacheBack\File($frontCache, $backEndOptions);
+            $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
             return $cache;
         });
@@ -364,12 +371,15 @@ class Application
         $this->_di->set('modelsCache', function () use ($config) {
             // Get the parameters
             $lifetime = $config->application->cache->lifetime;
-            $cacheDir = $config->application->cache->cacheDir;
+            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+
             $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = array('cacheDir' => $cacheDir);
+            $backEndOptions = $config->application->cache->toArray();
+            unset($backEndOptions['lifetime']);
+            unset($backEndOptions['adapter']);
 
             $frontCache = new PhCacheFront\Data($frontEndOptions);
-            $cache = new PhCacheBack\File($frontCache, $backEndOptions);
+            $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
             return $cache;
         });

@@ -20,8 +20,11 @@ return new \Phalcon\Config(array (
     'miscDir' => '/www/phalcon/www/app/misc/',
     'cache' => 
     array (
-      'cacheDir' => '/www/phalcon/www/app/var/cache/',
-      'lifetime' => 86400,
+      'lifetime' => '86400',
+      'adapter' => 'Memcache',
+      'host' => '127.0.0.1',
+      'port' => '11211',
+      'persistent' => '1',
     ),
     'logger' => 
     array (
