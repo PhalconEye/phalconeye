@@ -70,6 +70,7 @@ class AdminIndexController extends Controller
                     'admin/users' => 'Users',
                     'admin/pages' => 'Pages',
                     'admin/menus' => 'Menus',
+                    'admin/languages' => 'Languages',
                 )
             ),
             'settings' => array( // type - dropdown

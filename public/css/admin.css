@@ -2,6 +2,10 @@ body {
     padding-top: 60px;
 }
 
+.clear{
+    clear: both;
+}
+
 #footer {
     margin-top: 10px;
     text-align: center;
@@ -45,6 +49,10 @@ body {
     border-radius: 6px;
     padding: 0 10px 10px 10px;
     border: 1px solid #e5e5e5;
+}
+
+.admin-sidebar{
+    margin-left: 0px;
 }
 
 
@@ -442,6 +450,7 @@ form .form_footer .btn + .btn{
     border: 1px solid #e5e5e5;
     border-radius:6px;
     padding: 5px;
+    margin-left: 0px;
 }
 
 .dashboard-sidebar h4{
@@ -457,4 +466,13 @@ form .form_footer .btn + .btn{
 
 .dashboard-sidebar .btn{
     width: 100px;
+}
+
+.languages_header h1{
+    float: left;
+}
+
+.languages_header button{
+    float: right;
+    margin-top: 20px;
 }

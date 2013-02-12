@@ -90,7 +90,7 @@ class Application
             $config->application->engineDir,
             $config->application->controllersDir,
             $config->application->modelsDir,
-            $config->application->miscDir,
+            $config->application->miscDir
         ))
             ->register();
 
@@ -400,6 +400,15 @@ class Application
             ));
             return $flash;
         });
+
+        $this->_di->set('flashSession', function () {
+            $flash = new \Phalcon\Flash\Session(array(
+                'error' => 'alert alert-error',
+                'success' => 'alert alert-success',
+                'notice' => 'alert alert-info',
+            ));
+            return $flash;
+        });
     }
 
 
@@ -415,11 +424,30 @@ class Application
             return new Api_Auth($di);
         });
 
-        $translate = new Translation_GetText(array(
-            'locale' => 'ru_RU',
-            'file' => 'messages',
-            'directory' => ROOT_PATH . '/app/var/languages'
-        ));
+        $locale = $di->get('session')->get('locale', 'en');
+
+        $translate = null;
+
+        if (!$config->application->debug){
+            $messages = array();
+            if (file_exists(ROOT_PATH . "/app/var/languages/".$locale.".php")) {
+                require ROOT_PATH . "/app/var/languages/".$locale.".php";
+            } else {
+                // fallback to some default
+                require ROOT_PATH . "/app/var/languages/en.php";
+            }
+
+            $translate = new \Phalcon\Translate\Adapter\NativeArray(array(
+                "content" => $messages
+            ));
+        }
+        else{
+            $translate = new Translation_Db(array(
+                'db' => $di->get('db'),
+                'locale' => $locale,
+            ));
+        }
+
 
         $this->_di->set('trans', $translate);
     }

@@ -56,6 +56,7 @@ class Form
     private $_errors = array();
     private $_notices = array();
     private $_useToken = true;
+    private $_files = array();
 
 
     private $_action = '';
@@ -142,6 +143,11 @@ class Form
     {
         if ($order === null) {
             $order = $this->_currentOrder++;
+        }
+
+        // check file input
+        if ($type == "fileField") {
+            $this->_enctype = self::ENCTYPE_MULTIPART;
         }
 
         $this->_elements[$name] = array(
@@ -273,6 +279,52 @@ class Form
 
             // fill model data
             foreach ($this->_elements as $element) {
+
+                if ($element['type'] == 'fileField') {
+                    // Check uploaded files
+                    if (isset($_FILES[$element['name']])) {
+                        $file = $_FILES[$element['name']];
+
+                        if (empty($file['tmp_name']) && (empty($element['params']['required']) || $element['params']['required'] == false))
+                            continue;
+
+                        if ($file['error'] > 0) {
+                            $message = '';
+                            switch ($file['error']) {
+                                case UPLOAD_ERR_INI_SIZE:
+                                case UPLOAD_ERR_FORM_SIZE:
+                                    $message = "The uploaded file exceeds the upload max size.";
+                                    break;
+                                case UPLOAD_ERR_PARTIAL:
+                                    $message = "The uploaded file was only partially uploaded";
+                                    break;
+                                case UPLOAD_ERR_NO_FILE:
+                                    $message = "No file was uploaded";
+                                    break;
+                                case UPLOAD_ERR_NO_TMP_DIR:
+                                    $message = "Missing a temporary folder";
+                                    break;
+                                case UPLOAD_ERR_CANT_WRITE:
+                                    $message = "Failed to write file to disk";
+                                    break;
+                                case UPLOAD_ERR_EXTENSION:
+                                    $message = "File upload stopped by extension";
+                                    break;
+                                default:
+                                    $message = "Unknown upload error";
+                                    break;
+                            }
+                            $this->addError($message);
+                            return false;
+                        }
+
+                        $this->_files[] = $file;
+
+                    }
+
+                    continue;
+                }
+
                 if ($modelClass->hasProperty($element['name'])) {
                     $varFilter = $this->_getModelPropType($modelClass->getProperty($element['name']));
                     $value = $request->getPost($element['name'], $varFilter, $this->_model->readAttribute($element['name']));
@@ -299,6 +351,52 @@ class Form
             }
         } else {
             foreach ($this->_elements as $element) {
+
+                if ($element['type'] == 'fileField') {
+                    // Check uploaded files
+                    if (isset($_FILES[$element['name']])) {
+                        $file = $_FILES[$element['name']];
+
+                        if (empty($file['tmp_name']) && (empty($element['params']['required']) || $element['params']['required'] == false))
+                            continue;
+
+                        if ($file['error'] > 0) {
+                            $message = '';
+                            switch ($file['error']) {
+                                case UPLOAD_ERR_INI_SIZE:
+                                case UPLOAD_ERR_FORM_SIZE:
+                                    $message = "The uploaded file exceeds the upload max size.";
+                                    break;
+                                case UPLOAD_ERR_PARTIAL:
+                                    $message = "The uploaded file was only partially uploaded";
+                                    break;
+                                case UPLOAD_ERR_NO_FILE:
+                                    $message = "No file was uploaded";
+                                    break;
+                                case UPLOAD_ERR_NO_TMP_DIR:
+                                    $message = "Missing a temporary folder";
+                                    break;
+                                case UPLOAD_ERR_CANT_WRITE:
+                                    $message = "Failed to write file to disk";
+                                    break;
+                                case UPLOAD_ERR_EXTENSION:
+                                    $message = "File upload stopped by extension";
+                                    break;
+                                default:
+                                    $message = "Unknown upload error";
+                                    break;
+                            }
+                            $this->addError($message);
+                            return false;
+                        }
+
+                        $this->_files[] = $file;
+
+                    }
+
+                    continue;
+                }
+
                 if ((!empty($element['params']['ignore']) && $element['params']['ignore'] == true) || in_array($element['name'], $this->_ignoreFields) || in_array($element['type'], $this->_ignoreTypes)) continue;
 
                 // get value
@@ -342,6 +440,11 @@ class Form
         return $this->_data;
     }
 
+    public function getFiles()
+    {
+        return $this->_files;
+    }
+
     public function setData($data)
     {
         if (!empty($this->_elements)) {
@@ -366,7 +469,7 @@ class Form
             return $a['order'] - $b['order'];
         });
 
-        $body = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'ectype' => $this->_enctype))) . '<div>';
+        $body = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
 
         // title and description
         if (!empty($this->_title) || !empty($this->_description)) {
@@ -394,7 +497,7 @@ class Form
         $body .= '<div class="form_elements">';
         $hiddenFields = array(); // push hidden to the end of form
         foreach ($this->_elements as $element) {
-            if ($element['type'] == 'html' && !empty($element['params']['html'])){
+            if ($element['type'] == 'html' && !empty($element['params']['html'])) {
                 $body .= $element['params']['html'];
                 continue;
             }
@@ -409,9 +512,12 @@ class Form
                 $description = (!empty($element['params']['description']) ? sprintf('<p>%s</p>', $element['params']['description']) : '');
                 $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
             }
-            if ($element['type'] == "select" || $element['type'] == "selectStatic" ) {
+            if ($element['type'] == "select" || $element['type'] == "selectStatic") {
                 if (!empty($element['params']['options'])) {
                     $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
+                    foreach ($element['params']['options'] as $key => $optionValue) {
+                        $element['params']['options'][$key] = $this->_trans->_($optionValue);
+                    }
                     $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
                 }
             } elseif ($element['type'] == "radioField" || $element['type'] == "checkField") {
@@ -425,12 +531,11 @@ class Form
                         );
                         if ($value == $key)
                             $allOptions['checked'] = '';
-                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($allOptions), $option);
+                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($allOptions), $this->_trans->_($option));
                     }
 
                     $body .= sprintf('<div class="form_element">%s</div>', $optionsBody);
-                }
-                elseif (!empty($element['params']['options'])){
+                } elseif (!empty($element['params']['options'])) {
                     $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
                     $allOptions = array(
                         $element['name'],

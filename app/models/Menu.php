@@ -70,6 +70,6 @@ class Menu extends \Phalcon\Mvc\Model
 
     public function beforeDelete()
     {
-        return $this->getMenuItem()->delete();
+        $this->getMenuItem()->delete();
     }
 }

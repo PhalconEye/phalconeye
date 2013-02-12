@@ -42,6 +42,7 @@
 <div class="container">
     <div class="row">
         {{ content() }}
+        {{ flashSession.output() }}
     </div><!--/row-->
 
     <div class="row wrapper">
