@@ -16,6 +16,7 @@
 <body>
 <div id="wrapper" class="container">
     <div id="header" class="masthead">
+        {{ helper('renderContent', 'header') }}
         {% block header %}
         {% endblock %}
     </div>
@@ -30,6 +31,7 @@
         </div><!--/row-->
     </div>
     <div id="footer">
+        {{ helper('renderContent', 'footer') }}
         {% block footer %}
         {% endblock %}
     </div>

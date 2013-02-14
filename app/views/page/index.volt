@@ -2,14 +2,6 @@
 
 {% block title %}{{ page.getTitle() |trans }}{% endblock %}
 
-{% block header %}
-
-    {% for widget in header %}
-        {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
-    {% endfor %}
-
-{% endblock %}
-
 {% block content %}
 
     {# TOP #}
@@ -92,11 +84,4 @@
     <div class="clear"></div>
 {% endblock %}
 
-{% block footer %}
-
-    {% for widget in footer %}
-        {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
-    {% endfor %}
-
-{% endblock %}
 
