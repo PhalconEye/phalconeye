@@ -119,6 +119,18 @@ class Language extends \Phalcon\Mvc\Model
         return "languages";
     }
 
+    public function validation()
+    {
+
+        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+            'field' => 'locale'
+        )));
+
+
+        if ($this->validationHasFailed() == true) {
+            return false;
+        }
+    }
 
     public function beforeDelete()
     {

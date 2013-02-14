@@ -515,10 +515,16 @@ class Form
             if ($element['type'] == "select" || $element['type'] == "selectStatic") {
                 if (!empty($element['params']['options'])) {
                     $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
+                    if (is_array($element['params']['options']))
                     foreach ($element['params']['options'] as $key => $optionValue) {
                         $element['params']['options'][$key] = $this->_trans->_($optionValue);
                     }
-                    $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
+                    if ($element['params']['options'] instanceof \Phalcon\Mvc\Model\Resultset){
+                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'using' => $element['params']['using'], 'value' => $value)));
+                    }
+                    else{
+                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
+                    }
                 }
             } elseif ($element['type'] == "radioField" || $element['type'] == "checkField") {
                 if (!empty($element['params']['options']) && is_array($element['params']['options'])) {

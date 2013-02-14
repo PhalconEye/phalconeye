@@ -424,7 +424,7 @@ class Application
             return new Api_Auth($di);
         });
 
-        $locale = $di->get('session')->get('locale', 'en');
+        $locale = $di->get('session')->get('locale', Settings::getSetting('system_default_language'));
 
         $translate = null;
 

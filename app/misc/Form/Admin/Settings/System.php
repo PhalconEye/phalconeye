@@ -28,6 +28,13 @@ class Form_Admin_Settings_System extends Form
             'value' => Settings::getSetting('system_theme')
         ));
 
+        $this->addElement('selectStatic', 'system_default_language', array(
+            'label' => 'Default language',
+            'options' => Language::find(),
+            'using' => array('locale', 'name'),
+            'value' => Settings::getSetting('system_default_language')
+        ));
+
         $this->addButton('Save', true);
     }
 }
