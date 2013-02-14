@@ -184,7 +184,6 @@ class AdminPagesController extends Controller
         }
 
 
-        $d = json_encode($form->getData());
         $this->view->setVar('params', json_encode($form->getData()));
 
 

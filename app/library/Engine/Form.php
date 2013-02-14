@@ -55,7 +55,7 @@ class Form
     private $_currentOrder = 1;
     private $_errors = array();
     private $_notices = array();
-    private $_useToken = true;
+    private $_useToken = false;
     private $_files = array();
 
 

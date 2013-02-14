@@ -16,6 +16,8 @@ class Form_Admin_Pages_Create extends Form
         }
 
         parent::__construct($model);
+
+        $this->setElementParam('controller', 'description', 'Controller and action name that will handle this page. Example: NameController->someAction');
     }
 
     public function init()

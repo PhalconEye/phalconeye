@@ -238,7 +238,7 @@ class Page extends \Phalcon\Mvc\Model
             $widgets = array();
 
         // updating
-        $existing_widgets = $this->getWidgets();
+        $existing_widgets = $this->getWidgets(false);
         $widgets_ids_to_remove = array(); // widgets that we need to remove
         // looping all exisitng widgets and looping new widgets
         // looking for new, changed, and deleted actions
@@ -296,22 +296,31 @@ class Page extends \Phalcon\Mvc\Model
 
     public function getWidgets($cache = true)
     {
-        $config = $this->getDI()->get('config');
-
-        $data = array(
-            "page_id = '{$this->id}'",
-            "order" => "widget_order",
-
-        );
-
         if ($cache) {
-            $data['cache'] = array(
-                'key' => "page_{$this->id}_widgets.cache",
-                'lifetime' => ($config->application->debug ? 0 : 86400) // 1 day
-            );
+            /** @var \Phalcon\Cache\Backend\Memcache $cacheData */
+            $cacheData = $this->getDI()->get('cacheData');
+            $cacheKey = "page_{$this->id}_widgets.cache";
+
+            $widgets = $cacheData->get($cacheKey);
+
+            if ($widgets === null) {
+                $widgets = Content::find(array(
+                    "page_id = '{$this->id}'",
+                    "order" => "widget_order",
+                ));
+
+                $cacheData->save($cacheKey, serialize($widgets));
+            } else {
+                $widgets = unserialize($widgets);
+            }
+
+            return $widgets;
         }
 
-        return Content::find($data);
+        return Content::find(array(
+            "page_id = '{$this->id}'",
+            "order" => "widget_order",
+        ));
     }
 
     public function getSource()

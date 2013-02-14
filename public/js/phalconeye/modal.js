@@ -58,6 +58,15 @@ PE.modal = {
         // set submiting
         $('#modal .btn-save').click(function () {
             if ($('#modal form').length == 1) {
+                // check ckeditor
+                if (Object.keys(CKEDITOR.instances).length > 0){
+                    for (var instance in CKEDITOR.instances) {
+                        var elementId = '#'+CKEDITOR.instances[instance].name;
+                        $(elementId).val(CKEDITOR.instances[instance].getData());
+                    }
+                }
+
+
                 $.post($('#modal form').attr('action'), $('#modal form').serialize())
                     .done(function (postHTML) {
                         $('#modal').html(postHTML);

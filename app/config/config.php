@@ -11,7 +11,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => true,
+    'debug' => false,
     'baseUri' => '/',
     'engineDir' => '/www/phalcon/www/app/library/Engine/',
     'controllersDir' => '/www/phalcon/www/app/controllers/',
@@ -21,10 +21,8 @@ return new \Phalcon\Config(array (
     'cache' => 
     array (
       'lifetime' => '86400',
-      'adapter' => 'Memcache',
-      'host' => '127.0.0.1',
-      'port' => '11211',
-      'persistent' => '1',
+      'adapter' => 'File',
+      'cacheDir' => '/www/phalcon/www/app/var/cache/',
     ),
     'logger' => 
     array (

@@ -26,6 +26,7 @@ class Widget_HtmlBlock_Controller extends Widget_Controller{
 
         $form->addElement('html', 'ckeditor',
             array(
+                'ignore' => true,
                 'html' => '<script type="text/javascript">$(document).ready(function () {CKEDITOR.replace("html");});</script>'
             ), 1000);
 
