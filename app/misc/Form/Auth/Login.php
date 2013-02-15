@@ -6,7 +6,9 @@ class Form_Auth_Login extends Form
     {
         $this
             ->setOption('title', "Login")
-            ->setOption('description', "Use you email or username to login.");
+            ->setOption('description', "Use you email or username to login.")
+            ->setAttrib('class', 'form_login');
+        ;
 
 
         $this->addElement('textField', 'login', array(

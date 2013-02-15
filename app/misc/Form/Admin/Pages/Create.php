@@ -17,6 +17,7 @@ class Form_Admin_Pages_Create extends Form
 
         parent::__construct($model);
 
+        $this->setElementParam('url', 'description', 'Page will be available under http://'.$_SERVER['HTTP_HOST'].'/page/[URL NAME]');
         $this->setElementParam('controller', 'description', 'Controller and action name that will handle this page. Example: NameController->someAction');
     }
 

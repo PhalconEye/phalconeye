@@ -2,6 +2,7 @@
 
 /**
  * @property \Phalcon\Db\Adapter\Pdo $db
+ * @property \Phalcon\Cache\Backend $cacheData
  */
 class Controller extends \Phalcon\Mvc\Controller
 {
@@ -16,7 +17,7 @@ class Controller extends \Phalcon\Mvc\Controller
             $this->init();
     }
 
-    public function renderContent($url = null, $controller = null)
+    public function renderContent($url = null, $controller = null, $type = null)
     {
         $page = null;
         if ($url !== null) {
@@ -34,7 +35,7 @@ class Controller extends \Phalcon\Mvc\Controller
                 ))
             ))->getFirst();
 
-        } else {
+        } elseif ($controller !== null) {
             $page = Page::find(array(
                 'conditions' => 'controller=:controller:',
                 'bind' => (array(
@@ -42,6 +43,17 @@ class Controller extends \Phalcon\Mvc\Controller
                 )),
                 'bindTypes' => (array(
                     "controller" => \Phalcon\Db\Column::BIND_PARAM_STR
+                ))
+            ))->getFirst();
+        }
+        elseif($type !== null){
+            $page = Page::find(array(
+                'conditions' => 'type=:type:',
+                'bind' => (array(
+                    "type" => $type
+                )),
+                'bindTypes' => (array(
+                    "type" => \Phalcon\Db\Column::BIND_PARAM_STR
                 ))
             ))->getFirst();
         }

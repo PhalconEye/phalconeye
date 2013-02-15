@@ -78,6 +78,24 @@ PE.modal = {
                 $('#modal').modal('hide');
             }
         });
+
+        $('#modal form').submit(function() {
+            $('#modal .btn-save').click();
+            return false;
+        });
+
+        // chkeditor save button
+        setTimeout((function(){
+            if (Object.keys(CKEDITOR.instances).length > 0){
+                for (var instance in CKEDITOR.instances) {
+                    if (CKEDITOR.instances[instance].commands.save){
+                        CKEDITOR.instances[instance].commands.save.exec = function(){
+                            $('#modal .btn-save').click();
+                        }
+                    }
+                }
+            }
+        }), 1000);
     }
 
 

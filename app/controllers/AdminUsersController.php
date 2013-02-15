@@ -4,7 +4,7 @@ class AdminUsersController extends Controller
 {
     public function init()
     {
-        $navigation = new Navigation($this->di);
+        $navigation = new Navigation();
         $navigation
             ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
             ->setListClass('nav nav-list admin-sidenav')
@@ -17,15 +17,16 @@ class AdminUsersController extends Controller
                 'href' => 'admin/users/roles',
                 'title' => 'Roles'
             ),
-            'access' => array(
-                'href' => 'admin/access',
-                'title' => 'User access'
-            )))
+//            'access' => array(
+//                'href' => 'admin/access',
+//                'title' => 'User access'
+//            )
+        ))
             ->setActiveItem($this->dispatcher->getActionName());
 
         $this->view->setVar('navigationMain', $navigation);
 
-        $navigation = new Navigation($this->di);
+        $navigation = new Navigation();
         $navigation
             ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
             ->setListClass('nav nav-list admin-sidenav')

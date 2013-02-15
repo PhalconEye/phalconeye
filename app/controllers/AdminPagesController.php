@@ -4,7 +4,7 @@ class AdminPagesController extends Controller
 {
     public function init()
     {
-        $navigation = new Navigation($this->di);
+        $navigation = new Navigation();
         $navigation
             ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
             ->setListClass('nav nav-list admin-sidenav')
@@ -53,6 +53,13 @@ class AdminPagesController extends Controller
             return;
         }
 
+        $page = $form->getData();
+        $url = $page->getUrl();
+        if (!empty($url)){
+            $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
+            $page->save();
+        }
+
         $this->response->redirect("admin/pages/manage/" . $form->getData()->getId());
     }
 
@@ -70,6 +77,13 @@ class AdminPagesController extends Controller
 
         if (!$this->request->isPost() || !$form->isValid($this->request)) {
             return;
+        }
+
+        $page = $form->getData();
+        $url = $page->getUrl();
+        if (!empty($url)){
+            $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
+            $page->save();
         }
 
         $this->response->redirect("admin/pages");

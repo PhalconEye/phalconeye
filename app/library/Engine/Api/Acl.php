@@ -55,11 +55,9 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
                 $acl->allow($roleAdminObject->getName(), self::ACL_ADMIN_AREA, 'access');
 
 
-                $this->cacheData->save(self::ACL_CACHE_KEY, serialize($acl), 10000000);
+                $this->cacheData->save(self::ACL_CACHE_KEY, $acl, 10000000);
             }
-            else{
-                $acl = unserialize($aclData);
-            }
+
 
 
             $this->_acl = $acl;

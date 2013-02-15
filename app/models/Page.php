@@ -309,9 +309,7 @@ class Page extends \Phalcon\Mvc\Model
                     "order" => "widget_order",
                 ));
 
-                $cacheData->save($cacheKey, serialize($widgets));
-            } else {
-                $widgets = unserialize($widgets);
+                $cacheData->save($cacheKey, $widgets);
             }
 
             return $widgets;
@@ -349,6 +347,11 @@ class Page extends \Phalcon\Mvc\Model
         if ($this->validationHasFailed() == true) {
             return false;
         }
+    }
+
+    public function beforeDelete()
+    {
+        $this->getWidgets(false)->delete();
     }
 
 }

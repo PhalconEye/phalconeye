@@ -6,7 +6,7 @@ class AdminLanguagesController extends Controller
 
     public function init()
     {
-        $navigation = new Navigation($this->di);
+        $navigation = new Navigation();
         $navigation
             ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
             ->setListClass('nav nav-list admin-sidenav')

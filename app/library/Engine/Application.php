@@ -184,6 +184,10 @@ class Application
                         return 'Helper_' . ucfirst($name) . '::_(' . $resolvedArgs . ')';
                     });
 
+                    $compiler->addFunction('viewer', function () {
+                        return 'User::getViewer()';
+                    });
+
                     // register main filter
                     $compiler->addFilter('trans', function ($resolvedArgs) {
                         return 'Helper_Translate::_(' . $resolvedArgs . ')';
@@ -275,7 +279,8 @@ class Application
         }, true);
     }
 
-    protected function initAcl($config){
+    protected function initAcl($config)
+    {
         $di = $this->_di;
         $di->set('acl', function () use ($di) {
             return new Api_Acl($di);
@@ -336,53 +341,51 @@ class Application
      */
     protected function initCache($config)
     {
-        $this->_di->set('cacheOutput', function () use ($config) {
-            // Get the parameters
-            $lifetime = $config->application->cache->lifetime;
-            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+        if (!$config->application->debug) {
+            $this->_di->set('cacheOutput', function () use ($config) {
+                // Get the parameters
+                $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+                $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+                $backEndOptions = $config->application->cache->toArray();
 
-            $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = $config->application->cache->toArray();
-            unset($backEndOptions['lifetime']);
-            unset($backEndOptions['adapter']);
+                $frontCache = new PhCacheFront\Output($frontEndOptions);
+                $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
-            $frontCache = new PhCacheFront\Output($frontEndOptions);
-            $cache = new $cacheAdapter($frontCache, $backEndOptions);
+                return $cache;
+            });
 
-            return $cache;
-        });
+            $this->_di->set('cacheData', function () use ($config) {
+                // Get the parameters
+                $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+                $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+                $backEndOptions = $config->application->cache->toArray();
 
-        $this->_di->set('cacheData', function () use ($config) {
-            // Get the parameters
-            $lifetime = $config->application->cache->lifetime;
-            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+                $frontCache = new PhCacheFront\Data($frontEndOptions);
+                $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
-            $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = $config->application->cache->toArray();
-            unset($backEndOptions['lifetime']);
-            unset($backEndOptions['adapter']);
+                return $cache;
+            });
 
-            $frontCache = new PhCacheFront\Data($frontEndOptions);
-            $cache = new $cacheAdapter($frontCache, $backEndOptions);
+            $this->_di->set('modelsCache', function () use ($config) {
+                // Get the parameters
+                $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+                $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+                $backEndOptions = $config->application->cache->toArray();
 
-            return $cache;
-        });
+                $frontCache = new PhCacheFront\Data($frontEndOptions);
+                $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
-        $this->_di->set('modelsCache', function () use ($config) {
-            // Get the parameters
-            $lifetime = $config->application->cache->lifetime;
-            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
-
-            $frontEndOptions = array('lifetime' => ($config->application->debug ? 0 : $lifetime));
-            $backEndOptions = $config->application->cache->toArray();
-            unset($backEndOptions['lifetime']);
-            unset($backEndOptions['adapter']);
-
-            $frontCache = new PhCacheFront\Data($frontEndOptions);
-            $cache = new $cacheAdapter($frontCache, $backEndOptions);
-
-            return $cache;
-        });
+                return $cache;
+            });
+        }
+        else{
+            // Create a dummy cache for system.
+            // System will work correctly and the data will be always current for all adapters
+            $dummyCache = new Cache_Dummy(null);
+            $this->_di->set('cacheOutput', $dummyCache);
+            $this->_di->set('cacheData', $dummyCache);
+            $this->_di->set('modelsCache', $dummyCache);
+        }
     }
 
     /**
@@ -428,10 +431,10 @@ class Application
 
         $translate = null;
 
-        if (!$config->application->debug){
+        if (!$config->application->debug) {
             $messages = array();
-            if (file_exists(ROOT_PATH . "/app/var/languages/".$locale.".php")) {
-                require ROOT_PATH . "/app/var/languages/".$locale.".php";
+            if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
+                require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
             } else {
                 // fallback to some default
                 require ROOT_PATH . "/app/var/languages/en.php";
@@ -440,8 +443,7 @@ class Application
             $translate = new \Phalcon\Translate\Adapter\NativeArray(array(
                 "content" => $messages
             ));
-        }
-        else{
+        } else {
             $translate = new Translation_Db(array(
                 'db' => $di->get('db'),
                 'locale' => $locale,

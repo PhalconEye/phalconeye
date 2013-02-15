@@ -4,7 +4,7 @@ class AdminMenusController extends Controller
 {
     public function init()
     {
-        $navigation = new Navigation($this->di);
+        $navigation = new Navigation();
         $navigation
             ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
             ->setListClass('nav nav-list admin-sidenav')
@@ -188,9 +188,21 @@ class AdminMenusController extends Controller
 
         $form->setData($data);
 
+
         if (!$this->request->isPost() || !$form->isValid($this->request)) {
             return;
         }
+
+        $item = $form->getData();
+
+        // clear url type
+        $urlType = $this->request->getPost('url_type', 'int', 0);
+        if ($urlType == 0) {
+            $item->setPageId(null);
+        } else {
+            $item->setUrl(null);
+        }
+        $item->save();
 
         $this->view->setVar('edited', $form->getData());
     }

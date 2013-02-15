@@ -1,21 +1,33 @@
+body{
+    background-color: #fcfcfc;
+}
+
+.clear{
+    clear:both;
+}
+
 /*** CUSTOM PAGE LAYOUT ***/
 
 #general-content{
     min-height: 200px;
     overflow: hidden;
+    margin: 5px;
 }
 
 #general-content-left{
     width: 250px;
     min-height: 200px;
     float: left;
+    margin: 5px;
 }
 
 #general-content-right{
     width: 250px;
     min-height: 200px;
     float: right;
+    margin: 5px;
 }
+
 
 #general-content-wrapper{
     width: 960px;
@@ -27,19 +39,30 @@
 
 #general-content-column-left{
     float: left;
-    width: 706px;
+    width: 655px;
     min-height: 200px;
+    margin: 5px;
 }
 
 #general-content-column-right{
     float: right;
-    width: 706px;
+    width: 655px;
     min-height: 200px;
+    margin: 5px;
 }
 
 #general-content-full-top, #general-content-full-bottom{
     min-height: 10px;
     clear: both;
+    margin: 0 5px;
+}
+
+#general-content-full-bottom{
+    margin: 5px;
+}
+
+#general-content-full{
+    margin: 0 5px;
 }
 
 #content-left-left{
@@ -59,6 +82,171 @@
 
 }
 
-.row > div{
-border:1px solid black;
+.container{
+
+}
+
+.row .widget_container{
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    *zoom: 1;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    padding: 5px;
+}
+
+.widget_wrapper + .widget_wrapper{
+    margin-top: 5px;
+}
+
+.row .widget_header{
+    display: block;
+    padding: 5px;
+}
+
+.row .widget_header span{
+    margin-right: 10px;
+}
+
+.row{
+    margin: 0 -5px;
+}
+
+/*** FORMS ***/
+
+
+form{
+    background-color: #fafafa;
+    background-image: -moz-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -webkit-gradient(linear, 0 0, 0 100%, from(#ffffff), to(#f2f2f2));
+    background-image: -webkit-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: -o-linear-gradient(top, #ffffff, #f2f2f2);
+    background-image: linear-gradient(to bottom, #ffffff, #f2f2f2);
+    background-repeat: repeat-x;
+    border: 1px solid #d4d4d4;
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ffffffff', endColorstr='#fff2f2f2', GradientType=0);
+    *zoom: 1;
+    -webkit-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    -moz-box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.065);
+    padding: 10px;
+    margin: 5px;
+}
+
+
+form .form_header > h3{
+    margin: 0;
+}
+
+form .form_header > p{
+    color: #969696;
+}
+
+form .form_elements > div {
+    min-height: 30px;
+    clear: both;
+    padding-top: 10px;
+}
+
+form .form_elements .form_label {
+    width: 200px;
+    float: left;
+    margin-right: 50px;
+}
+
+form .form_elements .form_label > label{
+    margin-bottom: 0;
+    color:#08c;
+    font-weight: bold;
+}
+
+form .form_elements .form_label > p {
+    font-size: 11px;
+    color: #969696;
+}
+
+form .form_elements .form_element {
+    float: left;
+    max-width: 550px;
+}
+form .form_elements .form_element textarea {
+    max-width: 530px;
+    width: 400px;
+    height: 100px;
+}
+
+
+form .form_footer{
+    margin: 20px 0 20px 250px;
+}
+
+form .form_footer .btn + .btn{
+    margin-left: 10px;
+}
+
+.form_errors,
+.form_notices {
+    margin: 0;
+}
+
+.form_errors li,
+.form_notices li {
+    list-style: none;
+    margin-bottom: 10px;
+}
+
+.form_element_radio{
+    min-height: 30px;
+    width: 220px;
+}
+
+.form_element_radio label,
+.form_element_radio input{
+    float: left;
+}
+
+.form_element_radio label{
+    margin-left: 5px;
+}
+
+/*CONTENT RELATED STYLES*/
+.form_login{
+    width: 470px;
+    margin: 0 auto;
+}
+
+.header_logo{
+    float:left;
+}
+
+.header_logo img{
+    max-width: 250px;
+    max-height: 150px;
+}
+
+.header_logo a{
+    font-family: comic sans ms,cursive;
+}
+
+.header_widget{
+    padding-bottom: 10px;
+}
+
+.header_auth{
+    float: right;
+    margin: 5px;
 }

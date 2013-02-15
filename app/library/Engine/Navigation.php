@@ -3,9 +3,6 @@
 class Navigation
 {
 
-    /** @var \Phalcon\DiInterface */
-    protected $_di = null;
-
     /** @var array Items in navigation */
     protected $_items = array();
 
@@ -45,11 +42,6 @@ class Navigation
     /** @var string Tag of navigation item */
     protected $_listItemTag = 'li';
 
-
-    public function __construct($di)
-    {
-        $this->_di = $di;
-    }
 
     /** Set list class
      *
@@ -161,7 +153,7 @@ class Navigation
             if (isset($item['items']) && !empty($item['items'])) { // dropdown menu item
                 $active = ($name == $this->_activeItem || array_key_exists($this->_activeItem, $item['items']) ? ' active' : '');
                 $content .= "<{$lit} class='{$ddic}{$active}'>";
-                $content .= sprintf('<a href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s</a>', $dditc, $pc, $this->_di->get('trans')->query($item['title']), $ac, $ddmc);
+                $content .= sprintf('<a href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s</a>', $dditc, $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac, $ddmc);
                 $content .= "<{$lt} class='{$ddimc}'>";
                 foreach ($item['items'] as $key => $subitem) {
                     if (is_numeric($key) && !is_array($subitem)) {
@@ -169,15 +161,15 @@ class Navigation
                             $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
                         } else {
                             $content .= "<{$lit} class='{$ddihc}'>";
-                            $content .= $this->_di->get('trans')->query($subitem);
+                            $content .= Phalcon\DI::getDefault()->get('trans')->query($subitem);
                             $content .= "</{$lit}>";
                         }
                     } elseif (is_array($subitem)) {
                         $content .= $this->_renderItems(array(1 => $subitem), true);
                     } else {
-                        $itemLink = (strpos($key, 'javascript:') !== false || $key == "#" ? $key : $this->_di->get('url')->get($key));
                         $content .= "<{$lit}>";
-                        $content .= sprintf('<a href="%s">%s%s%s</a>', $itemLink, $pc, $this->_di->get('trans')->query($subitem), $ac);
+                        $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+                        $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $key, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
                         $content .= "</{$lit}>";
                     }
 
@@ -186,10 +178,10 @@ class Navigation
                 $content .= "</{$lit}>";
             } else { // normal item
                 $active = ($name == $this->_activeItem || $item['href'] == $this->_activeItem ? ' class="active"' : '');
-                $itemLink = (strpos($item['href'], 'javascript:') !== false || $item['href'] == "#" ? $item['href'] : $this->_di->get('url')->get($item['href']));
+                $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
 
                 $content .= "<{$lit}{$active}>";
-                $content .= sprintf('<a href="%s">%s%s%s</a>', $itemLink, $pc, $this->_di->get('trans')->query($item['title']), $ac);
+                $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);
                 $content .= "</{$lit}>";
             }
         }

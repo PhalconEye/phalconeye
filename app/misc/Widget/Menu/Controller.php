@@ -30,16 +30,15 @@ class Widget_Menu_Controller extends Widget_Controller
                 return $this->setNoRender();
             }
 
-            $navigation = new Navigation($this->di);
+            $navigation = new Navigation();
             $navigation
                 ->setListClass($menuClass)
                 ->setItems($items)
                 ->setActiveItem($this->dispatcher->getActionName());
 
+            $this->cacheData->save($cacheKey, $navigation);
         }
-        else{
-            $navigation = unserialize($navigation);
-        }
+
 
         $this->view->setVar('navigation', $navigation);
     }
@@ -58,6 +57,7 @@ class Widget_Menu_Controller extends Widget_Controller
                 $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();
+                $navigationItems[$index]['target'] = $item->getTarget();
             }
             $index++;
         }

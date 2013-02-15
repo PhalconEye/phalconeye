@@ -1,5 +1,8 @@
 <?php
 
+/**
+ * @property \Phalcon\Cache\Backend $cacheData
+ */
 class Widget_Controller extends \Phalcon\Mvc\Controller
 {
     /**

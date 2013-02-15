@@ -124,6 +124,9 @@
             connectWith:'.widgets_placer',
             start:function (event, ui) {
                 changePageState(true);
+
+                if (!$(ui.item[0]).attr('element_id'))
+                    $(ui.item[0]).attr('element_id', elementIdCounter++);
             },
             receive:function (event, ui) {
                 $(".admin_pages_layout").find('.delete_widget').css('display', 'block');
@@ -281,7 +284,7 @@
         <div class="manage_page_header">
             <div class="manage_page_header_label">
                 <h3><a href="/admin/pages" class='btn'>{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
-                <a href="{% if currentPage.getType() is null %}/page{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}" target="_blank">{{ currentPage.getTitle() }}</a>
+                <a href="{% if currentPage.getType() is null and currentPage.getUrl() is not null %}/page/{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}" target="_blank">{{ currentPage.getTitle() }}</a>
             </div>
 
             <div class="widget_options_panel">
