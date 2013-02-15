@@ -240,14 +240,14 @@
 
         // correcting middle placer
         if ($("#widgets_container_middle")) {
-            if (types.indexOf('left') != -1 && types.indexOf('right') != -1) {
-                if (window.opera)
+            if ($.inArray('left', types) != -1 && $.inArray('right', types) != -1) {
+                if (window.opera || !!window.ActiveXObject) // opera or ie 7-8
                     $("#widgets_container_middle").attr("style", "width: 365px !important");
                 else
                     $("#widgets_container_middle").attr("style", "width: 366px !important");
             }
-            else if (types.indexOf('left') != -1 || types.indexOf('right') != -1) {
-                if (window.opera)
+            else if ($.inArray('left', types) != -1 || $.inArray('right', types) != -1) {
+                if (window.opera || !!window.ActiveXObject)
                     $("#widgets_container_middle").attr("style", "width: 549px !important");
                 else
                     $("#widgets_container_middle").attr("style", "width: 550px !important");

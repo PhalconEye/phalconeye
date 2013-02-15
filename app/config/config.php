@@ -11,7 +11,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => false,
+    'debug' => true,
     'baseUri' => '/',
     'engineDir' => '/www/phalcon/www/app/library/Engine/',
     'controllersDir' => '/www/phalcon/www/app/controllers/',

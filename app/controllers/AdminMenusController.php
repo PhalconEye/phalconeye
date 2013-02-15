@@ -10,11 +10,11 @@ class AdminMenusController extends Controller
             ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'index' => array(
-                'href' => 'admin/menus',
+                'href' => '/admin/menus',
                 'title' => 'Browse'
             ),
             'create' => array(
-                'href' => 'admin/menus/create',
+                'href' => '/admin/menus/create',
                 'title' => 'Create new menu'
             )))
             ->setActiveItem($this->dispatcher->getActionName());
