@@ -244,9 +244,9 @@ form .form_footer .btn + .btn{
 
 .header_widget{
     padding-bottom: 10px;
+    margin: 5px;
 }
 
 .header_auth{
     float: right;
-    margin: 5px;
 }
