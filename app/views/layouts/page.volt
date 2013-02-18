@@ -6,7 +6,7 @@
 
     {# TOP #}
     {% if helper('contains', "top", content|keys) %}
-        <div id="general-content-full-top" class="general_container">
+        <div id="general-content-full-top">
             {% for widget in content["top"] %}
                 {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
             {% endfor %}
@@ -15,7 +15,7 @@
 
     {# LEFT #}
     {% if helper('contains', "left", content|keys) %}
-        <div id="general-content-left" class="general_container">
+        <div id="general-content-left">
             {% for widget in content["left"] %}
                 {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
             {% endfor %}
@@ -24,7 +24,7 @@
 
     {# RIGHT #}
     {% if helper('contains', "right", content|keys) %}
-        <div id="general-content-right" class="general_container">
+        <div id="general-content-right">
             {% for widget in content["right"] %}
                 {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
             {% endfor %}
@@ -36,7 +36,7 @@
 
         {# LEFT MIDDLE RIGHT #}
         {% if helper('contains', "right", content|keys) and helper('contains', "left", content|keys) %}
-            <div id="general-content" class="general_container">
+            <div id="general-content">
                 {% for widget in content["middle"] %}
                     {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
                 {% endfor %}
@@ -44,7 +44,7 @@
         {% endif %}
         {# MIDDLE RIGHT #}
         {% if helper('contains', "right", content|keys) and not (helper('contains', "left", content|keys)) %}
-            <div id="general-content-column-left" class="general_container">
+            <div id="general-content-column-left">
                 {% for widget in content["middle"] %}
                     {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
                 {% endfor %}
@@ -52,7 +52,7 @@
         {% endif %}
         {# LEFT MIDDLE#}
         {% if helper('contains', "left", content|keys) and not (helper('contains', "right", content|keys)) %}
-            <div id="general-content-column-right" class="general_container">
+            <div id="general-content-column-right">
                 {% for widget in content["middle"] %}
                     {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
                 {% endfor %}
@@ -62,7 +62,7 @@
         {% endif %}
 
         {% if not (helper('contains', "right", content|keys)) and not (helper('contains', "left", content|keys)) %}
-            <div id="general-content-full" class="general_container">
+            <div id="general-content-full">
                 {% for widget in content["middle"] %}
                     {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
                 {% endfor %}
@@ -73,7 +73,7 @@
 
     {# BOTTOM #}
     {% if helper('contains', "bottom", content|keys) %}
-        <div id="general-content-full-bottom" class="general_container">
+        <div id="general-content-full-bottom">
             {% for widget in content["bottom"] %}
                 {{ helper('renderWidget', widget.getWidgetId(), widget.getParams()) }}
             {% endfor %}

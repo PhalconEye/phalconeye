@@ -19,7 +19,7 @@
 
     <div class="span9">
         <div class="row-fluid">
-            <h1>{{ 'Pages' | trans }}</h1>
+            <h1>{{ 'Menus' | trans }}</h1>
             <table class="table">
                 <thead>
                 <tr>

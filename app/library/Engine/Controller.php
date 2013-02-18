@@ -3,6 +3,7 @@
 /**
  * @property \Phalcon\Db\Adapter\Pdo $db
  * @property \Phalcon\Cache\Backend $cacheData
+ * @property Api_Acl $acl
  */
 class Controller extends \Phalcon\Mvc\Controller
 {

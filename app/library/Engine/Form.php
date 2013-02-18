@@ -561,7 +561,7 @@ class Form
             $body .= '</div>';
         }
 
-        $body .= '</div>';
+        $body .= '<div class="clear"></div></div>';
 
         // render hidden fields
         foreach ($hiddenFields as $hidden) {

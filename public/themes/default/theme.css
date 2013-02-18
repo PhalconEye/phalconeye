@@ -181,10 +181,10 @@ form .form_elements .form_label > p {
 
 form .form_elements .form_element {
     float: left;
-    max-width: 550px;
+    max-width: 650px;
 }
 form .form_elements .form_element textarea {
-    max-width: 530px;
+    max-width: 650px;
     width: 400px;
     height: 100px;
 }
