@@ -52,9 +52,8 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
     {
         if (!$this->_acl)
         {
-            $aclData = $this->cacheData->get(self::ACL_CACHE_KEY);
-            $acl = null;
-            if ($aclData === null){
+            $acl = $this->cacheData->get(self::ACL_CACHE_KEY);
+            if ($acl === null){
                 $acl = new \Phalcon\Acl\Adapter\Memory();
                 $acl->setDefaultAction(\Phalcon\Acl::DENY);
 
