@@ -22,10 +22,7 @@ return new \Phalcon\Config(array (
     array (
       'lifetime' => '86400',
       'prefix' => 'pe_',
-      'adapter' => 'Memcache',
-      'host' => '127.0.0.1',
-      'port' => '11211',
-      'persistent' => '1',
+      'adapter' => 'Apc',
     ),
     'logger' => 
     array (

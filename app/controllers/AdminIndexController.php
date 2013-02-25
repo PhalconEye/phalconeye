@@ -1,17 +1,29 @@
 <?php
+/**
+ * PhalconEye
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to lantian.ivan@gmail.com so we can send you a copy immediately.
+ *
+ */
 
 class AdminIndexController extends Controller
 {
     public function init()
     {
-        // temporary disable, until dev
-//        $viewer = User::getViewer();
-//        if ($this->acl->_()->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
-//            return  $this->dispatcher->forward(array(
-//                "controller" => 'error',
-//                "action" => 'show404'
-//            ));
-//        }
+        $viewer = User::getViewer();
+        if ($this->acl->_()->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+            return  $this->dispatcher->forward(array(
+                "controller" => 'error',
+                "action" => 'show404'
+            ));
+        }
 
         // dispatch admin routes
         $controller = $this->dispatcher->getParam('admin_controller');
