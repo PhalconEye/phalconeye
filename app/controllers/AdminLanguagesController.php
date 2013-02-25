@@ -12,11 +12,11 @@ class AdminLanguagesController extends Controller
             ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'index' => array(
-                'href' => '/admin/languages',
+                'href' => 'admin/languages',
                 'title' => 'Browse'
             ),
             'create' => array(
-                'href' => '/admin/languages/create',
+                'href' => 'admin/languages/create',
                 'title' => 'Create new language'
             )))
             ->setActiveItem($this->dispatcher->getActionName());

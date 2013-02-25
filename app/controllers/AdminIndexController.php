@@ -61,24 +61,24 @@ class AdminIndexController extends Controller
         $navigation
             ->setItems(array(
             'index' => array(
-                'href' => '/admin',
+                'href' => 'admin',
                 'title' => 'Dashboard'
             ),
             'users' => array(
                 'title' => 'Manage',
                 'items' => array( // type - dropdown
-                    '/admin/users' => 'Users',
-                    '/admin/pages' => 'Pages',
-                    '/admin/menus' => 'Menus',
-                    '/admin/languages' => 'Languages',
+                    'admin/users' => 'Users',
+                    'admin/pages' => 'Pages',
+                    'admin/menus' => 'Menus',
+                    'admin/languages' => 'Languages',
                 )
             ),
             'settings' => array( // type - dropdown
                 'title' => 'Settings',
                 'items' => array(
                     1 => 'Main settings',
-                    '/admin/settings/index' => 'System',
-                    '/admin/settings/performance' => 'Performance',
+                    'admin/settings/index' => 'System',
+                    'admin/settings/performance' => 'Performance',
 //                    2 => 'divider',
 //                    3 => 'Other settings',
 //                    'admin/3' => 'Menu item 3',
@@ -100,7 +100,9 @@ class AdminIndexController extends Controller
         $this->view->disable();
 
         $this->config->application->debug = (bool)$this->request->get('debug', null, true);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php ".PHP_EOL.PHP_EOL."return new \\Phalcon\\Config(" . var_export($this->config->toArray(), true) .");");
+        $configText = var_export($this->config->toArray(), true);
+        $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
+        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php ".PHP_EOL.PHP_EOL."return new \\Phalcon\\Config(" . $configText .");");
     }
 }
 

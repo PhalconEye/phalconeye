@@ -7,7 +7,7 @@
         var setMode = function(debug){
             $.ajax({
                 type:"POST",
-                url:'/admin/index/mode',
+                url:'{{ url("admin/index/mode")}}',
                 data:{
                     'debug':debug
                 },

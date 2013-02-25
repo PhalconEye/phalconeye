@@ -2,11 +2,12 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{% block title %}<?php echo Settings::getSetting('system_title', '') ?>{% endblock %}</title>
+    <title><?php echo Settings::getSetting('system_title', '') ?> | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="/public/themes/{{ helper('setting', 'system_theme', 'default') }}/theme.css"/>
+    <meta name="generator" content="PhalconEye - Open Source Content Management System" />
 
     {% block head %}
 

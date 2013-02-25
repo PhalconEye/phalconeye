@@ -173,7 +173,7 @@ class Role extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Get default guest role
+     * Get guest role by type
      *
      * @return Role
      */
@@ -184,6 +184,25 @@ class Role extends \Phalcon\Mvc\Model
             $role->setName(ucfirst($type));
             $role->setDescription(ucfirst($type). ' role.');
             $role->setType($type);
+            $role->setUndeletable(1);
+            $role->save();
+        }
+
+        return $role;
+    }
+
+    /**
+     * Get default guest role
+     *
+     * @return Role
+     */
+    public static function getDefaultRole(){
+        $role = Role::findFirst("is_default = 1");
+        if (!$role){
+            $role = new Role();
+            $role->setName("User");
+            $role->setDescription('Default user role.');
+            $role->setType('user');
             $role->setUndeletable(1);
             $role->save();
         }

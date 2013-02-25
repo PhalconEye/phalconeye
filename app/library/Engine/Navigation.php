@@ -168,8 +168,10 @@ class Navigation
                         $content .= $this->_renderItems(array(1 => $subitem), true);
                     } else {
                         $content .= "<{$lit}>";
+                        if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/')
+                            $link = Phalcon\DI::getDefault()->get('url')->get($key);
                         $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
-                        $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $key, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
+                        $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $link, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
                         $content .= "</{$lit}>";
                     }
 
@@ -179,6 +181,9 @@ class Navigation
             } else { // normal item
                 $active = ($name == $this->_activeItem || $item['href'] == $this->_activeItem ? ' class="active"' : '');
                 $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+
+                if (strpos($item['href'], 'http') === false && strpos($item['href'], 'javascript:') === false && $item['href'] != '/')
+                    $item['href'] = Phalcon\DI::getDefault()->get('url')->get($item['href']);
 
                 $content .= "<{$lit}{$active}>";
                 $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);

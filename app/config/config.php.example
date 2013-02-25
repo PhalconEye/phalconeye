@@ -19,7 +19,8 @@ return new \Phalcon\Config(array(
         'cache' => array(
             'adapter' => 'File',
             'path' => ROOT_PATH . '/app/var/cache/',
-            'lifetime' => 86400
+            'lifetime' => 86400,
+            'prefix' => 'pe_'
         ),
         'logger' => array(
             'enabled' => true,

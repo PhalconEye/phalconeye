@@ -35,7 +35,7 @@ class AdminSettingsController extends Controller
                 $cacheData['adapter'] = 1;
             }
                 break;
-            case "APC":
+            case "Apc":
             {
                 $cacheData['adapter'] = 2;
             }
@@ -76,7 +76,8 @@ class AdminSettingsController extends Controller
 
 
         $cacheData = array(
-            'lifetime' => $data['lifetime']
+            'lifetime' => $data['lifetime'],
+            'prefix' => $data['prefix']
         );
 
         switch ($data['adapter']) {
@@ -110,7 +111,9 @@ class AdminSettingsController extends Controller
         }
 
         $this->config->application->cache = new \Phalcon\Config($cacheData);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . var_export($this->config->toArray(), true) . ");");
+        $configText = var_export($this->config->toArray(), true);
+        $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
+        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
     }
 }
 

@@ -6,7 +6,7 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this user?" | trans}}')) {
-                window.location.href = '/admin/users/delete/' + id;
+                window.location.href = '{{ url("admin/users/delete/")}}' + id;
             }
         }
     </script>

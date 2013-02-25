@@ -2,6 +2,11 @@
 
 {% block title %}{{ page.getTitle() |trans }}{% endblock %}
 
+{% block head %}
+    <meta name="keywords" content="{{ page.getKeywords() |trans }}" />
+    <meta name="description" content="{{ page.getDescription() |trans }}" />
+{% endblock %}
+
 {% block content %}
 
     {# TOP #}

@@ -7,6 +7,12 @@ class Form_Admin_Settings_Performance extends Form
         $this
             ->setOption('title', "Performance settings");
 
+        $this->addElement('textField', 'prefix', array(
+            'label' => 'Cache prefix',
+            'description' => 'Example "pe_"',
+            'value' => "pe_"
+        ));
+
         $this->addElement('textField', 'lifetime', array(
             'label' => 'Cache lifetime',
             'description' => 'This determines how long the system will keep cached data before reloading it from the database server. A shorter cache lifetime causes greater database server CPU usage, however the data will be more current.',

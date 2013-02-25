@@ -6,7 +6,7 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this language?" | trans}}')) {
-                window.location.href = '/admin/languages/delete/' + id;
+                window.location.href = '{{ url("admin/languages/delete/")}}' + id;
             }
         }
     </script>
@@ -21,7 +21,7 @@
         <div class="row-fluid">
             <div class="languages_header">
                 <h1>{{ 'Languages' | trans }}</h1>
-                <button onclick="window.location.href='/admin/languages/compile'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
+                <button onclick="window.location.href='{{ url("admin/languages/compile") }}'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
                 <div class="clear"></div>
             </div>
             <table class="table">

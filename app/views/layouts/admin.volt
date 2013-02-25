@@ -23,14 +23,14 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="/admin">Phalcon Eye</a>
+            <a class="brand" href="{{ url("admin")}}">Phalcon Eye</a>
 
             <div class="nav-collapse collapse">
                 <p class="navbar-text pull-right">
                     {{ 'Logged in as ' | trans }} Username
-                    [<a href="/" class="navbar-link">{{ 'Back to site' | trans }}</a>]
+                    [<a href="{{ url()}}" class="navbar-link">{{ 'Back to site' | trans }}</a>]
                     {{ ' or '|trans }}
-                    [<a href="/logout" class="navbar-link">{{ 'Exit' | trans }}</a>]
+                    [<a href="{{ url("logout")}}" class="navbar-link">{{ 'Exit' | trans }}</a>]
                 </p>
                 {{ headerNavigation.render() }}
             </div>

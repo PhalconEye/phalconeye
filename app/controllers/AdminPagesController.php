@@ -10,11 +10,11 @@ class AdminPagesController extends Controller
             ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'index' => array(
-                'href' => '/admin/pages',
+                'href' => 'admin/pages',
                 'title' => 'Browse'
             ),
             'create' => array(
-                'href' => '/admin/pages/create',
+                'href' => 'admin/pages/create',
                 'title' => 'Create new page'
             )))
             ->setActiveItem($this->dispatcher->getActionName());

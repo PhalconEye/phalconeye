@@ -15,7 +15,7 @@ class Widget_Menu_Controller extends Widget_Controller
             return $this->setNoRender();
 
 
-        $menuClass = $this->getParam('class', 'int', 'nav');
+        $menuClass = $this->getParam('class', 'nav');
         if (empty($menuClass))
             $menuClass = 'nav';
 

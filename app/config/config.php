@@ -13,14 +13,15 @@ return new \Phalcon\Config(array (
   array (
     'debug' => true,
     'baseUri' => '/',
-    'engineDir' => '/www/phalcon/www/app/library/Engine/',
-    'controllersDir' => '/www/phalcon/www/app/controllers/',
-    'modelsDir' => '/www/phalcon/www/app/models/',
-    'viewsDir' => '/www/phalcon/www/app/views/',
-    'miscDir' => '/www/phalcon/www/app/misc/',
+    'engineDir' => ROOT_PATH . '/app/library/Engine/',
+    'controllersDir' => ROOT_PATH . '/app/controllers/',
+    'modelsDir' => ROOT_PATH . '/app/models/',
+    'viewsDir' => ROOT_PATH . '/app/views/',
+    'miscDir' => ROOT_PATH . '/app/misc/',
     'cache' => 
     array (
       'lifetime' => '86400',
+      'prefix' => 'pe_',
       'adapter' => 'Memcache',
       'host' => '127.0.0.1',
       'port' => '11211',
@@ -29,12 +30,12 @@ return new \Phalcon\Config(array (
     'logger' => 
     array (
       'enabled' => true,
-      'path' => '/www/phalcon/www/app/var/logs/',
+      'path' => ROOT_PATH . '/app/var/logs/',
       'format' => '[%date%][%type%] %message%',
     ),
     'view' => 
     array (
-      'compiledPath' => '/www/phalcon/www/app/var/compiled/',
+      'compiledPath' => ROOT_PATH . '/app/var/compiled/',
       'compiledExtension' => '.compiled',
     ),
   ),

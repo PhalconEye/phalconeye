@@ -75,6 +75,9 @@ class AuthController extends Controller
             return;
         }
 
+        $user->role_id = Role::getDefaultRole()->getId();
+        $user->save();
+
         $this->auth->authenticate($user->getId());
         $this->response->redirect()->send();
 

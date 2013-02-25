@@ -10,11 +10,11 @@ class AdminUsersController extends Controller
             ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'index' => array(
-                'href' => '/admin/users',
+                'href' => 'admin/users',
                 'title' => 'Users'
             ),
             'roles' => array(
-                'href' => '/admin/users/roles',
+                'href' => 'admin/users/roles',
                 'title' => 'Roles'
             ),
 //            'access' => array(
@@ -32,11 +32,11 @@ class AdminUsersController extends Controller
             ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'create' => array(
-                'href' => '/admin/users/create',
+                'href' => 'admin/users/create',
                 'title' => 'Create new user'
             ),
             'rolesCreate' => array(
-                'href' => '/admin/users/roles-create',
+                'href' => 'admin/users/roles-create',
                 'title' => 'Create new role'
             )))
             ->setActiveItem($this->dispatcher->getActionName());
@@ -76,6 +76,7 @@ class AdminUsersController extends Controller
 
         $user = $form->getData();
         $user->setPassword($this->security->hash($user->getPassword()));
+        $user->role_id = Role::getDefaultRole()->getId();
         $user->save();
 
         $this->response->redirect("admin/users");

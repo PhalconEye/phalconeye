@@ -6,12 +6,12 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
-                window.location.href = '/admin/languages/deleteItem/' + id + '?lang={{ lang.getId() }}';
+                window.location.href = '{{ url("admin/languages/deleteItem/") }}' + id + '?lang={{ lang.getId() }}';
             }
         }
 
         var requestAddItem = function () {
-            var url = '/admin/languages/createItem';
+            var url = '{{ url("admin/languages/createItem")}}';
             var data = {
                 'language_id': {{ lang.getId() }}
             };
@@ -20,7 +20,7 @@
         }
 
         var editItem = function (id) {
-            var url = '/admin/languages/editItem';
+            var url = '{{ url("admin/languages/editItem")}}';
             var data = {
                 'id':id,
                 'language_id': {{ lang.getId() }}
@@ -35,7 +35,7 @@
 
     <div class="row-fluid">
         <div class="language_manage_header">
-            <h3><a href="/admin/languages" class='btn'>{{ "<< Back" | trans }}</a>
+            <h3><a href="{{ url("admin/languages") }}" class='btn'>{{ "<< Back" | trans }}</a>
                 | {{ "Manage language" | trans }}
                 "{{ lang.getName() }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>

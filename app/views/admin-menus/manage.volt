@@ -15,7 +15,7 @@
 
                     $.ajax({
                         type:"POST",
-                        url:'/admin/menus/orderItem',
+                        url:'{{ url("admin/menus/orderItem")}}',
                         data:{
                             'order':order
                         },
@@ -39,11 +39,10 @@
         }
 
         var requestAddItem = function () {
-            var url = '/admin/menus/createItem';
+            var url = '{{ url("admin/menus/createItem")}}';
             var data = {
                 'menu_id': {{ menu.getId() }}
-                {% if parent is defined %}
-                ,'parent_id': {{ parent.getId() }}
+                {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
                 {% endif %}
             };
 
@@ -52,22 +51,21 @@
 
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this menu item?" | trans }}')) {
-                {% if parent is defined %}
-                window.location.href = '/admin/menus/deleteItem/' + id + '?parent_id={{ parent.getId() }}';
-                {% else %}
-                window.location.href = '/admin/menus/deleteItem/' + id;
-                {% endif %}
+            {% if parent is defined %}
+                window.location.href = '{{ url("admin/menus/deleteItem/")}}' + id + '?parent_id={{ parent.getId() }}';
+            {% else %}
+                window.location.href = '{{ url("admin/menus/deleteItem/")}}' + id;
+            {% endif %}
 
             }
         }
 
         var editItem = function (id) {
-            var url = '/admin/menus/editItem';
+            var url = '{{ url("admin/menus/editItem")}}';
             var data = {
                 'id':id,
                 'menu_id': {{ menu.getId() }}
-                {% if parent is defined %}
-                ,'parent_id': {{ parent.getId() }}
+                {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
                 {% endif %}
             };
 
@@ -86,11 +84,12 @@
 
     <div class="row-fluid">
         <div class="menu_manage_header">
-            <h3><a href="/admin/menus" class='btn'>{{ "<< Back" | trans }}</a>
+            <h3><a href="{{ url("admin/menus")}}" class='btn'>{{ "<< Back" | trans }}</a>
                 {% if parent is defined %}
                     |
                     {% for p in parents %}
-                        <a href="/admin/menus/manage/{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}" class='btn'>{{ p.getTitle() }}</a>
+                        <a href="{{ url("admin/menus/manage/")}}{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}"
+                           class='btn'>{{ p.getTitle() }}</a>
                         |
                     {% endfor %}
                 {% endif %}
@@ -103,7 +102,8 @@
             <ul id="items">
                 {% for item in items %}
                     <li element_id="{{ item.getId() }}">
-                        <div class="item_title"><i class="icon-move"></i>{{ item.getTitle() }} | {{ 'Items: '|trans }}{{ item.getMenuItem().count() }}</div>
+                        <div class="item_title"><i class="icon-move"></i>{{ item.getTitle() }}
+                            | {{ 'Items: '|trans }}{{ item.getMenuItem().count() }}</div>
                         <div class="item_options">
                             <a class="btn btn-success" href="javascript:;"
                                onclick="manageItem({{ item.getId() }});">{{ 'Manage'|trans }}</a>
