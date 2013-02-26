@@ -106,7 +106,7 @@ body {
 .admin_pages_widgets {
     float: left;
     background: #cccccc;
-    width: 200px;
+    width: 195px;
     height: 600px;
     border: 1px solid black;
 }
@@ -181,7 +181,7 @@ body {
 .admin_pages_layout {
     float: right;
     background: #cccccc;
-    width: 756px;
+    width: 760px;
     height: 600px;
     border: 1px solid black;
     overflow-y: scroll;
