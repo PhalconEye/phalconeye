@@ -8,4 +8,4 @@ Website: [PhalconEye](http://phalconeye.dynns.com/)
 
 License
 -------
-PhalconEye is open-sourced software licensed under the New BSD License. See the LICENSE.txt file for more information.
+Phalcon Eye CMS is open-sourced software licensed under the New BSD License. See the LICENSE.txt file for more information.
