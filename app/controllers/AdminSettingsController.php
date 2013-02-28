@@ -83,6 +83,13 @@ class AdminSettingsController extends Controller
                 $this->modelsCache->delete($key);
             }
 
+            // clear view cache
+            $files = glob($this->config->application->view->compiledPath . '*'); // get all file names
+            foreach($files as $file){ // iterate files
+                if(is_file($file))
+                    @unlink($file); // delete file
+            }
+
             $form->addNotice('Cache cleared!');
             $form->setElementParam('clear_cache', 'value', null);
         }
@@ -127,6 +134,7 @@ class AdminSettingsController extends Controller
         $configText = var_export($this->config->toArray(), true);
         $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
         file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
+        $form->addNotice('Settings saved!');
     }
 }
 
