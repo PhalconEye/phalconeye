@@ -17,16 +17,21 @@
 /**
  * Provides small layer between session and services
  */
-class Api_Auth extends \Phalcon\Mvc\User\Plugin{
+class Api_Auth{
 
     private $_identity = 0;
+
+    /**
+     * @var \Phalcon\DiInterface
+     */
+    protected $_di;
 
     /**
      * @param $identity Current session identity
      */
     public function __construct($di){
-        $this->_dependencyInjector = $di;
-        $this->_identity = $this->session->get('identity', 0);
+        $this->_di = $di;
+        $this->_identity = $this->_di->get('session')->get('identity', 0);
     }
 
     /**
@@ -38,7 +43,7 @@ class Api_Auth extends \Phalcon\Mvc\User\Plugin{
      */
     public function authenticate($identity){
         $this->_identity = $identity;
-        $this->session->set('identity', $identity);
+        $this->_di->get('session')->set('identity', $identity);
     }
 
     /**
@@ -46,7 +51,7 @@ class Api_Auth extends \Phalcon\Mvc\User\Plugin{
      */
     public function clearAuth(){
         $this->_identity = 0;
-        $this->session->set('identity', 0);
+        $this->_di->get('session')->set('identity', 0);
     }
 
     /**

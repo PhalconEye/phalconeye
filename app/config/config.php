@@ -11,7 +11,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => true,
+    'debug' => false,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/library/Engine/',
     'controllersDir' => ROOT_PATH . '/app/controllers/',
@@ -22,7 +22,8 @@ return new \Phalcon\Config(array (
     array (
       'lifetime' => '86400',
       'prefix' => 'pe_',
-      'adapter' => 'Apc',
+      'adapter' => 'File',
+      'cacheDir' => ROOT_PATH . '/app/var/cache/',
     ),
     'logger' => 
     array (

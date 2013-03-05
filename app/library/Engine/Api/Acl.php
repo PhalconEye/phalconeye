@@ -14,7 +14,7 @@
  *
  */
 
-class Api_Acl extends \Phalcon\Mvc\User\Plugin{
+class Api_Acl{
 
     const ACL_CACHE_KEY = "acl_data.cache";
     const ROLE_TYPE_ADMIN = 'admin';
@@ -29,11 +29,16 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
     protected $_acl;
 
     /**
+     * @var \Phalcon\DiInterface
+     */
+    protected $_di;
+
+    /**
      * @param \Phalcon\DiInterface $di
      */
     public function __construct($di)
     {
-        $this->_dependencyInjector = $di;
+        $this->_di = $di;
     }
 
     /*
@@ -52,7 +57,7 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
     {
         if (!$this->_acl)
         {
-            $acl = $this->cacheData->get(self::ACL_CACHE_KEY);
+            $acl = $this->_di->get('cacheData')->get(self::ACL_CACHE_KEY);
             if ($acl === null){
                 $acl = new \Phalcon\Acl\Adapter\Memory();
                 $acl->setDefaultAction(\Phalcon\Acl::DENY);
@@ -68,7 +73,7 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
                 $acl->allow($roleAdminObject->getName(), self::ACL_ADMIN_AREA, 'access');
 
 
-                $this->cacheData->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache
+                $this->_di->get('cacheData')->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache
             }
 
 
@@ -82,7 +87,7 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
      * Clear acl cache. The system will rework acl from database
      */
     public function clearAcl(){
-        $this->cacheData->delete(self::ACL_CACHE_KEY);
+        $this->_di->get('cacheData')->delete(self::ACL_CACHE_KEY);
     }
 
     /**
@@ -98,7 +103,7 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
         // check admin area
         if (substr($controller,0, 5) == 'admin'){
             if ($acl->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
-                return  $this->dispatcher->forward(array(
+                return  $dispatcher->forward(array(
                     "controller" => 'error',
                     "action" => 'show404'
                 ));

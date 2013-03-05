@@ -76,6 +76,11 @@ class AdminSettingsController extends AdminController
 
         $data = $form->getData();
         if (!empty($data['clear_cache']) && $data['clear_cache'] = 1) {
+            $keys = $this->viewCache->queryKeys();
+            foreach ($keys as $key) {
+                $this->viewCache->delete($key);
+            }
+
             $keys = $this->cacheOutput->queryKeys();
             foreach ($keys as $key) {
                 $this->cacheOutput->delete($key);

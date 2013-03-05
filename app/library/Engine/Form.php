@@ -59,6 +59,9 @@ class Form
      */
     private $_requiredFields = array();
 
+    /**
+     * @var null|Phalcon\DiInterface
+     */
     public $di = null;
 
     private $_trans = null;

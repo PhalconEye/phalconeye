@@ -248,7 +248,7 @@ class Application
                 "dbname" => $config->database->name,
             ));
 
-            if ($config->application->debug || true) {
+            if ($config->application->debug) {
                 $eventsManager = new Phalcon\Events\Manager();
 
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "db.log");
@@ -306,9 +306,9 @@ class Application
     {
         $di = $this->_di;
         $di->set('dispatcher', function () use ($di, $config) {
-            $evtManager = $di->getShared('eventsManager');
+            $eventsManager = $di->getShared('eventsManager');
             if (!$config->application->debug) {
-                $evtManager->attach(
+                $eventsManager->attach(
                     "dispatch:beforeException", function ($event, $dispatcher, $exception) {
                     //The controller exists but the action not
                     if ($event->getType() == 'beforeNotFoundAction') {
@@ -332,17 +332,19 @@ class Application
                         }
                     }
                 });
+
+                $eventsManager->attach('dispatch', new Plugin_CacheAnnotation());
             }
 
             /**
              * Listening to events in the dispatcher using the
              * Acl plugin
              */
-            $evtManager->attach('dispatch', $di->get('acl'));
+            $eventsManager->attach('dispatch', $di->get('acl'));
 
             // Create dispatcher
             $dispatcher = new \Phalcon\Mvc\Dispatcher();
-            $dispatcher->setEventsManager($evtManager);
+            $dispatcher->setEventsManager($eventsManager);
             return $dispatcher;
         });
     }
@@ -356,6 +358,18 @@ class Application
     protected function initCache($config)
     {
         if (!$config->application->debug) {
+            $this->_di->set('viewCache', function () use ($config) {
+                // Get the parameters
+                $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+                $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+                $backEndOptions = $config->application->cache->toArray();
+
+                $frontCache = new \Phalcon\Cache\Frontend\Output($frontEndOptions);
+                $cache = new $cacheAdapter($frontCache, $backEndOptions);
+
+                return $cache;
+            });
+
             $this->_di->set('cacheOutput', function () use ($config) {
                 // Get the parameters
                 $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
