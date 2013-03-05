@@ -14,7 +14,10 @@
  *
  */
 
-class AdminLanguagesController extends Controller
+/**
+ * @RoutePrefix("/admin/languages", name="admin-languages")
+ */
+class AdminLanguagesController extends AdminController
 {
     CONST FLAGS_DIR = '/public/img/phalconeye/languages/';
 
@@ -39,6 +42,9 @@ class AdminLanguagesController extends Controller
 
     }
 
+    /**
+     * @Get("/", name="admin-languages")
+     */
     public function indexAction()
     {
         $currentPage = $this->request->getQuery('page', 'int', 1);
@@ -60,6 +66,9 @@ class AdminLanguagesController extends Controller
         $this->view->setVar('paginator', $page);
     }
 
+    /**
+     * @Route("/create", methods={"GET", "POST"}, name="admin-languages-create")
+     */
     public function createAction()
     {
         $form = new Form_Admin_Languages_Create();
@@ -94,6 +103,9 @@ class AdminLanguagesController extends Controller
         $this->response->redirect("admin/languages");
     }
 
+    /**
+     * @Route("/edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-edit")
+     */
     public function editAction($id)
     {
         $item = Language::findFirst($id);
@@ -122,6 +134,9 @@ class AdminLanguagesController extends Controller
         $this->response->redirect("admin/languages");
     }
 
+    /**
+     * @Get("/delete/{id:[0-9]+}", name="admin-languages-delete")
+     */
     public function deleteAction($id)
     {
         $item = Language::findFirst($id);
@@ -131,6 +146,9 @@ class AdminLanguagesController extends Controller
         return $this->response->redirect("admin/languages");
     }
 
+    /**
+     * @Get("/manage/{id:[0-9]+}", name="admin-languages-manage")
+     */
     public function manageAction($id)
     {
         $item = Language::findFirst($id);
@@ -159,6 +177,9 @@ class AdminLanguagesController extends Controller
 
     }
 
+    /**
+     * @Route("/create-item", methods={"GET", "POST"}, name="admin-languages-create-item")
+     */
     public function createItemAction()
     {
         $form = new Form_Admin_Languages_CreateItem();
@@ -179,9 +200,11 @@ class AdminLanguagesController extends Controller
         $this->view->setVar('created', $item);
     }
 
-    public function editItemAction()
+    /**
+     * @Route("/edit-item/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-edit-item")
+     */
+    public function editItemAction($id)
     {
-        $id = $this->request->get('id', 'int');
         $item = LanguageTranslation::findFirst($id);
 
         $form = new Form_Admin_Languages_EditItem($item);
@@ -200,6 +223,9 @@ class AdminLanguagesController extends Controller
         $this->view->setVar('edited', $form->getData());
     }
 
+    /**
+     * @Get("/delete-item/{id:[0-9]+}", name="admin-languages-delete-item")
+     */
     public function deleteItemAction($id)
     {
         $item = LanguageTranslation::findFirst($id);
@@ -215,6 +241,9 @@ class AdminLanguagesController extends Controller
         return $this->response->redirect("admin/languages");
     }
 
+    /**
+     * @Get("/compile", name="admin-languages-compile")
+     */
     public function compileAction()
     {
         // Prepare languages

@@ -14,8 +14,14 @@
  *
  */
 
+/**
+ * @RoutePrefix("")
+ */
 class IndexController extends Controller
 {
+    /**
+     * @Route("/", methods={"GET"}, name="home")
+     */
     public function indexAction()
     {
         // check lang flag

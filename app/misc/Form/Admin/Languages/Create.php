@@ -35,7 +35,7 @@ class Form_Admin_Languages_Create extends Form
 
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', '/admin/languages');
+        $this->addButtonLink('Cancel',  array('for' => 'admin-languages'));
 
     }
 }

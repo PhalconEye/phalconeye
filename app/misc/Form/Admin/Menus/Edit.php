@@ -26,7 +26,7 @@ class Form_Admin_Menus_Edit extends Form_Admin_Menus_Create
 
 
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', '/admin/menus');
+        $this->addButtonLink('Cancel', array('for' => 'admin-menus'));
 
     }
 }

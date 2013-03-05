@@ -28,7 +28,7 @@
 
                     $.ajax({
                         type:"POST",
-                        url:'{{ url("admin/menus/orderItem")}}',
+                        url:'{{ url(['for':'admin-menus-order'])}}',
                         data:{
                             'order':order
                         },
@@ -52,7 +52,7 @@
         }
 
         var requestAddItem = function () {
-            var url = '{{ url("admin/menus/createItem")}}';
+            var url = '{{ url(['for':'admin-menus-create-item'])}}';
             var data = {
                 'menu_id': {{ menu.getId() }}
                 {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
@@ -65,18 +65,17 @@
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this menu item?" | trans }}')) {
             {% if parent is defined %}
-                window.location.href = '{{ url("admin/menus/deleteItem/")}}' + id + '?parent_id={{ parent.getId() }}';
+                window.location.href = '{{ url(['for':'admin-menus-delete-item'])}}' + id + '?parent_id={{ parent.getId() }}';
             {% else %}
-                window.location.href = '{{ url("admin/menus/deleteItem/")}}' + id;
+                window.location.href = '{{ url(['for':'admin-menus-delete-item'])}}' + id;
             {% endif %}
 
             }
         }
 
         var editItem = function (id) {
-            var url = '{{ url("admin/menus/editItem")}}';
+            var url = '{{ url(['for':'admin-menus-edit-item'])}}' + id;
             var data = {
-                'id':id,
                 'menu_id': {{ menu.getId() }}
                 {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
                 {% endif %}
@@ -101,7 +100,7 @@
                 {% if parent is defined %}
                     |
                     {% for p in parents %}
-                        <a href="{{ url("admin/menus/manage/")}}{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}"
+                        <a href="{{ url(['for':'admin-menus-manage'])}}{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}"
                            class='btn'>{{ p.getTitle() }}</a>
                         |
                     {% endfor %}

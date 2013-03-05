@@ -13,13 +13,13 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Menus"|trans }}{% endblock %}
+{% block title %}{{ 'Roles'|trans }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this menu?" | trans }}')) {
-                window.location.href = '{{ url("admin/menus/delete/")}}' + id;
+            if (confirm('{{ "Are you really want to delete this role?" | trans}}')) {
+                window.location.href = '{{ url(['for':'admin-roles-delete'])}}' + id;
             }
         }
     </script>
@@ -27,18 +27,21 @@
 
 {% block content %}
     <div class="span3 admin-sidebar">
-        {{ navigation.render() }}
+        {{ navigationMain.render() }}
+        <br/>
+        {{ navigationCreation.render() }}
     </div>
 
     <div class="span9">
         <div class="row-fluid">
-            <h1>{{ 'Menus' | trans }}</h1>
+            <h1>{{ 'Roles' | trans }}</h1>
             <table class="table">
                 <thead>
                 <tr>
                     <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Title' | trans }}</th>
-                    <th>{{ 'Menu items' | trans }}</th>
+                    <th>{{ 'Name' | trans }}</th>
+                    <th>{{ 'Description' | trans }}</th>
+                    <th>{{ 'Is default?' | trans }}</th>
                     <th>{{ 'Options' | trans }}</th>
                 </tr>
                 </thead>
@@ -52,12 +55,20 @@
                             {{ item.getName() }}
                         </td>
                         <td>
-                            {{ item.getMenuItem().count() }}
+                            {{ item.getDescription() }}
                         </td>
                         <td>
-                            {{ link_to("admin/menus/manage/" ~ item.getId(), 'Manage' | trans) }}
-                            {{ link_to("admin/menus/edit/" ~ item.getId(), 'Edit' | trans) }}
+                            {% if item.getIsDefault() %}
+                            {{ 'Yes' |trans }}
+                            {% else %}
+                            {{ 'No' |trans }}
+                            {% endif %}
+                        </td>
+                        <td>
+                            {{ link_to(['for':'admin-roles-edit', 'id':item.getId()], 'Edit' | trans) }}
+                            {% if not item.getUndeletable() %}
                             {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}

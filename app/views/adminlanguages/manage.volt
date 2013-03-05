@@ -19,12 +19,12 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
-                window.location.href = '{{ url("admin/languages/deleteItem/") }}' + id + '?lang={{ lang.getId() }}';
+                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.getId() }}';
             }
         }
 
         var requestAddItem = function () {
-            var url = '{{ url("admin/languages/createItem")}}';
+            var url = '{{ url(['for':'admin-languages-create-item'])}}';
             var data = {
                 'language_id': {{ lang.getId() }}
             };
@@ -33,7 +33,7 @@
         }
 
         var editItem = function (id) {
-            var url = '{{ url("admin/languages/editItem")}}';
+            var url = '{{ url(['for':'admin-languages-edit-item'])}}' + id;
             var data = {
                 'id':id,
                 'language_id': {{ lang.getId() }}

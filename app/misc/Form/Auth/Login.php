@@ -36,9 +36,7 @@ class Form_Auth_Login extends Form
         ));
 
         $this->addButton('Login', true);
-        $this->addButton('Register', false, array(
-            'onclick' => "window.location.href='/register'; return false;"
-        ));
+        $this->addButtonLink('Register', array('for' => 'register'));
 
     }
 }

@@ -84,7 +84,7 @@
     var savePage = function () {
         if (!notSaved) return;
 
-        $.getJSON("{{ url("admin/pages/save-layout/")}}{{currentPage.getId()}}",
+        $.getJSON("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.getId()}}",
                 {
                     format:"json",
                     layout:currentLayoutType,
@@ -101,7 +101,7 @@
 
         element.parent().parent().attr('id', 'widget_editing');
 
-        var url = '{{ url("admin/pages/widgetOptions")}}';
+        var url = '{{ url(['for':'admin-pages-widget-options'])}}';
         var data = {
             'id': element.attr('content_id'),
             'widget_id': element.attr('widget_current_id'),
@@ -295,7 +295,7 @@
     <div class="row-fluid">
         <div class="manage_page_header">
             <div class="manage_page_header_label">
-                <h3><a href="{{ url("admin/pages")}}" class='btn'>{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
+                <h3><a href="{{ url(['for':'admin-pages'])}}" class='btn'>{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
                 <a href="{% if currentPage.getType() is null and currentPage.getUrl() is not null %}/page/{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}" target="_blank">{{ currentPage.getTitle() }}</a>
             </div>
 

@@ -19,7 +19,7 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this language?" | trans}}')) {
-                window.location.href = '{{ url("admin/languages/delete/")}}' + id;
+                window.location.href = '{{ url(['for':'admin-languages-delete'])}}' + id;
             }
         }
     </script>
@@ -34,7 +34,7 @@
         <div class="row-fluid">
             <div class="languages_header">
                 <h1>{{ 'Languages' | trans }}</h1>
-                <button onclick="window.location.href='{{ url("admin/languages/compile") }}'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
+                <button onclick="window.location.href='{{ url(['for':'admin-languages-compile'])}}'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
                 <div class="clear"></div>
             </div>
             <table class="table">
@@ -63,8 +63,8 @@
                             <img alt='' src='{{ item.getIcon() }}'/>
                         </td>
                         <td>
-                            {{ link_to("admin/languages/edit/" ~ item.getId(), 'Edit' | trans) }}
-                            {{ link_to("admin/languages/manage/" ~ item.getId(), 'Manage' | trans) }}
+                            {{ link_to(['for':'admin-languages-manage', 'id':item.getId()], 'Manage' | trans) }}
+                            {{ link_to(['for':'admin-languages-edit', 'id':item.getId()], 'Edit' | trans) }}
                             {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
                         </td>
                     </tr>

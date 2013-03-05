@@ -41,9 +41,7 @@ class Form_Admin_Users_RoleCreate extends Form
 
 
         $this->addButton('Create', true);
-        $this->addButton('Cancel', false, array(
-            'onclick' => "window.location.href='/admin/users/roles'; return false;"
-        ));
+        $this->addButtonLink('Cancel', array('for' => 'admin-roles'));
 
     }
 }

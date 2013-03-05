@@ -13,7 +13,10 @@
  *
  */
 
-class AdminUsersController extends Controller
+/**
+ * @RoutePrefix("/admin/users", name="admin-users")
+ */
+class AdminUsersController extends AdminController
 {
     public function init()
     {
@@ -57,6 +60,9 @@ class AdminUsersController extends Controller
         $this->view->setVar('navigationCreation', $navigation);
     }
 
+    /**
+     * @Get("/", name="admin-users")
+     */
     public function indexAction()
     {
         $currentPage = $this->request->getQuery('page', 'int', 1);
@@ -78,6 +84,9 @@ class AdminUsersController extends Controller
         $this->view->setVar('paginator', $page);
     }
 
+    /**
+     * @Route("/create", methods={"GET", "POST"}, name="admin-users-create")
+     */
     public function createAction()
     {
         $form = new Form_Admin_Users_Create();
@@ -95,6 +104,9 @@ class AdminUsersController extends Controller
         $this->response->redirect("admin/users");
     }
 
+    /**
+     * @Route("/edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-users-edit")
+     */
     public function editAction($id)
     {
         $item = User::findFirst($id);
@@ -120,6 +132,9 @@ class AdminUsersController extends Controller
         $this->response->redirect("admin/users");
     }
 
+    /**
+     * @Get("/delete/{id:[0-9]+}", name="admin-users-delete")
+     */
     public function deleteAction($id)
     {
         $item = User::findFirst($id);
@@ -129,6 +144,9 @@ class AdminUsersController extends Controller
         return $this->response->redirect("admin/users");
     }
 
+    /**
+     * @Get("/roles", name="admin-roles")
+     */
     public function rolesAction()
     {
         $currentPage = $this->request->getQuery('page', 'int', 1);
@@ -150,6 +168,9 @@ class AdminUsersController extends Controller
         $this->view->setVar('paginator', $page);
     }
 
+    /**
+     * @Route("/roles-create", methods={"GET", "POST"}, name="admin-roles-create")
+     */
     public function rolesCreateAction()
     {
         $form = new Form_Admin_Users_RoleCreate();
@@ -172,6 +193,9 @@ class AdminUsersController extends Controller
         $this->response->redirect("admin/users/roles");
     }
 
+    /**
+     * @Route("/roles-edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-roles-edit")
+     */
     public function rolesEditAction($id)
     {
         $item = Role::findFirst($id);
@@ -199,6 +223,9 @@ class AdminUsersController extends Controller
         $this->response->redirect("admin/users/roles");
     }
 
+    /**
+     * @Get("/roles-delete/{id:[0-9]+}", name="admin-roles-delete")
+     */
     public function rolesDeleteAction($id)
     {
         $item = Role::findFirst($id);

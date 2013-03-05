@@ -13,7 +13,10 @@
  *
  */
 
-class AdminMenusController extends Controller
+/**
+ * @RoutePrefix("/admin/menus")
+ */
+class AdminMenusController extends AdminController
 {
     public function init()
     {
@@ -35,6 +38,9 @@ class AdminMenusController extends Controller
         $this->view->setVar('navigation', $navigation);
     }
 
+    /**
+     * @Get("/", name="admin-menus")
+     */
     public function indexAction()
     {
         $currentPage = $this->request->getQuery('page', 'int', 1);
@@ -56,6 +62,9 @@ class AdminMenusController extends Controller
         $this->view->setVar('paginator', $page);
     }
 
+    /**
+     * @Route("/create", methods={"GET", "POST"}, name="admin-menus-create")
+     */
     public function createAction()
     {
         $form = new Form_Admin_Menus_Create();
@@ -68,6 +77,9 @@ class AdminMenusController extends Controller
         $this->response->redirect("admin/menus/manage/" . $form->getData()->getId());
     }
 
+    /**
+     * @Route("/edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-menus-edit")
+     */
     public function editAction($id)
     {
         $item = Menu::findFirst($id);
@@ -85,6 +97,9 @@ class AdminMenusController extends Controller
         $this->response->redirect("admin/menus");
     }
 
+    /**
+     * @Get("/delete/{id:[0-9]+}", name="admin-menus-delete")
+     */
     public function deleteAction($id)
     {
         $item = Menu::findFirst($id);
@@ -94,6 +109,9 @@ class AdminMenusController extends Controller
         return $this->response->redirect("admin/menus");
     }
 
+    /**
+     * @Get("/manage/{id:[0-9]+}", name="admin-menus-manage")
+     */
     public function manageAction($id)
     {
         $item = Menu::findFirst($id);
@@ -133,6 +151,9 @@ class AdminMenusController extends Controller
 
     }
 
+    /**
+     * @Route("/create-item", methods={"GET", "POST"}, name="admin-menus-create-item")
+     */
     public function createItemAction()
     {
         $form = new Form_Admin_Menus_CreateItem();
@@ -176,9 +197,11 @@ class AdminMenusController extends Controller
         $this->view->setVar('created', $item);
     }
 
-    public function editItemAction()
+    /**
+     * @Route("/edit-item/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-menus-edit-item")
+     */
+    public function editItemAction($id)
     {
-        $id = $this->request->get('id', 'int');
         $item = MenuItem::findFirst($id);
 
         $form = new Form_Admin_Menus_EditItem($item);
@@ -220,7 +243,9 @@ class AdminMenusController extends Controller
         $this->view->setVar('edited', $form->getData());
     }
 
-
+    /**
+     * @Get("/delete-item/{id:[0-9]+}", name="admin-menus-delete-item")
+     */
     public function deleteItemAction($id)
     {
         $item = MenuItem::findFirst($id);
@@ -241,7 +266,10 @@ class AdminMenusController extends Controller
         return $this->response->redirect("admin/menus");
     }
 
-    public function orderItemAction()
+    /**
+     * @Get("/order", name="admin-menus-order")
+     */
+    public function orderAction()
     {
         $order = $this->request->get('order', null, array());
         foreach($order as $index => $id){
@@ -250,6 +278,9 @@ class AdminMenusController extends Controller
         $this->view->disable();
     }
 
+    /**
+     * @Get("/suggest", name="admin-menus-suggest")
+     */
     public function suggestAction(){
         $this->view->disable();
         $query = $this->request->get('query');

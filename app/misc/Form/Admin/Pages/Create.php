@@ -43,9 +43,7 @@ class Form_Admin_Pages_Create extends Form
 
 
         $this->addButton('Create', true);
-        $this->addButton('Cancel', false, array(
-            'onclick' => 'history.go(-1); return false;'
-        ));
+        $this->addButtonLink('Cancel', array('for' => 'admin-pages'));
 
     }
 }

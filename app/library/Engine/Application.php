@@ -14,23 +14,6 @@
  *
  */
 
-use \Phalcon\Config\Adapter\Ini as PhConfig;
-use \Phalcon\Loader as PhLoader;
-use \Phalcon\Flash\Direct as PhFlash;
-use \Phalcon\Logger\Adapter\File as PhLogger;
-use \Phalcon\Db\Adapter\Pdo\Mysql as PhMysql;
-use \Phalcon\Session\Adapter\Files as PhSession;
-use \Phalcon\Cache\Frontend as PhCacheFront;
-use \Phalcon\Cache\Backend as PhCacheBack;
-use \Phalcon\Mvc\Application as PhApplication;
-use \Phalcon\Mvc\Dispatcher as PhDispatcher;
-use \Phalcon\Mvc\Router as PhRouter;
-use \Phalcon\Mvc\Url as PhUrl;
-use \Phalcon\Mvc\View as PhView;
-use \Phalcon\Mvc\View\Engine\Volt as PhVolt;
-use \Phalcon\Mvc\Model\Metadata\Memory as PhMetadataMemory;
-use \Phalcon\Events\Manager as PhEventsManager;
-use \Phalcon\Exception as PhException;
 
 class Application
 {
@@ -80,7 +63,7 @@ class Application
             $this->{'init' . $service}($this->_config);
         }
 
-        $application = new PhApplication();
+        $application = new \Phalcon\Mvc\Application();
         $application->setDI($this->_di);
 
         return $application->handle()->getContent();
@@ -96,7 +79,7 @@ class Application
     protected function initLoader($config)
     {
         // Creates the autoloader
-        $loader = new PhLoader();
+        $loader = new \Phalcon\Loader();
 
         // Register the namespaces
         $loader
@@ -136,7 +119,7 @@ class Application
          * application
          */
         $this->_di->set('url', function () use ($config) {
-            $url = new PhUrl();
+            $url = new \Phalcon\Mvc\Url();
             $url->setBaseUri($config->application->baseUri);
             return $url;
         });
@@ -149,21 +132,38 @@ class Application
      */
     protected function initRouter($config)
     {
-        $di = $this->_di;
+        $routerCacheKey = 'router_data.cache';
+        $router = $this->_di->get('cacheData')->get($routerCacheKey);
+        if ($config->application->debug || $router === null) {
+            $saveToCache = false;
+            if ($router === null)
+                $saveToCache = true;
 
-        $this->_di->set('router', function () use ($config, $di) {
-            $router = new PhRouter();
+            //Use the annotations router
+            $router = new \Phalcon\Mvc\Router\Annotations(false);
+
             $router->add('/:controller/:action', array(
                 'controller' => 1,
                 'action' => 2,
             ));
 
-            foreach ($config->router as $path => $routerSettings) {
-                $router->add($path, $routerSettings->toArray());
+            //Read the annotations from controllers
+            $files = scandir($config->application->controllersDir); // get all file names
+            foreach ($files as $file) { // iterate files
+                if ($file == "." || $file == "..") continue;
+                if (strpos($file, 'Controller.php') !== false)
+                    $router->addResource(str_replace('Controller.php', '', $file));
             }
 
-            return $router;
-        });
+            if ($saveToCache){
+                $this->_di->get('cacheData')->save($routerCacheKey, $router, 2592000); // 30 days cache
+            }
+        }
+
+
+
+        $this->_di->set('router', $router);
+
     }
 
     /**
@@ -225,7 +225,7 @@ class Application
     {
         if ($config->application->logger->enabled) {
             $this->_di->set('logger', function () use ($config) {
-                $logger = new PhLogger($config->application->logger->path . "main.log");
+                $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "main.log");
                 $formatter = new Phalcon\Logger\Formatter\Line($config->application->logger->format);
                 $logger->setFormatter($formatter);
                 return $logger;
@@ -241,7 +241,7 @@ class Application
     protected function initDatabase($config)
     {
         $this->_di->set('db', function () use ($config) {
-            $connection = new PhMysql(array(
+            $connection = new \Phalcon\Db\Adapter\Pdo\Mysql(array(
                 "host" => $config->database->host,
                 "username" => $config->database->username,
                 "password" => $config->database->password,
@@ -287,7 +287,7 @@ class Application
     protected function initSession()
     {
         $this->_di->set('session', function () {
-            $session = new PhSession();
+            $session = new \Phalcon\Session\Adapter\Files();
             $session->start();
             return $session;
         }, true);
@@ -362,7 +362,7 @@ class Application
                 $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
                 $backEndOptions = $config->application->cache->toArray();
 
-                $frontCache = new PhCacheFront\Output($frontEndOptions);
+                $frontCache = new \Phalcon\Cache\Frontend\Output($frontEndOptions);
                 $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
                 return $cache;
@@ -374,7 +374,7 @@ class Application
                 $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
                 $backEndOptions = $config->application->cache->toArray();
 
-                $frontCache = new PhCacheFront\Data($frontEndOptions);
+                $frontCache = new \Phalcon\Cache\Frontend\Data($frontEndOptions);
                 $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
                 return $cache;
@@ -386,13 +386,12 @@ class Application
                 $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
                 $backEndOptions = $config->application->cache->toArray();
 
-                $frontCache = new PhCacheFront\Data($frontEndOptions);
+                $frontCache = new \Phalcon\Cache\Frontend\Data($frontEndOptions);
                 $cache = new $cacheAdapter($frontCache, $backEndOptions);
 
                 return $cache;
             });
-        }
-        else{
+        } else {
             // Create a dummy cache for system.
             // System will work correctly and the data will be always current for all adapters
             $dummyCache = new Cache_Dummy(null);

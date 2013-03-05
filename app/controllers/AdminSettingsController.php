@@ -13,9 +13,14 @@
  *
  */
 
-class AdminSettingsController extends Controller
+/**
+ * @RoutePrefix("/admin/settings", name="admin-languages")
+ */
+class AdminSettingsController extends AdminController
 {
-
+    /**
+     * @Route("/", methods={"GET", "POST"}, name="admin-settings-general")
+     */
     public function indexAction()
     {
         $form = new Form_Admin_Settings_System();
@@ -29,6 +34,9 @@ class AdminSettingsController extends Controller
         Settings::setSettings($data);
     }
 
+    /**
+     * @Route("/performance", methods={"GET", "POST"}, name="admin-settings-performance")
+     */
     public function performanceAction()
     {
         $form = new Form_Admin_Settings_Performance();

@@ -15,6 +15,9 @@
 
 class AuthController extends Controller
 {
+    /**
+     * @Route("/login", methods={"GET", "POST"}, name="login")
+     */
     public function loginAction()
     {
         if (User::getViewer()->getId())
@@ -49,6 +52,9 @@ class AuthController extends Controller
 
     }
 
+    /**
+     * @Route("/logout", methods={"GET", "POST"}, name="logout")
+     */
     public function logoutAction()
     {
         if (User::getViewer()->getId())
@@ -57,6 +63,9 @@ class AuthController extends Controller
         $this->response->redirect()->send();
     }
 
+    /**
+     * @Route("/register", methods={"GET", "POST"}, name="register")
+     */
     public function registerAction()
     {
         if (User::getViewer()->getId())

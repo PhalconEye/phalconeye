@@ -56,9 +56,7 @@ class Form_Auth_Register extends Form
         ));
 
         $this->addButton('Register', true);
-        $this->addButton('Cancel', false, array(
-            'onclick' => "window.location.href='/'; return false;"
-        ));
+        $this->addButtonLink('Cancel', array('for' => 'home'));
 
     }
 }

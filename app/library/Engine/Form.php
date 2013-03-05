@@ -608,7 +608,7 @@ class Form
                 }
 
                 if (!empty($button['is_link']) && $button['is_link'] == true) {
-                    $body .= sprintf('<a href="%s" %s>%s</a>', $button['href'], $attribs, $this->_trans->_($button['name']));
+                    $body .= sprintf('<a href="%s" %s>%s</a>', $this->di->get('url')->get($button['href']), $attribs, $this->_trans->_($button['name']));
                 } else {
                     $body .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
                 }

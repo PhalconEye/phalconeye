@@ -19,7 +19,7 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this user?" | trans}}')) {
-                window.location.href = '{{ url("admin/users/delete/")}}' + id;
+                window.location.href = '{{ url(['for':'admin-users-delete'])}}' + id;
             }
         }
     </script>
@@ -65,7 +65,7 @@
                             {{ item.getCreationDate() }}
                         </td>
                         <td>
-                            {{ link_to("admin/users/edit/" ~ item.getId(), 'Edit' | trans) }}
+                            {{ link_to(['for':'admin-users-edit', 'id':item.getId()], 'Edit' | trans) }}
                             {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
                         </td>
                     </tr>

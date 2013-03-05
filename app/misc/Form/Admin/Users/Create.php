@@ -38,9 +38,7 @@ class Form_Admin_Users_Create extends Form
 
 
         $this->addButton('Create', true);
-        $this->addButton('Cancel', false, array(
-            'onclick' => "window.location.href='/admin/users'; return false;"
-        ));
+        $this->addButtonLink('Cancel', array('for' => 'admin-users'));
 
     }
 }

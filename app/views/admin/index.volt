@@ -19,8 +19,8 @@
     <script type="text/javascript">
         var setMode = function(debug){
             $.ajax({
-                type:"POST",
-                url:'{{ url("admin/index/mode")}}',
+                type:"get",
+                url:'{{ url(['for':'admin-mode'])}}',
                 data:{
                     'debug':debug
                 },

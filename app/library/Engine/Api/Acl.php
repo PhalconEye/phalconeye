@@ -68,7 +68,7 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
                 $acl->allow($roleAdminObject->getName(), self::ACL_ADMIN_AREA, 'access');
 
 
-                $this->cacheData->save(self::ACL_CACHE_KEY, $acl, 10000000);
+                $this->cacheData->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache
             }
 
 
@@ -93,6 +93,17 @@ class Api_Acl extends \Phalcon\Mvc\User\Plugin{
         $viewer = User::getViewer();
         $acl = $this->_();
 
+        $controller = $dispatcher->getControllerName();
+
+        // check admin area
+        if (substr($controller,0, 5) == 'admin'){
+            if ($acl->isAllowed($viewer->getRole()->getName(), Api_Acl::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+                return  $this->dispatcher->forward(array(
+                    "controller" => 'error',
+                    "action" => 'show404'
+                ));
+            }
+        }
 
     }
 }

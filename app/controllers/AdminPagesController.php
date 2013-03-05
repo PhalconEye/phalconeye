@@ -13,7 +13,10 @@
  *
  */
 
-class AdminPagesController extends Controller
+/**
+ * @RoutePrefix("/admin/pages", name="admin-pages")
+ */
+class AdminPagesController extends AdminController
 {
     public function init()
     {
@@ -35,6 +38,9 @@ class AdminPagesController extends Controller
         $this->view->setVar('navigation', $navigation);
     }
 
+    /**
+     * @Get("/", name="admin-pages")
+     */
     public function indexAction()
     {
         // index page logic
@@ -57,6 +63,9 @@ class AdminPagesController extends Controller
         $this->view->setVar('paginator', $page);
     }
 
+    /**
+     * @Route("/create", methods={"GET", "POST"}, name="admin-pages-create")
+     */
     public function createAction()
     {
         $form = new Form_Admin_Pages_Create();
@@ -76,6 +85,9 @@ class AdminPagesController extends Controller
         $this->response->redirect("admin/pages/manage/" . $form->getData()->getId());
     }
 
+    /**
+     * @Route("/edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-pages-edit")
+     */
     public function editAction($id)
     {
         $page = null;
@@ -102,6 +114,9 @@ class AdminPagesController extends Controller
         $this->response->redirect("admin/pages");
     }
 
+    /**
+     * @Get("/delete/{id:[0-9]+}", name="admin-pages-delete")
+     */
     public function deleteAction($id)
     {
         $page = null;
@@ -113,7 +128,9 @@ class AdminPagesController extends Controller
         return $this->response->redirect("admin/pages");
     }
 
-
+    /**
+     * @Get("/manage/{id:[0-9]+}", name="admin-pages-manage")
+     */
     public function manageAction($id)
     {
         $page = null;
@@ -165,6 +182,9 @@ class AdminPagesController extends Controller
         $this->view->setVar('currentPageWidgets', json_encode($currentPageWidgets));
     }
 
+    /**
+     * @Route("/widget-options", methods={"GET", "POST"}, name="admin-pages-widget-options")
+     */
     public function widgetOptionsAction()
     {
         $id = $this->request->get('id', 'int', 0);
@@ -220,6 +240,9 @@ class AdminPagesController extends Controller
         $this->view->setVar('page_id', $page_id);
     }
 
+    /**
+     * @Route("/save-layout/{id:[0-9]+}", methods={"GET"}, name="admin-pages-save-layout")
+     */
     public function saveLayoutAction($id)
     {
         $response = new Phalcon\Http\Response();
@@ -237,6 +260,9 @@ class AdminPagesController extends Controller
         return $response->send();
     }
 
+    /**
+     * @Route("/suggest", methods={"get"}, name="admin-pages-suggest")
+     */
     public function suggestAction()
     {
         $this->view->disable();
