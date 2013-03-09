@@ -31,11 +31,11 @@ class Widget_HtmlBlock_Controller extends Widget_Controller{
 //        $form->setAttrib('style', 'width: 700px;');
 
         $form->addElement('textField', 'title', array(
-            'label' => $this->di->get('trans')->_('Title')
+            'label' => 'Title'
         ));
 
         $form->addElement('textArea', 'html', array(
-            'label' => $this->di->get('trans')->_('HTML block')
+            'label' => 'HTML block'
         ));
 
         $form->addElement('html', 'ckeditor',

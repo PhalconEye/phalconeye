@@ -61,6 +61,7 @@ class Role extends \Phalcon\Mvc\Model
     public function initialize()
     {
         $this->hasMany("id", "User", "role_id");
+        $this->hasMany("id", "Access", "role_id");
     }
 
     /**
@@ -173,6 +174,14 @@ class Role extends \Phalcon\Mvc\Model
         return $this->undeletable;
     }
 
+    /**
+     * Returns the value of field type
+     *
+     * @return string
+     */
+    public function getType(){
+        return $this->type;
+    }
 
     public function getSource()
     {
@@ -183,6 +192,13 @@ class Role extends \Phalcon\Mvc\Model
         if (empty($this->is_default)){
             $this->is_default = 0;
         }
+    }
+
+    public function beforeDelete(){
+        // cleanup acl
+        $this->_modelsManager->executeQuery(
+            "DELETE FROM Access WHERE role_id = ".$this->getId().""
+        );
     }
 
     /**

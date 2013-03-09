@@ -74,12 +74,15 @@ class Controller extends \Phalcon\Mvc\Controller
         }
 
 
-        if (!$page) {
+        if (!$page || !$page->isAllowed()) {
             return $this->dispatcher->forward(array(
                 'controller' => 'error',
                 'action' => 'show404'
             ));
         }
+
+        // increment views
+        $page->incrementViews();
 
         // resort content by sides
         $content = array();

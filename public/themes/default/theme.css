@@ -250,3 +250,8 @@ form .form_footer .btn + .btn{
 .header_auth{
     float: right;
 }
+
+.page_views{
+    padding: 10px;
+    text-align: center;
+}

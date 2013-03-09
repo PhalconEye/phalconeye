@@ -192,6 +192,12 @@ class AdminMenusController extends AdminController
 
         if ($orderItem->getId() != $item->getId())
             $item->setItemOrder($orderItem->getItemOrder() + 1);
+
+        $roles = $this->request->get('roles');
+        if ($roles == null){
+            $item->setRoles(array());
+        }
+
         $item->save();
 
         $this->view->setVar('created', $item);
@@ -238,6 +244,12 @@ class AdminMenusController extends AdminController
         } else {
             $item->setUrl(null);
         }
+
+        $roles = $this->request->get('roles');
+        if ($roles == null){
+            $item->setRoles(array());
+        }
+
         $item->save();
 
         $this->view->setVar('edited', $form->getData());

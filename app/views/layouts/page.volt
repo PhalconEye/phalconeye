@@ -99,6 +99,13 @@
     {% endif %}
 
 
+    {% if helper('Allowed', 'Page', 'show_views') %}
+        <div class="page_views">{{ 'View count:'|trans }}{{ page.getViewCount() }}</div>
+    {% endif %}
+
+    {{ helper('GetAllowed', 'Page', 'page_footer') }}
+
+
     <div class="clear"></div>
 {% endblock %}
 

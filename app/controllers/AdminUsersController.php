@@ -32,11 +32,7 @@ class AdminUsersController extends AdminController
             'roles' => array(
                 'href' => 'admin/users/roles',
                 'title' => 'Roles'
-            ),
-//            'access' => array(
-//                'href' => 'admin/access',
-//                'title' => 'User access'
-//            )
+            )
         ))
             ->setActiveItem($this->dispatcher->getActionName());
 

@@ -32,6 +32,11 @@ class Form_Admin_Menus_CreateItem extends Form
         }
 
         parent::__construct($model);
+
+        $this->setElementAttrib('roles', 'multiple', 'multiple');
+        $this->setElementParam('roles', 'options', Role::find());
+        $this->setElementParam('roles', 'using', array('id', 'name'));
+        $this->setElementParam('roles', 'description', 'If no value is selected, will be allowed to all (also as all selected).');
     }
 
     public function init()

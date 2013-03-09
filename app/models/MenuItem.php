@@ -72,6 +72,11 @@ class MenuItem extends \Phalcon\Mvc\Model
      */
     protected $languages;
 
+    /**
+     * @var string
+     * @form_type select
+     */
+    protected $roles = null;
 
     public function initialize()
     {
@@ -159,6 +164,15 @@ class MenuItem extends \Phalcon\Mvc\Model
         $this->languages = $languages;
     }
 
+    /**
+     * Method to set the value of field roles
+     *
+     * @param string $roles
+     */
+    public function setRoles($roles = array())
+    {
+        $this->roles = json_encode($roles);
+    }
 
     /**
      * Returns the value of field id
@@ -264,6 +278,17 @@ class MenuItem extends \Phalcon\Mvc\Model
         return $this->languages;
     }
 
+
+    /**
+     * Returns the value of field roles
+     *
+     * @return string
+     */
+    public function getRoles()
+    {
+        return json_decode($this->roles);
+    }
+
     public function getSource()
     {
         return "menu_items";
@@ -284,6 +309,13 @@ class MenuItem extends \Phalcon\Mvc\Model
         return $flag;
     }
 
+
+    public function beforeSave(){
+        if (is_array($this->roles)){
+            $this->roles = json_encode($this->roles);
+        }
+    }
+
     public function getHref(){
         if ($this->page_id){
             return "page/{$this->page_id}";
@@ -294,5 +326,12 @@ class MenuItem extends \Phalcon\Mvc\Model
         }
 
         return 'javascript:;';
+    }
+
+    public function isAllowed(){
+        $viewer = User::getViewer();
+        $roles = $this->getRoles();
+        if (empty($roles)) return true;
+        return in_array($viewer->getRoleId(), $roles);
     }
 }

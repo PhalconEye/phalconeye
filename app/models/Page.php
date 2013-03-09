@@ -14,6 +14,11 @@
  *
  */
 
+/**
+ * Dynamic Page
+ *
+ * @Acl(actions={"show_views"}, options={"page_footer"})
+ */
 class Page extends \Phalcon\Mvc\Model
 {
 
@@ -67,6 +72,12 @@ class Page extends \Phalcon\Mvc\Model
      *
      */
     protected $controller = null;
+
+    /**
+     * @var string
+     * @form_type select
+     */
+    protected $roles = null;
 
     /**
      * @var int
@@ -143,6 +154,16 @@ class Page extends \Phalcon\Mvc\Model
     public function setController($controller)
     {
         $this->controller = $controller;
+    }
+
+    /**
+     * Method to set the value of field roles
+     *
+     * @param string $roles
+     */
+    public function setRoles($roles = array())
+    {
+        $this->roles = json_encode($roles);
     }
 
     /**
@@ -237,6 +258,16 @@ class Page extends \Phalcon\Mvc\Model
     }
 
     /**
+     * Returns the value of field roles
+     *
+     * @return string
+     */
+    public function getRoles()
+    {
+        return json_decode($this->roles);
+    }
+
+    /**
      * Returns the value of field view_count
      *
      * @return int
@@ -270,6 +301,7 @@ class Page extends \Phalcon\Mvc\Model
                 if ($ex_widget->getId() == $item["id"]) {
                     $ex_widget->setLayout($item["layout"]);
                     $ex_widget->setWidgetOrder($orders[$item["layout"]]);
+                    $ex_widget->setRoles($item["roles"]);
                     $ex_widget->setParams($item["params"]);
                     $ex_widget->save();
                     $founded = true;
@@ -294,6 +326,7 @@ class Page extends \Phalcon\Mvc\Model
                 $content->setPageId($this->id);
                 $content->setWidgetId($item["widget_id"]);
                 $content->setLayout($item["layout"]);
+                $content->setRoles($item["roles"]);
                 $content->setParams($item["params"]);
                 $content->setWidgetOrder($orders[$item["layout"]]);
                 $content->save();
@@ -335,6 +368,18 @@ class Page extends \Phalcon\Mvc\Model
         ));
     }
 
+    public function incrementViews(){
+        $this->view_count++;
+        $this->save();
+    }
+
+    public function isAllowed(){
+        $viewer = User::getViewer();
+        $roles = $this->getRoles();
+        if (empty($roles)) return true;
+        return in_array($viewer->getRoleId(), $roles);
+    }
+
     public function getSource()
     {
         return "pages";
@@ -366,6 +411,12 @@ class Page extends \Phalcon\Mvc\Model
     public function beforeDelete()
     {
         $this->getWidgets(false)->delete();
+    }
+
+    public function beforeSave(){
+        if (is_array($this->roles)){
+            $this->roles = json_encode($this->roles);
+        }
     }
 
 }

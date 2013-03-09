@@ -53,6 +53,13 @@ class Widget extends \Phalcon\Mvc\Model
      */
     protected $is_paginated;
 
+
+    /**
+     * @var integer
+     *
+     */
+    protected $is_acl_controlled;
+
     /**
      * @var string
      *
@@ -119,6 +126,15 @@ class Widget extends \Phalcon\Mvc\Model
         $this->is_paginated = $is_paginated;
     }
 
+    /**
+     * Method to set the value of field is_acl_controlled
+     *
+     * @param integer $is_acl_controlled
+     */
+    public function setIsAclControlled($is_acl_controlled)
+    {
+        $this->is_acl_controlled = $is_acl_controlled;
+    }
     /**
      * Method to set the value of field admin_form
      *
@@ -188,6 +204,16 @@ class Widget extends \Phalcon\Mvc\Model
     public function getIsPaginated()
     {
         return $this->is_paginated;
+    }
+
+    /**
+     * Returns the value of field is_acl_controlled
+     *
+     * @return integer
+     */
+    public function getIsAclControlled()
+    {
+        return $this->is_acl_controlled;
     }
 
     /**

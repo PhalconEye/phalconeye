@@ -30,7 +30,7 @@ class Form_Admin_Users_RoleCreate extends Form
 
         parent::__construct($model);
 
-        $this->setElementParam('is_default', 'value', 1);
+        $this->setElementParam('is_default', 'options', 1);
     }
 
     public function init()

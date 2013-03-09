@@ -64,7 +64,7 @@ class Widget_Element
     }
 
     public function render($action = 'index'){
-        if (!$this->_widget){
+        if (!$this->_widget || !$this->isAllowed()){
             return '';
         }
 
@@ -81,5 +81,11 @@ class Widget_Element
            return '';
 
         return $controller->view->getRender('', 'index');
+    }
+
+    private function isAllowed(){
+        $viewer = User::getViewer();
+        if (empty($this->_widgetParams['roles']) || !is_array($this->_widgetParams['roles'])) return true;
+        return in_array($viewer->getRoleId(), $this->_widgetParams['roles']);
     }
 }

@@ -16,6 +16,11 @@
 
 use Phalcon\Tag as Tag;
 
+/**
+ * Class Form
+ *
+ * Will be replaced with \Phalcon\Forms\Form
+ */
 class Form
 {
     /**
@@ -525,8 +530,8 @@ class Form
             }
             $body .= '<div>';
             if (!empty($element['params']['label']) || !empty($element['params']['description'])) {
-                $label = (!empty($element['params']['label']) ? sprintf('<label for="%s">%s</label>', $element['name'], $element['params']['label']) : '');
-                $description = (!empty($element['params']['description']) ? sprintf('<p>%s</p>', $element['params']['description']) : '');
+                $label = (!empty($element['params']['label']) ? sprintf('<label for="%s">%s</label>', $element['name'], $this->_trans->_($element['params']['label'])) : '');
+                $description = (!empty($element['params']['description']) ? sprintf('<p>%s</p>', $this->_trans->_($element['params']['description'])) : '');
                 $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
             }
             if ($element['type'] == "select" || $element['type'] == "selectStatic") {
@@ -537,10 +542,30 @@ class Form
                         $element['params']['options'][$key] = $this->_trans->_($optionValue);
                     }
                     if ($element['params']['options'] instanceof \Phalcon\Mvc\Model\Resultset){
-                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'using' => $element['params']['using'], 'value' => $value)));
+                        if (!empty($element['multiple']) && $element['multiple'] == 'multiple'){
+                            $element['name'] = $element['name'] . '[]';
+                        }
+                        $tagOptions = array($element['name'], $element['params']['options'], 'using' => $element['params']['using'], 'value' => $value);
+                        $tagAttribs = $element;
+                        unset($tagAttribs['name']);
+                        unset($tagAttribs['params']);
+                        unset($tagAttribs['value']);
+                        unset($tagAttribs['order']);
+                        $tagOptions = array_merge($tagOptions, $tagAttribs);
+                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
                     }
                     else{
-                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type'](array($element['name'], $element['params']['options'], 'value' => $value)));
+                        if (!empty($element['multiple']) && $element['multiple'] == 'multiple'){
+                            $element['name'] = $element['name'] . '[]';
+                        }
+                        $tagOptions = array($element['name'], $element['params']['options'], 'value' => $value);
+                        $tagAttribs = $element;
+                        unset($tagAttribs['name']);
+                        unset($tagAttribs['params']);
+                        unset($tagAttribs['value']);
+                        unset($tagAttribs['order']);
+                        $tagOptions = array_merge($tagOptions, $tagAttribs);
+                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
                     }
                 }
             } elseif ($element['type'] == "radioField" || $element['type'] == "checkField") {

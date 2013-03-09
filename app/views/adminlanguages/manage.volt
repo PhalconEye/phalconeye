@@ -48,7 +48,7 @@
 
     <div class="row-fluid">
         <div class="language_manage_header">
-            <h3><a href="{{ url("admin/languages") }}" class='btn'>{{ "<< Back" | trans }}</a>
+            <h3><a href="{{ url(['for': 'admin-languages']) }}" class='btn'>{{ "<< Back" | trans }}</a>
                 | {{ "Manage language" | trans }}
                 "{{ lang.getName() }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>

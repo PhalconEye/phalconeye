@@ -476,3 +476,12 @@ form .form_footer .btn + .btn{
     float: right;
     margin-top: 20px;
 }
+
+.access_edit_header h2{
+    float:left;
+}
+
+.current_role{
+    float: left;
+    margin: 15px;
+}

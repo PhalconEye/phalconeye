@@ -62,6 +62,7 @@ class Widget_Menu_Controller extends Widget_Controller
         $navigationItems = array();
         $index = 1;
         foreach ($items as $item) {
+            if (!$item->isAllowed()) continue;
             $subItems = $item->getMenuItem(array('order' => 'item_order ASC'));
             $navigationItems[$index] = array(
                 'title' => $item->getTitle()

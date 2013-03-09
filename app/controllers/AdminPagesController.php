@@ -79,8 +79,14 @@ class AdminPagesController extends AdminController
         $url = $page->getUrl();
         if (!empty($url)){
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
-            $page->save();
         }
+
+        $roles = $this->request->get('roles');
+        if ($roles == null){
+            $page->setRoles(array());
+        }
+
+        $page->save();
 
         $this->response->redirect("admin/pages/manage/" . $form->getData()->getId());
     }
@@ -108,8 +114,14 @@ class AdminPagesController extends AdminController
         $url = $page->getUrl();
         if (!empty($url)){
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
-            $page->save();
         }
+
+        $roles = $this->request->get('roles');
+        if ($roles == null){
+            $page->setRoles(array());
+        }
+
+        $page->save();
 
         $this->response->redirect("admin/pages");
     }
@@ -198,15 +210,8 @@ class AdminPagesController extends AdminController
         $adminForm = $widgetMetadata->getAdminForm();
         if (empty($adminForm)) {
             $form->addElement('textField', 'title', array(
-                'label' => $this->di->get('trans')->_('Title')
+                'label' => 'Title'
             ));
-
-            if ($widgetMetadata->getIsPaginated() == 1) {
-                $form->addElement('textField', 'count', array(
-                    'label' => $this->di->get('trans')->_('Items count'),
-                    'value' => 10
-                ));
-            }
         } elseif ($adminForm == 'action') {
             $widgetName = $widgetMetadata->getName();
             $widgetClass = "Widget_{$widgetName}_Controller";
@@ -215,6 +220,23 @@ class AdminPagesController extends AdminController
             $form = call_user_func_array(array($widgetObject, "adminAction"), $_REQUEST);
         } else {
             $form = new $adminForm();
+        }
+
+        if ($widgetMetadata->getIsPaginated() == 1) {
+            $form->addElement('textField', 'count', array(
+                'label' => 'Items count',
+                'value' => 10
+            ));
+        }
+
+        if ($widgetMetadata->getIsAclControlled() == 1) {
+            $form->addElement('select', 'roles', array(
+                'label' => 'Roles',
+                'options' => Role::find(),
+                'using' => array('id', 'name')
+            ));
+
+            $form->setElementAttrib('roles', 'multiple', 'multiple');
         }
 
         // set form values
@@ -229,7 +251,6 @@ class AdminPagesController extends AdminController
 
             return;
         }
-
 
         $this->view->setVar('params', json_encode($form->getData()));
 

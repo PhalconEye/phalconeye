@@ -45,13 +45,13 @@ class Application
     public function run()
     {
         $loaders = array(
+            'logger',
             'loader',
             'environment',
             'url',
             'cache',
             'router',
             'view',
-            'logger',
             'database',
             'session',
             'acl',
@@ -67,6 +67,7 @@ class Application
         $application->setDI($this->_di);
 
         return $application->handle()->getContent();
+
     }
 
     // Protected functions
@@ -80,17 +81,30 @@ class Application
     {
         // Creates the autoloader
         $loader = new \Phalcon\Loader();
+        $di = $this->_di;
 
         // Register the namespaces
         $loader
             ->registerDirs(array(
-            $config->application->engineDir,
-            $config->application->controllersDir,
-            $config->application->modelsDir,
-            $config->application->miscDir
-        ))
-            ->register();
+                $config->application->engineDir,
+                $config->application->controllersDir,
+                $config->application->modelsDir,
+                $config->application->miscDir
+            ));
 
+        if ($config->application->debug) {
+            $eventsManager = new \Phalcon\Events\Manager();
+            $eventsManager->attach('loader', function ($event, $loader, $className) use ($di) {
+                if ($event->getType() == 'afterCheckClass') {
+                    $di->get('logger')->log("Can't load class '" . $className . "'", \Phalcon\Logger::ERROR);
+                }
+            });
+
+            $loader->setEventsManager($eventsManager);
+        }
+        $loader->register();
+
+        $di->set('loader', $loader);
     }
 
     /**
@@ -149,18 +163,17 @@ class Application
 
             //Read the annotations from controllers
             $files = scandir($config->application->controllersDir); // get all file names
+
             foreach ($files as $file) { // iterate files
                 if ($file == "." || $file == "..") continue;
                 if (strpos($file, 'Controller.php') !== false)
                     $router->addResource(str_replace('Controller.php', '', $file));
             }
 
-            if ($saveToCache){
+            if ($saveToCache) {
                 $this->_di->get('cacheData')->save($routerCacheKey, $router, 2592000); // 30 days cache
             }
         }
-
-
 
         $this->_di->set('router', $router);
 
@@ -173,7 +186,8 @@ class Application
      */
     protected function initView($config)
     {
-        $this->_di->set('view', function () use ($config) {
+        $di = $this->_di;
+        $di->set('view', function () use ($config) {
             $view = new \Phalcon\Mvc\View();
             $view->setViewsDir($config->application->viewsDir);
 
@@ -185,6 +199,7 @@ class Application
                         "compiledExtension" => $config->application->view->compiledExtension,
                         'compileAlways' => $config->application->debug
                     ));
+
 
                     $compiler = $volt->getCompiler();
 
@@ -198,11 +213,12 @@ class Application
                         return 'Helper_' . ucfirst($name) . '::_(' . $resolvedArgs . ')';
                     });
 
+                    // current viewer helper
                     $compiler->addFunction('viewer', function () {
                         return 'User::getViewer()';
                     });
 
-                    // register main filter
+                    // register translation filter
                     $compiler->addFilter('trans', function ($resolvedArgs) {
                         return 'Helper_Translate::_(' . $resolvedArgs . ')';
                     });
@@ -476,7 +492,6 @@ class Application
                 'locale' => $locale,
             ));
         }
-
 
         $this->_di->set('trans', $translate);
     }

@@ -198,6 +198,10 @@ class User extends \Phalcon\Mvc\Model
         return $this->creation_date;
     }
 
+    public function isAdmin(){
+        return $this->getRole()->getType() == Api_Acl::ROLE_TYPE_ADMIN;
+    }
+
     /**
      * Get current user
      * If user logged in this function will return user object with data

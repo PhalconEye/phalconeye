@@ -33,7 +33,7 @@ class AdminController extends Controller
             'users' => array(
                 'title' => 'Manage',
                 'items' => array( // type - dropdown
-                    'admin/users' => 'Users',
+                    'admin/users' => 'Users and Roles',
                     'admin/pages' => 'Pages',
                     'admin/menus' => 'Menus',
                     'admin/languages' => 'Languages',
@@ -45,10 +45,9 @@ class AdminController extends Controller
                     1 => 'Main settings',
                     'admin/settings' => 'System',
                     'admin/settings/performance' => 'Performance',
-//                    2 => 'divider',
-//                    3 => 'Other settings',
-//                    'admin/3' => 'Menu item 3',
-//                    'admin/4' => 'Menu item 4',
+                    2 => 'divider',
+                    3 => 'Other settings',
+                    'admin/access' => 'Access rights'
                 )
             )))
             ->setActiveItem($activeItem);
