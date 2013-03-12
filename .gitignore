@@ -1,0 +1,5 @@
+.idea/*
+app/var/cache/*
+app/var/compiled/*
+app/var/languages/*
+app/var/logs/*
