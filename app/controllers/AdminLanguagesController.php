@@ -155,7 +155,13 @@ class AdminLanguagesController extends AdminController
         if (!$item)
             return $this->response->redirect("admin/languages");
 
-        $translations = $item->getLanguageTranslation();
+        $search = $this->request->get('search');
+        $options = array();
+        if ($search != null){
+            $options = array("original LIKE  '%{$search}%' OR translated LIKE  '%{$search}%'");
+        }
+
+        $translations = $item->getLanguageTranslation($options);
 
         $currentPage = $this->request->getQuery('page', 'int', 1);
         if ($currentPage < 1) $currentPage = 1;
@@ -172,7 +178,7 @@ class AdminLanguagesController extends AdminController
         $page = $paginator->getPaginate();
 
         $this->view->setVar('paginator', $page);
-
+        $this->view->setVar('search', $search);
         $this->view->setVar('lang', $item);
 
     }

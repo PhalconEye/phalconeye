@@ -84,15 +84,17 @@
     var savePage = function () {
         if (!notSaved) return;
 
-        $.getJSON("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.getId()}}",
-                {
-                    format:"json",
-                    layout:currentLayoutType,
-                    items:getWidgetsList(true)
-                }, function(){
-                    changePageState(false);
-                    window.location.reload();
-                }).error(function() { changePageState(true); alert("{{ 'Error while saving...' |trans }}"); });
+        $.post("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.getId()}}", {
+            format:"json",
+            layout:currentLayoutType,
+            items:getWidgetsList(true)
+        }, function() {
+            changePageState(false);
+            alert('{{ 'Changes saved!' |trans }}');
+            window.location.reload();
+        })
+                .fail(function() { changePageState(true); alert("{{ 'Error while saving...' |trans }}"); });
+
     }
 
     var editAction = function(element){

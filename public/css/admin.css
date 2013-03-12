@@ -477,6 +477,15 @@ form .form_footer .btn + .btn{
     margin-top: 20px;
 }
 
+.language_manage_header .icon-search{
+    margin-left: -30px;
+    cursor: pointer;
+}
+
+.language_manage_header .icon-remove{
+    cursor: pointer;
+}
+
 .access_edit_header h2{
     float:left;
 }

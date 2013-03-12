@@ -15,7 +15,7 @@
  */
 
 /**
- * @RoutePrefix("")
+ * @RoutePrefix("/")
  */
 class IndexController extends Controller
 {

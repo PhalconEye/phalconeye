@@ -26,8 +26,8 @@
     <div class="pagination">
         <ul>
             {% if paginator.current > 1 %}
-                <li><a href="{{ helper('currentUrl') }}">{{ 'First' |trans }}</a></li>
-                <li><a href="{{ helper('currentUrl') }}?page={{ paginator.before }}">&laquo;</a></li>
+                <li><a href="{{ helper('paginatorUrl') }}">{{ 'First' |trans }}</a></li>
+                <li><a href="{{ helper('paginatorUrl', paginator.before) }}">&laquo;</a></li>
             {% endif %}
 
             {% for pageIndex in startIndex..paginator.total_pages %}
@@ -36,12 +36,12 @@
                 {% endif %}
 
                 <li {% if pageIndex is paginator.current %}class="active"{% endif %}><a
-                       href="{{ helper('currentUrl') }}?page={{ pageIndex }}">{{ pageIndex }}</a></li>
+                       href="{{ helper('paginatorUrl', pageIndex) }}">{{ pageIndex }}</a></li>
             {% endfor %}
 
             {% if paginator.current < paginator.total_pages %}
-                <li><a href="{{ helper('currentUrl') }}?page={{ paginator.current + 1 }}">&raquo;</a></li>
-                <li><a href="{{ helper('currentUrl') }}?page={{ paginator.last }}">{{ 'Last' |trans }}</a></li>
+                <li><a href="{{ helper('paginatorUrl', paginator.current + 1) }}">&raquo;</a></li>
+                <li><a href="{{ helper('paginatorUrl', paginator.last ) }}">{{ 'Last' |trans }}</a></li>
             {% endif %}
         </ul>
     </div>

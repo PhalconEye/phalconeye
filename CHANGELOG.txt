@@ -1,0 +1,11 @@
+Version 0.2.0
+ - Views cache cleaning from admin
+ - Routing annotations system
+ - Acl management implemented
+ - Added 'Class not found' log message
+ - Page access management implemented
+ - Menu items access management implemented
+ - Added is_acl_controlled option for widget and implemented acces management for widgets
+ - is_paginated and is_acl_controlled now will be added for all kind of widgets admin form if option is enabled
+ - Search text in languages management
+ - Tested with Phalcon 1.0.0 Beta

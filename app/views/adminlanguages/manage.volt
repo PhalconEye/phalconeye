@@ -52,6 +52,13 @@
                 | {{ "Manage language" | trans }}
                 "{{ lang.getName() }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
+            <form class="navbar-search pull-right" method="GET" action="{{ url(['for': 'admin-languages-manage'])~lang.getId() }}">
+                {% if search is defined %}
+                <div class="icon-remove" onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.getId() }}'"></div>
+                {% endif %}
+                <input name="search" type="text" class="search-query" placeholder="{{ 'Search' |trans }}" value="{{ search }}"/>
+                <div class="icon-search" onclick="$(this).parent().submit();"></div>
+            </form>
         </div>
         <div class="language_manage_body">
             <table class="table">

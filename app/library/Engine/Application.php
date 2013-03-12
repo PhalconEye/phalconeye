@@ -161,6 +161,8 @@ class Application
                 'action' => 2,
             ));
 
+            $router->notFound(array('controller' => 'error', 'action' => 'show404'));
+
             //Read the annotations from controllers
             $files = scandir($config->application->controllersDir); // get all file names
 
