@@ -480,8 +480,8 @@ class Application
             $messages = array();
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
-            } else {
-                // fallback to some default
+            } elseif (file_exists(ROOT_PATH . "/app/var/languages/en.php")) {
+                // fallback to default
                 require ROOT_PATH . "/app/var/languages/en.php";
             }
 
