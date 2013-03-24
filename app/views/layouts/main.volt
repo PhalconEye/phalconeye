@@ -18,9 +18,12 @@
     <title><?php echo Settings::getSetting('system_title', '') ?> | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="generator" content="PhalconEye - Open Source Content Management System" />
     <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css" />
     <link rel="stylesheet" href="/public/themes/{{ helper('setting', 'system_theme', 'default') }}/theme.css"/>
-    <meta name="generator" content="PhalconEye - Open Source Content Management System" />
+    {{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
+    {{ javascript_include("js/bootstrap/bootstrap.min.js") }}
+
 
     {% block head %}
 
@@ -50,10 +53,6 @@
         {% endblock %}
     </div>
 </div>
-
-{{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
-{{ javascript_include("js/bootstrap/bootstrap.min.js") }}
-
 
 </body>
 </html>

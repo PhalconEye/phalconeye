@@ -14,6 +14,15 @@
 {% extends "../../../views/layouts/widget.volt" %}
 
 {% block content %}
+
+    <script type="text/javascript">
+        $(document).ready(function(){
+            $(".navbar .navbar-inner a").tooltip({
+                html:"true"
+            });
+        });
+    </script>
+
     <div class="navbar">
         <div class="navbar-inner">
             {{ navigation.render() }}

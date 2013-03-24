@@ -61,6 +61,19 @@ class MenuItem extends \Phalcon\Mvc\Model
     protected $target;
 
     /**
+     * Tooltip html
+     * has no var type
+     */
+    protected $tooltip;
+
+    /**
+     * @var string
+     * @form_type selectStatic
+     *
+     */
+    protected $tooltip_position = 'top';
+
+    /**
      * @var integer
      *
      */
@@ -142,6 +155,16 @@ class MenuItem extends \Phalcon\Mvc\Model
     public function setUrl($url)
     {
         $this->url = $url;
+    }
+
+    /**
+     * Method to set the value of field position
+     *
+     * @param string $position
+     */
+    public function setTooltipPosition($position)
+    {
+        $this->tooltip_position = $position;
     }
 
     /**
@@ -246,6 +269,21 @@ class MenuItem extends \Phalcon\Mvc\Model
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Returns the value of field tooltip
+     *
+     * @return string
+     */
+    public function getTooltip()
+    {
+        return str_replace('"', "'", $this->tooltip); // we need html to work well in attribute "title"
+    }
+
+    public function getTooltipPosition()
+    {
+        return $this->tooltip_position; // we need html to work well in attribute "title"
     }
 
     /**

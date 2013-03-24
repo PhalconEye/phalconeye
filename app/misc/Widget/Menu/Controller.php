@@ -73,6 +73,8 @@ class Widget_Menu_Controller extends Widget_Controller
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();
                 $navigationItems[$index]['target'] = $item->getTarget();
+                $navigationItems[$index]['tooltip'] = $item->getTooltip();
+                $navigationItems[$index]['tooltip_position'] = $item->getTooltipPosition();
             }
             $index++;
         }

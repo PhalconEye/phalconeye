@@ -152,7 +152,7 @@ class Form
         if ($type !== null)
             return $type;
 
-        return "string";
+        return null;
     }
 
 

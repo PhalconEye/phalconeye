@@ -185,7 +185,9 @@ class Navigation
                         if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/')
                             $link = Phalcon\DI::getDefault()->get('url')->get($key);
                         $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
-                        $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $link, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
+                        $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+
+                        $content .= sprintf('<a %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $link, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
                         $content .= "</{$lit}>";
                     }
 
@@ -195,12 +197,13 @@ class Navigation
             } else { // normal item
                 $active = ($name == $this->_activeItem || $item['href'] == $this->_activeItem ? ' class="active"' : '');
                 $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+                $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
 
                 if (strpos($item['href'], 'http') === false && strpos($item['href'], 'javascript:') === false && $item['href'] != '/')
                     $item['href'] = Phalcon\DI::getDefault()->get('url')->get($item['href']);
 
                 $content .= "<{$lit}{$active}>";
-                $content .= sprintf('<a %s href="%s">%s%s%s</a>', $linkTarget, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);
+                $content .= sprintf('<a %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);
                 $content .= "</{$lit}>";
             }
         }

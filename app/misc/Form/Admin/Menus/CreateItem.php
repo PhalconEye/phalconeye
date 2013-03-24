@@ -44,6 +44,18 @@ class Form_Admin_Menus_CreateItem extends Form
         $this->setElementParam('languages', 'options', Language::find());
         $this->setElementParam('languages', 'using', array('locale', 'name'));
         $this->setElementParam('languages', 'description', 'Choose the language in which the menu item will be displayed. If no one selected - will be displayed at all.');
+
+        $this->setElementAttrib('tooltip', 'type', 'textArea');
+        $this->setElementAttrib('tooltip', 'order', 8);
+        $this->setElementParam('tooltip', 'label', 'Tooltip');
+
+        $this->setElementAttrib('tooltip_position', 'order', 9);
+        $this->setElementParam('tooltip_position', 'options', array(
+            'top' => 'Top',
+            'bottom' => 'Bottom',
+            'left' => 'Left',
+            'right' => 'Right'
+        ));
     }
 
     public function init()
@@ -84,6 +96,12 @@ class Form_Admin_Menus_CreateItem extends Form
 
         $this->addElement('hiddenField', 'menu_id');
         $this->addElement('hiddenField', 'parent_id');
+
+        $this->addElement('html', 'ckeditor',
+            array(
+                'ignore' => true,
+                'html' => '<script type="text/javascript">$(document).ready(function () {CKEDITOR.replace("tooltip");});</script>'
+            ), 1000);
 
     }
 }
