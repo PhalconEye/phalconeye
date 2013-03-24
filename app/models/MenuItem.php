@@ -54,6 +54,11 @@ class MenuItem extends \Phalcon\Mvc\Model
     protected $url;
 
     /**
+     * Onclick js action
+     */
+    protected $onclick;
+
+    /**
      * @var string
      * @form_type selectStatic
      *
@@ -269,6 +274,16 @@ class MenuItem extends \Phalcon\Mvc\Model
     public function getUrl()
     {
         return $this->url;
+    }
+
+    /**
+     * Returns the value of field onclick
+     *
+     * @return string
+     */
+    public function getOnclick()
+    {
+        return str_replace('"', "'", $this->onclick); // double quetes escaping for tag onlick
     }
 
     /**

@@ -70,9 +70,13 @@ class Widget_Menu_Controller extends Widget_Controller
 
             if ($subItems->count() > 0) {
                 $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);
+                $navigationItems[$index]['onclick'] = $item->getOnclick();
+                $navigationItems[$index]['tooltip'] = $item->getTooltip();
+                $navigationItems[$index]['tooltip_position'] = $item->getTooltipPosition();
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();
                 $navigationItems[$index]['target'] = $item->getTarget();
+                $navigationItems[$index]['onclick'] = $item->getOnclick();
                 $navigationItems[$index]['tooltip'] = $item->getTooltip();
                 $navigationItems[$index]['tooltip_position'] = $item->getTooltipPosition();
             }

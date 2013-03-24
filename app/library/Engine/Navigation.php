@@ -166,8 +166,11 @@ class Navigation
         foreach ($items as $name => $item) {
             if (isset($item['items']) && !empty($item['items'])) { // dropdown menu item
                 $active = ($name == $this->_activeItem || array_key_exists($this->_activeItem, $item['items']) ? ' active' : '');
+                $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
+                $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+
                 $content .= "<{$lit} class='{$ddic}{$active}'>";
-                $content .= sprintf('<a href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s</a>', $dditc, $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac, $ddmc);
+                $content .= sprintf('<a %s %s href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s</a>', $linkOnclick, $linkTooltip, $dditc, $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac, $ddmc);
                 $content .= "<{$lt} class='{$ddimc}'>";
                 foreach ($item['items'] as $key => $subitem) {
                     if (is_numeric($key) && !is_array($subitem)) {
@@ -185,9 +188,10 @@ class Navigation
                         if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/')
                             $link = Phalcon\DI::getDefault()->get('url')->get($key);
                         $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+                        $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
                         $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
 
-                        $content .= sprintf('<a %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $link, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
+                        $content .= sprintf('<a %s %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $linkOnclick, $link, $pc, Phalcon\DI::getDefault()->get('trans')->query($subitem), $ac);
                         $content .= "</{$lit}>";
                     }
 
@@ -197,13 +201,14 @@ class Navigation
             } else { // normal item
                 $active = ($name == $this->_activeItem || $item['href'] == $this->_activeItem ? ' class="active"' : '');
                 $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+                $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
                 $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
 
                 if (strpos($item['href'], 'http') === false && strpos($item['href'], 'javascript:') === false && $item['href'] != '/')
                     $item['href'] = Phalcon\DI::getDefault()->get('url')->get($item['href']);
 
                 $content .= "<{$lit}{$active}>";
-                $content .= sprintf('<a %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);
+                $content .= sprintf('<a %s %s %s href="%s">%s%s%s</a>', $linkTooltip, $linkTarget, $linkOnclick, $item['href'], $pc, Phalcon\DI::getDefault()->get('trans')->query($item['title']), $ac);
                 $content .= "</{$lit}>";
             }
         }

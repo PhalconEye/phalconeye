@@ -56,6 +56,9 @@ class Form_Admin_Menus_CreateItem extends Form
             'left' => 'Left',
             'right' => 'Right'
         ));
+
+        $this->setElementAttrib('onclick', 'type', 'textArea');
+        $this->setElementParam('onclick', 'description', 'Type JS action that will be performed when this menu item is selected.');
     }
 
     public function init()

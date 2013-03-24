@@ -43,7 +43,7 @@
                 <span class="icon-bar"></span>
                 <span class="icon-bar"></span>
             </a>
-            <a class="brand" href="{{ url("admin")}}">Phalcon Eye</a>
+            <a class="brand" href="{{ url("admin")}}"><img alt="Pahlcon Eye" src="/public/img/phalconeye/PE_logo_white.png"/></a>
 
             <div class="nav-collapse collapse">
                 <p class="navbar-text pull-right">

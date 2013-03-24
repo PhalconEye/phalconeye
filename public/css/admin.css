@@ -494,3 +494,7 @@ form .form_footer .btn + .btn{
     float: left;
     margin: 15px;
 }
+
+.brand img{
+    height: 20px;
+}
