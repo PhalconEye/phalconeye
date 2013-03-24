@@ -250,6 +250,11 @@ class AdminMenusController extends AdminController
             $item->setRoles(array());
         }
 
+        $languages = $this->request->get('languages');
+        if ($languages == null){
+            $item->setLanguages(array());
+        }
+
         $item->save();
 
         $this->view->setVar('edited', $form->getData());

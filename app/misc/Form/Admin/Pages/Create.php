@@ -29,6 +29,8 @@ class Form_Admin_Pages_Create extends Form
             $model = new Page();
         }
 
+        $model->prepareRoles();
+
         parent::__construct($model);
 
         $this->setElementParam('url', 'description', 'Page will be available under http://'.$_SERVER['HTTP_HOST'].'/page/[URL NAME]');

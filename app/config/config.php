@@ -11,7 +11,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => false,
+    'debug' => true,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/library/Engine/',
     'controllersDir' => ROOT_PATH . '/app/controllers/',

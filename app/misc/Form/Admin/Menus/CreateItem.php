@@ -24,12 +24,14 @@ class Form_Admin_Menus_CreateItem extends Form
             ->addIgnored('page_id')
             ->addIgnored('parent_id')
             ->addIgnored('item_order')
-            ->addIgnored('languages')
         ;
 
         if ($model === null) {
             $model = new MenuItem();
         }
+
+        $model->prepareRoles();
+        $model->prepareLanguages();
 
         parent::__construct($model);
 
@@ -37,6 +39,11 @@ class Form_Admin_Menus_CreateItem extends Form
         $this->setElementParam('roles', 'options', Role::find());
         $this->setElementParam('roles', 'using', array('id', 'name'));
         $this->setElementParam('roles', 'description', 'If no value is selected, will be allowed to all (also as all selected).');
+
+        $this->setElementAttrib('languages', 'multiple', 'multiple');
+        $this->setElementParam('languages', 'options', Language::find());
+        $this->setElementParam('languages', 'using', array('locale', 'name'));
+        $this->setElementParam('languages', 'description', 'Choose the language in which the menu item will be displayed. If no one selected - will be displayed at all.');
     }
 
     public function init()
@@ -75,8 +82,8 @@ class Form_Admin_Menus_CreateItem extends Form
             'class' => 'autocomplete',
         ));
 
-
         $this->addElement('hiddenField', 'menu_id');
         $this->addElement('hiddenField', 'parent_id');
+
     }
 }

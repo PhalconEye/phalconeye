@@ -68,7 +68,7 @@ class MenuItem extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     *
+     * @form_type select
      */
     protected $languages;
 
@@ -169,9 +169,9 @@ class MenuItem extends \Phalcon\Mvc\Model
      *
      * @param string $roles
      */
-    public function setRoles($roles = array())
+    public function setRoles($roles)
     {
-        $this->roles = json_encode($roles);
+        $this->roles = $roles;
     }
 
     /**
@@ -275,9 +275,19 @@ class MenuItem extends \Phalcon\Mvc\Model
      */
     public function getLanguages()
     {
-        return $this->languages;
+        if (is_array($this->languages))
+            return $this->languages;
+
+        return json_decode($this->languages);
     }
 
+    /**
+     * Prepare json string to object to interract
+     */
+    public function prepareLanguages(){
+        if (!is_array($this->languages))
+            $this->languages = json_decode($this->languages);
+    }
 
     /**
      * Returns the value of field roles
@@ -286,7 +296,18 @@ class MenuItem extends \Phalcon\Mvc\Model
      */
     public function getRoles()
     {
+        if (is_array($this->roles))
+            return $this->roles;
+
         return json_decode($this->roles);
+    }
+
+    /**
+     * Prepare json string to object to interract
+     */
+    public function prepareRoles(){
+        if (!is_array($this->roles))
+            $this->roles = json_decode($this->roles);
     }
 
     public function getSource()
@@ -314,6 +335,10 @@ class MenuItem extends \Phalcon\Mvc\Model
         if (is_array($this->roles)){
             $this->roles = json_encode($this->roles);
         }
+
+        if (is_array($this->languages)){
+            $this->languages = json_encode($this->languages);
+        }
     }
 
     public function getHref(){
@@ -329,9 +354,23 @@ class MenuItem extends \Phalcon\Mvc\Model
     }
 
     public function isAllowed(){
+        $valid = true;
         $viewer = User::getViewer();
         $roles = $this->getRoles();
-        if (empty($roles)) return true;
-        return in_array($viewer->getRoleId(), $roles);
+
+        if (!empty($roles))
+            $valid = in_array($viewer->getRoleId(), $roles);
+
+        if (!$valid)
+            return false;
+
+        $valid = true;
+        $locale = $this->getDI()->get('session')->get('locale', 'en');
+        $languages = $this->getLanguages();
+
+        if (!empty($languages))
+            $valid = in_array($locale, $languages);
+
+        return $valid;
     }
 }

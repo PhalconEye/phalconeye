@@ -85,7 +85,6 @@ class Page extends \Phalcon\Mvc\Model
      */
     protected $view_count = 0;
 
-
     /**
      * Method to set the value of field id
      *
@@ -161,9 +160,9 @@ class Page extends \Phalcon\Mvc\Model
      *
      * @param string $roles
      */
-    public function setRoles($roles = array())
+    public function setRoles($roles)
     {
-        $this->roles = json_encode($roles);
+        $this->roles = $roles;
     }
 
     /**
@@ -264,7 +263,18 @@ class Page extends \Phalcon\Mvc\Model
      */
     public function getRoles()
     {
+        if (is_array($this->roles))
+            return $this->roles;
+
         return json_decode($this->roles);
+    }
+
+    /**
+     * Prepare json string to object to interract
+     */
+    public function prepareRoles(){
+        if (!is_array($this->roles))
+            $this->roles = json_decode($this->roles);
     }
 
     /**

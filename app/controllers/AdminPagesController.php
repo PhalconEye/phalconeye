@@ -112,7 +112,7 @@ class AdminPagesController extends AdminController
 
         $page = $form->getData();
         $url = $page->getUrl();
-        if (!empty($url)){
+        if (!empty($url) && $url != '/'){
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
         }
 
@@ -122,7 +122,6 @@ class AdminPagesController extends AdminController
         }
 
         $page->save();
-
         $this->response->redirect("admin/pages");
     }
 
