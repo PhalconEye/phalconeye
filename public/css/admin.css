@@ -1,5 +1,23 @@
 body {
-    padding-top: 60px;
+    background-color: #e5e5e5;
+}
+
+
+h1, h2, h3, h4, h5, h6 {
+    color: #555555;
+    font-family: inherit;
+    font-weight: 700;
+    margin: 0px 0px 0px;
+    text-rendering: optimizeLegibility;
+}
+
+h2 {
+    font-family: "PT Sans", "Calibri", "Lucida Grande", "arial", sans-serif;
+    font-size: 16pt;
+}
+
+h3{
+    font-family: "PT Sans", "Calibri", "Lucida Grande", "arial", sans-serif;
 }
 
 .clear{
@@ -7,8 +25,11 @@ body {
 }
 
 #footer {
-    margin-top: 10px;
     text-align: center;
+    position: fixed;
+    bottom: 10px;
+    right: 10px;
+    font: normal normal 700 12px/18px Arial;
 }
 
 .admin-sidenav {
@@ -44,11 +65,26 @@ body {
     box-shadow: inset 1px 0 0 rgba(0, 0, 0, .1), inset -1px 0 0 rgba(0, 0, 0, .1);
 }
 
-.container .row-fluid{
-    background-color: #f5f5f5;
-    border-radius: 6px;
-    padding: 0 10px 10px 10px;
-    border: 1px solid #e5e5e5;
+.content{
+    padding-left: 200px;
+}
+
+.content .row-fluid > div{
+    min-width: 800px;
+}
+
+.content .row-fluid > [class*="span"]{
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px 40px 20px 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+}
+
+.row-after-header{
+    margin-left: 20px;
+    padding-top: 20px;
+    margin-bottom: -20px;
 }
 
 .admin-sidebar{
@@ -176,6 +212,18 @@ body {
 
 #widgets_container_special {
     width: 759px !important;
+}
+
+.row-page-manager{
+    min-width: 1000px !important;
+}
+
+.manage_page_header{
+    width: 960px;
+}
+
+#global_placer{
+    float: left;
 }
 
 .admin_pages_layout {
@@ -395,7 +443,7 @@ form .form_footer .btn + .btn{
 
 .menu_manage_body > ul{
     padding: 10px 0;
-    margin: 0px;
+    margin: 0;
 }
 
 .menu_manage_body > ul li{
@@ -445,6 +493,19 @@ form .form_footer .btn + .btn{
 
 /* COMMON ADMIN styles */
 
+.dashboard{
+    margin-left: 20px;
+}
+
+.dashboard > div{
+    background-color: white;
+    border-radius: 5px;
+    padding: 20px 40px 20px 20px;
+    margin-left: 20px;
+    margin-top: 20px;
+    min-width: 240px;
+}
+
 .dashboard-sidebar{
     width: 200px;
     border: 1px solid #e5e5e5;
@@ -492,9 +553,136 @@ form .form_footer .btn + .btn{
 
 .current_role{
     float: left;
-    margin: 15px;
+    margin: 5px 15px 15px;
+}
+
+.brand{
+    margin-left: 0px !important;
+    padding: 10px 10px 10px !important;
 }
 
 .brand img{
-    height: 20px;
+    width: 200px;
+}
+
+.navbar_panel *{
+    font: normal normal 700 11px/18px Arial;
+}
+
+.navbar_panel{
+    background: #262729;
+    height: 100%;
+    margin-bottom: 0px;
+    overflow: auto;
+    position: fixed;
+    width: 200px;
+    z-index: 1000;
+}
+
+.navbar_panel .navbar-inner{
+    background: #262729;
+    border:none;
+    padding: 0px;
+    box-shadow: none;
+}
+
+.navbar_panel .nav{
+    margin: 0px;
+}
+
+.navbar_panel .nav>li{
+    width: 100%;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.102);
+}
+
+.navbar_panel .nav>li>a{
+    color: #b8b8b8;
+    text-shadow: none;
+    padding: 2px 15px;
+}
+
+.navbar_panel .nav>li:not(.nav-category)>a{
+    background-color: rgba(255, 255, 255, 0.031);
+    border-top: 1px solid rgba(255, 255, 255, 0.031)
+}
+
+.navbar_panel .nav>li:not(.nav-category)>a:hover,
+.navbar_panel .nav>li:not(.nav-category)>a:focus{
+    background-color: rgba(185, 190, 185, 0.18);
+}
+
+.navbar_panel .nav>li>a:hover,
+.navbar_panel .nav>li>a:focus{
+    color: white;
+}
+
+.navbar_panel .nav-category{
+    margin-top: 10px;
+}
+
+.navbar_panel .nav-category > a{
+    padding-left: 5px !important;
+    border-bottom: 1px solid white;
+    text-transform: uppercase;
+    color: #b8b8b8;
+    text-align: right;
+}
+
+.navbar_panel .nav-category > a:hover,
+.navbar_panel .nav-category > a:focus{
+    color: #b8b8b8 !important;
+}
+
+.navbar_panel .navbar-text{
+    position: absolute;
+    bottom: 10px;
+    width: 180px;
+    padding: 0px 10px;
+    text-align: right;
+}
+
+.navbar_panel .navbar-text a:hover{
+    color: white;
+    text-decoration: none;
+}
+
+.navbar_panel .nav>.active>a{
+    background: rgb(32, 142, 204) !important;
+    color: white;
+}
+
+.navbar_panel .nav>.active>a:hover{
+    color: white;
+}
+
+.navbar-header *{
+    font: normal normal 700 11px/18px Arial;
+}
+
+.navbar-header{
+    background: #262729;
+    margin-bottom: 0px;
+}
+
+.navbar-header .navbar-inner{
+    background: #262729;
+    border: none;
+    box-shadow: none;
+}
+
+.navbar-header .nav>li>a{
+    color: #b8b8b8;
+    text-shadow: none;
+    padding: 12px 15px 10px;
+}
+
+.navbar-header .nav>li>a:hover{
+    color: white;
+}
+
+
+.navbar-header .nav>.active>a,
+.navbar-header .nav>.active>a:hover{
+    box-shadow: none;
+    color: black;
 }

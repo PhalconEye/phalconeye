@@ -15,10 +15,10 @@
 
 {% block title %}{{ "Access Rights"|trans }}{% endblock %}
 {% block content %}
-
+<div class="span12">
     <div class="row-fluid">
         <div class="languages_header">
-            <h1>{{ 'Available resources' | trans }}</h1>
+            <h2>{{ 'Available resources' | trans }}</h2>
             <div class="clear"></div>
         </div>
         <table class="table">
@@ -51,6 +51,6 @@
             </tbody>
         </table>
     </div>
-
+</div>
 {% endblock %}
 

@@ -21,12 +21,25 @@ class AdminController extends Controller
     public function initialize()
     {
         parent::initialize();
-        $activeItem = "index";
+        $activeItem = 'admin';
+        $path = explode('/', $this->request->get('_url'));
+
+        if (count($path) >= 3){
+            $activeItem = '';
+            for($i = 1, $count = count($path); $i < $count; $i++){
+                $activeItem .= $path[$i] . '/';
+            }
+            $activeItem = substr($activeItem, 0, -1);
+        }
+        elseif (count($path) == 2){
+            $activeItem = $path[1];
+        }
+
 
         $navigation = new Navigation();
         $navigation
             ->setItems(array(
-            'index' => array(
+            'admin' => array(
                 'href' => 'admin',
                 'title' => 'Dashboard'
             ),
@@ -42,15 +55,17 @@ class AdminController extends Controller
             'settings' => array( // type - dropdown
                 'title' => 'Settings',
                 'items' => array(
-                    1 => 'Main settings',
                     'admin/settings' => 'System',
                     'admin/settings/performance' => 'Performance',
-                    2 => 'divider',
-                    3 => 'Other settings',
                     'admin/access' => 'Access rights'
                 )
             )))
-            ->setActiveItem($activeItem);
+            ->setActiveItem($activeItem)
+            ->setListClass('nav nav-categories')
+            ->setDropDownItemClass('nav-category')
+            ->setDropDownItemMenuClass('nav')
+            ->setDropDownIcon('')
+            ->setEnabledDropDownHighlight(false);
 
         $this->view->setVar('headerNavigation', $navigation);
     }

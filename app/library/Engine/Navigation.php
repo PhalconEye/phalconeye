@@ -47,6 +47,12 @@ class Navigation
     /** @var string Class of dropdown divider item */
     protected $_dropDownItemDividerClass = "divider";
 
+    /** @var string HTML code for dropdown icon */
+    protected $_dropDownIcon = '<b class="caret"></b>';
+
+    /** @var bool Set true to highlight dropdown top item */
+    protected $_highlightActiveDropDownItem = true;
+
     /** @var string Currently active item, it can be name or href */
     protected $_activeItem = '';
 
@@ -57,6 +63,10 @@ class Navigation
     protected $_listItemTag = 'li';
 
 
+    public function __construct(){
+        $this->_activeItem = substr(Phalcon\DI::getDefault()->get('request')->get('_url'), 1);
+    }
+
     /** Set list class
      *
      * @param string $class
@@ -66,6 +76,54 @@ class Navigation
     public function setListClass($class)
     {
         $this->_listClass = $class;
+
+        return $this;
+    }
+
+    /** Set dropdown item class
+     *
+     * @param string $class
+     *
+     * @return Navigation
+     * */
+    public function setDropDownItemClass($class){
+        $this->_dropDownItemClass = $class;
+
+        return $this;
+    }
+
+    /** Set dropdown menu class
+     *
+     * @param string $class
+     *
+     * @return Navigation
+     * */
+    public function setDropDownItemMenuClass($class){
+        $this->_dropDownItemMenuClass = $class;
+
+        return $this;
+    }
+
+    /** Set dropdown icon html
+     *
+     * @param string $html
+     *
+     * @return Navigation
+     * */
+    public function setDropDownIcon($html){
+        $this->_dropDownIcon = $html;
+
+        return $this;
+    }
+
+    /** Set true to highlight dropdown top item
+     *
+     * @param bool $flag
+     *
+     * @return Navigation
+     * */
+    public function setEnabledDropDownHighlight($flag = true){
+        $this->_highlightActiveDropDownItem = $flag;
 
         return $this;
     }
@@ -157,7 +215,7 @@ class Navigation
         $pc = $this->_itemPrependContent;
         $ac = $this->_itemAppendContent;
         $ddic = ($isSubMenu ? $this->_dropDownSubItemMenuClass : $this->_dropDownItemClass);
-        $ddmc = ($isSubMenu ? '' : '<b class="caret"></b>');
+        $ddmc = ($isSubMenu ? '' : $this->_dropDownIcon);
         $ddimc = $this->_dropDownItemMenuClass;
         $dditc = $this->_dropDownItemToggleClass;
         $ddihc = $this->_dropDownItemHeaderClass;
@@ -165,7 +223,7 @@ class Navigation
 
         foreach ($items as $name => $item) {
             if (isset($item['items']) && !empty($item['items'])) { // dropdown menu item
-                $active = ($name == $this->_activeItem || array_key_exists($this->_activeItem, $item['items']) ? ' active' : '');
+                $active = ($name == $this->_activeItem || ($this->_highlightActiveDropDownItem && array_key_exists($this->_activeItem, $item['items'])) ? ' active' : '');
                 $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
                 $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
 
@@ -184,7 +242,8 @@ class Navigation
                     } elseif (is_array($subitem)) {
                         $content .= $this->_renderItems(array(1 => $subitem), true);
                     } else {
-                        $content .= "<{$lit}>";
+                        $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
+                        $content .= "<{$lit}{$active}>";
                         if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/')
                             $link = Phalcon\DI::getDefault()->get('url')->get($key);
                         $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');

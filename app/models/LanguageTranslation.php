@@ -30,14 +30,12 @@ class LanguageTranslation extends \Phalcon\Mvc\Model
     protected $language_id;
 
     /**
-     * @var string
      * @form_type textArea
      */
     protected $original;
 
 
     /**
-     * @var string
      * @form_type textArea
      */
     protected $translated = NULL;

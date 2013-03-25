@@ -43,8 +43,8 @@
         buildWidgetsList();
 
         $('.widget').draggable({
-            helper:'clone',
-            connectToSortable:".widgets_placer"
+            helper: 'clone',
+            connectToSortable: ".widgets_placer"
         });
 
 
@@ -52,7 +52,7 @@
         setWidgetsList({{currentPageWidgets}}, true);
 
         $(".widget_tooltip").tooltip({
-            position:"center left"
+            position: "center left"
         });
 
         $("#form_page").change(function () {
@@ -61,7 +61,7 @@
     };
 
     var defaultWidgetControl = function (widget) {
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" content_id="'+widget.id+'" widget_current_id="'+widget.widget_id+'" widget_page_id="'+currentPageId+'">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
+        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" content_id="' + widget.id + '" widget_current_id="' + widget.widget_id + '" widget_page_id="' + currentPageId + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
     }
 
     var buildWidgetsList = function () {
@@ -85,19 +85,22 @@
         if (!notSaved) return;
 
         $.post("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.getId()}}", {
-            format:"json",
-            layout:currentLayoutType,
-            items:getWidgetsList(true)
-        }, function() {
+            format: "json",
+            layout: currentLayoutType,
+            items: getWidgetsList(true)
+        }, function () {
             changePageState(false);
             alert('{{ 'Changes saved!' |trans }}');
             window.location.reload();
         })
-                .fail(function() { changePageState(true); alert("{{ 'Error while saving...' |trans }}"); });
+                .fail(function () {
+                    changePageState(true);
+                    alert("{{ 'Error while saving...' |trans }}");
+                });
 
     }
 
-    var editAction = function(element){
+    var editAction = function (element) {
         if ($('#widget_editing'))
             $('#widget_editing').attr('id', '');
 
@@ -114,18 +117,18 @@
         PE.modal.open(url, data);
     }
 
-    var removeAction = function(element){
+    var removeAction = function (element) {
         element.parent().parent().remove();
         changePageState(true);
     }
 
     var changePageState = function (state) {
 
-        if (state){
+        if (state) {
             $('#save_button').attr("disabled", null);
             $('#save_button').html("{{"Save (NOT  SAVED)" | trans}}");
         }
-        else{
+        else {
             $('#save_button').attr("disabled", "disabled");
             $('#save_button').html("{{"Save" | trans}}");
         }
@@ -135,14 +138,14 @@
 
     var bindDraggable = function () {
         $(".widgets_placer").sortable({
-            connectWith:'.widgets_placer',
-            start:function (event, ui) {
+            connectWith: '.widgets_placer',
+            start: function (event, ui) {
                 changePageState(true);
 
                 if (!$(ui.item[0]).attr('element_id'))
                     $(ui.item[0]).attr('element_id', elementIdCounter++);
             },
-            receive:function (event, ui) {
+            receive: function (event, ui) {
                 $(".admin_pages_layout").find('.delete_widget').css('display', 'block');
                 updateLayoutPanelsHeight();
             }
@@ -157,11 +160,11 @@
         $(".widgets_placer").each(function () {
             $(this).find(".widget").each(function () {
                 items.push({
-                    "content":(!$no_content ? $(this).html().trim() : ''),
-                    "id":$(this).attr("widgetid"),
-                    "widget_id":$(this).attr("widget_object_id"),
-                    "params":widgetsParams[$(this).attr('element_id')],
-                    "layout":$(this).parent().attr("layout")
+                    "content": (!$no_content ? $(this).html().trim() : ''),
+                    "id": $(this).attr("widgetid"),
+                    "widget_id": $(this).attr("widget_object_id"),
+                    "params": widgetsParams[$(this).attr('element_id')],
+                    "layout": $(this).parent().attr("layout")
                 });
             });
         });
@@ -176,7 +179,7 @@
             $.each(list, function (i, l) {
                 widgetsParams[elementIdCounter] = l.params;
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    $("#widgets_container_" + l.layout).append('<li element_id="'+elementIdCounter+'" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + l.content + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + l.content + '</div>');
                     elementIdCounter++;
                 }
                 else hasRemove = true;
@@ -194,7 +197,7 @@
                         var title = widgetsListData[l.widget_id].name;
                     else
                         var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
-                    $("#widgets_container_" + l.layout).append('<li element_id="'+elementIdCounter+'" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
                     elementIdCounter++;
                 }
             });
@@ -292,107 +295,123 @@
     </script>
 {% endblock %}
 
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
+    <div class="span12 row-page-manager">
 
-    <div class="row-fluid">
-        <div class="manage_page_header">
-            <div class="manage_page_header_label">
-                <h3><a href="{{ url(['for':'admin-pages'])}}" class='btn'>{{ "<< Back" | trans }}</a> | {{ "Manage page" | trans }}</h3>
-                <a href="{% if currentPage.getType() is null and currentPage.getUrl() is not null %}/page/{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}" target="_blank">{{ currentPage.getTitle() }}</a>
-            </div>
+                <div class="manage_page_header">
+                    <div class="manage_page_header_label">
+                        <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
+                            > {{ "Manage page" | trans }}</h3>
+                        <a href="{% if currentPage.getType() is null and currentPage.getUrl() is not null %}/page/{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}"
+                           target="_blank">{{ currentPage.getTitle() }}</a>
+                    </div>
 
-            <div class="widget_options_panel">
+                    <div class="widget_options_panel">
 
-                <div class="btn-group">
-                    <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-                        {{ "Change layout" | trans }}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        <li>
-                            <div id="layout_select_block">
-                                <div class="admin_layoutbox_menu_columnchoices_instructions">
-                                    {{ "Select layout type for current page" | trans }}
-                                </div>
-                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                    <li>
-                                        <img src="/public/img/admin/content/cols1_3.png" alt="3 columns"
-                                             onclick="changeCurrentLayoutType('right,middle,left');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols1_2left.png" alt="2 columns - Left"
-                                             onclick="changeCurrentLayoutType('middle,left');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols1_2right.png" alt="2 columns - Right"
-                                             onclick="changeCurrentLayoutType('right,middle');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols1_1.png" alt="1 columns"
-                                             onclick="changeCurrentLayoutType('middle');">
-                                    </li>
-                                </ul>
-                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                    <li>
-                                        <img src="/public/img/admin/content/cols2_3.png" alt="3 columns"
-                                             onclick="changeCurrentLayoutType('top,right,middle,left');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols2_2left.png" alt="2 columns - Left"
-                                             onclick="changeCurrentLayoutType('top,middle,left');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols2_2right.png" alt="2 columns - Right"
-                                             onclick="changeCurrentLayoutType('top,right,middle');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols2_1.png" alt="1 columns"
-                                             onclick="changeCurrentLayoutType('top,middle');">
-                                    </li>
-                                </ul>
-                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                    <li>
-                                        <img src="/public/img/admin/content/cols3_3.png" alt="3 columns"
-                                             onclick="changeCurrentLayoutType('right,middle,left,bottom');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols3_2left.png" alt="2 columns - Left"
-                                             onclick="changeCurrentLayoutType('middle,left,bottom');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols3_2right.png" alt="2 columns - Right"
-                                             onclick="changeCurrentLayoutType('right,middle,bottom');">
-                                    </li>
-                                    <li>
-                                        <img src="/public/img/admin/content/cols3_1.png" alt="1 columns"
-                                             onclick="changeCurrentLayoutType('middle,bottom');">
-                                    </li>
-                                </ul>
+                        <div class="btn-group">
+                            <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                                {{ "Change layout" | trans }}
+                                <span class="caret"></span>
+                            </a>
+                            <ul class="dropdown-menu">
+                                <li>
+                                    <div id="layout_select_block">
+                                        <div class="admin_layoutbox_menu_columnchoices_instructions">
+                                            {{ "Select layout type for current page" | trans }}
+                                        </div>
+                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                            <li>
+                                                <img src="/public/img/admin/content/cols1_3.png" alt="3 columns"
+                                                     onclick="changeCurrentLayoutType('right,middle,left');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols1_2left.png"
+                                                     alt="2 columns - Left"
+                                                     onclick="changeCurrentLayoutType('middle,left');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols1_2right.png"
+                                                     alt="2 columns - Right"
+                                                     onclick="changeCurrentLayoutType('right,middle');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols1_1.png" alt="1 columns"
+                                                     onclick="changeCurrentLayoutType('middle');">
+                                            </li>
+                                        </ul>
+                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                            <li>
+                                                <img src="/public/img/admin/content/cols2_3.png" alt="3 columns"
+                                                     onclick="changeCurrentLayoutType('top,right,middle,left');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols2_2left.png"
+                                                     alt="2 columns - Left"
+                                                     onclick="changeCurrentLayoutType('top,middle,left');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols2_2right.png"
+                                                     alt="2 columns - Right"
+                                                     onclick="changeCurrentLayoutType('top,right,middle');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols2_1.png" alt="1 columns"
+                                                     onclick="changeCurrentLayoutType('top,middle');">
+                                            </li>
+                                        </ul>
+                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                            <li>
+                                                <img src="/public/img/admin/content/cols3_3.png" alt="3 columns"
+                                                     onclick="changeCurrentLayoutType('right,middle,left,bottom');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols3_2left.png"
+                                                     alt="2 columns - Left"
+                                                     onclick="changeCurrentLayoutType('middle,left,bottom');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols3_2right.png"
+                                                     alt="2 columns - Right"
+                                                     onclick="changeCurrentLayoutType('right,middle,bottom');">
+                                            </li>
+                                            <li>
+                                                <img src="/public/img/admin/content/cols3_1.png" alt="1 columns"
+                                                     onclick="changeCurrentLayoutType('middle,bottom');">
+                                            </li>
+                                        </ul>
 
 
-                            </div>
-                        </li>
-                    </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                        </div>
+                        <button id="save_button" disabled="disabled" onclick="savePage();" type="button"
+                                class="btn btn-primary button-loading"
+                                data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
+                    </div>
                 </div>
-                <button id="save_button" disabled="disabled" onclick="savePage();" type="button" class="btn btn-primary button-loading" data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
-            </div>
-        </div>
-        <div class="clearfix"></div>
+                <div class="clearfix"></div>
 
-        <div id="widget_list" class="admin_pages_widgets">
-            <ul class="widgets">
+                <div id="widget_list" class="admin_pages_widgets">
+                    <ul class="widgets">
 
-            </ul>
+                    </ul>
 
-        </div>
+                </div>
 
-        <div id="global_placer" class="admin_pages_layout">
+                <div id="global_placer" class="admin_pages_layout">
 
 
-        </div>
-        <div class="clear"></div>
+                </div>
+                <div class="clear"></div>
 
     </div>
-    <!--/row-->
-
 {% endblock %}

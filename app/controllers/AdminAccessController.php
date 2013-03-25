@@ -182,5 +182,7 @@ class AdminAccessController extends AdminController
             $result->value = $data[$options];
             $result->save();
         }
+
+        $this->flash->success('Settings saved!');
     }
 }

@@ -22,18 +22,19 @@ class AdminMenusController extends AdminController
     {
         $navigation = new Navigation();
         $navigation
-            ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
-            ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
-            'index' => array(
-                'href' => 'admin/menus',
-                'title' => 'Browse'
-            ),
-            'create' => array(
-                'href' => 'admin/menus/create',
-                'title' => 'Create new menu'
-            )))
-            ->setActiveItem($this->dispatcher->getActionName());
+                'index' => array(
+                    'href' => 'admin/menus',
+                    'title' => 'Browse'
+                ),
+                1 => array(
+                    'href' => 'javascript:;',
+                    'title' => '|'
+                ),
+                'create' => array(
+                    'href' => 'admin/menus/create',
+                    'title' => 'Create new menu'
+                )));
 
         $this->view->setVar('navigation', $navigation);
     }
@@ -74,7 +75,8 @@ class AdminMenusController extends AdminController
             return;
         }
 
-        $this->response->redirect("admin/menus/manage/" . $form->getData()->getId());
+        $this->flashSession->success('New object created successfully!');
+        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getData()->getId()));
     }
 
     /**
@@ -84,7 +86,7 @@ class AdminMenusController extends AdminController
     {
         $item = Menu::findFirst($id);
         if (!$item)
-            return $this->response->redirect("admin/menus");
+            return $this->response->redirect(array('for' => "admin-menus"));
 
 
         $form = new Form_Admin_Menus_Edit($item);
@@ -94,7 +96,8 @@ class AdminMenusController extends AdminController
             return;
         }
 
-        $this->response->redirect("admin/menus");
+        $this->flashSession->success('Object saved!');
+        return $this->response->redirect(array('for' => "admin-menus"));
     }
 
     /**
@@ -103,10 +106,16 @@ class AdminMenusController extends AdminController
     public function deleteAction($id)
     {
         $item = Menu::findFirst($id);
-        if ($item)
-            $item->delete();
+        if ($item){
+            if ($item->delete()){
+                $this->flashSession->notice('Object deleted!');
+            }
+            else{
+                $this->flashSession->error($item->getMessages());
+            }
+        }
 
-        return $this->response->redirect("admin/menus");
+        return $this->response->redirect(array('for' => "admin-menus"));
     }
 
     /**
@@ -116,21 +125,20 @@ class AdminMenusController extends AdminController
     {
         $item = Menu::findFirst($id);
         if (!$item)
-            return $this->response->redirect("admin/menus");
+            return $this->response->redirect(array('for' => "admin-menus"));
 
         $parentId = $this->request->get('parent_id', 'int');
-        if ($parentId){
+        if ($parentId) {
             $parent = MenuItem::findFirst($parentId);
 
             // get all parents
             $flag = true;
             $parents = array();
             $parents[] = $currentParent = $parent;
-            while($flag){
-                if ($currentParent->getParentId()){
+            while ($flag) {
+                if ($currentParent->getParentId()) {
                     $parents[] = $currentParent = $currentParent->getParent();
-                }
-                else{
+                } else {
                     $flag = false;
                 }
             }
@@ -138,12 +146,11 @@ class AdminMenusController extends AdminController
 
             $this->view->setVar('parent', $parent);
             $this->view->setVar('parents', $parents);
-            $this->view->setVar('items', $parent->getMenuItem(array('order'=>'item_order ASC')));
-        }
-        else{
+            $this->view->setVar('items', $parent->getMenuItem(array('order' => 'item_order ASC')));
+        } else {
             $this->view->setVar('items', $item->getMenuItem(array(
                 'parent_id IS NULL',
-                'order'=>'item_order ASC'
+                'order' => 'item_order ASC'
             )));
         }
 
@@ -185,7 +192,7 @@ class AdminMenusController extends AdminController
             "menu_id = {$data['menu_id']}",
             'order' => 'item_order DESC'
         );
-        if (!empty($data['parent_id'])){
+        if (!empty($data['parent_id'])) {
             $orderData[0] .= " AND parent_id = {$data['parent_id']}";
         }
         $orderItem = MenuItem::findFirst($orderData);
@@ -194,7 +201,7 @@ class AdminMenusController extends AdminController
             $item->setItemOrder($orderItem->getItemOrder() + 1);
 
         $roles = $this->request->get('roles');
-        if ($roles == null){
+        if ($roles == null) {
             $item->setRoles(array());
         }
 
@@ -219,9 +226,9 @@ class AdminMenusController extends AdminController
             'url_type' => ($item->getPageId() == null ? 0 : 1),
         );
 
-        if ($item->getPageId()){
+        if ($item->getPageId()) {
             $page = Page::findFirst($item->getPageId());
-            if ($page){
+            if ($page) {
                 $data['page_id'] = $page->getId();
                 $data['page'] = $page->getTitle();
             }
@@ -246,12 +253,12 @@ class AdminMenusController extends AdminController
         }
 
         $roles = $this->request->get('roles');
-        if ($roles == null){
+        if ($roles == null) {
             $item->setRoles(array());
         }
 
         $languages = $this->request->get('languages');
-        if ($languages == null){
+        if ($languages == null) {
             $item->setLanguages(array());
         }
 
@@ -274,13 +281,13 @@ class AdminMenusController extends AdminController
 
         $parentId = $this->request->get('parent_id');
         $parentLink = '';
-        if ($parentId){
+        if ($parentId) {
             $parentLink = "?parent_id={$parentId}";
         }
         if ($menuId)
             return $this->response->redirect("admin/menus/manage/{$menuId}{$parentLink}");
 
-        return $this->response->redirect("admin/menus");
+        return $this->response->redirect(array('for' => "admin-menus"));
     }
 
     /**
@@ -289,7 +296,7 @@ class AdminMenusController extends AdminController
     public function orderAction()
     {
         $order = $this->request->get('order', null, array());
-        foreach($order as $index => $id){
+        foreach ($order as $index => $id) {
             $this->db->update(MenuItem::getSourceStatic(), array('item_order'), array($index), "id = {$id}");
         }
         $this->view->disable();
@@ -298,10 +305,11 @@ class AdminMenusController extends AdminController
     /**
      * @Get("/suggest", name="admin-menus-suggest")
      */
-    public function suggestAction(){
+    public function suggestAction()
+    {
         $this->view->disable();
         $query = $this->request->get('query');
-        if (!$query){
+        if (!$query) {
             $this->response->setContent('[]')->send();
             return;
         }
@@ -310,12 +318,12 @@ class AdminMenusController extends AdminController
         $results = Menu::find(
             array(
                 "conditions" => "name LIKE ?1",
-                "bind"       => array(1 => '%'.$query.'%')
+                "bind" => array(1 => '%' . $query . '%')
             )
         );
 
         $data = array();
-        foreach($results as $result){
+        foreach ($results as $result) {
             $data[] = array(
                 'id' => $result->getId(),
                 'label' => $result->getName()

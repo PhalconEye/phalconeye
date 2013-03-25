@@ -92,17 +92,24 @@
 
 {% endblock %}
 
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
+{% endblock %}
+
 {% block content %}
 
-    <div class="row-fluid">
+    <div class="span12">
         <div class="menu_manage_header">
-            <h3><a href="{{ url("admin/menus")}}" class='btn'>{{ "<< Back" | trans }}</a>
+            <h3><a href="{{ url("admin/menus")}}">{{ "Menus" | trans }}</a> >
                 {% if parent is defined %}
-                    |
                     {% for p in parents %}
                         <a href="{{ url(['for':'admin-menus-manage'])}}{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}"
                            class='btn'>{{ p.getTitle() }}</a>
-                        |
+                        >
                     {% endfor %}
                 {% endif %}
                 {{ "Manage menu" | trans }}

@@ -22,38 +22,31 @@ class AdminUsersController extends AdminController
     {
         $navigation = new Navigation();
         $navigation
-            ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
-            ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
-            'index' => array(
-                'href' => 'admin/users',
-                'title' => 'Users'
-            ),
-            'roles' => array(
-                'href' => 'admin/users/roles',
-                'title' => 'Roles'
-            )
-        ))
-            ->setActiveItem($this->dispatcher->getActionName());
+                'index' => array(
+                    'href' => 'admin/users',
+                    'title' => 'Users'
+                ),
+                'roles' => array(
+                    'href' => 'admin/users/roles',
+                    'title' => 'Roles'
+                ),
+                2 => array(
+                    'href' => 'javascript:;',
+                    'title' => '|'
+                ),
+                'create' => array(
+                    'href' => 'admin/users/create',
+                    'title' => 'Create new user'
+                ),
+                'rolesCreate' => array(
+                    'href' => 'admin/users/roles-create',
+                    'title' => 'Create new role'
+                )
+            ));
 
-        $this->view->setVar('navigationMain', $navigation);
+        $this->view->setVar('navigation', $navigation);
 
-        $navigation = new Navigation();
-        $navigation
-            ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
-            ->setListClass('nav nav-list admin-sidenav')
-            ->setItems(array(
-            'create' => array(
-                'href' => 'admin/users/create',
-                'title' => 'Create new user'
-            ),
-            'rolesCreate' => array(
-                'href' => 'admin/users/roles-create',
-                'title' => 'Create new role'
-            )))
-            ->setActiveItem($this->dispatcher->getActionName());
-
-        $this->view->setVar('navigationCreation', $navigation);
     }
 
     /**
@@ -69,7 +62,7 @@ class AdminUsersController extends AdminController
         $paginator = new \Phalcon\Paginator\Adapter\Model(
             array(
                 "data" => $users,
-                "limit"=> 25,
+                "limit" => 25,
                 "page" => $currentPage
             )
         );
@@ -97,7 +90,8 @@ class AdminUsersController extends AdminController
         $user->role_id = Role::getDefaultRole()->getId();
         $user->save();
 
-        $this->response->redirect("admin/users");
+        $this->flashSession->success('New object created successfully!');
+        return $this->response->redirect(array('for' => 'admin-users'));
     }
 
     /**
@@ -107,7 +101,7 @@ class AdminUsersController extends AdminController
     {
         $item = User::findFirst($id);
         if (!$item)
-            return $this->response->redirect("admin/users");
+            return $this->response->redirect(array('for' => 'admin-users'));
 
 
         $form = new Form_Admin_Users_Edit($item);
@@ -120,12 +114,13 @@ class AdminUsersController extends AdminController
         }
 
         $user = $form->getData();
-        if ($lastPassword != $item->getPassword()){
+        if ($lastPassword != $item->getPassword()) {
             $user->setPassword($this->security->hash($user->getPassword()));
             $user->save();
         }
 
-        $this->response->redirect("admin/users");
+        $this->flashSession->success('Object saved!');
+        return $this->response->redirect(array('for' => 'admin-users'));
     }
 
     /**
@@ -134,10 +129,16 @@ class AdminUsersController extends AdminController
     public function deleteAction($id)
     {
         $item = User::findFirst($id);
-        if ($item)
-            $item->delete();
+        if ($item){
+            if ($item->delete()){
+                $this->flashSession->notice('Object deleted!');
+            }
+            else{
+                $this->flashSession->error($item->getMessages());
+            }
+        }
 
-        return $this->response->redirect("admin/users");
+        return $this->response->redirect(array('for' => 'admin-users'));
     }
 
     /**
@@ -153,7 +154,7 @@ class AdminUsersController extends AdminController
         $paginator = new \Phalcon\Paginator\Adapter\Model(
             array(
                 "data" => $users,
-                "limit"=> 25,
+                "limit" => 25,
                 "page" => $currentPage
             )
         );
@@ -177,7 +178,7 @@ class AdminUsersController extends AdminController
         }
 
         $item = $form->getData();
-        if ($item->getIsDefault()){
+        if ($item->getIsDefault()) {
             $this->db->update(
                 $item->getSource(),
                 array('is_default'),
@@ -186,7 +187,8 @@ class AdminUsersController extends AdminController
             );
         }
 
-        $this->response->redirect("admin/users/roles");
+        $this->flashSession->success('New object created successfully!');
+        return $this->response->redirect(array('for' => 'admin-users-roles'));
     }
 
     /**
@@ -196,7 +198,7 @@ class AdminUsersController extends AdminController
     {
         $item = Role::findFirst($id);
         if (!$item)
-            return $this->response->redirect("admin/users/roles");
+            return $this->response->redirect(array('for' => 'admin-users-roles'));
 
 
         $form = new Form_Admin_Users_RoleEdit($item);
@@ -207,7 +209,7 @@ class AdminUsersController extends AdminController
         }
 
         $item = $form->getData();
-        if ($item->getIsDefault()){
+        if ($item->getIsDefault()) {
             $this->db->update(
                 $item->getSource(),
                 array('is_default'),
@@ -216,7 +218,8 @@ class AdminUsersController extends AdminController
             );
         }
 
-        $this->response->redirect("admin/users/roles");
+        $this->flashSession->success('Object saved!');
+        return $this->response->redirect(array('for' => 'admin-users-roles'));
     }
 
     /**
@@ -225,16 +228,23 @@ class AdminUsersController extends AdminController
     public function rolesDeleteAction($id)
     {
         $item = Role::findFirst($id);
-        if ($item){
-            if ($item->getIsDefault()){
+        if ($item) {
+            if ($item->getIsDefault()) {
                 $anotherRole = Role::findFirst();
-                $anotherRole->setIsDefault(1);
-                $anotherRole->save();
+                if ($anotherRole){
+                    $anotherRole->setIsDefault(1);
+                    $anotherRole->save();
+                }
             }
-            $item->delete();
+            if ($item->delete()){
+                $this->flashSession->notice('Object deleted!');
+            }
+            else{
+                $this->flashSession->error($item->getMessages());
+            }
         }
 
-        return $this->response->redirect("admin/users/roles");
+        return $this->response->redirect(array('for' => 'admin-users-roles'));
     }
 }
 

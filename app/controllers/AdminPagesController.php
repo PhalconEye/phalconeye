@@ -22,8 +22,6 @@ class AdminPagesController extends AdminController
     {
         $navigation = new Navigation();
         $navigation
-            ->setItemPrependContent('<i class="icon-chevron-right"></i> ')
-            ->setListClass('nav nav-list admin-sidenav')
             ->setItems(array(
             'index' => array(
                 'href' => 'admin/pages',
@@ -32,8 +30,7 @@ class AdminPagesController extends AdminController
             'create' => array(
                 'href' => 'admin/pages/create',
                 'title' => 'Create new page'
-            )))
-            ->setActiveItem($this->dispatcher->getActionName());
+            )));
 
         $this->view->setVar('navigation', $navigation);
     }
@@ -87,8 +84,8 @@ class AdminPagesController extends AdminController
         }
 
         $page->save();
-
-        $this->response->redirect("admin/pages/manage/" . $form->getData()->getId());
+        $this->flashSession->success('New object created successfully!');
+        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getData()->getId()));
     }
 
     /**
@@ -100,7 +97,7 @@ class AdminPagesController extends AdminController
         if ($id)
             $page = Page::findFirst($id);
         if (!$page)
-            return $this->response->redirect("admin/pages");
+            return $this->response->redirect(array('for' => "admin-pages"));
 
 
         $form = new Form_Admin_Pages_Edit($page);
@@ -122,7 +119,8 @@ class AdminPagesController extends AdminController
         }
 
         $page->save();
-        $this->response->redirect("admin/pages");
+        $this->flashSession->success('Object saved!');
+        return $this->response->redirect(array('for' => "admin-pages"));
     }
 
     /**
@@ -133,10 +131,12 @@ class AdminPagesController extends AdminController
         $page = null;
         if ($id)
             $page = Page::findFirst($id);
-        if ($page)
+        if ($page){
             $page->delete();
+            $this->flashSession->notice('Object deleted!');
+        }
 
-        return $this->response->redirect("admin/pages");
+        return $this->response->redirect(array('for' => "admin-pages"));
     }
 
     /**
@@ -148,7 +148,7 @@ class AdminPagesController extends AdminController
         if ($id)
             $page = Page::find($id)->getFirst();
         if (!$page)
-            return $this->response->redirect("admin/pages");
+            return $this->response->redirect(array('for' => "admin-pages"));
 
         // Collecting widgets info
         $content = Widget::find();

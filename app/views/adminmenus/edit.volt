@@ -14,12 +14,17 @@
 {% extends "layouts/admin.volt" %}
 
 {% block title %}{{ "Menu Editing"|trans }}{% endblock %}
-{% block content %}
-    <div class="span3 admin-sidebar">
-        {{ navigation.render() }}
-    </div>
 
-    <div class="span9">
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
+{% endblock %}
+
+{% block content %}
+    <div class="span12">
         <div class="row-fluid">
             {{ form.render() }}
         </div>

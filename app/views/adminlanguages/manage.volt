@@ -19,7 +19,7 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
-                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.getId() }}';
+                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.getId() }}{% if search is defined %}&search={{ search }}{% endif %}';
             }
         }
 
@@ -44,12 +44,21 @@
     </script>
 {% endblock %}
 
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
+{% endblock %}
+
+
 {% block content %}
 
-    <div class="row-fluid">
+    <div class="span12">
         <div class="language_manage_header">
-            <h3><a href="{{ url(['for': 'admin-languages']) }}" class='btn'>{{ "<< Back" | trans }}</a>
-                | {{ "Manage language" | trans }}
+            <h3><a href="{{ url(['for': 'admin-languages']) }}">{{ "Languages" | trans }}</a>
+                > {{ "Manage language" | trans }}
                 "{{ lang.getName() }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
             <form class="navbar-search pull-right" method="GET" action="{{ url(['for': 'admin-languages-manage'])~lang.getId() }}">

@@ -35,44 +35,46 @@
 </head>
 <body>
 
-<div class="navbar navbar-inverse navbar-fixed-top">
+
+<div class="navbar navbar_panel">
     <div class="navbar-inner">
         <div class="container">
-            <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-                <span class="icon-bar"></span>
-            </a>
-            <a class="brand" href="{{ url("admin")}}"><img alt="Pahlcon Eye" src="/public/img/phalconeye/PE_logo_white.png"/></a>
+            <a class="brand" href="{{ url("admin") }}"><img alt="Pahlcon Eye"
+                                                            src="/public/img/phalconeye/PE_logo_white.png"/></a>
 
             <div class="nav-collapse collapse">
-                <p class="navbar-text pull-right">
-                    {{ 'Logged in as ' | trans }} Username
-                    [<a href="{{ url()}}" class="navbar-link">{{ 'Back to site' | trans }}</a>]
-                    {{ ' or '|trans }}
-                    [<a href="{{ url("logout")}}" class="navbar-link">{{ 'Exit' | trans }}</a>]
-                </p>
                 {{ headerNavigation.render() }}
             </div>
             <!--/.nav-collapse -->
         </div>
     </div>
+
+    <div class="navbar-text">
+        <a href="{{ url() }}" class="btn btn-primary">{{ 'Back to site' | trans }}</a>
+        <a href="{{ url("logout") }}" class="btn btn-danger">{{ 'Logout' | trans }}</a>
+    </div>
 </div>
 
-<div class="container">
-    <div class="row">
-        {{ content() }}
-        {{ flashSession.output() }}
-    </div><!--/row-->
+<div class="content">
 
-    <div class="row wrapper">
+    {% block header %}
+    {% endblock %}
+
+    <div class="row-fluid row-after-header">
+        {{ content() | trans }}
+        {{ flashSession.output() | trans }}
+    </div>
+
+    <div class="row-fluid">
+        <!--/row-->
         {% block content %}
         {% endblock %}
-    </div><!--/row-->
+    </div>
+    <!--/row-->
 </div>
 
-<div id="footer" class="container">
-     Phalcon Eye - {{ date('d-m-Y H:i:s') }}
+<div id="footer">
+    Phalcon Eye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
 
 </body>

@@ -25,16 +25,19 @@
     </script>
 {% endblock %}
 
-{% block content %}
-    <div class="span3 admin-sidebar">
-        {{ navigationMain.render() }}
-        <br/>
-        {{ navigationCreation.render() }}
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
     </div>
+{% endblock %}
 
-    <div class="span9">
+{% block content %}
+
+    <div class="span12">
         <div class="row-fluid">
-            <h1>{{ 'Users' | trans }}</h1>
+            <h2>{{ 'Users' | trans }} ({{ paginator.items | length }})</h2>
             <table class="table">
                 <thead>
                 <tr>

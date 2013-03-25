@@ -77,8 +77,11 @@ class Translation_Db implements AdapterInterface
      */
     public function query($index, $placeholders = null)
     {
-        if (!$this->_locale)
+        if (!$this->_locale || empty($index))
             return $index;
+
+        // cleanup
+        $index = preg_replace('~[\r\n]+~', '',$index);
 
         $translation = $this->get($index);
 

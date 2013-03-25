@@ -32,6 +32,8 @@ class AdminSettingsController extends AdminController
 
         $data = $form->getData();
         Settings::setSettings($data);
+
+        $this->flash->success('Settings saved!');
     }
 
     /**
@@ -147,7 +149,7 @@ class AdminSettingsController extends AdminController
         $configText = var_export($this->config->toArray(), true);
         $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
         file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
-        $form->addNotice('Settings saved!');
+        $this->flash->success('Settings saved!');
     }
 }
 

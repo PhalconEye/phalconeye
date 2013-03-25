@@ -25,12 +25,17 @@
     </script>
 {% endblock %}
 
-{% block content %}
-    <div class="span3 admin-sidebar">
-        {{ navigation.render() }}
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
     </div>
+{% endblock %}
 
-    <div class="span9">
+
+{% block content %}
+    <div class="span12">
         <div class="row-fluid">
             <div class="languages_header">
                 <h1>{{ 'Languages' | trans }}</h1>

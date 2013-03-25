@@ -427,6 +427,7 @@ class Application
             // Create a dummy cache for system.
             // System will work correctly and the data will be always current for all adapters
             $dummyCache = new Cache_Dummy(null);
+            $this->_di->set('viewCache', $dummyCache);
             $this->_di->set('cacheOutput', $dummyCache);
             $this->_di->set('cacheData', $dummyCache);
             $this->_di->set('modelsCache', $dummyCache);
