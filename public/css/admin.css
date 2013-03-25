@@ -616,6 +616,11 @@ form .form_footer .btn + .btn{
     color: white;
 }
 
+.navbar_panel .nav>li>a>i{
+    margin-right: 10px;
+    margin-top: 0px;
+}
+
 .navbar_panel .nav-category{
     margin-top: 10px;
 }
@@ -680,6 +685,10 @@ form .form_footer .btn + .btn{
     color: white;
 }
 
+.navbar-header .nav>li>a>i{
+    margin-right: 10px;
+    margin-top: 0px;
+}
 
 .navbar-header .nav>.active>a,
 .navbar-header .nav>.active>a:hover{

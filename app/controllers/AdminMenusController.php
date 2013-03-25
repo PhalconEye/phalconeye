@@ -25,7 +25,8 @@ class AdminMenusController extends AdminController
             ->setItems(array(
                 'index' => array(
                     'href' => 'admin/menus',
-                    'title' => 'Browse'
+                    'title' => 'Browse',
+                    'prepend' => '<i class="icon-list icon-white"></i>'
                 ),
                 1 => array(
                     'href' => 'javascript:;',
@@ -33,7 +34,8 @@ class AdminMenusController extends AdminController
                 ),
                 'create' => array(
                     'href' => 'admin/menus/create',
-                    'title' => 'Create new menu'
+                    'title' => 'Create new menu',
+                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
                 )));
 
         $this->view->setVar('navigation', $navigation);

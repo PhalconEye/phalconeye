@@ -41,23 +41,52 @@ class AdminController extends Controller
             ->setItems(array(
             'admin' => array(
                 'href' => 'admin',
-                'title' => 'Dashboard'
+                'title' => 'Dashboard',
+                'prepend' => '<i class="icon-home icon-white"></i>'
             ),
             'users' => array(
                 'title' => 'Manage',
                 'items' => array( // type - dropdown
-                    'admin/users' => 'Users and Roles',
-                    'admin/pages' => 'Pages',
-                    'admin/menus' => 'Menus',
-                    'admin/languages' => 'Languages',
+                    'admin/users' => array(
+                      'title' => 'Users and Roles',
+                      'href' => 'admin/users',
+                      'prepend' => '<i class="icon-user icon-white"></i>'
+                    ),
+                    'admin/pages' => array(
+                      'title' => 'Pages',
+                      'href' => 'admin/pages',
+                      'prepend' => '<i class="icon-list-alt icon-white"></i>'
+                    ),
+                    'admin/menus' => array(
+                      'title' => 'Menus',
+                      'href' => 'admin/menus',
+                      'prepend' => '<i class="icon-th-list icon-white"></i>'
+                    ),
+                    'admin/languages' => array(
+                      'title' => 'Languages',
+                      'href' => 'admin/languages',
+                      'prepend' => '<i class="icon-globe icon-white"></i>'
+                    )
                 )
             ),
             'settings' => array( // type - dropdown
                 'title' => 'Settings',
                 'items' => array(
-                    'admin/settings' => 'System',
-                    'admin/settings/performance' => 'Performance',
-                    'admin/access' => 'Access rights'
+                    'admin/settings' => array(
+                        'title' => 'System',
+                        'href' => 'admin/settings',
+                        'prepend' => '<i class="icon-cog icon-white"></i>'
+                    ),
+                    'admin/settings/performance' => array(
+                        'title' => 'Performance',
+                        'href' => 'admin/settings/performance',
+                        'prepend' => '<i class="icon-signal icon-white"></i>'
+                    ),
+                    'admin/access' => array(
+                        'title' => 'Access Rights',
+                        'href' => 'admin/access',
+                        'prepend' => '<i class="icon-lock icon-white"></i>'
+                    )
                 )
             )))
             ->setActiveItem($activeItem)

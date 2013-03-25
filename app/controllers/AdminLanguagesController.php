@@ -28,7 +28,8 @@ class AdminLanguagesController extends AdminController
             ->setItems(array(
                 'index' => array(
                     'href' => 'admin/languages',
-                    'title' => 'Browse'
+                    'title' => 'Browse',
+                    'prepend' => '<i class="icon-list icon-white"></i>'
                 ),
                 1 => array(
                     'href' => 'javascript:;',
@@ -36,7 +37,8 @@ class AdminLanguagesController extends AdminController
                 ),
                 'create' => array(
                     'href' => 'admin/languages/create',
-                    'title' => 'Create new language'
+                    'title' => 'Create new language',
+                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
                 )));
 
         $this->view->setVar('navigation', $navigation);

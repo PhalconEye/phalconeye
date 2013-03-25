@@ -25,11 +25,13 @@ class AdminUsersController extends AdminController
             ->setItems(array(
                 'index' => array(
                     'href' => 'admin/users',
-                    'title' => 'Users'
+                    'title' => 'Users',
+                    'prepend' => '<i class="icon-user icon-white"></i>'
                 ),
                 'roles' => array(
                     'href' => 'admin/users/roles',
-                    'title' => 'Roles'
+                    'title' => 'Roles',
+                    'prepend' => '<i class="icon-share icon-white"></i>'
                 ),
                 2 => array(
                     'href' => 'javascript:;',
@@ -37,11 +39,13 @@ class AdminUsersController extends AdminController
                 ),
                 'create' => array(
                     'href' => 'admin/users/create',
-                    'title' => 'Create new user'
+                    'title' => 'Create new user',
+                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
                 ),
                 'rolesCreate' => array(
                     'href' => 'admin/users/roles-create',
-                    'title' => 'Create new role'
+                    'title' => 'Create new role',
+                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
                 )
             ));
 

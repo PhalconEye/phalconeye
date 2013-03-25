@@ -25,11 +25,13 @@ class AdminPagesController extends AdminController
             ->setItems(array(
             'index' => array(
                 'href' => 'admin/pages',
-                'title' => 'Browse'
+                'title' => 'Browse',
+                'prepend' => '<i class="icon-list icon-white"></i>'
             ),
             'create' => array(
                 'href' => 'admin/pages/create',
-                'title' => 'Create new page'
+                'title' => 'Create new page',
+                'prepend' => '<i class="icon-plus-sign icon-white"></i>'
             )));
 
         $this->view->setVar('navigation', $navigation);
