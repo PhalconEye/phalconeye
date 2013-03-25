@@ -225,7 +225,7 @@ class AdminPagesController extends AdminController
             $form->addElement('textField', 'count', array(
                 'label' => 'Items count',
                 'value' => 10
-            ));
+            ), 10000);
         }
 
         if ($widgetMetadata->getIsAclControlled() == 1) {
@@ -233,7 +233,7 @@ class AdminPagesController extends AdminController
                 'label' => 'Roles',
                 'options' => Role::find(),
                 'using' => array('id', 'name')
-            ));
+            ), 10000);
 
             $form->setElementAttrib('roles', 'multiple', 'multiple');
         }
@@ -261,7 +261,7 @@ class AdminPagesController extends AdminController
     }
 
     /**
-     * @Route("/save-layout/{id:[0-9]+}", methods={"GET"}, name="admin-pages-save-layout")
+     * @Route("/save-layout/{id:[0-9]+}", methods={"POST"}, name="admin-pages-save-layout")
      */
     public function saveLayoutAction($id)
     {

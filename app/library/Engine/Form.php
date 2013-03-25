@@ -552,6 +552,8 @@ class Form
                         unset($tagAttribs['value']);
                         unset($tagAttribs['order']);
                         $tagOptions = array_merge($tagOptions, $tagAttribs);
+                        unset($tagOptions['label']);
+                        unset($tagOptions['description']);
                         $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
                     }
                     else{
@@ -565,6 +567,8 @@ class Form
                         unset($tagAttribs['value']);
                         unset($tagAttribs['order']);
                         $tagOptions = array_merge($tagOptions, $tagAttribs);
+                        unset($tagOptions['label']);
+                        unset($tagOptions['description']);
                         $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
                     }
                 }
@@ -597,6 +601,9 @@ class Form
             } else {
                 unset($element['params']['validators']); // Phalcon elements doesn't like this
                 unset($element['params']['filter']);
+                unset($element['params']['label']);
+                unset($element['params']['description']);
+
 
                 $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($element['params']));
             }

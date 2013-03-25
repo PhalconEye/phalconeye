@@ -80,7 +80,7 @@ class Settings extends \Phalcon\Mvc\Model
     /**
      * @param $name
      * @param null $default
-     * @return null|Settings
+     * @return null|string
      */
     public static function getSetting($name, $default = null)
     {
@@ -92,6 +92,10 @@ class Settings extends \Phalcon\Mvc\Model
         return $setting->getValue();
     }
 
+    /**
+     * @param $name
+     * @return null|Settings
+     */
     public static function getSettingObject($name)
     {
         $setting = Settings::findFirst(

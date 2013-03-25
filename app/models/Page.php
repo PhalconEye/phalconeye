@@ -311,7 +311,8 @@ class Page extends \Phalcon\Mvc\Model
                 if ($ex_widget->getId() == $item["id"]) {
                     $ex_widget->setLayout($item["layout"]);
                     $ex_widget->setWidgetOrder($orders[$item["layout"]]);
-                    $ex_widget->setRoles($item["roles"]);
+                    if (!empty($item["roles"]))
+                        $ex_widget->setRoles($item["roles"]);
                     $ex_widget->setParams($item["params"]);
                     $ex_widget->save();
                     $founded = true;
@@ -336,7 +337,8 @@ class Page extends \Phalcon\Mvc\Model
                 $content->setPageId($this->id);
                 $content->setWidgetId($item["widget_id"]);
                 $content->setLayout($item["layout"]);
-                $content->setRoles($item["roles"]);
+                if (!empty($item["roles"]))
+                    $content->setRoles($item["roles"]);
                 $content->setParams($item["params"]);
                 $content->setWidgetOrder($orders[$item["layout"]]);
                 $content->save();
