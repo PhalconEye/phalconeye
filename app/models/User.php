@@ -25,6 +25,7 @@ class User extends \Phalcon\Mvc\Model
 
     /**
      * @var int
+     * @form_type select
      *
      */
     protected $role_id;

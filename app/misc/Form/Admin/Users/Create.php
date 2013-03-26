@@ -19,15 +19,17 @@ class Form_Admin_Users_Create extends Form
 
     public function __construct($model = null)
     {
-        $this
-            ->addIgnored('role_id')
-        ;
 
         if ($model === null){
             $model = new User();
         }
 
         parent::__construct($model);
+
+        $this->setElementParam('role_id', 'options', Role::find());
+        $this->setElementParam('role_id', 'using', array('id', 'name'));
+        $this->setElementParam('role_id', 'description', 'Select user role');
+        $this->setElementAttrib('role_id', 'order', 4);
     }
 
     public function init()

@@ -23,16 +23,20 @@ class AdminPagesController extends AdminController
         $navigation = new Navigation();
         $navigation
             ->setItems(array(
-            'index' => array(
-                'href' => 'admin/pages',
-                'title' => 'Browse',
-                'prepend' => '<i class="icon-list icon-white"></i>'
-            ),
-            'create' => array(
-                'href' => 'admin/pages/create',
-                'title' => 'Create new page',
-                'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-            )));
+                'index' => array(
+                    'href' => 'admin/pages',
+                    'title' => 'Browse',
+                    'prepend' => '<i class="icon-list icon-white"></i>'
+                ),
+                1 => array(
+                    'href' => 'javascript:;',
+                    'title' => '|'
+                ),
+                'create' => array(
+                    'href' => 'admin/pages/create',
+                    'title' => 'Create new page',
+                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                )));
 
         $this->view->setVar('navigation', $navigation);
     }
@@ -76,12 +80,12 @@ class AdminPagesController extends AdminController
 
         $page = $form->getData();
         $url = $page->getUrl();
-        if (!empty($url)){
+        if (!empty($url)) {
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
         }
 
         $roles = $this->request->get('roles');
-        if ($roles == null){
+        if ($roles == null) {
             $page->setRoles(array());
         }
 
@@ -111,12 +115,12 @@ class AdminPagesController extends AdminController
 
         $page = $form->getData();
         $url = $page->getUrl();
-        if (!empty($url) && $url != '/'){
+        if (!empty($url) && $url != '/') {
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
         }
 
         $roles = $this->request->get('roles');
-        if ($roles == null){
+        if ($roles == null) {
             $page->setRoles(array());
         }
 
@@ -133,7 +137,7 @@ class AdminPagesController extends AdminController
         $page = null;
         if ($id)
             $page = Page::findFirst($id);
-        if ($page){
+        if ($page) {
             $page->delete();
             $this->flashSession->notice('Object deleted!');
         }
