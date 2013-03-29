@@ -215,7 +215,7 @@ h3{
 }
 
 .row-page-manager{
-    min-width: 1000px !important;
+    min-width: 1050px !important;
 }
 
 .manage_page_header{
@@ -529,13 +529,13 @@ form .form_footer .btn + .btn{
     width: 100px;
 }
 
-.languages_header h1{
+.languages_header h2{
     float: left;
 }
 
 .languages_header button{
     float: right;
-    margin-top: 20px;
+    margin-top: 5px;
 }
 
 .language_manage_header .icon-search{

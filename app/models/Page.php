@@ -292,6 +292,8 @@ class Page extends \Phalcon\Mvc\Model
         if (!$widgets)
             $widgets = array();
 
+        $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', array());
+
         // updating
         $existing_widgets = $this->getWidgets(false);
         $widgets_ids_to_remove = array(); // widgets that we need to remove
@@ -303,17 +305,19 @@ class Page extends \Phalcon\Mvc\Model
             $orders = array();
 
             foreach ($widgets as $item) {
+                if (empty($currentPageWidgets[$item['widget_index']]))
+                    continue;
+                $itemData = $currentPageWidgets[$item['widget_index']];
+
                 if (empty($orders[$item["layout"]]))
                     $orders[$item["layout"]] = 1;
                 else
                     $orders[$item["layout"]]++;
 
-                if ($ex_widget->getId() == $item["id"]) {
+                if ($ex_widget->getId() == $itemData["id"]) {
                     $ex_widget->setLayout($item["layout"]);
                     $ex_widget->setWidgetOrder($orders[$item["layout"]]);
-                    if (!empty($item["roles"]))
-                        $ex_widget->setRoles($item["roles"]);
-                    $ex_widget->setParams($item["params"]);
+                    $ex_widget->setParams($itemData["params"]);
                     $ex_widget->save();
                     $founded = true;
                 }
@@ -327,19 +331,21 @@ class Page extends \Phalcon\Mvc\Model
         // inserting
         $orders = array();
         foreach ($widgets as $item) {
+            if (empty($currentPageWidgets[$item['widget_index']]))
+                continue;
+            $itemData = $currentPageWidgets[$item['widget_index']];
+
             if (empty($orders[$item["layout"]]))
                 $orders[$item["layout"]] = 1;
             else
                 $orders[$item["layout"]]++;
 
-            if ($item["id"] == 0) { // need to be inserted
+            if ($itemData["id"] == 0) { // need to be inserted
                 $content = new Content();
                 $content->setPageId($this->id);
-                $content->setWidgetId($item["widget_id"]);
+                $content->setWidgetId($itemData["widget_id"]);
                 $content->setLayout($item["layout"]);
-                if (!empty($item["roles"]))
-                    $content->setRoles($item["roles"]);
-                $content->setParams($item["params"]);
+                $content->setParams($itemData["params"]);
                 $content->setWidgetOrder($orders[$item["layout"]]);
                 $content->save();
             }

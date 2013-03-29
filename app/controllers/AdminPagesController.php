@@ -184,14 +184,22 @@ class AdminPagesController extends AdminController
 
         $content = $page->getWidgets(false);
         $currentPageWidgets = array();
-        foreach ($content as $widget)
-            $currentPageWidgets[] = array(
+        $widgetIndex = 0;
+        foreach ($content as $widget){
+            $currentPageWidgets[$widgetIndex] = array(
+                'widget_index' => $widgetIndex, // indification for this array
                 'id' => $widget->getId(),
                 'layout' => $widget->getLayout(),
                 'widget_id' => $widget->getWidgetId(),
                 'params' => $widget->getParams()
             );
+            $widgetIndex++;
+        }
 
+
+        // store parameters in session
+        $this->session->set('admin-pages-manage', $currentPageWidgets);
+        $this->session->set('admin-pages-widget-index', $widgetIndex);
 
         $this->view->setVar('currentPage', $page);
         $this->view->setVar('bundlesWidgetsMetadata', json_encode($bundlesWidgetsMetadata));
@@ -204,10 +212,31 @@ class AdminPagesController extends AdminController
      */
     public function widgetOptionsAction()
     {
-        $id = $this->request->get('id', 'int', 0);
-        $widgetParams = $this->request->get('params');
-        $widget_id = $this->request->get('widget_id');
-        $page_id = $this->request->get('page_id');
+        $widgetIndex = $this->request->get('widget_index', 'int', -1);
+        if ($widgetIndex != '0' && intval($widgetIndex) == 0)
+            $widgetIndex = -1;
+        $currentPageWidgets = $this->session->get('admin-pages-manage', array());
+
+        if ($widgetIndex == -1){
+            $widgetIndex = $this->session->get('admin-pages-widget-index');
+            $currentPageWidgets[$widgetIndex] =array(
+                'widget_index' => $widgetIndex, // indification for this array
+                'id' => 0,
+                'layout' => $this->request->get('layout', 'string', 'middle'),
+                'widget_id' =>$this->request->get('widget_id', 'int'),
+                'params' => array()
+            );
+
+        }
+
+        if (empty($currentPageWidgets[$widgetIndex]))
+            return;
+
+        $widgetData = $currentPageWidgets[$widgetIndex];
+
+        $id = $widgetData['id'];
+        $widgetParams = $widgetData['params'];
+        $widget_id = $widgetData['widget_id'];
         $widgetMetadata = Widget::findFirst('id = ' . $widget_id);
         $form = new Form();
 
@@ -252,18 +281,20 @@ class AdminPagesController extends AdminController
             $this->view->setVar('form', $form);
             $this->view->setVar('id', $id);
             $this->view->setVar('name', $widgetMetadata->getName());
-            $this->view->setVar('page_id', $page_id);
 
             return;
         }
 
-        $this->view->setVar('params', json_encode($form->getData()));
+        $currentPageWidgets[$widgetIndex]['params'] = $form->getData();
+        $this->view->setVar('widget_index', $widgetIndex);
 
 
         $this->view->setVar('form', $form);
         $this->view->setVar('id', $id);
         $this->view->setVar('name', $widgetMetadata->getName());
-        $this->view->setVar('page_id', $page_id);
+
+        $this->session->set('admin-pages-manage', $currentPageWidgets);
+        $this->session->set('admin-pages-widget-index', ++$widgetIndex);
     }
 
     /**
@@ -283,6 +314,7 @@ class AdminPagesController extends AdminController
         $page->setWidgets($items);
         $page->save();
 
+        $this->flashSession->success('Page saved!');
         return $response->send();
     }
 

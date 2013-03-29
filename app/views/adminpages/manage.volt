@@ -23,7 +23,6 @@
     var notSaved = false;
     var bundlesWidgetsMetadata = [];
     var widgetsListData = [];
-    var widgetsParams = [];
     var elementIdCounter = 1;
 
     window.onload = function () {
@@ -61,7 +60,7 @@
     };
 
     var defaultWidgetControl = function (widget) {
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" content_id="' + widget.id + '" widget_current_id="' + widget.widget_id + '" widget_page_id="' + currentPageId + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
+        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index+ '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
     }
 
     var buildWidgetsList = function () {
@@ -74,8 +73,9 @@
         });
     }
 
-    var setEditedWidgetParams = function (params) {
-        widgetsParams[$("#widget_editing").attr('element_id')] = JSON.parse(JSON.stringify(params));
+    var setEditedWidgetIndex = function (index) {
+        $("#widget_editing").attr('widget_index', index);
+        $("#widget_editing a[widget_index='undefined']").attr('widget_index', index);
 
         $("#widget_editing").attr("id", "");
         changePageState(true);
@@ -90,7 +90,6 @@
             items: getWidgetsList(true)
         }, function () {
             changePageState(false);
-            alert('{{ 'Changes saved!' |trans }}');
             window.location.reload();
         })
                 .fail(function () {
@@ -108,12 +107,11 @@
 
         var url = '{{ url(['for':'admin-pages-widget-options'])}}';
         var data = {
-            'id': element.attr('content_id'),
-            'widget_id': element.attr('widget_current_id'),
-            'page_id': element.attr('widget_page_id'),
-            'params': widgetsParams[element.parent().parent().attr('element_id')]
+            'widget_index': parseInt(element.attr('widget_index')),
+            'widget_id': element.attr('widget_id'),
+            "layout": element.parent().attr("layout")
         };
-
+console.log(data);
         PE.modal.open(url, data);
     }
 
@@ -161,9 +159,7 @@
             $(this).find(".widget").each(function () {
                 items.push({
                     "content": (!$no_content ? $(this).html().trim() : ''),
-                    "id": $(this).attr("widgetid"),
-                    "widget_id": $(this).attr("widget_object_id"),
-                    "params": widgetsParams[$(this).attr('element_id')],
+                    "widget_index":  parseInt($(this).attr("widget_index")),
                     "layout": $(this).parent().attr("layout")
                 });
             });
@@ -177,9 +173,8 @@
             var hasRemove = false;
 
             $.each(list, function (i, l) {
-                widgetsParams[elementIdCounter] = l.params;
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + l.content + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_id="' + l.widget_id + '">' + l.content + '</div>');
                     elementIdCounter++;
                 }
                 else hasRemove = true;
@@ -190,14 +185,13 @@
         else {
             list = JSON.parse(JSON.stringify(list));
             $.each(list, function (i, l) {
-                widgetsParams[elementIdCounter] = l.params;
                 if ($("#widgets_container_" + l.layout).length > 0) {
                     // get widget real title
                     if (widgetsListData[l.widget_id])
                         var title = widgetsListData[l.widget_id].name;
                     else
                         var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
-                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widgetid="' + l.id + '" widget_object_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
                     elementIdCounter++;
                 }
             });

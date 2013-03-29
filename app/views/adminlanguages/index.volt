@@ -38,7 +38,7 @@
     <div class="span12">
         <div class="row-fluid">
             <div class="languages_header">
-                <h1>{{ 'Languages' | trans }}</h1>
+                <h2>{{ 'Languages' | trans }} ({{ paginator.items | length }})</h2>
                 <button onclick="window.location.href='{{ url(['for':'admin-languages-compile'])}}'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
                 <div class="clear"></div>
             </div>

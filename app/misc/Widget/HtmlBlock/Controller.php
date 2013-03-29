@@ -87,7 +87,7 @@ class Widget_HtmlBlock_Controller extends Widget_Controller
         $languageTextCode = '';
         $defaultLocale = Settings::getSetting('system_default_language', 'en');
 
-        $order = 3; // all textarea's must be together
+        $order = 3; // all textarea's must be ordered together
         foreach($languages as $language){
             $selectedLanguage = '';
             if ($language->getLocale() == $defaultLocale){

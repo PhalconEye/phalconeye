@@ -19,10 +19,10 @@
 
 {% block body %}
 
-    {% if params is defined %}
+    {% if widget_index is defined %}
         <script type="text/javascript">
 
-            setEditedWidgetParams({{params}});
+            setEditedWidgetIndex({{widget_index}});
             $('#modal').modal('hide');
 
         </script>
