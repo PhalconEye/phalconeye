@@ -44,7 +44,11 @@ return new \Phalcon\Config(array(
         'view' => array(
             'compiledPath' => ROOT_PATH . '/app/var/compiled/',
             'compiledExtension' => '.compiled'
+        ),
+        'session' => array(
+            'tableName' => 'session_data'
         )
+
     ),
     'models' => array(
         'metadata' => array(

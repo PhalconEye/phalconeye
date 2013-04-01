@@ -256,3 +256,14 @@ form .form_footer .btn + .btn{
     text-align: center;
 }
 
+.error_page_title{
+    font-size: 128px;
+    font-weight: bold;
+    text-align: center;
+    height: 100px;
+    padding-top: 200px;
+}
+
+.error_page_description{
+    text-align: center;
+}

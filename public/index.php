@@ -12,6 +12,6 @@ define('PE_VERSION', '0.2.0');
 require_once ROOT_PATH . "/app/library/Engine/Application.php";
 
 $application = new Application();
-
-echo $application->run();
+$application->run();
+echo $application->getOutput();
 

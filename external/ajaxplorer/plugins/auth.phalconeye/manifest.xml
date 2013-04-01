@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<authdriver name="phalconeye" label="CONF_MESSAGE[Phalcon Eye authentication storage]" description="CONF_MESSAGE[Stores the Authentication data as serialized PHP values on the filesystem.]" mixins="authdriver_commons"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../core.ajaxplorer/ajxp_registry.xsd">
+	<class_definition filename="plugins/auth.phalconeye/class.phalconeyeAuthDriver.php" classname="phalconeyeAuthDriver"/>
+</authdriver>

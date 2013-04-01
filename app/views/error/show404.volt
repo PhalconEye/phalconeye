@@ -11,5 +11,18 @@
    to lantian.ivan@gmail.com so we can send you a copy immediately.
 #}
 
-{{ content() }}
-<div style="margin-top:100px; font-size: 100px; font-weight: bold; width:100%; text-align: center;">404</div>
+{% extends "layouts/main.volt" %}
+
+{% block title %}
+    {{ 'Not Found'|trans }}
+{% endblock %}
+
+{% block content %}
+<div class="error_page_title">
+    404
+</div>
+<div class="error_page_description">
+    Page Not Found - The requested page could not be found
+</div>
+{% endblock %}
+

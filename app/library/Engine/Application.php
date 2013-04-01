@@ -24,6 +24,8 @@ class Application
 
     private $_config;
 
+    private $_application;
+
     /**
      * Constructor
      */
@@ -42,32 +44,47 @@ class Application
      *
      * @return mixed
      */
-    public function run()
+    public function run($mode = 'normal')
     {
         $loaders = array(
-            'logger',
-            'loader',
-            'environment',
-            'url',
-            'cache',
-            'router',
-            'view',
-            'database',
-            'session',
-            'acl',
-            'dispatcher',
-            'flash',
-            'engine'
+            'normal' => array(
+                'logger',
+                'loader',
+                'environment',
+                'url',
+                'cache',
+                'router',
+                'view',
+                'database',
+                'session',
+                'acl',
+                'dispatcher',
+                'flash',
+                'engine'
+            ),
+            'mini' => array(
+                'logger',
+                'loader',
+                'database',
+                'session'
+            )
         );
-        foreach ($loaders as $service) {
+
+        if (empty($loaders[$mode]))
+            $mode = 'normal';
+
+        foreach ($loaders[$mode] as $service) {
             $this->{'init' . $service}($this->_config);
         }
 
-        $application = new \Phalcon\Mvc\Application();
-        $application->setDI($this->_di);
+        $this->_application = new \Phalcon\Mvc\Application();
+        $this->_application->setDI($this->_di);
 
-        return $application->handle()->getContent();
 
+    }
+
+    public function getOutput(){
+        return $this->_application->handle()->getContent();
     }
 
     // Protected functions
@@ -302,10 +319,15 @@ class Application
     /**
      * Initializes the session
      */
-    protected function initSession()
+    protected function initSession($config)
     {
-        $this->_di->set('session', function () {
-            $session = new \Phalcon\Session\Adapter\Files();
+        $di = $this->_di;
+        $di->set('session', function () use($di, $config) {
+            $session = new Session_Database(array(
+                'db' => $di->get('db'),
+                'table' => $config->application->session->tableName
+            ));
+
             $session->start();
             return $session;
         }, true);

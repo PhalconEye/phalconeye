@@ -66,6 +66,11 @@ class AdminController extends Controller
                       'title' => 'Languages',
                       'href' => 'admin/languages',
                       'prepend' => '<i class="icon-globe icon-white"></i>'
+                    ),
+                    'admin/files' => array(
+                        'title' => 'Files',
+                        'href' => 'admin/files',
+                        'prepend' => '<i class="icon-file icon-white"></i>'
                     )
                 )
             ),

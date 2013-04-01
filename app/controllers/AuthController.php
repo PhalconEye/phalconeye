@@ -43,7 +43,7 @@ class AuthController extends Controller
             $userPassword = $user->getPassword();
             if ($this->security->checkHash($password, $userPassword)) {
                 $this->auth->authenticate($user->getId());
-                $this->response->redirect()->send();
+                return $this->response->redirect()->send();
             }
         }
 

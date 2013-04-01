@@ -24,6 +24,10 @@ PE.modal = {
                     keyboard:false
                 });
 
+                modal.on('focus', function(e){ // focus bug workaround
+                    e.preventDefault();
+                });
+
                 modal.on('shown', function () {
                     // set removing
                     $('#modal').on('hidden', function () {
