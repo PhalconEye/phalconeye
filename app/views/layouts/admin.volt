@@ -61,8 +61,10 @@
     {% endblock %}
 
     <div class="row-fluid row-after-header">
-        {{ content() | trans }}
-        {{ flashSession.output() | trans }}
+        <div>
+            {{ content() | trans }}
+            {{ flashSession.output() | trans }}
+        </div>
     </div>
 
     <div class="row-fluid">

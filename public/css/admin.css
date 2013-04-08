@@ -69,6 +69,10 @@ h3{
     padding-left: 200px;
 }
 
+.content .row-fluid{
+    overflow: hidden;
+}
+
 .content .row-fluid > div{
     min-width: 800px;
 }
@@ -82,9 +86,12 @@ h3{
 }
 
 .row-after-header{
-    margin-left: 20px;
     padding-top: 20px;
     margin-bottom: -20px;
+}
+
+.row-after-header > div{
+    margin-left: 20px;
 }
 
 .admin-sidebar{
