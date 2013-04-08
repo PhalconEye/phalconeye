@@ -588,6 +588,7 @@ form .form_footer .btn + .btn{
 
 .navbar_panel .nav{
     margin: 0px;
+    width: 100%;
 }
 
 .navbar_panel .nav>li{

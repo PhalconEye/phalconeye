@@ -85,11 +85,11 @@ class AdminUsersController extends AdminController
         $form = new Form_Admin_Users_Create();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $user = $form->getData();
+        $user = $form->getValues();
         $user->setPassword($this->security->hash($user->getPassword()));
         $user->role_id = Role::getDefaultRole()->getId();
         $user->save();
@@ -113,11 +113,11 @@ class AdminUsersController extends AdminController
 
         $lastPassword = $item->getPassword();
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $user = $form->getData();
+        $user = $form->getValues();
         if ($lastPassword != $item->getPassword()) {
             $user->setPassword($this->security->hash($user->getPassword()));
             $user->save();
@@ -146,7 +146,7 @@ class AdminUsersController extends AdminController
     }
 
     /**
-     * @Get("/roles", name="admin-roles")
+     * @Get("/roles", name="admin-users-roles")
      */
     public function rolesAction()
     {
@@ -177,11 +177,13 @@ class AdminUsersController extends AdminController
         $form = new Form_Admin_Users_RoleCreate();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $item = $form->getData();
+        return;
+
+        $item = $form->getValues();
         if ($item->getIsDefault()) {
             $this->db->update(
                 $item->getSource(),
@@ -208,11 +210,11 @@ class AdminUsersController extends AdminController
         $form = new Form_Admin_Users_RoleEdit($item);
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $item = $form->getData();
+        $item = $form->getValues();
         if ($item->getIsDefault()) {
             $this->db->update(
                 $item->getSource(),

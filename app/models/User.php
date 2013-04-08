@@ -25,7 +25,6 @@ class User extends \Phalcon\Mvc\Model
 
     /**
      * @var int
-     * @form_type select
      *
      */
     protected $role_id;
@@ -38,7 +37,6 @@ class User extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type passwordField
      *
      */
     protected $password;
@@ -157,6 +155,17 @@ class User extends \Phalcon\Mvc\Model
     public function getRoleId()
     {
         return $this->role_id;
+    }
+
+    public function getRole(){
+        $role = parent::getRole();
+        if (!$role){
+            $role = new Role();
+            $role->id = 0;
+            $role->name = '';
+        }
+
+        return $role;
     }
 
     /**

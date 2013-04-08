@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PhalconEye
  *
@@ -14,5 +13,8 @@
  *
  */
 
-class Validator_Exception extends Exception
-{}
+class Validator_ExclusionIn extends \Phalcon\Validation\Validator\ExclusionIn implements \Phalcon\Validation\ValidatorInterface
+{
+
+
+}

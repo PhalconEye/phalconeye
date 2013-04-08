@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PhalconEye
  *
@@ -16,13 +15,9 @@
 
 use Phalcon\Tag as Tag;
 
-/**
- * Class Form
- *
- * Will be replaced with \Phalcon\Forms\Form
- */
-class Form
+class Form extends \Phalcon\Forms\Form
 {
+
     /**
      * Method type constants
      */
@@ -43,42 +38,25 @@ class Form
      */
     const MESSAGE_FIELD_REQUIRED = "Field '%s' is required!";
 
-    /**
-     * Ignored fields by default
-     *
-     * @var array
-     */
-    private $_ignoreFields = array('id', 'creation_date', 'modified_date');
-
-    /**
-     * Ignored field types by default
-     *
-     * @var array
-     */
-    private $_ignoreTypes = array('submitButton');
-
-    /**
-     * Required fields
-     *
-     * @var array
-     */
-    private $_requiredFields = array();
-
-    /**
-     * @var null|Phalcon\DiInterface
-     */
-    public $di = null;
-
     private $_trans = null;
-    private $_elements = array();
+    private $_elementsData = array();
+    private $_orderedElements = array();
     private $_buttons = array();
-    private $_model = null;
-    private $_data = array();
     private $_currentOrder = 1;
     private $_errors = array();
     private $_notices = array();
     private $_useToken = false;
-    private $_files = array();
+    private $_useNullValue = true;
+    private $_validationFinished = false;
+    private $_hasValidators = false;
+    private $_elementsPrepared = false;
+    private $_elementsOptions = array(
+        'label',
+        'description',
+        'filter',
+        'required',
+        'validators'
+    );
 
 
     private $_action = '';
@@ -89,99 +67,93 @@ class Form
     private $_enctype = self::ENCTYPE_URLENCODED;
 
     /**
-     * @param \Phalcon\Mvc\Model|null $model
+     * Form constructor
+     *
+     * @param \Phalcon\Mvc\Model $entity
      */
-    public function __construct(\Phalcon\Mvc\Model $model = null)
+    public function __construct(\Phalcon\Mvc\Model $entity = null)
     {
-        $this->di = Phalcon\DI::getDefault();
         $this->_trans = $this->di->get('trans');
         $this->_action = substr($_SERVER['REQUEST_URI'], 1);
-        $this->_model = $model;
-        if ($this->_model !== null) {
-            $this->_generateModelElements();
-        }
+        parent::__construct($entity);
 
         $this->init();
     }
 
-    private function _generateModelElements()
-    {
-        $modelClass = new ReflectionClass($this->_model);
-
-        foreach ($modelClass->getProperties(ReflectionProperty::IS_PROTECTED) as $property) {
-            if (in_array($property->getName(), $this->_ignoreFields) || substr($property->getName(), 0, 1) == "_") continue;
-
-            $elementData = array(
-                'label' => $this->_trans->query(ucfirst(str_replace('_', ' ', $property->getName()))),
-                'filter' => $this->_getModelPropType($property),
-                'value' => $this->_model->readAttribute($property->getName())
-            );
-            if (in_array($property->getName(), $this->_requiredFields)) {
-                $elementData['required'] = true;
-            }
-
-            $fieldType = $this->_getModelFieldType($property);
-            if ($fieldType == 'checkField' && !empty($elementData['value'])) {
-                $elementData['checked'] = true;
-            }
-
-            $this->addElement($fieldType, $property->getName(), $elementData);
-        }
-
-    }
-
-    private function _getModelFieldType(ReflectionProperty $property)
-    {
-        preg_match_all('/@form_type\s+([^\s]+)/', $property->getDocComment(), $propData);
-        $type = (count($propData) == 2 && !empty($propData[1][0]) ? $propData[1][0] : null);
-
-        if ($type !== null)
-            return $type;
-
-        return "textField";
-    }
-
-    private function _getModelPropType(ReflectionProperty $property)
-    {
-        preg_match_all('/@var\s+([^\s]+)/', $property->getDocComment(), $propData);
-        $type = (count($propData) == 2 && !empty($propData[1][0]) ? $propData[1][0] : null);
-
-        if ($type == 'integer')
-            return 'int';
-
-        if ($type !== null)
-            return $type;
-
-        return null;
-    }
-
-
+    /**
+     * Second initialization of the form
+     */
     public function init()
     {
-
     }
 
+    /**
+     * Clear all elements from form
+     */
+    public function clearElements()
+    {
+        $this->_elementsData = array();
+    }
+
+    /**
+     * Add new element to form
+     *
+     * @param $type - element type, see /Engine/Form/Element/*
+     * @param $name - element name
+     * @param array $params - element parameters
+     * @param null $order - order of elemen t
+     *
+     * @return $this
+     * @throws Phalcon\Forms\Exception
+     */
     public function addElement($type, $name, $params = array(), $order = null)
     {
+        $elementClass = 'Form_Element_' . ucfirst($type);
+        if (!class_exists($elementClass))
+            throw new \Phalcon\Forms\Exception("Element with type '{$type}' doesn't exist.");
+
         if ($order === null) {
             $order = $this->_currentOrder++;
         }
 
         // check file input
-        if ($type == "fileField") {
+        if ($type == "file") {
             $this->_enctype = self::ENCTYPE_MULTIPART;
         }
 
-        $this->_elements[$name] = array(
-            "type" => $type,
-            "name" => $name,
-            "order" => $order,
-            "params" => array_merge(array($name), $params)
+        $onlyParams = array_intersect_key($params, array_flip($this->_elementsOptions));
+        $attributes = array_diff_key($params, $onlyParams);
+
+        /* @var \Phalcon\Forms\Element $element */
+        $element = new $elementClass($name, $attributes);
+
+        $this->_elementsData[$name] = array(
+            'type' => $type,
+            'element' => $element,
+            'params' => $onlyParams,
+            'attributes' => $attributes,
+            'order' => $order
         );
 
         return $this;
     }
 
+    /**
+     * Clear all buttons from form
+     */
+    public function clearButtons()
+    {
+        $this->_buttons = array();
+    }
+
+    /**
+     * Add button element
+     *
+     * @param $name
+     * @param bool $isSubmit
+     * @param array $params
+     * @return $this
+     */
     public function addButton($name, $isSubmit = false, $params = array())
     {
         $this->_buttons[$name] = array(
@@ -193,6 +165,14 @@ class Form
         return $this;
     }
 
+    /**
+     * Add link element
+     *
+     * @param $name
+     * @param string $href
+     * @param array $params
+     * @return $this
+     */
     public function addButtonLink($name, $href = 'javascript:;', $params = array())
     {
         $this->_buttons[$name] = array(
@@ -206,43 +186,72 @@ class Form
         return $this;
     }
 
+    /**
+     * Remove element by name (short function, same as removeElement)
+     *
+     * @param $name
+     * @return $this
+     */
+    public function remove($name)
+    {
+        return $this->removeElement($name);
+    }
+
+    /**
+     * Remove element by name
+     *
+     * @param $name
+     * @return $this
+     */
     public function removeElement($name)
     {
-        if (!empty($this->_elements[$name])) {
-            unset($this->_elements[$name]);
+        if ($this->_elementsPrepared && $this->has($name))
+            parent::remove($name);
+
+        if (!empty($this->_elementsData[$name])) {
+            unset($this->_elementsData[$name]);
         }
         return $this;
     }
 
+    /**
+     * Get element object
+     *
+     * @param $name
+     * @return Form_Element
+     * @throws Phalcon\Forms\Exception
+     */
     public function getElement($name)
     {
-        if (empty($this->_elements[$name]))
-            throw new Exception('Form has no element "' . $name . '"');
+        if (empty($this->_elementsData[$name]))
+            throw new \Phalcon\Forms\Exception('Form has no element "' . $name . '"');
 
-        return $this->_elements[$name];
-
+        return $this->_elementsData[$name]['element'];
     }
 
+    /**
+     * Set element attribute
+     *
+     * @param $name
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setElementAttrib($name, $key, $value)
     {
-        if (empty($this->_elements[$name]))
-            throw new Exception('Form has no element "' . $name . '"');
-
-        $this->_elements[$name][$key] = $value;
+        $element = $this->getElement($name);
+        $element->setAttribute($key, $value);
 
         return $this;
     }
 
-    public function setElementParam($name, $key, $value)
-    {
-        if (empty($this->_elements[$name]))
-            throw new Exception('Form has no element "' . $name . '"');
-
-        $this->_elements[$name]['params'][$key] = $value;
-
-        return $this;
-    }
-
+    /**
+     * Set form option
+     *
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setOption($key, $value)
     {
         if (property_exists($this, "_" . $key)) {
@@ -252,379 +261,320 @@ class Form
         return $this;
     }
 
+    /**
+     * Set form attribute
+     *
+     * @param $key
+     * @param $value
+     * @return $this
+     */
     public function setAttrib($key, $value)
     {
         $this->_attribs[$key] = $value;
         return $this;
     }
 
+    /**
+     * Add error message
+     *
+     * @param $message
+     * @return $this
+     */
     public function addError($message)
     {
         $this->_errors[] = $message;
         return $this;
     }
 
+    /**
+     * Add notice message
+     *
+     * @param $message
+     * @return $this
+     */
     public function addNotice($message)
     {
         $this->_notices[] = $message;
         return $this;
     }
 
-    public function addRequired($value)
+    /**
+     * Set form values
+     *
+     * @param $values
+     * @return $this
+     */
+    public function setValues($values)
     {
-        $this->_requiredFields[] = $value;
-        return $this;
-    }
-
-    public function addIgnored($value)
-    {
-        $this->_ignoreFields[] = $value;
+        foreach ($this->_elementsData as $name => $element) {
+            if (isset($values[$name])) {
+                $element['element']->setDefault($values[$name]);
+                $this->_elementsData[$name]['attributes']['value'] = $values[$name];
+            } else {
+                $element['element']->setDefault(null);
+            }
+        }
         return $this;
     }
 
     /**
-     * @param \Phalcon\HTTP\RequestInterface $request
+     * Set element value by name
      *
-     * @return bool
+     * @param $name
+     * @param $value
+     * @return $this
      */
-    public function isValid($request)
+    public function setValue($name, $value)
+    {
+        $this->getElement($name)->setDefault($value);
+        return $this;
+    }
+
+    /**
+     * Get form values
+     *
+     * @return array
+     */
+    public function getValues()
+    {
+        if ($this->_entity !== null) {
+            return $this->_entity;
+        } else {
+            $values = array();
+            foreach ($this->_elementsData as $name => $element) {
+                if (isset($_POST[$name])) {
+                    $values[$name] = $this->_elementsData[$name]['attributes']['value'];
+                } else {
+                    $values[$name] = null;
+                }
+            }
+            return $values;
+        }
+    }
+
+    /**
+     * Get element value by name
+     *
+     * @param string $name
+     * @return mixed|null
+     * @throws Phalcon\Forms\Exception
+     */
+    public function getValue($name)
+    {
+        $name = str_replace('[]', '', $name);
+
+        $value = parent::getValue($name);
+        if ($value !== null)
+            return $value;
+
+        if (!isset($this->_elementsData[$name]))
+            throw new \Phalcon\Forms\Exception('Form has no element "' . $name . '"');
+
+        if (!isset($this->_elementsData[$name]['attributes']['value']))
+            return null;
+
+        return $this->_elementsData[$name]['attributes']['value'];
+    }
+
+    /**
+     * Prepare elements to render or validation
+     * This method add element and validator to Phalcon form class
+     */
+    protected function prepareElements()
+    {
+        if ($this->_elementsPrepared) return;
+
+        $this->_orderedElements = $this->_elementsData;
+        // sort elements by order
+        usort($this->_orderedElements, function ($a, $b) {
+            return $a['order'] - $b['order'];
+        });
+
+        // add elements to Phalcon form class
+        foreach ($this->_orderedElements as $element) {
+            if (!empty($element['params']['label']))
+                $element['element']->setLabel($element['params']['label']);
+            if (!empty($element['params']['description']))
+                $element['element']->setDescription($element['params']['description']);
+            if (!empty($element['params']['validators']) && is_array($element['params']['validators'])) {
+                $this->_hasValidators = true;
+                foreach ($element['params']['validators'] as $validator) {
+                    $element['element']->addValidator($validator);
+                }
+            }
+
+            $this->add($element['element']);
+        }
+
+        $this->_elementsPrepared = true;
+    }
+
+    /**
+     * Validates the form
+     *
+     * @param array $data
+     * @param object $entity
+     * @return boolean
+     */
+    public function isValid($data = null, $entity = null)
     {
         if ($this->_useToken && !$this->di->get('security')->checkToken()) {
             $this->addError('Token is not valid!');
             return false;
         }
 
+        $elementsData = $this->_elementsData;
 
-        $isValid = true;
-        if ($this->_model !== null) {
-            $modelClass = new ReflectionClass($this->_model);
+        // save values in form
+        $this->setValues($data);
 
-            // fill model data
-            foreach ($this->_elements as $element) {
+        // Filter and check required
+        $requiredFailed = false;
+        $filter = new \Phalcon\Filter();
+        foreach ($elementsData as $name => $element) {
 
-                if ($element['type'] == 'fileField') {
-                    // Check uploaded files
-                    if (isset($_FILES[$element['name']])) {
-                        $file = $_FILES[$element['name']];
-
-                        if (empty($file['tmp_name']) && (empty($element['params']['required']) || $element['params']['required'] == false))
-                            continue;
-
-                        if ($file['error'] > 0) {
-                            $message = '';
-                            switch ($file['error']) {
-                                case UPLOAD_ERR_INI_SIZE:
-                                case UPLOAD_ERR_FORM_SIZE:
-                                    $message = "The uploaded file exceeds the upload max size.";
-                                    break;
-                                case UPLOAD_ERR_PARTIAL:
-                                    $message = "The uploaded file was only partially uploaded";
-                                    break;
-                                case UPLOAD_ERR_NO_FILE:
-                                    $message = "No file was uploaded";
-                                    break;
-                                case UPLOAD_ERR_NO_TMP_DIR:
-                                    $message = "Missing a temporary folder";
-                                    break;
-                                case UPLOAD_ERR_CANT_WRITE:
-                                    $message = "Failed to write file to disk";
-                                    break;
-                                case UPLOAD_ERR_EXTENSION:
-                                    $message = "File upload stopped by extension";
-                                    break;
-                                default:
-                                    $message = "Unknown upload error";
-                                    break;
-                            }
-                            $this->addError($message);
-                            return false;
-                        }
-
-                        $this->_files[] = $file;
-
-                    }
-
-                    continue;
-                }
-
-                if ($modelClass->hasProperty($element['name'])) {
-                    $varFilter = $this->_getModelPropType($modelClass->getProperty($element['name']));
-                    $value = $request->getPost($element['name'], $varFilter, $this->_model->readAttribute($element['name']));
-                    if (empty($value) && $this->_model->readAttribute($element['name']) === null) {
-                        $value = $this->_model->readAttribute($element['name']);
-                    }
-                    if ($element['type'] == 'checkField') {
-                        $value = $request->get($element['name']);
-                    }
-                    $this->_model->writeAttribute($element['name'], $value);
-
-                    $this->_data[$element['name']] = $value;
-                    $this->_elements[$element['name']]['params']['value'] = $value;
-                }
-
+            // filter
+            if (isset($data[$name]) && isset($elementsData[$name]['params']['filter'])) {
+                $data[$name] = $filter->sanitize($data[$name], $elementsData[$name]['params']['filter']);
             }
 
-            // validate model data
-            $isValid = $this->_model->save();
-            if (!$isValid) {
-                foreach ($this->_model->getMessages() as $message) {
-                    $this->addError($message);
+            if (isset($element['params']['required']) && $element['params']['required'] === true) {
+                if (!isset($data[$name]) || empty($data[$name])) {
+                    $this->addError(sprintf(self::MESSAGE_FIELD_REQUIRED, (!empty($element['params']['label'])) ? $this->_trans->_($element['params']['label']) : $name));
+                    $requiredFailed = true;
                 }
             }
-        } else {
-            foreach ($this->_elements as $element) {
 
-                if ($element['type'] == 'fileField') {
-                    // Check uploaded files
-                    if (isset($_FILES[$element['name']])) {
-                        $file = $_FILES[$element['name']];
-
-                        if (empty($file['tmp_name']) && (empty($element['params']['required']) || $element['params']['required'] == false))
-                            continue;
-
-                        if ($file['error'] > 0) {
-                            $message = '';
-                            switch ($file['error']) {
-                                case UPLOAD_ERR_INI_SIZE:
-                                case UPLOAD_ERR_FORM_SIZE:
-                                    $message = "The uploaded file exceeds the upload max size.";
-                                    break;
-                                case UPLOAD_ERR_PARTIAL:
-                                    $message = "The uploaded file was only partially uploaded";
-                                    break;
-                                case UPLOAD_ERR_NO_FILE:
-                                    $message = "No file was uploaded";
-                                    break;
-                                case UPLOAD_ERR_NO_TMP_DIR:
-                                    $message = "Missing a temporary folder";
-                                    break;
-                                case UPLOAD_ERR_CANT_WRITE:
-                                    $message = "Failed to write file to disk";
-                                    break;
-                                case UPLOAD_ERR_EXTENSION:
-                                    $message = "File upload stopped by extension";
-                                    break;
-                                default:
-                                    $message = "Unknown upload error";
-                                    break;
-                            }
-                            $this->addError($message);
-                            return false;
-                        }
-
-                        $this->_files[] = $file;
-
-                    }
-
-                    continue;
-                }
-
-                if ((!empty($element['params']['ignore']) && $element['params']['ignore'] == true) || in_array($element['name'], $this->_ignoreFields) || in_array($element['type'], $this->_ignoreTypes)) continue;
-
-                // get value
-                $value = $request->getPost($element['name'], (!empty($element['params']['filter']) ? $element['params']['filter'] : null));
-
-                // check if this field is required and not empty
-                if (!empty($element['params']['required']) && $element['params']['required'] == true && (!$request->hasPost($element['name']) || preg_match('/^\s+$/s', $value))) {
-                    $label = (!empty($element['params']['label']) ? $element['params']['label'] : $element['name']);
-                    $this->addError(sprintf(self::MESSAGE_FIELD_REQUIRED, $label));
-                    $isValid = false;
-                    continue;
-                }
-
-                // check validators
-                if (!empty($element['params']['validators']) && is_array($element['params']['validators'])) {
-                    foreach ($element['params']['validators'] as $validator) {
-                        if (!($validator instanceof Validator_Abstract)) continue;
-                        if (!$validator->isValid($value)) {
-                            foreach ($validator->getMessages() as $message) {
-                                $this->addError($message);
-                            }
-                            $isValid = false;
-                        }
-                    }
-                }
-
-                $this->_data[$element['name']] = $value;
-                $this->_elements[$element['name']]['params']['value'] = $value;
+            if ($this->_useNullValue) {
+                if (isset($data[$name]) && empty($data[$name]))
+                    $data[$name] = null;
             }
         }
 
-        return $isValid;
-    }
+        if ($requiredFailed)
+            return false;
 
-    public function getData()
-    {
-        if ($this->_model !== null) {
-            return $this->_model;
+        $modelIsValid = true;
+        $this->setValues($data);
+        $this->prepareElements();
+        if ($this->_entity !== null) {
+            if ($entity !== null)
+                $this->_entity = $entity;
+
+            $this->bind($data, $this->_entity);
+            $modelIsValid = $this->_entity->save();
         }
-
-        return $this->_data;
+        $this->_validationFinished = true;
+        return $modelIsValid && parent::isValid($data, $this->_entity);
     }
 
-    public function getFiles()
+    /**
+     * Renders form
+     *
+     * @param string $name
+     * @param array $attributes
+     * @return string
+     */
+    public function render($name = null, $attributes = null)
     {
-        return $this->_files;
-    }
+        if (empty($this->_elementsData)) return "";
+        $this->prepareElements();
 
-    public function setData($data)
-    {
-        if (!empty($this->_elements)) {
-            foreach ($data as $key => $value) {
-                if (!empty($this->_elements[$key]))
-                    $this->_elements[$key]['params']['value'] = $value;
+        $content = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
 
-            }
-        }
-
-        return $this;
-    }
-
-
-    public function render()
-    {
-        if (empty($this->_elements)) return "";
-        $tagReflection = new ReflectionClass("Phalcon\Tag");
-
-        // sort elements by order
-        usort($this->_elements, function ($a, $b) {
-            return $a['order'] - $b['order'];
-        });
-
-        $body = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
-
-        // title and description
+        ///////////////////////////////////////////
+        /// Title and Description
+        //////////////////////////////////////////
         if (!empty($this->_title) || !empty($this->_description)) {
-            $body .= sprintf('<div class="form_header"><h3>%s</h3><p>%s</p></div>', $this->_trans->_($this->_title), $this->_trans->_($this->_description));
+            $content .= sprintf('<div class="form_header"><h3>%s</h3><p>%s</p></div>', $this->_trans->_($this->_title), $this->_trans->_($this->_description));
         }
 
-        // error messages
-        if (!empty($this->_errors)) {
-            $body .= '<ul class="form_errors">';
+        ///////////////////////////////////////////
+        /// Error Messages
+        //////////////////////////////////////////
+
+        if (!empty($this->_errors) || count($this->_messages) != 0 || ($this->_entity != null && count($this->_entity->getMessages()) != 0)) {
+            $content .= '<ul class="form_errors">';
             foreach ($this->_errors as $error) {
-                $body .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error));
+                $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error));
             }
-            $body .= '</ul>';
+            if (count($this->_messages) != 0) {
+                foreach ($this->getMessages() as $error) {
+                    $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error->getMessage()));
+                }
+            }
+            if ($this->_entity != null) {
+                foreach ($this->_entity->getMessages() as $error) {
+                    $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error));
+                }
+            }
+            $content .= '</ul>';
         }
 
-        // notice messages
+        ///////////////////////////////////////////
+        /// Notice Messages
+        //////////////////////////////////////////
         if (!empty($this->_notices)) {
-            $body .= '<ul class="form_notices">';
+            $content .= '<ul class="form_notices">';
             foreach ($this->_notices as $notice) {
-                $body .= sprintf('<li class="alert alert-success">%s</li>', $this->_trans->_($notice));
+                $content .= sprintf('<li class="alert alert-success">%s</li>', $this->_trans->_($notice));
             }
-            $body .= '</ul>';
+            $content .= '</ul>';
         }
 
-        $body .= '<div class="form_elements">';
-        $hiddenFields = array(); // push hidden to the end of form
-        foreach ($this->_elements as $element) {
-            if ($element['type'] == 'html' && !empty($element['params']['html'])) {
-                $body .= $element['params']['html'];
-                continue;
-            }
-            if (!$tagReflection->hasMethod($element['type'])) continue;
-            if ($element['type'] == 'hiddenField') {
+        ///////////////////////////////////////////
+        /// Elements
+        //////////////////////////////////////////
+        $content .= '<div class="form_elements">';
+        $hiddenFields = array();
+        /* @var \Phalcon\Forms\Element|Form_ElementInterface $element */
+        foreach ($this as $element) {
+
+            $elementData = $this->_elementsData[$element->getName()];
+
+            if ($elementData['type'] == 'hidden') {
                 $hiddenFields[] = $element;
                 continue;
             }
-            $body .= '<div>';
-            if (!empty($element['params']['label']) || !empty($element['params']['description'])) {
-                $label = (!empty($element['params']['label']) ? sprintf('<label for="%s">%s</label>', $element['name'], $this->_trans->_($element['params']['label'])) : '');
-                $description = (!empty($element['params']['description']) ? sprintf('<p>%s</p>', $this->_trans->_($element['params']['description'])) : '');
-                $body .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
-            }
-            if ($element['type'] == "select" || $element['type'] == "selectStatic") {
-                if (!empty($element['params']['options'])) {
-                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
-                    if (is_array($element['params']['options']))
-                    foreach ($element['params']['options'] as $key => $optionValue) {
-                        $element['params']['options'][$key] = $this->_trans->_($optionValue);
-                    }
-                    if ($element['params']['options'] instanceof \Phalcon\Mvc\Model\Resultset){
-                        if (!empty($element['multiple']) && $element['multiple'] == 'multiple'){
-                            $element['name'] = $element['name'] . '[]';
-                        }
-                        $tagOptions = array($element['name'], $element['params']['options'], 'using' => $element['params']['using'], 'value' => $value);
-                        $tagAttribs = $element;
-                        unset($tagAttribs['name']);
-                        unset($tagAttribs['params']);
-                        unset($tagAttribs['value']);
-                        unset($tagAttribs['order']);
-                        $tagOptions = array_merge($tagOptions, $tagAttribs);
-                        unset($tagOptions['label']);
-                        unset($tagOptions['description']);
-                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
-                    }
-                    else{
-                        if (!empty($element['multiple']) && $element['multiple'] == 'multiple'){
-                            $element['name'] = $element['name'] . '[]';
-                        }
-                        $tagOptions = array($element['name'], $element['params']['options'], 'value' => $value);
-                        $tagAttribs = $element;
-                        unset($tagAttribs['name']);
-                        unset($tagAttribs['params']);
-                        unset($tagAttribs['value']);
-                        unset($tagAttribs['order']);
-                        $tagOptions = array_merge($tagOptions, $tagAttribs);
-                        unset($tagOptions['label']);
-                        unset($tagOptions['description']);
-                        $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($tagOptions));
-                    }
-                }
-            } elseif ($element['type'] == "radioField" || $element['type'] == "checkField") {
-                if (!empty($element['params']['options']) && is_array($element['params']['options'])) {
-                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
-                    $optionsBody = '';
-                    foreach ($element['params']['options'] as $key => $option) {
-                        $allOptions = array(
-                            $element['name'],
-                            'value' => $key
-                        );
-                        if ($value == $key)
-                            $allOptions['checked'] = '';
-                        $optionsBody .= sprintf('<div class="form_element_radio">%s<label>%s</label></div>', Tag::$element['type']($allOptions), $this->_trans->_($option));
-                    }
 
-                    $body .= sprintf('<div class="form_element">%s</div>', $optionsBody);
-                } elseif (!empty($element['params']['options'])) {
-                    $value = (isset($element['params']['value']) ? $element['params']['value'] : null);
-                    $allOptions = array(
-                        $element['name'],
-                        'value' => $element['params']['options']
-                    );
-                    if ($value == $element['params']['options'])
-                        $allOptions['checked'] = '';
+            // multiple option specific
+            if (isset($elementData['attributes']['multiple']))
+                $element->setName($element->getName() . '[]');
 
-                    $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($allOptions));
-                }
+            $content .= '<div>';
+            $label = (!empty($elementData['params']['label']) ? sprintf('<label for="%s">%s</label>', $element->getName(), $this->_trans->_($elementData['params']['label'])) : '');
+            $description = (!empty($elementData['params']['description']) ? sprintf('<p>%s</p>', $this->_trans->_($elementData['params']['description'])) : '');
+
+            if ($element->useDefaultLayout()) {
+                $content .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
+                $content .= sprintf('<div class="form_element">%s</div>', $element->render());
             } else {
-                unset($element['params']['validators']); // Phalcon elements doesn't like this
-                unset($element['params']['filter']);
-                unset($element['params']['label']);
-                unset($element['params']['description']);
-
-
-                $body .= sprintf('<div class="form_element">%s</div>', Tag::$element['type']($element['params']));
+                $content .= $element->render();
             }
-            $body .= '</div>';
-        }
 
-        $body .= '<div class="clear"></div></div>';
+            $content .= '</div>';
+        }
+        $content .= '</div><div class="clear"></div>';
 
         // render hidden fields
-        foreach ($hiddenFields as $hidden) {
-            $body .= sprintf('<input type="hidden" id="%s" name="%s" value="%s">', $hidden['name'], $hidden['name'], (!empty($hidden['params']['value']) ? $hidden['params']['value'] : ''));
+        foreach ($hiddenFields as $element) {
+            $content .= $element->render();
         }
 
+        ///////////////////////////////////////////
+        /// Token
+        //////////////////////////////////////////
         if ($this->_useToken) {
             $tokenKey = $this->di->get('security')->getTokenKey();
             $token = $this->di->get('security')->getToken();
-            $body .= sprintf('<input type="hidden" name="%s" value="%s">', $tokenKey, $token);
+            $content .= sprintf('<input type="hidden" name="%s" value="%s">', $tokenKey, $token);
         }
 
+        ///////////////////////////////////////////
+        /// Buttons
+        //////////////////////////////////////////
         if (!empty($this->_buttons)) {
-            $body .= '<div class="form_footer">';
+            $content .= '<div class="form_footer">';
             foreach ($this->_buttons as $button) {
                 $attribs = "";
                 if (!empty($button['params']['class'])) {
@@ -643,17 +593,18 @@ class Form
                 }
 
                 if (!empty($button['is_link']) && $button['is_link'] == true) {
-                    $body .= sprintf('<a href="%s" %s>%s</a>', $this->di->get('url')->get($button['href']), $attribs, $this->_trans->_($button['name']));
+                    $content .= sprintf('<a href="%s" %s>%s</a>', $this->di->get('url')->get($button['href']), $attribs, $this->_trans->_($button['name']));
                 } else {
-                    $body .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
+                    $content .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
                 }
 
             }
-            $body .= '</div>';
+            $content .= '</div>';
         }
 
-        $body .= '</div>' . Tag::endForm();
+        $content .= '</div>' . Tag::endForm();
 
-        return $body;
+
+        return $content;
     }
 }

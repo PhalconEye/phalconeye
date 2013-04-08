@@ -23,15 +23,17 @@ class Form_Auth_Register extends Form
             ->setOption('description', "Register your account!");
 
 
-        $this->addElement('textField', 'username', array(
+        $this->addElement('text', 'username', array(
             'label' => 'Username',
             'required' => true,
             'validators' => array(
-                new Validator_StringLength(2)
+                new Validator_StringLength(array(
+                    'min' => 2,
+                ))
             )
         ));
 
-        $this->addElement('textField', 'email', array(
+        $this->addElement('text', 'email', array(
             'label' => 'Email',
             'required' => true,
             'validators' => array(
@@ -39,19 +41,23 @@ class Form_Auth_Register extends Form
             )
         ));
 
-        $this->addElement('passwordField', 'password', array(
+        $this->addElement('password', 'password', array(
             'label' => 'Password',
             'required' => true,
             'validators' => array(
-                new Validator_StringLength(6)
+                new Validator_StringLength(array(
+                    'min' => 6,
+                ))
             )
         ));
 
-        $this->addElement('passwordField', 'repeatPassword', array(
+        $this->addElement('password', 'repeatPassword', array(
             'label' => 'Password Repeat',
             'required' => true,
             'validators' => array(
-                new Validator_StringLength(6)
+                new Validator_StringLength(array(
+                    'min' => 6,
+                ))
             )
         ));
 

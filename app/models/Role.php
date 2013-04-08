@@ -31,14 +31,12 @@ class Role extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type textArea
      *
      */
     protected $description;
 
     /**
      * @var int
-     * @form_type checkField
      *
      */
     protected $is_default = 0;

@@ -37,7 +37,6 @@ class Language extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type fileField
      */
     protected $icon = null;
 

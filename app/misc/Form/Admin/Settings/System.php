@@ -14,6 +14,7 @@
  *
  */
 
+
 class Form_Admin_Settings_System extends Form
 {
     CONST THEMES_DIR = '/public/themes/';
@@ -24,8 +25,7 @@ class Form_Admin_Settings_System extends Form
             ->setOption('title', "System settings")
             ->setOption('description', "All system settings here.");
 
-
-        $this->addElement('textField', 'system_title', array(
+        $this->addElement('text', 'system_title', array(
             'label' => 'Site name',
             'value' => Settings::getSetting('system_title', '')
         ));
@@ -37,13 +37,13 @@ class Form_Admin_Settings_System extends Form
             $themes[$entry] = ucfirst($entry);
         }
 
-        $this->addElement('selectStatic', 'system_theme', array(
+        $this->addElement('select', 'system_theme', array(
             'label' => 'Theme',
             'options' => $themes,
             'value' => Settings::getSetting('system_theme')
         ));
 
-        $this->addElement('selectStatic', 'system_default_language', array(
+        $this->addElement('select', 'system_default_language', array(
             'label' => 'Default language',
             'options' => Language::find(),
             'using' => array('locale', 'name'),
@@ -51,5 +51,6 @@ class Form_Admin_Settings_System extends Form
         ));
 
         $this->addButton('Save', true);
+
     }
 }

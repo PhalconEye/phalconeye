@@ -19,11 +19,13 @@ class Form_Admin_Languages_Edit extends Form_Admin_Languages_Create
 
     public function init()
     {
+        parent::init();
         $this
             ->setOption('title', "Edit Language")
             ->setOption('description', "Edit this language.");
 
 
+        $this->clearButtons();
         $this->addButton('Save', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-languages'));
 

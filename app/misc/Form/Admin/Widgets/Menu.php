@@ -22,15 +22,15 @@ class Form_Admin_Widgets_Menu extends Form
         $this
             ->setOption('description', "Select menu that will be rendered.");
 
-        $this->addElement('textField', 'title', array(
+        $this->addElement('text', 'title', array(
             'label' => 'Title'
         ));
 
-        $this->addElement('textField', 'class', array(
+        $this->addElement('text', 'class', array(
             'label' => 'Menu css class'
         ));
 
-        $this->addElement('textField', 'menu', array(
+        $this->addElement('text', 'menu', array(
             'label' => 'Menu',
             'description' => 'Start typing to see menus variants',
             'data-link' => '/admin/menus/suggest',
@@ -40,6 +40,6 @@ class Form_Admin_Widgets_Menu extends Form
         ));
 
 
-        $this->addElement('hiddenField', 'menu_id');
+        $this->addElement('hidden', 'menu_id');
     }
 }

@@ -51,29 +51,27 @@ class MenuItem extends \Phalcon\Mvc\Model
      * @var string
      *
      */
-    protected $url;
+    protected $url = null;
 
     /**
      * Onclick js action
      */
-    protected $onclick;
+    protected $onclick = null;
 
     /**
      * @var string
-     * @form_type selectStatic
      *
      */
-    protected $target;
+    protected $target = null;
 
     /**
      * Tooltip html
      * has no var type
      */
-    protected $tooltip;
+    protected $tooltip = null;
 
     /**
      * @var string
-     * @form_type selectStatic
      *
      */
     protected $tooltip_position = 'top';
@@ -86,13 +84,11 @@ class MenuItem extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type select
      */
-    protected $languages;
+    protected $languages = null;
 
     /**
      * @var string
-     * @form_type select
      */
     protected $roles = null;
 
@@ -385,12 +381,17 @@ class MenuItem extends \Phalcon\Mvc\Model
 
 
     public function beforeSave(){
-        if (is_array($this->roles)){
+        if (is_array($this->roles) && !empty($this->roles)){
             $this->roles = json_encode($this->roles);
+        }else{
+            $this->roles = null;
         }
 
-        if (is_array($this->languages)){
+        if (is_array($this->languages) && !empty($this->languages)){
             $this->languages = json_encode($this->languages);
+        }
+        else{
+            $this->languages = null;
         }
     }
 

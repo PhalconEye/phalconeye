@@ -33,6 +33,18 @@ class Form_Admin_Languages_Create extends Form
             ->setOption('description', "Create new language.")
             ;
 
+        $this->addElement('text', 'name', array(
+            'label' => 'Name'
+        ));
+
+        $this->addElement('text', 'locale', array(
+            'label' => 'Locale'
+        ));
+
+        $this->addElement('file', 'icon', array(
+            'label' => 'Icon'
+        ));
+
 
         $this->addButton('Create', true);
         $this->addButtonLink('Cancel',  array('for' => 'admin-languages'));

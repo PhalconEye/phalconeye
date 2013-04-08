@@ -22,7 +22,6 @@ class Plugin_CacheAnnotation extends \Phalcon\Mvc\User\Plugin
      */
     public function beforeExecuteRoute($event, $dispatcher)
     {
-
         //Parse the annotations in the method currently executed
         $annotations = $this->annotations->getMethod(
             $dispatcher->getActiveController(),

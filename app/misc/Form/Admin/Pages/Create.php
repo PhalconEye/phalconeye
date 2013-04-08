@@ -19,11 +19,6 @@ class Form_Admin_Pages_Create extends Form
 
     public function __construct($model = null)
     {
-        $this
-            ->addIgnored('view_count')
-            ->addIgnored('layout')
-            ->addIgnored('type')
-        ;
 
         if ($model === null){
             $model = new Page();
@@ -32,15 +27,6 @@ class Form_Admin_Pages_Create extends Form
         $model->prepareRoles();
 
         parent::__construct($model);
-
-        $this->setElementParam('url', 'description', 'Page will be available under http://'.$_SERVER['HTTP_HOST'].'/page/[URL NAME]');
-        $this->setElementParam('controller', 'description', 'Controller and action name that will handle this page. Example: NameController->someAction');
-
-        $this->setElementAttrib('roles', 'multiple', 'multiple');
-        $this->setElementParam('roles', 'options', Role::find());
-        $this->setElementParam('roles', 'using', array('id', 'name'));
-        $this->setElementParam('roles', 'description', 'If no value is selected, will be allowed to all (also as all selected).');
-
     }
 
     public function init()
@@ -48,6 +34,37 @@ class Form_Admin_Pages_Create extends Form
         $this
             ->setOption('title', "Page Creation")
             ->setOption('description', "Create new page.");
+
+        $this->addElement('text', 'title', array(
+            'label' => 'Title',
+        ));
+
+        $this->addElement('text', 'url', array(
+            'label' => 'Url',
+            'description' => 'Page will be available under http://'.$_SERVER['HTTP_HOST'].'/page/[URL NAME]'
+        ));
+
+        $this->addElement('textArea', 'description', array(
+            'label' => 'Description'
+        ));
+
+        $this->addElement('textArea', 'keywords', array(
+            'label' => 'Keywords'
+        ));
+
+        $this->addElement('text', 'controller', array(
+            'label' => 'Controller',
+            'description' => 'Controller and action name that will handle this page. Example: NameController->someAction'
+        ));
+
+        $this->addElement('select', 'roles', array(
+            'label' => 'Roles',
+            'description' => 'If no value is selected, will be allowed to all (also as all selected).',
+            'options' => Role::find(),
+            'using' => array('id', 'name'),
+            'multiple' => 'multiple'
+        ));
+
 
 
         $this->addButton('Create', true);

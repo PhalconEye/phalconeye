@@ -38,7 +38,7 @@ class Widget_HtmlBlock_Controller extends Widget_Controller
     {
         $form = new Form();
 
-        $form->addElement('textField', 'title', array(
+        $form->addElement('text', 'title', array(
             'label' => 'Title'
         ));
 
@@ -104,7 +104,6 @@ class Widget_HtmlBlock_Controller extends Widget_Controller
         // adding created html to form
         $form->addElement('html', 'html', array(
             'ignore' => true,
-            'label' => 'HTML block, for:',
             'html' => $languageSelectorHtml
         ));
 

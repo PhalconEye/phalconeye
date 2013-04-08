@@ -19,10 +19,6 @@ class Form_Admin_Languages_CreateItem extends Form
 
     public function __construct($model = null)
     {
-        $this
-            ->addIgnored('language_id')
-        ;
-
         if ($model === null) {
             $model = new LanguageTranslation();
         }
@@ -32,6 +28,14 @@ class Form_Admin_Languages_CreateItem extends Form
 
     public function init()
     {
-        $this->addElement('hiddenField', 'language_id');
+        $this->addElement('textArea', 'original', array(
+            'label' => 'Original'
+        ));
+
+        $this->addElement('textArea', 'translated', array(
+            'label' => 'Translated'
+        ));
+
+        $this->addElement('hidden', 'language_id');
     }
 }

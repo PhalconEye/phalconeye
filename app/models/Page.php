@@ -48,21 +48,18 @@ class Page extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type textArea
      *
      */
     protected $description;
 
     /**
      * @var string
-     * @form_type textArea
      *
      */
     protected $keywords;
 
     /**
      * @var string
-     * @form_type selectStatic
      *
      */
     protected $layout = 'middle';
@@ -75,7 +72,6 @@ class Page extends \Phalcon\Mvc\Model
 
     /**
      * @var string
-     * @form_type select
      */
     protected $roles = null;
 
@@ -432,8 +428,10 @@ class Page extends \Phalcon\Mvc\Model
     }
 
     public function beforeSave(){
-        if (is_array($this->roles)){
+        if (is_array($this->roles) && !empty($this->roles)){
             $this->roles = json_encode($this->roles);
+        }else{
+            $this->roles = null;
         }
     }
 

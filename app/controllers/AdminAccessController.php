@@ -95,12 +95,13 @@ class AdminAccessController extends AdminController
                 ));
 
             foreach ($objectAcl->actions as $action) {
-                $form->addElement('checkField', $action, array(
+                $form->addElement('check', $action, array(
                     'label' => ucfirst($action),
                     'description' => sprintf('ACCESS_OBJECT_%s_ACTION_%s', strtoupper($objectAcl->name), strtoupper($action)),
                     'options' => 1,
                     'value' => $this->acl->_()->isAllowed($currentRole->getName(), $objectAcl->name, $action)
                 ));
+
             }
         }
 
@@ -112,7 +113,7 @@ class AdminAccessController extends AdminController
                 ));
 
             foreach ($objectAcl->options as $option) {
-                $form->addElement('textField', $option, array(
+                $form->addElement('text', $option, array(
                     'label' => ucfirst($option),
                     'description' => sprintf('ACCESS_OBJECT_%s_OPTION_%s', strtoupper($objectAcl->name), strtoupper($action)),
                     'value' => $this->acl->getAllowedValue($objectAcl->name, $currentRole, $option)
@@ -126,11 +127,11 @@ class AdminAccessController extends AdminController
         $this->view->setVar('roles', $roles);
         $this->view->setVar('currentRole', $currentRole);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $data = $form->getData();
+        $data = $form->getValues();
         // save actions
         foreach ($objectAcl->actions as $action) {
             $result = Access::findFirst(array(

@@ -74,24 +74,19 @@ class AdminPagesController extends AdminController
         $form = new Form_Admin_Pages_Create();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $page = $form->getData();
+        $page = $form->getValues();
         $url = $page->getUrl();
         if (!empty($url)) {
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
         }
 
-        $roles = $this->request->get('roles');
-        if ($roles == null) {
-            $page->setRoles(array());
-        }
-
         $page->save();
         $this->flashSession->success('New object created successfully!');
-        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getData()->getId()));
+        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getValues()->getId()));
     }
 
     /**
@@ -109,11 +104,11 @@ class AdminPagesController extends AdminController
         $form = new Form_Admin_Pages_Edit($page);
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $page = $form->getData();
+        $page = $form->getValues();
         $url = $page->getUrl();
         if (!empty($url) && $url != '/') {
             $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
@@ -243,7 +238,7 @@ class AdminPagesController extends AdminController
         // building widget form
         $adminForm = $widgetMetadata->getAdminForm();
         if (empty($adminForm)) {
-            $form->addElement('textField', 'title', array(
+            $form->addElement('text', 'title', array(
                 'label' => 'Title'
             ));
         } elseif ($adminForm == 'action') {
@@ -257,7 +252,7 @@ class AdminPagesController extends AdminController
         }
 
         if ($widgetMetadata->getIsPaginated() == 1) {
-            $form->addElement('textField', 'count', array(
+            $form->addElement('text', 'count', array(
                 'label' => 'Items count',
                 'value' => 10
             ), 10000);
@@ -267,17 +262,17 @@ class AdminPagesController extends AdminController
             $form->addElement('select', 'roles', array(
                 'label' => 'Roles',
                 'options' => Role::find(),
-                'using' => array('id', 'name')
+                'using' => array('id', 'name'),
+                'multiple' => 'multiple'
             ), 10000);
 
-            $form->setElementAttrib('roles', 'multiple', 'multiple');
         }
 
         // set form values
         if (!empty($widgetParams))
-            $form->setData($widgetParams);
+            $form->setValues($widgetParams);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             $this->view->setVar('form', $form);
             $this->view->setVar('id', $id);
             $this->view->setVar('name', $widgetMetadata->getName());
@@ -285,7 +280,7 @@ class AdminPagesController extends AdminController
             return;
         }
 
-        $currentPageWidgets[$widgetIndex]['params'] = $form->getData();
+        $currentPageWidgets[$widgetIndex]['params'] = $form->getValues();
         $this->view->setVar('widget_index', $widgetIndex);
 
 
@@ -319,7 +314,7 @@ class AdminPagesController extends AdminController
     }
 
     /**
-     * @Route("/suggest", methods={"get"}, name="admin-pages-suggest")
+     * @Route("/suggest", methods={"GET"}, name="admin-pages-suggest")
      */
     public function suggestAction()
     {

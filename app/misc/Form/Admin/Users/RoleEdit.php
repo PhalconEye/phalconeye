@@ -19,15 +19,14 @@ class Form_Admin_Users_RoleEdit extends Form_Admin_Users_RoleCreate
 
     public function init()
     {
+        parent::init();
         $this
             ->setOption('title', "Edit Role")
             ->setOption('description', "Edit this role.");
 
-
-
-
+        $this->clearButtons();
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-roles'));
+        $this->addButtonLink('Cancel', array('for' => 'admin-users-roles'));
 
     }
 }

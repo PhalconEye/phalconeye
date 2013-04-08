@@ -13,7 +13,7 @@
  *
  */
 
-class Validator_Regex extends \Phalcon\Validation\Validator\Regex implements \Phalcon\Validation\ValidatorInterface
+class Validator_PresenceOf extends \Phalcon\Validation\Validator\PresenceOf implements \Phalcon\Validation\ValidatorInterface
 {
 
 

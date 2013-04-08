@@ -25,12 +25,12 @@ class Form_Auth_Login extends Form
         ;
 
 
-        $this->addElement('textField', 'login', array(
+        $this->addElement('text', 'login', array(
             'label' => 'Login (email or username)',
             'required' => true
         ));
 
-        $this->addElement('passwordField', 'password', array(
+        $this->addElement('password', 'password', array(
             'label' => 'Password',
             'required' => true
         ));

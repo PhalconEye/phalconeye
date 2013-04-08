@@ -46,7 +46,8 @@ return new \Phalcon\Config(array(
             'compiledExtension' => '.compiled'
         ),
         'session' => array(
-            'tableName' => 'session_data'
+            'tableName' => 'session_data',
+            'lifetime' => 1440
         )
 
     ),

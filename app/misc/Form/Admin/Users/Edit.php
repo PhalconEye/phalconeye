@@ -19,13 +19,13 @@ class Form_Admin_Users_Edit extends Form_Admin_Users_Create
 
     public function init()
     {
+        parent::init();
         $this
             ->setOption('title', "Edit User")
             ->setOption('description', "Edit this user.");
 
 
-
-
+        $this->clearButtons();
         $this->addButton('Save', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-users'));
 

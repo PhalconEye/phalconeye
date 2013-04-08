@@ -26,12 +26,13 @@ class AdminSettingsController extends AdminController
         $form = new Form_Admin_Settings_System();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+
             return;
         }
 
-        $data = $form->getData();
-        Settings::setSettings($data);
+        $values = $form->getValues();
+        Settings::setSettings($values);
 
         $this->flash->success('Settings saved!');
     }
@@ -70,13 +71,13 @@ class AdminSettingsController extends AdminController
                 break;
         }
 
-        $form->setData($cacheData);
+        $form->setValues($cacheData);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $data = $form->getData();
+        $data = $form->getValues();
         if (!empty($data['clear_cache']) && $data['clear_cache'] = 1) {
             $keys = $this->viewCache->queryKeys();
             foreach ($keys as $key) {
@@ -105,8 +106,8 @@ class AdminSettingsController extends AdminController
                     @unlink($file); // delete file
             }
 
-            $form->addNotice('Cache cleared!');
-            $form->setElementParam('clear_cache', 'value', null);
+            $this->flash->success('Cache cleared!');
+            $form->setValue('clear_cache', null);
         }
 
 

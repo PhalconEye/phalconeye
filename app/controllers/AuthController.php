@@ -25,7 +25,7 @@ class AuthController extends Controller
 
         $form = new Form_Auth_Login();
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             $this->view->setVar('form', $form);
             return;
         }
@@ -73,7 +73,7 @@ class AuthController extends Controller
 
         $form = new Form_Auth_Register();
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             $this->view->setVar('form', $form);
             return;
         }
@@ -87,7 +87,7 @@ class AuthController extends Controller
         }
 
         $user = new User();
-        $data = $form->getData();
+        $data = $form->getValues();
         $data['password'] = $this->security->hash($data['password']);
         if (!$user->save($data)) {
             foreach ($user->getMessages() as $message) {

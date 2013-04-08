@@ -40,8 +40,9 @@ return new \Phalcon\Config(array(
         ),
         'session' =>
         array(
-            'tableName' => 'session_data'
-        )
+            'tableName' => 'session_data',
+            'lifetime' => 1440
+        ),
     ),
     'models' =>
     array(

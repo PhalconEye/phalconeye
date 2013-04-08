@@ -22,20 +22,20 @@ class Form_Admin_Settings_Performance extends Form
         $this
             ->setOption('title', "Performance settings");
 
-        $this->addElement('textField', 'prefix', array(
+        $this->addElement('text', 'prefix', array(
             'label' => 'Cache prefix',
             'description' => 'Example "pe_"',
             'value' => "pe_"
         ));
 
-        $this->addElement('textField', 'lifetime', array(
+        $this->addElement('text', 'lifetime', array(
             'label' => 'Cache lifetime',
             'description' => 'This determines how long the system will keep cached data before reloading it from the database server. A shorter cache lifetime causes greater database server CPU usage, however the data will be more current.',
             'filter' => 'int',
             'value' => 86400
         ));
 
-        $this->addElement('selectStatic', 'adapter', array(
+        $this->addElement('select', 'adapter', array(
             'label' => 'Cache adapter',
             'description' => 'Cache type. Where cache will be stored.',
             'options' => array(
@@ -51,7 +51,7 @@ class Form_Admin_Settings_Performance extends Form
          * File options
          */
 
-        $this->addElement('textField', 'cacheDir', array(
+        $this->addElement('text', 'cacheDir', array(
             'label' => 'Files location',
             'value' => 'path_to_dir'
         ));
@@ -61,41 +61,42 @@ class Form_Admin_Settings_Performance extends Form
          * Memcached options
          */
 
-        $this->addElement('textField', 'host', array(
+        $this->addElement('text', 'host', array(
             'label' => 'Memcached host',
             'value' => '127.0.0.1'
         ));
 
-        $this->addElement('textField', 'port', array(
+        $this->addElement('text', 'port', array(
             'label' => 'Memcached port',
             'value' => '11211'
         ));
 
-        $this->addElement('checkField', 'persistent', array(
+        $this->addElement('check', 'persistent', array(
             'label' => 'Create a persitent connection to memcached?',
-            'options' => 1
+            'options' => 1,
+            'value' => true
         ));
 
         /**
          * Mongo options
          */
 
-        $this->addElement('textField', 'server', array(
+        $this->addElement('text', 'server', array(
             'label' => 'A MongoDB connection string',
             'value' => 'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
         ));
 
-        $this->addElement('textField', 'db', array(
+        $this->addElement('text', 'db', array(
             'label' => 'Mongo database name',
             'value' => 'database'
         ));
 
-        $this->addElement('textField', 'collection', array(
+        $this->addElement('text', 'collection', array(
             'label' => 'Mongo collection in the database',
             'value' => 'collection'
         ));
 
-        $this->addElement('checkField', 'clear_cache', array(
+        $this->addElement('check', 'clear_cache', array(
             'label' => 'Clear cache',
             'description' => 'All system cache will be cleared.',
             'options' => 1
@@ -105,21 +106,14 @@ class Form_Admin_Settings_Performance extends Form
         $this->addButton('Save', true);
     }
 
-    /**
-     * @param \Phalcon\HTTP\RequestInterface $request
-     *
-     * @return bool
-     */
-    public function isValid($request){
-        $adapter = $request->get('adapter');
-        if ($adapter == '0'){
-            $filepath = $request->get('cacheDir');
-            if (!is_dir($filepath)){
+    public function isValid($data = null, $entity = null){
+        if (isset($data['adapter']) && $data['adapter'] == '0'){
+            if (empty($data['cacheDir']) || !is_dir($data['cacheDir'])){
                 $this->addError('Files location isn\'t correct!');
                 return false;
             }
         }
 
-        return parent::isValid($request);
+        return parent::isValid($data);
     }
 }

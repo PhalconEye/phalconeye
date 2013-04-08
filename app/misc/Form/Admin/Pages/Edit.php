@@ -19,11 +19,12 @@ class Form_Admin_Pages_Edit extends Form_Admin_Pages_Create
 
     public function init()
     {
+        parent::init();
         $this
             ->setOption('title', "Edit Page")
             ->setOption('description', "Edit this page.");
 
-
+        $this->clearButtons();
         $this->addButton('Save', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-pages'));
 

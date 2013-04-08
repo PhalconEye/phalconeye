@@ -26,10 +26,6 @@ class Form_Admin_Users_Create extends Form
 
         parent::__construct($model);
 
-        $this->setElementParam('role_id', 'options', Role::find());
-        $this->setElementParam('role_id', 'using', array('id', 'name'));
-        $this->setElementParam('role_id', 'description', 'Select user role');
-        $this->setElementAttrib('role_id', 'order', 4);
     }
 
     public function init()
@@ -38,6 +34,27 @@ class Form_Admin_Users_Create extends Form
             ->setOption('title', "User Creation")
             ->setOption('description', "Create new user.");
 
+
+        $this->addElement('text', 'username', array(
+            'label' => 'Username',
+            'autocomplete' => 'off'
+        ));
+
+        $this->addElement('password', 'password', array(
+            'label' => 'Password',
+            'autocomplete' => 'off'
+        ));
+
+        $this->addElement('text', 'email', array(
+            'label' => 'Email'
+        ));
+
+        $this->addElement('select', 'role_id', array(
+            'label' => 'Role',
+            'description' => 'Select user role',
+            'options' => Role::find(),
+            'using' => array('id', 'name')
+        ));
 
         $this->addButton('Create', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-users'));

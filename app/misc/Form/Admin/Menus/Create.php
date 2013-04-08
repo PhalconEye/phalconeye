@@ -33,6 +33,9 @@ class Form_Admin_Menus_Create extends Form
             ->setOption('title', "Menu Creation")
             ->setOption('description', "Create new menu.");
 
+        $this->addElement('text', 'name', array(
+            'label' => 'Name'
+        ));
 
         $this->addButton('Create', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-menus'));

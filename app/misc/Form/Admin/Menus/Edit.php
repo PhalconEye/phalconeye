@@ -23,7 +23,9 @@ class Form_Admin_Menus_Edit extends Form_Admin_Menus_Create
             ->setOption('title', "Edit Menu")
             ->setOption('description', "Edit this menu.");
 
-
+        $this->addElement('text', 'name', array(
+            'label' => 'Name'
+        ));
 
         $this->addButton('Save', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-menus'));

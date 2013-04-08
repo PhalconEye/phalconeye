@@ -15,3 +15,4 @@ $application = new Application();
 $application->run();
 echo $application->getOutput();
 
+

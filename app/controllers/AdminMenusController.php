@@ -73,12 +73,12 @@ class AdminMenusController extends AdminController
         $form = new Form_Admin_Menus_Create();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
         $this->flashSession->success('New object created successfully!');
-        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getData()->getId()));
+        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getValues()->getId()));
     }
 
     /**
@@ -94,7 +94,7 @@ class AdminMenusController extends AdminController
         $form = new Form_Admin_Menus_Edit($item);
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
@@ -173,14 +173,14 @@ class AdminMenusController extends AdminController
             'parent_id' => $this->request->get('parent_id')
         );
 
-        $form->setData($data);
+        $form->setValues($data);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
         $urlType = $this->request->getPost('url_type', 'int', 0);
-        $item = $form->getData();
+        $item = $form->getValues();
 
         // clear url type
         if ($urlType == 0) {
@@ -202,10 +202,10 @@ class AdminMenusController extends AdminController
         if ($orderItem->getId() != $item->getId())
             $item->setItemOrder($orderItem->getItemOrder() + 1);
 
-        $roles = $this->request->get('roles');
-        if ($roles == null) {
-            $item->setRoles(array());
-        }
+//        $roles = $this->request->get('roles');
+//        if ($roles == null) {
+//            $item->setRoles(array());
+//        }
 
         $item->save();
 
@@ -237,14 +237,14 @@ class AdminMenusController extends AdminController
         }
 
 
-        $form->setData($data);
+        $form->setValues($data);
 
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $item = $form->getData();
+        $item = $form->getValues();
 
         // clear url type
         $urlType = $this->request->getPost('url_type', 'int', 0);
@@ -266,7 +266,7 @@ class AdminMenusController extends AdminController
 
         $item->save();
 
-        $this->view->setVar('edited', $form->getData());
+        $this->view->setVar('edited', $form->getValues());
     }
 
     /**

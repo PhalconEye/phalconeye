@@ -321,13 +321,20 @@ class Application
      */
     protected function initSession($config)
     {
+        if (!isset($config->application->session))
+            return;
+
         $di = $this->_di;
         $di->set('session', function () use($di, $config) {
-            $session = new Session_Database(array(
+            $sessionOptions = array(
                 'db' => $di->get('db'),
                 'table' => $config->application->session->tableName
-            ));
+            );
+            if (isset($config->application->session->lifetime)){
+                $sessionOptions['lifetime'] = $config->application->session->lifetime;
+            }
 
+            $session = new Session_Database($sessionOptions);
             $session->start();
             return $session;
         }, true);

@@ -77,7 +77,7 @@ class AdminLanguagesController extends AdminController
         $form = new Form_Admin_Languages_Create();
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
@@ -85,14 +85,14 @@ class AdminLanguagesController extends AdminController
             mkdir(ROOT_PATH . self::FLAGS_DIR, 766, true);
         }
 
-        $files = $form->getFiles();
-        $lang = $form->getData();
+        $files = $this->request->getUploadedFiles();
+        $lang = $form->getValues();
 
         // upload flag
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]['name'], -4);
+            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]->getName(), -4);
             @unlink(ROOT_PATH . $iconPath);
-            move_uploaded_file($files[0]['tmp_name'], ROOT_PATH . $iconPath);
+            $files[0]->moveTo(ROOT_PATH . $iconPath);
             $lang->setIcon($iconPath);
             $lang->save();
         }
@@ -103,6 +103,7 @@ class AdminLanguagesController extends AdminController
             file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = array();');
         }
 
+        $lang->save();
         $this->flashSession->success('New object created successfully!');
         return $this->response->redirect(array('for' => "admin-languages"));
     }
@@ -120,17 +121,17 @@ class AdminLanguagesController extends AdminController
         $form = new Form_Admin_Languages_Edit($item);
         $this->view->setVar('form', $form);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $files = $form->getFiles();
-        $lang = $form->getData();
+        $files = $this->request->getUploadedFiles();
+        $lang = $form->getValues();
 
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]['name'], -4);
+            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]->getName(), -4);
             @unlink(ROOT_PATH . $iconPath);
-            move_uploaded_file($files[0]['tmp_name'], ROOT_PATH . $iconPath);
+            $files[0]->moveTo(ROOT_PATH . $iconPath);
             $lang->setIcon($iconPath);
             $lang->save();
         }
@@ -207,13 +208,13 @@ class AdminLanguagesController extends AdminController
             'language_id' => $this->request->get('language_id')
         );
 
-        $form->setData($data);
+        $form->setValues($data);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $item = $form->getData();
+        $item = $form->getValues();
 
         $this->view->setVar('created', $item);
     }
@@ -232,13 +233,13 @@ class AdminLanguagesController extends AdminController
             'language_id' => $this->request->get('language_id'),
         );
 
-        $form->setData($data);
+        $form->setValues($data);
 
-        if (!$this->request->isPost() || !$form->isValid($this->request)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $this->view->setVar('edited', $form->getData());
+        $this->view->setVar('edited', $form->getValues());
     }
 
     /**

@@ -19,18 +19,11 @@ class Form_Admin_Users_RoleCreate extends Form
 
     public function __construct($model = null)
     {
-        $this
-            ->addIgnored('type')
-            ->addIgnored('undeletable')
-        ;
-
         if ($model === null){
             $model = new Role();
         }
 
         parent::__construct($model);
-
-        $this->setElementParam('is_default', 'options', 1);
     }
 
     public function init()
@@ -39,9 +32,21 @@ class Form_Admin_Users_RoleCreate extends Form
             ->setOption('title', "Role Creation")
             ->setOption('description', "Create new role.");
 
+        $this->addElement('text', 'name', array(
+            'label' => 'name',
+        ));
+
+        $this->addElement('textArea', 'description', array(
+            'label' => 'name'
+        ));
+
+        $this->addElement('check', 'is_default', array(
+            'label' => 'Is Default',
+            'options' => 1
+        ));
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-roles'));
+        $this->addButtonLink('Cancel', array('for' => 'admin-users-roles'));
 
     }
 }
