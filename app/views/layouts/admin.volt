@@ -27,6 +27,7 @@
     {{ javascript_include("js/phalconeye/core.js") }}
     {{ javascript_include("js/phalconeye/admin.js") }}
     {{ javascript_include("js/phalconeye/modal.js") }}
+    {{ javascript_include("js/phalconeye/ajaxplorer.js") }}
 
     {% block head %}
 

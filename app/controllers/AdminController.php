@@ -21,79 +21,74 @@ class AdminController extends Controller
     public function initialize()
     {
         parent::initialize();
-        $activeItem = 'admin';
         $path = explode('/', $this->request->get('_url'));
 
-        if (count($path) >= 3){
-            $activeItem = '';
-            for($i = 1, $count = count($path); $i < $count; $i++){
-                $activeItem .= $path[$i] . '/';
-            }
-            $activeItem = substr($activeItem, 0, -1);
+        $activeItem = '';
+        $limit = (count($path) > 3 ? 1 : 0);
+        for ($i = 1, $count = count($path); $i < $count - $limit; $i++) {
+            $activeItem .= $path[$i] . '/';
         }
-        elseif (count($path) == 2){
-            $activeItem = $path[1];
-        }
+        $activeItem = substr($activeItem, 0, -1);
 
 
         $navigation = new Navigation();
         $navigation
             ->setItems(array(
-            'admin' => array(
-                'href' => 'admin',
-                'title' => 'Dashboard',
-                'prepend' => '<i class="icon-home icon-white"></i>'
-            ),
-            'users' => array(
-                'title' => 'Manage',
-                'items' => array( // type - dropdown
-                    'admin/users' => array(
-                      'title' => 'Users and Roles',
-                      'href' => 'admin/users',
-                      'prepend' => '<i class="icon-user icon-white"></i>'
-                    ),
-                    'admin/pages' => array(
-                      'title' => 'Pages',
-                      'href' => 'admin/pages',
-                      'prepend' => '<i class="icon-list-alt icon-white"></i>'
-                    ),
-                    'admin/menus' => array(
-                      'title' => 'Menus',
-                      'href' => 'admin/menus',
-                      'prepend' => '<i class="icon-th-list icon-white"></i>'
-                    ),
-                    'admin/languages' => array(
-                      'title' => 'Languages',
-                      'href' => 'admin/languages',
-                      'prepend' => '<i class="icon-globe icon-white"></i>'
-                    ),
-                    'admin/files' => array(
-                        'title' => 'Files',
-                        'href' => 'admin/files',
-                        'prepend' => '<i class="icon-file icon-white"></i>'
+                'admin' => array(
+                    'href' => 'admin',
+                    'title' => 'Dashboard',
+                    'prepend' => '<i class="icon-home icon-white"></i>'
+                ),
+                'users' => array(
+                    'title' => 'Manage',
+                    'items' => array( // type - dropdown
+                        'admin/users' => array(
+                            'title' => 'Users and Roles',
+                            'href' => 'admin/users',
+                            'prepend' => '<i class="icon-user icon-white"></i>'
+                        ),
+                        'admin/pages' => array(
+                            'title' => 'Pages',
+                            'href' => 'admin/pages',
+                            'prepend' => '<i class="icon-list-alt icon-white"></i>'
+                        ),
+                        'admin/menus' => array(
+                            'title' => 'Menus',
+                            'href' => 'admin/menus',
+                            'prepend' => '<i class="icon-th-list icon-white"></i>'
+                        ),
+                        'admin/languages' => array(
+                            'title' => 'Languages',
+                            'href' => 'admin/languages',
+                            'prepend' => '<i class="icon-globe icon-white"></i>'
+                        ),
+                        'admin/files' => array(
+                            'title' => 'Files',
+                            'href' => 'admin/files',
+                            'prepend' => '<i class="icon-file icon-white"></i>'
+                        )
                     )
-                )
-            ),
-            'settings' => array( // type - dropdown
-                'title' => 'Settings',
-                'items' => array(
-                    'admin/settings' => array(
-                        'title' => 'System',
-                        'href' => 'admin/settings',
-                        'prepend' => '<i class="icon-cog icon-white"></i>'
-                    ),
-                    'admin/settings/performance' => array(
-                        'title' => 'Performance',
-                        'href' => 'admin/settings/performance',
-                        'prepend' => '<i class="icon-signal icon-white"></i>'
-                    ),
-                    'admin/access' => array(
-                        'title' => 'Access Rights',
-                        'href' => 'admin/access',
-                        'prepend' => '<i class="icon-lock icon-white"></i>'
+                ),
+                'settings' => array( // type - dropdown
+                    'title' => 'Settings',
+                    'items' => array(
+                        'admin/settings' => array(
+                            'title' => 'System',
+                            'href' => 'admin/settings',
+                            'prepend' => '<i class="icon-cog icon-white"></i>'
+                        ),
+                        'admin/settings/performance' => array(
+                            'title' => 'Performance',
+                            'href' => 'admin/settings/performance',
+                            'prepend' => '<i class="icon-signal icon-white"></i>'
+                        ),
+                        'admin/access' => array(
+                            'title' => 'Access Rights',
+                            'href' => 'admin/access',
+                            'prepend' => '<i class="icon-lock icon-white"></i>'
+                        )
                     )
-                )
-            )))
+                )))
             ->setActiveItem($activeItem)
             ->setListClass('nav nav-categories')
             ->setDropDownItemClass('nav-category')
@@ -116,13 +111,14 @@ class AdminController extends Controller
     /**
      * @Get("/mode", name="admin-mode")
      */
-    public function modeAction(){
+    public function modeAction()
+    {
         $this->view->disable();
 
         $this->config->application->debug = (bool)$this->request->get('debug', null, true);
         $configText = var_export($this->config->toArray(), true);
-        $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php ".PHP_EOL.PHP_EOL."return new \\Phalcon\\Config(" . $configText .");");
+        $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
+        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
     }
 }
 

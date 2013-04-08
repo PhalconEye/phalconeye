@@ -49,7 +49,8 @@ PE.core = {
             }
         }
     }
-}
+
+};
 
 
 $(document).ready(function () {

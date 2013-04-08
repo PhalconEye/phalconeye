@@ -223,6 +223,12 @@ form .form_footer .btn + .btn{
     margin-left: 5px;
 }
 
+.form_element_remote_file > input[type="text"]{
+    float: left;
+    padding-right: 15px;
+    margin-right: -10px;
+}
+
 /*CONTENT RELATED STYLES*/
 .form_login{
     width: 470px;
