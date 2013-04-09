@@ -14,5 +14,5 @@ Phalcon Eye CMS is open-source software licensed under the New BSD License. See 
 
 Third Party
 -----------
-CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
-AjaXplorer: http://ajaxplorer.info/ (GPL)
+* CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
+* AjaXplorer: http://ajaxplorer.info/ (GPL)
