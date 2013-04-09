@@ -1,3 +1,10 @@
+Version 0.3.0
+ - Some menu improvements: onclick action, icon, tooltip, language selector
+ - Form class fully rewritten
+ - Implemented session db handler
+ - AjaXplorer added for file management
+ - New style for admin panel
+
 Version 0.2.0
  - Views cache cleaning from admin
  - Routing annotations system
