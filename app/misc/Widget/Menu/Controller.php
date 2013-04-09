@@ -62,6 +62,7 @@ class Widget_Menu_Controller extends Widget_Controller
         $navigationItems = array();
         $index = 1;
         foreach ($items as $item) {
+            /** @var MenuItem $item */
             if (!$item->isAllowed()) continue;
             $subItems = $item->getMenuItem(array('order' => 'item_order ASC'));
             $navigationItems[$index] = array(
@@ -70,16 +71,29 @@ class Widget_Menu_Controller extends Widget_Controller
 
             if ($subItems->count() > 0) {
                 $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);
-                $navigationItems[$index]['onclick'] = $item->getOnclick();
-                $navigationItems[$index]['tooltip'] = $item->getTooltip();
-                $navigationItems[$index]['tooltip_position'] = $item->getTooltipPosition();
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();
                 $navigationItems[$index]['target'] = $item->getTarget();
-                $navigationItems[$index]['onclick'] = $item->getOnclick();
+            }
+
+            $navigationItems[$index]['onclick'] = $item->getOnclick();
+
+            $tooltip = $item->getTooltip();
+            if (!empty($tooltip)) {
                 $navigationItems[$index]['tooltip'] = $item->getTooltip();
                 $navigationItems[$index]['tooltip_position'] = $item->getTooltipPosition();
             }
+
+            $icon = $item->getIcon();
+            if (!empty($icon)) {
+                $iconPosition = $item->getIconPosition();
+                if ($iconPosition == 'left') {
+                    $navigationItems[$index]['prepend'] = "<img class='nav-icon' alt='{$item->getTitle()}' src='{$icon}'/>";
+                } else {
+                    $navigationItems[$index]['append'] = "<img class='nav-icon' alt='{$item->getTitle()}' src='{$icon}'/>";
+                }
+            }
+
             $index++;
         }
 

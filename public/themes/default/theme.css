@@ -273,3 +273,9 @@ form .form_footer .btn + .btn{
 .error_page_description{
     text-align: center;
 }
+
+.nav .nav-icon{
+    margin: 0 5px;
+    max-width: 25px;
+    max-height: 25px;
+}

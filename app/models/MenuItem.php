@@ -65,8 +65,7 @@ class MenuItem extends \Phalcon\Mvc\Model
     protected $target = null;
 
     /**
-     * Tooltip html
-     * has no var type
+     * @var string
      */
     protected $tooltip = null;
 
@@ -75,6 +74,18 @@ class MenuItem extends \Phalcon\Mvc\Model
      *
      */
     protected $tooltip_position = 'top';
+
+    /**
+     * @var string
+     */
+    protected $icon = null;
+
+    /**
+     * @var string
+     *
+     */
+    protected $icon_position = 'left';
+
 
     /**
      * @var integer
@@ -294,7 +305,17 @@ class MenuItem extends \Phalcon\Mvc\Model
 
     public function getTooltipPosition()
     {
-        return $this->tooltip_position; // we need html to work well in attribute "title"
+        return $this->tooltip_position;
+    }
+
+    public function getIcon()
+    {
+        return $this->icon;
+    }
+
+    public function getIconPosition()
+    {
+        return $this->icon_position;
     }
 
     /**

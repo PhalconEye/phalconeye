@@ -18,6 +18,15 @@ class Form_Element_RemoteFile extends Form_Element implements Form_ElementInterf
 
     private $_editorUrl = '/external/ajaxplorer/?external_selector_type=popup&relative_path=/public/files';
     protected $_description;
+    protected $_value;
+
+    public function __construct($name, $attributes=null){
+        if (!empty($attributes['value'])){
+            $this->_value = $attributes['value'];
+        }
+
+        parent::__construct($name, $attributes);
+    }
 
     /**
      * If element is need to be rendered in default layout
@@ -52,8 +61,17 @@ class Form_Element_RemoteFile extends Form_Element implements Form_ElementInterf
         return $this->_description;
     }
 
+    public function setDefault($value){
+        $this->_value = $value;
+        parent::setDefault($value);
+    }
+
+
     public function render()
     {
+        if ($this->_value === null)
+            $this->_value = $this->getForm()->getValue($this->getName());
+
         $attributes = $this->getAttributes();
         $buttonTitle = 'Select file';
         if (isset($attributes['title'])) {
@@ -62,10 +80,10 @@ class Form_Element_RemoteFile extends Form_Element implements Form_ElementInterf
         }
         return sprintf('
             <div class="form_element_remote_file">
-                <input type="text" name="%s" id="%s" />
+                <input type="text" name="%s" id="%s" value="%s" />
                 <input onclick="PE.ajaxplorer.openAjaxplorerPopup($(this).parent(), \'%s\', \'%s\');" type="button" class="btn btn-primary" value="%s"/>
             </div>',
-            $this->getName(), $this->getName(), $this->_editorUrl, $buttonTitle, $buttonTitle);
+            $this->getName(), $this->getName(), $this->_value, $this->_editorUrl, $buttonTitle, $buttonTitle);
     }
 
 }

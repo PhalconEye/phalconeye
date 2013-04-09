@@ -90,11 +90,23 @@ class Form_Admin_Menus_CreateItem extends Form
             ), 1000);
 
         $this->addElement('select', 'tooltip_position', array(
-            'label' => 'Title',
-            'description' => 'Link type',
+            'label' => 'Tooltip position',
             'options' => array(
                 'top' => 'Top',
                 'bottom' => 'Bottom',
+                'left' => 'Left',
+                'right' => 'Right'
+            )
+        ));
+
+        $this->addElement('remoteFile', 'icon', array(
+            'label' => 'Icon',
+            'title' => $this->di->get('trans')->_('Select file')
+        ));
+
+        $this->addElement('select', 'icon_position', array(
+            'label' => 'Icon position',
+            'options' => array(
                 'left' => 'Left',
                 'right' => 'Right'
             )
