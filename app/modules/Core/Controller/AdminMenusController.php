@@ -296,7 +296,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
     }
 
     /**
-     * @Get("/order", name="admin-menus-order")
+     * @Post("/order", name="admin-menus-order")
      */
     public function orderAction()
     {

@@ -156,10 +156,10 @@ class User extends \Phalcon\Mvc\Model
     /**
      * Return the related "Role"
      *
-     * @return \Core\Model\Role
+     * @return \User\Model\Role
      */
-    public function getRole(){
-        $role = $this->getRelated('\User\Model\Role');
+    public function getRole($arguments = array()){
+        $role = $this->getRelated('\User\Model\Role', $arguments);
         if (!$role){
             $role = new Role();
             $role->id = 0;

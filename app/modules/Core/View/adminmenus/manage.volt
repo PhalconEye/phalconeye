@@ -35,7 +35,7 @@
                         dataType:'json',
                         success:function () {
                             $('#label-saved').show();
-                            $('#label-saved').fadeOut(600);
+                            $('#label-saved').fadeOut(1000);
                         }
                     });
                 }

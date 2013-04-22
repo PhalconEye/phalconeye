@@ -88,7 +88,6 @@ class MenuItem extends \Phalcon\Mvc\Model
      */
     protected $icon_position = 'left';
 
-
     /**
      * @var integer
      *
@@ -116,8 +115,8 @@ class MenuItem extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\Menu
      */
-    public function getMenu(){
-        return $this->getRelated('\Core\Model\Menu');
+    public function getMenu($arguments = array()){
+        return $this->getRelated('\Core\Model\Menu', $arguments);
     }
 
     /**
@@ -125,8 +124,8 @@ class MenuItem extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\Menu
      */
-    public function getMenuItem(){
-        return $this->getRelated('\Core\Model\MenuItem');
+    public function getMenuItem($arguments = array()){
+        return $this->getRelated('\Core\Model\MenuItem', $arguments);
     }
 
     /**

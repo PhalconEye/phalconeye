@@ -54,8 +54,8 @@ class LanguageTranslation extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\Language
      */
-    public function getLanguage(){
-        return $this->getRelated('\Core\Model\Language');
+    public function getLanguage($arguments = array()){
+        return $this->getRelated('\Core\Model\Language', $arguments);
     }
 
     /**

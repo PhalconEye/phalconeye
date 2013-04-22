@@ -34,7 +34,7 @@ class Menu extends \Engine\Form
         $this->addElement('text', 'menu', array(
             'label' => 'Menu',
             'description' => 'Start typing to see menus variants',
-            'data-link' => '/admin/menus/suggest',
+            'data-link' => $this->di->get('url')->get('admin/menus/suggest'),
             'data-target' => '#menu_id',
             'autocomplete' => 'off',
             'class' => 'autocomplete',

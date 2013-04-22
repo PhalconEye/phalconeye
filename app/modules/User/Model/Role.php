@@ -69,8 +69,8 @@ class Role extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\User[]
      */
-    public function getUser(){
-        return $this->getRelated('\User\Model\User');
+    public function getUser($arguments = array()){
+        return $this->getRelated('\User\Model\User', $arguments);
     }
 
 
@@ -79,8 +79,8 @@ class Role extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\Access[]
      */
-    public function getAccess(){
-        return $this->getRelated('\Core\Model\Access');
+    public function getAccess($arguments = array()){
+        return $this->getRelated('\Core\Model\Access', $arguments);
     }
 
 

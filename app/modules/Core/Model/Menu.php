@@ -42,8 +42,8 @@ class Menu extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\MenuItem[]
      */
-    public function getMenuItem(){
-        return $this->getRelated('\Core\Model\MenuItem');
+    public function getMenuItem($arguments = array()){
+        return $this->getRelated('\Core\Model\MenuItem', $arguments);
     }
 
 
