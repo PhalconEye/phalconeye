@@ -1,5 +1,5 @@
 body {
-    background-color: #e5e5e5;
+    background-color: #f3f3f3;
 }
 
 
@@ -45,7 +45,7 @@ h3{
     width: 190px      \9;
     margin: 0 0 -1px;
     padding: 8px 14px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #f3f3f3;
 }
 
 .admin-sidenav > li:first-child > a {
@@ -79,10 +79,11 @@ h3{
 
 .content .row-fluid > [class*="span"]{
     background-color: white;
-    border-radius: 5px;
     padding: 20px 40px 20px 20px;
     margin-left: 20px;
     margin-top: 20px;
+    box-shadow: 0 0 5px #aaa;
+    margin-bottom: 5px;
 }
 
 .row-after-header{
@@ -378,12 +379,14 @@ form .form_elements .form_label {
     width: 200px;
     float: left;
     margin-right: 50px;
+    word-wrap: break-word;
 }
 
 form .form_elements .form_label > label{
     margin-bottom: 0;
     color:#08c;
     font-weight: bold;
+    word-wrap: break-word;
 }
 
 form .form_elements .form_label > p {
@@ -463,7 +466,6 @@ form .form_footer .btn + .btn{
 .menu_manage_body > ul li{
     list-style: none;
     height: 40px;
-    border-radius: 3px;
     margin: 10px 0;
     cursor: move;
 
@@ -522,7 +524,7 @@ form .form_footer .btn + .btn{
 
 .dashboard-sidebar{
     width: 200px;
-    border: 1px solid #e5e5e5;
+    border: 1px solid #f3f3f3;
     border-radius:6px;
     padding: 5px;
     margin-left: 0px;
@@ -709,4 +711,9 @@ form .form_footer .btn + .btn{
 .navbar-header .nav>.active>a:hover{
     box-shadow: none;
     color: black;
+    background-color: #f3f3f3;
+}
+
+.btn{
+    border-radius: 0px;
 }

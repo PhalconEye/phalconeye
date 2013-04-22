@@ -10,7 +10,7 @@
  *
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
+ * to phalconeye@gmail.com so we can send you a copy immediately.
  *
  */
 
@@ -32,7 +32,7 @@ return new \Phalcon\Config(array(
         'miscDir' => ROOT_PATH . '/app/misc/',
         'cache' => array(
             'adapter' => 'File',
-            'path' => ROOT_PATH . '/app/var/cache/',
+            'cacheDir' => ROOT_PATH . '/app/var/cache/',
             'lifetime' => 86400,
             'prefix' => 'pe_'
         ),
@@ -55,6 +55,5 @@ return new \Phalcon\Config(array(
         'metadata' => array(
             'adapter' => 'Memory'
         )
-    ),
-    'modules' => false
+    )
 ));

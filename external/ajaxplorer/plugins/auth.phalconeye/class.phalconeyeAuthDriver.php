@@ -9,7 +9,7 @@
  *
  * If you did not receive a copy of the license and are unable to
  * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
+ * to phalconeye@gmail.com so we can send you a copy immediately.
  *
  */
 
@@ -32,8 +32,8 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
             define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT']);
         }
 
-        require_once $_SERVER['DOCUMENT_ROOT'] . "/app/library/Engine/Application.php";
-        $application = new Application();
+        require_once $_SERVER['DOCUMENT_ROOT'] . "app/libraries/Engine/Application.php";
+        $application = new \Engine\Application();
         $application->run('mini');
 
         $identity = Phalcon\DI::getDefault()->get('session')->get('identity');

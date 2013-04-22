@@ -8,16 +8,18 @@ if (!defined('ROOT_PATH')) {
 define('PE_VERSION', '0.3.0');
 
 
-require_once ROOT_PATH . "/app/library/Engine/Application.php";
+require_once ROOT_PATH . "/app/libraries/Engine/Application.php";
+require_once ROOT_PATH . "/app/libraries/Engine/Error.php";
 
 try {
 
-    $application = new Application();
+    $application = new Engine\Application();
     $application->run();
     echo $application->getOutput();
 
 } catch (Exception $e) {
-    Error::exception($e);
+    \Engine\Error::exception($e);
+    throw $e;
 }
 
 
