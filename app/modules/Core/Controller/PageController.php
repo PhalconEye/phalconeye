@@ -18,7 +18,7 @@ namespace Core\Controller;
 class PageController extends \Core\Controller\Base
 {
     /**
-     * @Route("/page/{url:[a-zA-Z0-9_]+}", methods={"GET"}, name="page")
+     * @Route("/page/{url:[a-zA-Z0-9_-]+}", methods={"GET"}, name="page")
      */
     public function indexAction($url)
     {
