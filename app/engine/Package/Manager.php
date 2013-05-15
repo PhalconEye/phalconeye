@@ -149,10 +149,25 @@ class Manager
         }
 
         $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . 'manifest.php');
+        $manifest->offsetSet('isUpdate', false);
 
         // check itself
         if (isset($this->_installedPackages[$manifest->type][$manifest->name])){
-            throw new Exception('This package already installed.');
+            if ($this->_installedPackages[$manifest->type][$manifest->name] == $manifest->version){
+                throw new Exception('This package already installed.');
+            }
+            else{
+                $filter = new \Phalcon\Filter();
+                $installedVersion = $filter->sanitize( $this->_installedPackages[$manifest->type][$manifest->name], 'int');
+                $packageVersion = $filter->sanitize($manifest->version, 'int');
+
+                if ($installedVersion > $packageVersion){
+                    throw new Exception('Newer version of this package already installed.');
+                }
+
+                $manifest->offsetSet('isUpdate', true);
+                $manifest->offsetSet('currentVersion', $this->_installedPackages[$manifest->type][$manifest->name]);
+            }
         }
 
         // check dependencies
@@ -192,7 +207,6 @@ class Manager
         }
 
         // copy files
-
         if ($manifest->type == self::PACKAGE_TYPE_THEME){
             $destinationDirectory = $this->getPackageLocation($manifest->type).strtolower($manifest->name);
         }

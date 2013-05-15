@@ -15,10 +15,24 @@
 
 namespace Engine;
 
-class Installer
+abstract class Installer
 {
+    /**
+     * Used to install specific database entities or other specific action
+     */
+    public abstract function install();
 
-    public function process(){
+    /**
+     * Used before package will be removed from the system
+     */
+    public abstract function remove();
 
-    }
+    /**
+     * Used to apply some updates
+     *
+     * @param $currentVersion
+     * @return mixed 'string' (new version) if migration is not finished, 'null' if all updates were applied
+     */
+    public abstract function update($currentVersion);
+
 }

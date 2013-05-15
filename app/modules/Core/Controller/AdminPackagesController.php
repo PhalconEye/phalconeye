@@ -137,28 +137,61 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $manifest = $packageManager->installPackage($filename);
 
                 // create package database object
-                $package = new Package();
-                $package->save($manifest->toArray());
-                $this->_enablePackageConfig($package->getName(), $package->getType(), $manifest->toArray());
+                if (!$manifest->isUpdate) {
+                    $package = new Package();
+                    $package->save($manifest->toArray());
+                    $this->_enablePackageConfig($package->getName(), $package->getType(), $manifest->toArray());
 
-                // install package dependencies
-                if ($manifest->get('dependencies')) {
-                    $dependencies = $manifest->get('dependencies');
-                    foreach ($dependencies as $dependecy) {
-                        $needPackage = $this->_getPackage($dependecy['type'], $dependecy['name']);
-                        if ($needPackage){
-                            $packageDependency = new \Core\Model\PackageDependency();
-                            $packageDependency->package_id = $package->id;
-                            $packageDependency->dependency_id = $needPackage->id;
-                            $packageDependency->save();
+                    // install package dependencies
+                    if ($manifest->get('dependencies')) {
+                        $dependencies = $manifest->get('dependencies');
+                        foreach ($dependencies as $dependecy) {
+                            $needPackage = $this->_getPackage($dependecy['type'], $dependecy['name']);
+                            if ($needPackage) {
+                                $packageDependency = new \Core\Model\PackageDependency();
+                                $packageDependency->package_id = $package->id;
+                                $packageDependency->dependency_id = $needPackage->id;
+                                $packageDependency->save();
+                            }
                         }
                     }
                 }
 
                 // run module install script
+                $installerClass = ucfirst($manifest->name) . '\Installer';
+                $newPackageVersion = '0';
+                if (file_exists($packageManager->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php')) {
+                    include_once $packageManager->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php';
+                }
+                if (class_exists($installerClass)) {
+                    $packageInstaller = new $installerClass();
+                    if ($manifest->isUpdate) {
+                        if (method_exists($packageInstaller, 'update')) {
+                            $newVersion = $packageInstaller->update($manifest->currentVersion);
+                            $iterations = 0;
+                            while ($newVersion !== null && is_string($newVersion) && $iterations < 1000) {
+                                $newVersion = $packageInstaller->update($newVersion);
+                                if ($newVersion !== null) {
+                                    $newPackageVersion = $newVersion;
+                                }
+                                $iterations++;
+                            }
+                            $package = $this->_getPackage($manifest->type, $manifest->name);
+                            $package->setVersion($newPackageVersion);
+                            $package->save();
+                        }
+                    } else if (method_exists($packageInstaller, 'install')) {
+                        $packageInstaller->install();
+                    }
+                }
 
                 $this->app->clearCache();
-                $this->flash->success('Package installed!');
+                if ($manifest->isUpdate) {
+                    $this->flash->success('Package updated to version ' . $newPackageVersion . '!');
+                } else {
+                    $this->flash->success('Package installed!');
+                }
+
             } catch (\Engine\Package\Exception $e) {
                 $this->flash->error($e->getMessage());
             }
@@ -344,6 +377,15 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 return $this->response->redirect(array('for' => $return));
 
             try {
+
+                $installerClass = ucfirst($name) . '\Installer';
+                if (class_exists($installerClass)) {
+                    $packageInstaller = new $installerClass();
+                    if (method_exists($packageInstaller, 'remove')) {
+                        $packageInstaller->remove();
+                    }
+                }
+
                 $packageManager = new \Engine\Package\Manager();
                 $packageManager->removePackage($package->getName(), $package->getType());
 
@@ -593,12 +635,13 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         $this->app->saveConfig();
     }
 
-    private function _hasDependencies(\Core\Model\Package $package){
+    private function _hasDependencies(\Core\Model\Package $package)
+    {
         $dependencies = $package->getRelatedPackages();
         /** @var \Phalcon\Mvc\Model\Resultset\Simple $dependencies */
-        if ($dependencies->count()){
+        if ($dependencies->count()) {
             $message = 'You can\'t uninstall or disable this package, because it\'s related to:<br/>';
-            foreach($dependencies as $dependency){
+            foreach ($dependencies as $dependency) {
                 $dependencyPackage = $dependency->getDependencyPackage();
                 $message .= " - {$dependencyPackage->getType()} '{$dependencyPackage->getName()}'";
             }

@@ -281,6 +281,10 @@ h3{
     margin-left: -214px;
 }
 
+.dropdown-menu{
+    border-radius: 0;
+}
+
 #layout_select_block {
     background: white;
     border-radius: 3px;
