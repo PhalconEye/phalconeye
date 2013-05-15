@@ -137,9 +137,7 @@ class AdminPerformanceController extends \Core\Controller\BaseAdmin
         }
 
         $this->config->application->cache = new \Phalcon\Config($cacheData);
-        $configText = var_export($this->config->toArray(), true);
-        $configText = str_replace("'".ROOT_PATH, "ROOT_PATH . '", $configText);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
+        $this->app->saveConfig();
         $this->flash->success('Settings saved!');
     }
 }

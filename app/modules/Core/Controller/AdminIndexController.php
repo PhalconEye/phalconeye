@@ -37,45 +37,9 @@ class AdminIndexController extends \Core\Controller\BaseAdmin
         $this->view->disable();
 
         $this->config->application->debug = (bool)$this->request->get('debug', null, true);
-        $configText = var_export($this->config->toArray(), true);
-        $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
 
-        // clear cache
-        $keys = $this->viewCache->queryKeys();
-        foreach ($keys as $key) {
-            $this->viewCache->delete($key);
-        }
-
-        $keys = $this->cacheOutput->queryKeys();
-        foreach ($keys as $key) {
-            $this->cacheOutput->delete($key);
-        }
-
-        $keys = $this->cacheData->queryKeys();
-        foreach ($keys as $key) {
-            $this->cacheData->delete($key);
-        }
-
-        $keys = $this->modelsCache->queryKeys();
-        foreach ($keys as $key) {
-            $this->modelsCache->delete($key);
-        }
-
-        // clear files cache
-        $files = glob($this->config->application->cache->cacheDir . '*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file))
-                @unlink($file); // delete file
-        }
-
-        // clear view cache
-        $files = glob($this->config->application->view->compiledPath . '*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file))
-                @unlink($file); // delete file
-        }
-
-    }
+        $this->app->saveConfig();
+        $this->app->clearCache();
+     }
 }
 

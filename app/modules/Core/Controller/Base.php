@@ -20,6 +20,7 @@ namespace Core\Controller;
  * @property \Phalcon\Db\Adapter\Pdo $db
  * @property \Phalcon\Cache\Backend $cacheData
  * @property \Core\Api\Acl $acl
+ * @property \Engine\Application $app
  */
 class Base extends \Phalcon\Mvc\Controller
 {

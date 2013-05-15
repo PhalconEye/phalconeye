@@ -157,6 +157,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
                 // run module install script
 
+                $this->app->clearCache();
                 $this->flash->success('Package installed!');
             } catch (\Engine\Package\Exception $e) {
                 $this->flash->error($e->getMessage());
@@ -349,6 +350,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $package->delete();
 
                 $this->_removePackageConfig($name, $package->getType());
+                $this->app->clearCache();
                 $this->flashSession->success('Package "' . $name . '" removed!');
             } catch (Exception $e) {
                 $package->delete();
@@ -374,6 +376,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             $package->save();
 
             $this->_enablePackageConfig($name, $package->getType());
+            $this->app->clearCache();
         }
 
         return $this->response->redirect(array('for' => $return));
@@ -395,6 +398,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             $package->save();
 
             $this->_disablePackageConfig($name, $package->getType());
+            $this->app->clearCache();
         }
 
         return $this->response->redirect(array('for' => $return));
@@ -449,7 +453,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
         }
 
-        $this->_saveConfig();
+        $this->app->saveConfig();
     }
 
     private function _enablePackageConfig($name, $type, $data = null)
@@ -539,7 +543,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
         }
 
-        $this->_saveConfig();
+        $this->app->saveConfig();
     }
 
     private function _disablePackageConfig($name, $type)
@@ -586,7 +590,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
         }
 
-        $this->_saveConfig();
+        $this->app->saveConfig();
     }
 
     private function _hasDependencies(\Core\Model\Package $package){
@@ -605,11 +609,5 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         return false;
     }
 
-    private function _saveConfig()
-    {
-        $configText = var_export($this->config->toArray(), true);
-        $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
-        file_put_contents(ROOT_PATH . '/app/config/config.php', "<?php " . PHP_EOL . PHP_EOL . "return new \\Phalcon\\Config(" . $configText . ");");
-    }
 }
 

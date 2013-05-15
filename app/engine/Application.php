@@ -143,6 +143,7 @@ class Application
         $this->_application->setEventsManager($eventsManager);
         // Set default events manager
         $this->_di->setShared('eventsManager', $eventsManager);
+        $this->_di->setShared('app', $this);
     }
 
     public function getOutput()
@@ -455,5 +456,85 @@ class Application
             });
 
         }
+    }
+
+    /**
+     * Clear application cache
+     */
+    public function clearCache(){
+
+        // clear cache
+        $keys = $this->_di->get('viewCache')->queryKeys();
+        foreach ($keys as $key) {
+            $this->_di->get('viewCache')->delete($key);
+        }
+
+        $keys = $this->_di->get('cacheOutput')->queryKeys();
+        foreach ($keys as $key) {
+            $this->_di->get('cacheOutput')->delete($key);
+        }
+
+        $keys = $this->_di->get('cacheData')->queryKeys();
+        foreach ($keys as $key) {
+            $this->_di->get('cacheData')->delete($key);
+        }
+
+        $keys = $this->_di->get('modelsCache')->queryKeys();
+        foreach ($keys as $key) {
+            $this->_di->get('modelsCache')->delete($key);
+        }
+
+        // clear files cache
+        $files = glob($this->_di->get('config')->application->cache->cacheDir . '*'); // get all file names
+        foreach($files as $file){ // iterate files
+            if(is_file($file))
+                @unlink($file); // delete file
+        }
+
+        // clear view cache
+        $files = glob($this->_di->get('config')->application->view->compiledPath . '*'); // get all file names
+        foreach($files as $file){ // iterate files
+            if(is_file($file))
+                @unlink($file); // delete file
+        }
+    }
+
+    /**
+     * Save application config to file
+     *
+     * @param \Phalcon\Config $config
+     */
+    public function saveConfig($config = null){
+        if ($config === null){
+            $config = $this->_config;
+        }
+        $configText = var_export($config->toArray(), true);
+        $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
+        $configText = '<?php
+/**
+* PhalconEye
+*
+* LICENSE
+*
+* This source file is subject to the new BSD license that is bundled
+* with this package in the file LICENSE.txt.
+*
+* If you did not receive a copy of the license and are unable to
+* obtain it through the world-wide-web, please send an email
+* to phalconeye@gmail.com so we can send you a copy immediately.
+*
+*/
+
+/**
+* WARNING
+*
+* Manual changes to this file may cause a malfunction of the system.
+* Be careful when changing settings!
+*
+*/
+
+
+return new \\Phalcon\\Config(' . $configText . ');';
+        file_put_contents(ROOT_PATH . '/app/config/config.php', $configText);
     }
 }
