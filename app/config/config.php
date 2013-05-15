@@ -74,7 +74,7 @@ return new \Phalcon\Config(array (
   ),
   'modules' => 
   array (
-    'blog' => false,
+    'blog' => true,
   ),
   'events' => 
   array (
