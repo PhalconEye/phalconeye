@@ -41,7 +41,7 @@
     <div class="navbar-inner">
         <div class="container">
             <a class="brand" href="{{ url("admin") }}"><img alt="Pahlcon Eye"
-                                                            src="/public/img/phalconeye/PE_logo_white.png"/></a>
+                                                            src="{{ url('img/phalconeye/PE_logo_white.png') }}"/></a>
 
             <div class="nav-collapse collapse">
                 {{ headerNavigation.render() }}

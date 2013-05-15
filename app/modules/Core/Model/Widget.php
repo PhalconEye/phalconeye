@@ -29,7 +29,7 @@ class Widget extends \Phalcon\Mvc\Model
      * @var string
      *
      */
-    protected $module;
+    protected $module = null;
 
     /**
      * @var string
@@ -41,32 +41,47 @@ class Widget extends \Phalcon\Mvc\Model
      * @var string
      *
      */
-    protected $title;
-
-    /**
-     * @var string
-     *
-     */
     protected $description;
 
     /**
      * @var integer
      *
      */
-    protected $is_paginated;
+    protected $is_paginated = 0;
 
 
     /**
      * @var integer
      *
      */
-    protected $is_acl_controlled;
+    protected $is_acl_controlled = 0;
 
     /**
      * @var string
      *
      */
-    protected $admin_form;
+    protected $admin_form = 'action';
+
+    /**
+     * @var integer
+     *
+     */
+    protected $enabled = 1;
+
+
+    public function initialize()
+    {
+        $this->hasMany("id", '\Core\Model\Content', "widget_id");
+    }
+
+    /**
+     * Return the related "Content"
+     *
+     * @return \Core\Model\Content[]
+     */
+    public function getContent($arguments = array()){
+        return $this->getRelated('\Core\Model\Content', $arguments);
+    }
 
     /**
      * Method to set the value of field id
@@ -98,15 +113,6 @@ class Widget extends \Phalcon\Mvc\Model
         $this->name = $name;
     }
 
-    /**
-     * Method to set the value of field title
-     *
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
 
     /**
      * Method to set the value of field description
@@ -147,6 +153,16 @@ class Widget extends \Phalcon\Mvc\Model
         $this->admin_form = $admin_form;
     }
 
+    /**
+     * Method to set the value of field enabled
+     *
+     * @param bool $flag
+     */
+    public function setEnabled($flag = true)
+    {
+        $this->enabled = (int)$flag;
+    }
+
 
     /**
      * Returns the value of field id
@@ -176,16 +192,6 @@ class Widget extends \Phalcon\Mvc\Model
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Returns the value of field title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
     }
 
     /**
@@ -228,9 +234,32 @@ class Widget extends \Phalcon\Mvc\Model
         return $this->admin_form;
     }
 
+    /**
+     * Checks if module is enabled
+     *
+     * @return string
+     */
+    public function isEnabled()
+    {
+        return (bool)$this->enabled;
+    }
+
     public function getSource()
     {
         return "widgets";
     }
 
+    public static function getSourceStatic()
+    {
+        return "widgets";
+    }
+
+    public function beforeDelete(){
+        $flag = true;
+        foreach ($this->getContent() as $item) {
+            $flag = $item->delete();
+            if (!$flag) break;
+        }
+        return $flag;
+    }
 }

@@ -25,11 +25,11 @@
         {% if show_auth is 1 %}
             <div class="header_auth">
                 {% if helper('core').viewer().getId() is 0 %}
-                <a href="/login">{{ 'Login' | trans }}</a>&nbsp;|
-                <a href="/register">{{ 'Register' | trans }}</a> </span>
+                <a href="{{ url('login') }}">{{ 'Login' | trans }}</a>&nbsp;|
+                <a href="{{ url('register') }}">{{ 'Register' | trans }}</a> </span>
                 {% else %}
                     {{ 'Welcome, ' |trans }}{{ helper('core').viewer().getUserName() }}&nbsp;|
-                    <a href="/logout">{{ 'Logout' | trans }}</a> </span>
+                    <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a> </span>
                 {% endif %}
             </div>
         {% endif %}

@@ -22,6 +22,8 @@
     {% block body %}
     {% endblock %}
 </div>
+{% block footer %}
+{% endblock %}
 {% if hideFooter is not defined %}
     <div class="modal-footer">
         {% if hideClose is not defined %}

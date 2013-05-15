@@ -329,8 +329,18 @@ class Page extends \Phalcon\Mvc\Model
         // inserting
         $orders = array();
         foreach ($widgets as $item) {
-            if (empty($currentPageWidgets[$item['widget_index']]))
+            if (empty($currentPageWidgets[$item['widget_index']])){
+                if ($item['widget_index'] == 'NaN'){ // insert with empty parameters
+                    $content = new Content();
+                    $content->setPageId($this->id);
+                    $content->setWidgetId($item["widget_id"]);
+                    $content->setLayout($item["layout"]);
+                    $content->setParams(array());
+                    $content->setWidgetOrder($orders[$item["layout"]]);
+                    $content->save();
+                }
                 continue;
+            }
             $itemData = $currentPageWidgets[$item['widget_index']];
 
             if (empty($orders[$item["layout"]]))

@@ -155,7 +155,11 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
             return $this->response->redirect(array('for' => "admin-pages"));
 
         // Collecting widgets info
-        $content = \Core\Model\Widget::find();
+        $query = $this->modelsManager->createBuilder()
+            ->from(array('t' => '\Core\Model\Widget'))
+            ->where("t.enabled = :enabled:", array('enabled' => 1));
+        $widgets = $query->getQuery()->execute();
+
         $modulesDefinition = $this->getDI()->get('modules');
         $modules = array();
         foreach($modulesDefinition as $module => $enabled){
@@ -163,10 +167,16 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
             $modules[$module] = ucfirst($module);
         }
         $bundlesWidgetsMetadata = array();
-        foreach ($content as $widget) {
-            $bundlesWidgetsMetadata[$modules[$widget->getModule()]][$widget->getId()] = array(
+        foreach ($widgets as $widget) {
+            $moduleName = $widget->getModule();
+            if (!$moduleName){
+                $moduleName = 'Other';
+            }
+            else{
+                $moduleName = $modules[$moduleName];
+            }
+            $bundlesWidgetsMetadata[$moduleName][$widget->getId()] = array(
                 'widget_id' => $widget->getId(),
-                'title' => $widget->getTitle(),
                 'description' => $widget->getDescription(),
                 'name' => $widget->getName()
             );
@@ -185,7 +195,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
             $bundlesWidgetsMetadata[$key] = $widgetsMeta;
         }
 
-        $content = $page->getWidgets(false);
+        $content = $page->getWidgets();
         $currentPageWidgets = array();
         $widgetIndex = 0;
         foreach ($content as $widget){
@@ -251,7 +261,12 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
             ));
         } elseif ($adminForm == 'action') {
             $widgetName = $widgetMetadata->getName();
-            $widgetClass = '\Core\Widget\\'.$widgetName.'\Controller';
+            if ($widgetMetadata->getModule() !== null){
+                $widgetClass = '\\'.ucfirst($widgetMetadata->getModule()).'\Widget\\'.$widgetName.'\Controller';
+            }
+            else{
+                $widgetClass = '\Widget\\'.$widgetName.'\Controller';
+            }
             $widgetObject = new $widgetClass();
             $widgetObject->initialize();
             $form = call_user_func_array(array($widgetObject, "adminAction"), $_REQUEST);

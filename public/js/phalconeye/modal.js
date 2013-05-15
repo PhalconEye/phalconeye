@@ -9,7 +9,7 @@ PE.modal = {
             if (url.indexOf('#') == 0) {
                 $(url).modal('open');
             } else {
-                modal.open(url, {});
+                PE.modal.open(url, {});
             }
 
             return false;

@@ -1,54 +1,61 @@
-<?php 
+<?php
 
-return new \Phalcon\Config(array (
-  'database' => 
-  array (
-    'adapter' => 'Mysql',
-    'host' => 'localhost',
-    'username' => 'root',
-    'password' => 'root',
-    'name' => 'phalcon',
-  ),
-  'application' => 
-  array (
-    'debug' => true,
-    'baseUri' => '/',
-    'engineDir' => ROOT_PATH . '/app/libraries/Engine/',
-    'modulesDir' => ROOT_PATH . '/app/modules/',
-    'defaultModule' => 'core',
-    'cache' => 
-    array (
-      'lifetime' => '86400',
-      'prefix' => 'pe_',
-      'adapter' => 'File',
-      'cacheDir' => ROOT_PATH . '/app/var/cache/',
+return new \Phalcon\Config(array(
+    'database' =>
+    array(
+        'adapter' => 'Mysql',
+        'host' => 'localhost',
+        'username' => 'root',
+        'password' => 'root',
+        'name' => 'phalcon',
     ),
-    'logger' => 
-    array (
-      'enabled' => true,
-      'path' => ROOT_PATH . '/app/var/logs/',
-      'format' => '[%date%][%type%] %message%',
+    'application' =>
+    array(
+        'debug' => true,
+        'baseUri' => '/',
+        'engineDir' => ROOT_PATH . '/app/engine/',
+        'modulesDir' => ROOT_PATH . '/app/modules/',
+        'pluginsDir' => ROOT_PATH . '/app/plugins/',
+        'widgetsDir' => ROOT_PATH . '/app/widgets/',
+        'librariesDir' => ROOT_PATH . '/app/libraries/',
+        'defaultModule' => 'core',
+        'cache' =>
+        array(
+            'lifetime' => '86400',
+            'prefix' => 'pe_',
+            'adapter' => 'File',
+            'cacheDir' => ROOT_PATH . '/app/var/cache/',
+        ),
+        'logger' =>
+        array(
+            'enabled' => true,
+            'path' => ROOT_PATH . '/app/var/logs/',
+            'format' => '[%date%][%type%] %message%',
+        ),
+        'view' =>
+        array(
+            'compiledPath' => ROOT_PATH . '/app/var/compiled/',
+            'compiledExtension' => '.compiled',
+        ),
+        'session' =>
+        array(
+            'tableName' => 'session_data',
+            'lifetime' => 1440,
+        ),
     ),
-    'view' => 
-    array (
-      'compiledPath' => ROOT_PATH . '/app/var/compiled/',
-      'compiledExtension' => '.compiled',
+    'models' =>
+    array(
+        'metadata' =>
+        array(
+            'adapter' => 'Memory',
+        ),
     ),
-    'session' => 
-    array (
-      'tableName' => 'session_data',
-      'lifetime' => 1440,
+    'modules' =>
+    array(
+        'blog' => true,
     ),
-  ),
-  'models' => 
-  array (
-    'metadata' => 
-    array (
-      'adapter' => 'Apc',
-    ),
-  ),
-  'modules' => 
-  array (
-    'blog' => true,
-  ),
+    'events' =>
+    array(),
+    'plugins' =>
+    array(),
 ));

@@ -29,65 +29,93 @@ class BaseAdmin extends Base
         }
         $activeItem = substr($activeItem, 0, -1);
 
+        $menuItems = array(
+            'admin' => array(
+                'href' => 'admin',
+                'title' => 'Dashboard',
+                'prepend' => '<i class="icon-home icon-white"></i>'
+            ),
+            'users' => array(
+                'title' => 'Manage',
+                'items' => array( // type - dropdown
+                    'admin/users' => array(
+                        'title' => 'Users and Roles',
+                        'href' => 'admin/users',
+                        'prepend' => '<i class="icon-user icon-white"></i>'
+                    ),
+                    'admin/pages' => array(
+                        'title' => 'Pages',
+                        'href' => 'admin/pages',
+                        'prepend' => '<i class="icon-list-alt icon-white"></i>'
+                    ),
+                    'admin/menus' => array(
+                        'title' => 'Menus',
+                        'href' => 'admin/menus',
+                        'prepend' => '<i class="icon-th-list icon-white"></i>'
+                    ),
+                    'admin/languages' => array(
+                        'title' => 'Languages',
+                        'href' => 'admin/languages',
+                        'prepend' => '<i class="icon-globe icon-white"></i>'
+                    ),
+                    'admin/files' => array(
+                        'title' => 'Files',
+                        'href' => 'admin/files',
+                        'prepend' => '<i class="icon-file icon-white"></i>'
+                    ),
+                    'admin/packages' => array(
+                        'title' => 'Packages',
+                        'href' => 'admin/packages',
+                        'prepend' => '<i class="icon-th icon-white"></i>'
+                    )
+                )
+            ),
+            'settings' => array( // type - dropdown
+                'title' => 'Settings',
+                'items' => array(
+                    'admin/settings' => array(
+                        'title' => 'System',
+                        'href' => 'admin/settings',
+                        'prepend' => '<i class="icon-cog icon-white"></i>'
+                    ),
+                    'admin/settings/performance' => array(
+                        'title' => 'Performance',
+                        'href' => 'admin/performance',
+                        'prepend' => '<i class="icon-signal icon-white"></i>'
+                    ),
+                    'admin/access' => array(
+                        'title' => 'Access Rights',
+                        'href' => 'admin/access',
+                        'prepend' => '<i class="icon-lock icon-white"></i>'
+                    )
+                )
+            ));
+
+        $modules = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_MODULE, 1);
+        if ($modules->count()) {
+            $modulesMenuItems = array();
+            foreach ($modules as $module) {
+                if ($module->isSystem()) continue;
+                $href = 'admin/module/' . $module->getName();
+                $modulesMenuItems[$href] = array(
+                    'title' => $module->getTitle(),
+                    'href' => $href,
+                    'prepend' => '<i class="icon-th-large icon-white"></i>'
+                );
+            }
+
+            if (!empty($modulesMenuItems)) {
+                $menuItems['modules'] = array(
+                    'title' => 'Modules',
+                    'items' => $modulesMenuItems
+                );
+            }
+        }
+
 
         $navigation = new \Engine\Navigation();
         $navigation
-            ->setItems(array(
-                'admin' => array(
-                    'href' => 'admin',
-                    'title' => 'Dashboard',
-                    'prepend' => '<i class="icon-home icon-white"></i>'
-                ),
-                'users' => array(
-                    'title' => 'Manage',
-                    'items' => array( // type - dropdown
-                        'admin/users' => array(
-                            'title' => 'Users and Roles',
-                            'href' => 'admin/users',
-                            'prepend' => '<i class="icon-user icon-white"></i>'
-                        ),
-                        'admin/pages' => array(
-                            'title' => 'Pages',
-                            'href' => 'admin/pages',
-                            'prepend' => '<i class="icon-list-alt icon-white"></i>'
-                        ),
-                        'admin/menus' => array(
-                            'title' => 'Menus',
-                            'href' => 'admin/menus',
-                            'prepend' => '<i class="icon-th-list icon-white"></i>'
-                        ),
-                        'admin/languages' => array(
-                            'title' => 'Languages',
-                            'href' => 'admin/languages',
-                            'prepend' => '<i class="icon-globe icon-white"></i>'
-                        ),
-                        'admin/files' => array(
-                            'title' => 'Files',
-                            'href' => 'admin/files',
-                            'prepend' => '<i class="icon-file icon-white"></i>'
-                        )
-                    )
-                ),
-                'settings' => array( // type - dropdown
-                    'title' => 'Settings',
-                    'items' => array(
-                        'admin/settings' => array(
-                            'title' => 'System',
-                            'href' => 'admin/settings',
-                            'prepend' => '<i class="icon-cog icon-white"></i>'
-                        ),
-                        'admin/settings/performance' => array(
-                            'title' => 'Performance',
-                            'href' => 'admin/settings/performance',
-                            'prepend' => '<i class="icon-signal icon-white"></i>'
-                        ),
-                        'admin/access' => array(
-                            'title' => 'Access Rights',
-                            'href' => 'admin/access',
-                            'prepend' => '<i class="icon-lock icon-white"></i>'
-                        )
-                    )
-                )))
+            ->setItems($menuItems)
             ->setActiveItem($activeItem)
             ->setListClass('nav nav-categories')
             ->setDropDownItemClass('nav-category')

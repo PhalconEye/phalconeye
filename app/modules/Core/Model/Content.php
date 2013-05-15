@@ -55,6 +55,19 @@ class Content extends \Phalcon\Mvc\Model
      */
     protected $params;
 
+    public function initialize()
+    {
+        $this->belongsTo("widget_id", '\Core\Model\Widget', "id");
+    }
+
+    /**
+     * Return the related "Widget"
+     *
+     * @return \Core\Model\Widget
+     */
+    public function getWidget($arguments = array()){
+        return $this->getRelated('\Core\Model\Widget', $arguments);
+    }
 
     /**
      * Method to set the value of field id

@@ -67,7 +67,7 @@
         $.each(bundlesWidgetsMetadata, function (i, l) {
             $("#widget_list ul").append('<li class="widget_seperator">' + i + '</li>');
             $.each(l, function (i, l) {
-                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widgetid="0" widget_object_id="' + l.widget_id + '" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
+                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widget_id="' + l.widget_id + '" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
             });
             $("#widget_list ul").find('.delete_widget').css('display', 'none');
         });
@@ -160,6 +160,7 @@
                 items.push({
                     "content": (!$no_content ? $(this).html().trim() : ''),
                     "widget_index":  parseInt($(this).attr("widget_index")),
+                    "widget_id": $(this).attr('widget_id'),
                     "layout": $(this).parent().attr("layout")
                 });
             });
@@ -323,61 +324,61 @@
                                         </div>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="/public/img/admin/content/cols1_3.png" alt="3 columns"
+                                                <img src="{{ url('img/admin/content/cols1_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('right,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols1_2left.png"
+                                                <img src="{{ url('img/admin/content/cols1_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('middle,left');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols1_2right.png"
+                                                <img src="{{ url('img/admin/content/cols1_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('right,middle');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols1_1.png" alt="1 columns"
+                                                <img src="{{ url('img/admin/content/cols1_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('middle');">
                                             </li>
                                         </ul>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="/public/img/admin/content/cols2_3.png" alt="3 columns"
+                                                <img src="{{ url('img/admin/content/cols2_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('top,right,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols2_2left.png"
+                                                <img src="{{ url('img/admin/content/cols2_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('top,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols2_2right.png"
+                                                <img src="{{ url('img/admin/content/cols2_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('top,right,middle');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols2_1.png" alt="1 columns"
+                                                <img src="{{ url('img/admin/content/cols2_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('top,middle');">
                                             </li>
                                         </ul>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="/public/img/admin/content/cols3_3.png" alt="3 columns"
+                                                <img src="{{ url('img/admin/content/cols3_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('right,middle,left,bottom');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols3_2left.png"
+                                                <img src="{{ url('img/admin/content/cols3_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('middle,left,bottom');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols3_2right.png"
+                                                <img src="{{ url('img/admin/content/cols3_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('right,middle,bottom');">
                                             </li>
                                             <li>
-                                                <img src="/public/img/admin/content/cols3_1.png" alt="1 columns"
+                                                <img src="{{ url('img/admin/content/cols3_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('middle,bottom');">
                                             </li>
                                         </ul>

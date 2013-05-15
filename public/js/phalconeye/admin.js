@@ -59,4 +59,5 @@ PE.admin.performance = {
 
 $(document).ready(function () {
     PE.admin.performance.init();
+    PE.modal.init('[data-toggle="modal"]');
 });

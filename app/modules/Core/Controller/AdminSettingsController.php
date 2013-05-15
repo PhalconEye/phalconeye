@@ -16,7 +16,7 @@
 namespace Core\Controller;
 
 /**
- * @RoutePrefix("/admin/settings", name="admin-languages")
+ * @RoutePrefix("/admin/settings", name="admin-settings")
  */
 class AdminSettingsController extends \Core\Controller\BaseAdmin
 {
@@ -44,7 +44,7 @@ class AdminSettingsController extends \Core\Controller\BaseAdmin
      */
     public function performanceAction()
     {
-        $this->view->headerNavigation->setActiveItem('admin/settings/performance');
+//        $this->view->headerNavigation->setActiveItem('admin/settings/performance');
         $form = new \Core\Form\Admin\Setting\Performance();
         $this->view->form = $form;
 

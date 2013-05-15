@@ -29,7 +29,7 @@ class Register extends \Engine\Form
             'label' => 'Username',
             'required' => true,
             'validators' => array(
-                new \Engine\Validator\StringLength(array(
+                new \Engine\Form\Validator\StringLength(array(
                     'min' => 2,
                 ))
             )
@@ -39,7 +39,7 @@ class Register extends \Engine\Form
             'label' => 'Email',
             'required' => true,
             'validators' => array(
-                new \Engine\Validator\Email()
+                new \Engine\Form\Validator\Email()
             )
         ));
 
@@ -47,7 +47,7 @@ class Register extends \Engine\Form
             'label' => 'Password',
             'required' => true,
             'validators' => array(
-                new \Engine\Validator\StringLength(array(
+                new \Engine\Form\Validator\StringLength(array(
                     'min' => 6,
                 ))
             )
@@ -57,7 +57,7 @@ class Register extends \Engine\Form
             'label' => 'Password Repeat',
             'required' => true,
             'validators' => array(
-                new \Engine\Validator\StringLength(array(
+                new \Engine\Form\Validator\StringLength(array(
                     'min' => 6,
                 ))
             )
