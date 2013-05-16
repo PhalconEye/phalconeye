@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhalconEye
  *
@@ -13,6 +14,7 @@
  *
  */
 
-class Install extends \Engine\Installer{
+class Install extends \Engine\Installer
+{
 
 }

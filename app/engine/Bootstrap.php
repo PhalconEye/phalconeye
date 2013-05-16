@@ -16,6 +16,10 @@
 
 namespace Engine;
 
+use Phalcon\Mvc\View\Engine\Volt,
+    Phalcon\Mvc\View,
+    Phalcon\DiInterface;
+
 abstract class Bootstrap implements BootstrapInterface
 {
 
@@ -40,7 +44,7 @@ abstract class Bootstrap implements BootstrapInterface
         $this->_config = $this->_di->get('config');
     }
 
-    public static function dependencyInjection(\Phalcon\DiInterface $di){
+    public static function dependencyInjection(DiInterface $di){
 
     }
 
@@ -54,30 +58,36 @@ abstract class Bootstrap implements BootstrapInterface
      */
     public function registerServices($di)
     {
+
         if (empty($this->_moduleName)) {
             $class = new \ReflectionClass($this);
             throw new \Engine\Exception('Bootstrap has no module name: ' . $class->getFileName());
         }
 
         $moduleDirectory = $this->getModuleDirectory();
+
         $config = $this->_config;
 
+        //Create an event manager
+        $eventsManager = new EventsManager($config);
 
         /*************************************************/
         //  Initialize view
         /*************************************************/
-        $di->set('view', function () use ($moduleDirectory) {
-            $view = new \Phalcon\Mvc\View();
+        $di->set('view', function() use ($moduleDirectory, $eventsManager, $config) {
+
+            $view = new View();
             $view->setViewsDir($moduleDirectory . '/View/');
 
             $view->registerEngines(array(
-                ".volt" => function ($view, \Phalcon\DiInterface $di) {
-                    $volt = new \Phalcon\Mvc\View\Engine\Volt($view, $di);
+                ".volt" => function ($view, $di) use ($config) {
+
+                    $volt = new Volt($view, $di);
+
                     $volt->setOptions(array(
-                        "compiledPath" => $di->get('config')->application->view->compiledPath,
-                        "compiledExtension" => $di->get('config')->application->view->compiledExtension,
-                        'compiledSeparator' => '_',
-                        'compileAlways' => $di->get('config')->application->debug
+                        "compiledPath" => $config->application->view->compiledPath,
+                        "compiledExtension" => $config->application->view->compiledExtension,
+                        'compiledSeparator' => '_'
                     ));
 
                     $compiler = $volt->getCompiler();
@@ -89,65 +99,35 @@ abstract class Bootstrap implements BootstrapInterface
 
                     // register translation filter
                     $compiler->addFilter('trans', function ($resolvedArgs) {
-                        return '\Phalcon\DI::getDefault()->get("trans")->query(' . $resolvedArgs . ')';
+                        return '$this->trans->query(' . $resolvedArgs . ')';
                     });
 
                     return $volt;
                 }
             ));
 
-            //Create an event manager
-            $eventsManager = new EventsManager();
-
             //Attach a listener for type "view"
-            $eventsManager->attach("view", function ($event, $view) {
-                if ($event->getType() == 'notFoundView') {
-                    \Phalcon\DI::getDefault()->get('logger')->error('View not found - "' . $view->getActiveRenderPath().'"');
-                }
-            });
-            $view->setEventsManager($eventsManager);
+            if (!$config->application->debug) {
+
+                $eventsManager->attach("view", function ($event, $view) {
+                    if ($event->getType() == 'notFoundView') {
+                        \Phalcon\DI::getDefault()->get('logger')->error('View not found - "' . $view->getActiveRenderPath().'"');
+                    }
+                });
+
+                $view->setEventsManager($eventsManager);
+            }
 
             return $view;
         });
 
-
         /*************************************************/
         //  Initialize dispatcher
         /*************************************************/
-        $eventsManager = $di->getShared('eventsManager');
         if (!$config->application->debug) {
-            $eventsManager->attach(
-                "dispatch:beforeException", function ($event, $dispatcher, $exception) use($config) {
-                //The controller exists but the action not
-                if ($event->getType() == 'beforeNotFoundAction') {
-                    $dispatcher->forward(array(
-                        'module' => Application::$defaultModule,
-                        'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
-                        'controller' => 'Error',
-                        'action' => 'show404'
-                    ));
-                    return false;
-                }
-
-                //Alternative way, controller or action doesn't exist
-                if ($event->getType() == 'beforeException') {
-                    switch ($exception->getCode()) {
-                        case \Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-                        case \Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                            $dispatcher->forward(array(
-                                'module' => Application::$defaultModule,
-                                'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
-                                'controller' => 'Error',
-                                'action' => 'show404'
-                            ));
-                            return false;
-                    }
-                }
-            });
-
-            $eventsManager->attach('dispatch', new \Engine\Plugin\CacheAnnotation());
+            $eventsManager->attach("dispatch:beforeException", new \Engine\Plugin\NotFound());
+            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
         }
-
 
         /**
          * Listening to events in the dispatcher using the
@@ -162,7 +142,6 @@ abstract class Bootstrap implements BootstrapInterface
 
     }
 
-
     public function getModuleName()
     {
         return $this->_moduleName;
@@ -172,4 +151,5 @@ abstract class Bootstrap implements BootstrapInterface
     {
         return $this->_config->application->modulesDir . $this->_moduleName;
     }
+
 }

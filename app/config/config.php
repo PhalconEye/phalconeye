@@ -1,4 +1,5 @@
 <?php
+
 /**
 * PhalconEye
 *
@@ -21,19 +22,18 @@
 *
 */
 
-
 return new \Phalcon\Config(array (
-  'database' => 
+  'database' =>
   array (
     'adapter' => 'Mysql',
     'host' => 'localhost',
     'username' => 'root',
-    'password' => 'root',
+    'password' => '',
     'name' => 'phalcon',
   ),
-  'application' => 
+  'application' =>
   array (
-    'debug' => true,
+    'debug' => false,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/engine/',
     'modulesDir' => ROOT_PATH . '/app/modules/',
@@ -41,45 +41,46 @@ return new \Phalcon\Config(array (
     'widgetsDir' => ROOT_PATH . '/app/widgets/',
     'librariesDir' => ROOT_PATH . '/app/libraries/',
     'defaultModule' => 'core',
-    'cache' => 
+    'cache' =>
     array (
       'lifetime' => '86400',
       'prefix' => 'pe_',
       'adapter' => 'File',
       'cacheDir' => ROOT_PATH . '/app/var/cache/',
     ),
-    'logger' => 
+    'logger' =>
     array (
       'enabled' => true,
       'path' => ROOT_PATH . '/app/var/logs/',
       'format' => '[%date%][%type%] %message%',
     ),
-    'view' => 
+    'view' =>
     array (
       'compiledPath' => ROOT_PATH . '/app/var/compiled/',
-      'compiledExtension' => '.compiled',
+      'compiledExtension' => '.php',
     ),
-    'session' => 
+    'session' =>
     array (
       'tableName' => 'session_data',
       'lifetime' => 1440,
     ),
   ),
-  'models' => 
+  'models' =>
   array (
-    'metadata' => 
+    'metadata' =>
     array (
-      'adapter' => 'Memory',
+      'adapter' => 'Files',
+      'metaDataDir' => ROOT_PATH . '/app/var/metadata/'
     ),
   ),
-  'modules' => 
+  'modules' =>
   array (
     'blog' => true,
   ),
-  'events' => 
+  'events' =>
   array (
   ),
-  'plugins' => 
+  'plugins' =>
   array (
   ),
 ));

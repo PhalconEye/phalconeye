@@ -145,8 +145,8 @@ class Db implements AdapterInterface
         return $this->get($index) !== null;
     }
 
-
-    private function get($index){
+    private function get($index)
+    {
         $translationModel = $this->_translationModel;
         return $translationModel::find(array(
             'conditions' => 'original = :content: AND language_id = :id:',

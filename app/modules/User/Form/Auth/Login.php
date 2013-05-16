@@ -23,7 +23,8 @@ class Login extends \Engine\Form
         $this
             ->setOption('title', "Login")
             ->setOption('description', "Use you email or username to login.")
-            ->setAttrib('class', 'form_login');
+            ->setAttrib('class', 'form_login')
+            ->setAttrib('autocomplete', 'off')
         ;
 
 

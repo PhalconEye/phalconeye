@@ -18,8 +18,8 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="/css/bootstrap/bootstrap.min.css"/>
-    <link rel="stylesheet" href="/css/admin.css"/>
+    <link rel="stylesheet" href="{{ url("css/bootstrap/bootstrap.min.css") }}"/>
+    <link rel="stylesheet" href="{{ url("css/admin.css") }}"/>
     {{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
     {{ javascript_include("js/jquery/jquery-ui-1.9.0.custom.min.js") }}
     {{ javascript_include("js/bootstrap/bootstrap.min.js") }}
@@ -58,8 +58,8 @@
 
 <div class="content">
 
-    {% block header %}
-    {% endblock %}
+    {% block header -%}
+    {%- endblock %}
 
     <div class="row-fluid row-after-header">
         <div>
@@ -70,8 +70,8 @@
 
     <div class="row-fluid">
         <!--/row-->
-        {% block content %}
-        {% endblock %}
+        {% block content -%}
+        {%- endblock %}
     </div>
     <!--/row-->
 </div>

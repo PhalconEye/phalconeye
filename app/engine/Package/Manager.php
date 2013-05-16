@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhalconEye
  *
@@ -14,7 +15,6 @@
  */
 
 namespace Engine\Package;
-
 
 class Manager
 {
@@ -85,12 +85,14 @@ class Manager
 
     public function getPackageLocation($type)
     {
+        $application = $this->_config->application;
+
         $locations = array(
-            self::PACKAGE_TYPE_MODULE => $this->_config->application->modulesDir,
-            self::PACKAGE_TYPE_PLUGIN => $this->_config->application->pluginsDir,
+            self::PACKAGE_TYPE_MODULE => $application->modulesDir,
+            self::PACKAGE_TYPE_PLUGIN => $application->pluginsDir,
             self::PACKAGE_TYPE_THEME => ROOT_PATH . '/public/themes/',
-            self::PACKAGE_TYPE_WIDGET => $this->_config->application->widgetsDir,
-            self::PACKAGE_TYPE_LIBRARY => $this->_config->application->librariesDir
+            self::PACKAGE_TYPE_WIDGET => $application->widgetsDir,
+            self::PACKAGE_TYPE_LIBRARY => $applicationn->librariesDir
         );
         if (isset($locations[$type])) {
             return $locations[$type];
@@ -118,7 +120,6 @@ class Manager
             @rename($packageLocation . '/plugin.php', $packageLocation . '/' . $data['nameUpper'] . '.php');
         }
 
-
         // replace placholders in package
         $placeholders = array_keys($data);
         $placeholdersValues = array_values($data);
@@ -129,7 +130,6 @@ class Manager
             }
 
             $placeholders[$key] = '%' . $placeholder . '%';
-
         }
 
         foreach (Utilities::fsRecursiveGlob($packageLocation . "/", '*.*') as $filename) {

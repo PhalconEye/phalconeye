@@ -22,8 +22,9 @@ class AuthController extends \Core\Controller\Base
      */
     public function loginAction()
     {
-        if (\User\Model\User::getViewer()->getId())
+        if (\User\Model\User::getViewer()->getId()) {
             $this->response->redirect()->send();
+        }
 
         $form = new \User\Form\Auth\Login();
 
@@ -70,8 +71,9 @@ class AuthController extends \Core\Controller\Base
      */
     public function registerAction()
     {
-        if (\User\Model\User::getViewer()->getId())
+        if (\User\Model\User::getViewer()->getId()) {
             $this->response->redirect()->send();
+        }
 
         $form = new \User\Form\Auth\Register();
 

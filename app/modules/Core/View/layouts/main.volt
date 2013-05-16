@@ -20,14 +20,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="PhalconEye - Open Source Content Management System" />
     <link rel="stylesheet" href="{{ url('css/bootstrap/bootstrap.min.css') }}" />
-    <link rel="stylesheet" href="{{ url('themes/'~helper('core').setting('system_theme', 'default')~'/theme.css') }}"/>
+    <link rel="stylesheet" href="{{ url('themes/' ~ helper('core').setting('system_theme', 'default') ~ '/theme.css') }}"/>
     {{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
     {{ javascript_include("js/bootstrap/bootstrap.min.js") }}
 
 
-    {% block head %}
+    {%- block head -%}
 
-    {% endblock %}
+    {%- endblock -%}
 
 </head>
 <body>
@@ -43,14 +43,14 @@
         </div><!--/row-->
 
         <div class="row">
-            {% block content %}
-            {% endblock %}
+            {%- block content -%}
+            {%- endblock -%}
         </div><!--/row-->
     </div>
     <div id="footer">
         {{ helper('core').renderContent('footer') }}
-        {% block footer %}
-        {% endblock %}
+        {%- block footer -%}
+        {%- endblock -%}
     </div>
 </div>
 
