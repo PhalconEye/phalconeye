@@ -18,13 +18,14 @@ namespace Core\Helper;
 
 class RenderContent extends \Phalcon\Tag implements \Engine\HelperInterface
 {
-    static public function _(array $args){
+    static public function _(array $args)
+    {
         $content = '';
         $page = \Core\Model\Page::findFirst("type = '{$args[0]}'");
         $widgets = $page->getWidgets();
         $widgetRender = new RenderWidget();
 
-        foreach($widgets as $widget){
+        foreach ($widgets as $widget) {
             $content .= $widgetRender->_(array($widget->getWidgetId(), $widget->getParams()));
         }
 

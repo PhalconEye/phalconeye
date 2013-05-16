@@ -15,10 +15,15 @@
 
 namespace Core;
 
-class Bootstrap extends \Engine\Bootstrap{
+use Phalcon\DiInterface,
+    Phalcon\Translate\Adapter\NativeArray as TranslateArray;
+
+class Bootstrap extends \Engine\Bootstrap
+{
     protected $_moduleName = "Core";
 
-    public static function dependencyInjection(\Phalcon\DiInterface $di){
+    public static function dependencyInjection(DiInterface $di)
+    {
         self::_initWidgets($di);
         self::_initLocale($di);
     }
@@ -26,7 +31,8 @@ class Bootstrap extends \Engine\Bootstrap{
     /**
      * Prepare widgets metadata for Engine
      */
-    private static function _initWidgets($di){
+    private static function _initWidgets($di)
+    {
         $cache = $di->get('cacheData');
         $cacheKey = "widgets_metadata.cache";
         $widgets = $cache->get($cacheKey);
@@ -48,7 +54,8 @@ class Bootstrap extends \Engine\Bootstrap{
      *
      * @param $di
      */
-    private static function _initLocale($di){
+    private static function _initLocale($di)
+    {
         $locale = $di->get('session')->get('locale', \Core\Model\Settings::getSetting('system_default_language'));
         $translate = null;
 
@@ -56,12 +63,14 @@ class Bootstrap extends \Engine\Bootstrap{
             $messages = array();
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
-            } elseif (file_exists(ROOT_PATH . "/app/var/languages/en.php")) {
-                // fallback to default
-                require ROOT_PATH . "/app/var/languages/en.php";
+            } else {
+                if (file_exists(ROOT_PATH . "/app/var/languages/en.php")) {
+                    // fallback to default
+                    require ROOT_PATH . "/app/var/languages/en.php";
+                }
             }
 
-            $translate = new \Phalcon\Translate\Adapter\NativeArray(array(
+            $translate = new TranslateArray(array(
                 "content" => $messages
             ));
         } else {

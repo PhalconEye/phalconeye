@@ -81,28 +81,38 @@ class Application extends \Phalcon\Mvc\Application
             self::$defaultModule => true,
             'user' => true,
         );
+
         $enabledModules = $this->_config->get('modules');
         if (!$enabledModules){
             $enabledModules = array();
-        }
-        else{
+        } else {
             $enabledModules = $enabledModules->toArray();
         }
+
+        $di = $this->_dependencyInjector;
+        $config = $this->_config;
+
         $modules = array_merge($modules, $enabledModules);
-        $this->_dependencyInjector->set('modules', function() use($modules){
+
+        $di->set('modules', function() use ($modules){
             return $modules;
         });
 
+        // Set application event manager
+        $eventsManager = new \Phalcon\Events\Manager();
+
         // Init services and engine system
         foreach ($loaders[$mode] as $service) {
-            $this->{'init' . $service}($this->_config);
+            $this->{'init' . $service}($di, $config, $eventsManager);
         }
 
         // register enabled modules
         $enabledModules = array();
         if (!empty($modules)) {
             foreach ($modules as $module => $enabled) {
-                if (!$enabled) continue;
+                if (!$enabled) {
+                    continue;
+                }
                 $moduleName = ucfirst($module);
                 $enabledModules[$module] = array(
                     'className' => $moduleName . '\Bootstrap',
@@ -110,31 +120,28 @@ class Application extends \Phalcon\Mvc\Application
                 );
             }
 
-            if (!empty($enabledModules))
+            if (!empty($enabledModules)) {
                 $this->registerModules($enabledModules);
+            }
         }
 
-        // Set application event manager
-        $eventsManager = new EventsManager();
-
         // Attach event for modules DI
-        $eventsManager->attach(
-            "application:afterStartModule",
-            function ($event, $application) {
+        $eventsManager->attach("application:afterStartModule", function ($event, $application) {
                 foreach ($application->getModules() as $module => $moduleDefinition) {
                     /** @var BootstrapInterface $moduleDi */
                     $moduleDi = '\\' . ucfirst($module) . '\Bootstrap';
 
-                    if (class_exists($moduleDi))
+                    if (class_exists($moduleDi)) {
                         $moduleDi::dependencyInjection($application->getDI());
+                    }
                 }
             }
         );
 
-        $this->setEventsManager($eventsManager);
         // Set default events manager
-        $this->_dependencyInjector->setShared('eventsManager', $eventsManager);
-        $this->_dependencyInjector->setShared('app', $this);
+        $this->setEventsManager($eventsManager);
+        $di->setShared('eventsManager', $eventsManager);
+        $di->setShared('app', $this);
     }
 
     public function getOutput()
@@ -149,36 +156,35 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initLoader($config)
+    protected function initLoader($di, $config, $eventsManager)
     {
-        // Creates the autoloader
-        $di = $this->_dependencyInjector;
+
         $modules = $di->get('modules');
         foreach ($modules as $module => $enabled) {
-            if (!$enabled) continue;
+            if (!$enabled) {
+                continue;
+            }
             $modulesNamespaces[ucfirst($module)] = $this->_config->application->modulesDir . ucfirst($module);
         }
+
         $modulesNamespaces['Engine'] = $config->application->engineDir;
         $modulesNamespaces['Plugin'] = $config->application->pluginsDir;
         $modulesNamespaces['Widget'] = $config->application->widgetsDir;
         $modulesNamespaces['Library'] = $config->application->librariesDir;
+
         $loader = new \Phalcon\Loader();
         $loader->registerNamespaces($modulesNamespaces);
 
-        if ($this->_config->application->debug) {
-            $eventsManager = new \Phalcon\Events\Manager();
-            $di = \Phalcon\DI::getDefault();
+        if ($config->application->debug) {
             $eventsManager->attach('loader', function ($event, $loader, $className) use ($di) {
                 if ($event->getType() == 'afterCheckClass') {
                     $di->get('logger')->error("Can't load class '" . $className . "'");
                 }
             });
-
             $loader->setEventsManager($eventsManager);
         }
 
         $loader->register();
-
 
         $di->set('loader', $loader);
     }
@@ -188,7 +194,7 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initEnvironment($config)
+    protected function initEnvironment($di, $config)
     {
         if (!$config->application->debug) {
             set_error_handler(array('\Engine\Error', 'normal'));
@@ -202,7 +208,7 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initUrl($config)
+    protected function initUrl($di, $config, $eventsManager)
     {
         /**
          * The URL component is used to generate all kind of urls in the
@@ -210,7 +216,7 @@ class Application extends \Phalcon\Mvc\Application
          */
         $url = new \Phalcon\Mvc\Url();
         $url->setBaseUri($config->application->baseUri);
-        $this->_dependencyInjector->set('url', $url);
+        $di->set('url', $url);
     }
 
     /**
@@ -218,10 +224,12 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initAnnotations($config)
+    protected function initAnnotations($di, $config, $eventsManager)
     {
-        $adapter = new \Phalcon\Annotations\Adapter\Memory();
-        $this->_dependencyInjector->set('annotations', $adapter, true);
+        $adapter = new \Phalcon\Annotations\Adapter\Files(array(
+            'annotationsDir' => ROOT_PATH . '/app/var/annotations/'
+        ));
+        $di->set('annotations', $adapter, true);
     }
 
     /**
@@ -229,15 +237,19 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initRouter($config)
+    protected function initRouter($di, $config, $eventsManager)
     {
         $routerCacheKey = 'router_data.cache';
-        $router = $this->_dependencyInjector->get('cacheData')->get($routerCacheKey);
+
+        $cacheData = $di->get('cacheData');
+        $router = $cacheData->get($routerCacheKey);
+
         if ($config->application->debug || $router === null) {
+
             $saveToCache = ($router === null);
 
             // load all controllers of all modules for routing system
-            $modules = $this->_dependencyInjector->get('modules');
+            $modules = $di->get('modules');
 
             //Use the annotations router
             $router = new \Phalcon\Mvc\Router\Annotations(false);
@@ -252,15 +264,25 @@ class Application extends \Phalcon\Mvc\Application
                 'action' => 3,
             ));
 
-            $router->notFound(array('module' => self::$defaultModule, 'controller' => 'error', 'action' => 'show404'));
+            $router->notFound(array(
+                'module' => self::$defaultModule,
+                'controller' => 'error',
+                'action' => 'show404'
+            ));
 
             //Read the annotations from controllers
             foreach ($modules as $module => $enabled) {
-                if (!$enabled) continue;
+
+                if (!$enabled) {
+                    continue;
+                }
 
                 $files = scandir($config->application->modulesDir . ucfirst($module) . '/Controller'); // get all file names
                 foreach ($files as $file) { // iterate files
-                    if ($file == "." || $file == "..") continue;
+
+                    if ($file == "." || $file == "..") {
+                        continue;
+                    }
 
                     $controller = ucfirst($module) . '\Controller\\' . str_replace('Controller.php', '', $file);
                     if (strpos($file, 'Controller.php') !== false) {
@@ -271,12 +293,11 @@ class Application extends \Phalcon\Mvc\Application
             }
 
             if ($saveToCache) {
-                $this->_dependencyInjector->get('cacheData')->save($routerCacheKey, $router, 2592000); // 30 days cache
+                $cacheData->save($routerCacheKey, $router, 2592000); // 30 days cache
             }
         }
 
-        $this->_dependencyInjector->set('router', $router);
-
+        $di->set('router', $router);
     }
 
     /**
@@ -284,10 +305,10 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initLogger($config)
+    protected function initLogger($di, $config, $eventsManager)
     {
         if ($config->application->logger->enabled) {
-            $this->_dependencyInjector->set('logger', function () use ($config) {
+            $di->set('logger', function () use ($config) {
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "main.log");
                 $formatter = new \Phalcon\Logger\Formatter\Line($config->application->logger->format);
                 $logger->setFormatter($formatter);
@@ -301,7 +322,7 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initDatabase($config)
+    protected function initDatabase($di, $config, $eventsManager)
     {
         $connection = new \Phalcon\Db\Adapter\Pdo\Mysql(array(
             "host" => $config->database->host,
@@ -311,7 +332,6 @@ class Application extends \Phalcon\Mvc\Application
         ));
 
         if ($config->application->debug) {
-            $eventsManager = new \Engine\EventsManager();
 
             $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "db.log");
 
@@ -325,16 +345,16 @@ class Application extends \Phalcon\Mvc\Application
             $connection->setEventsManager($eventsManager);
         }
 
-        $this->_dependencyInjector->set('db', $connection);
+        $di->set('db', $connection);
 
         /**
          * If the configuration specify the use of metadata adapter use it or use memory otherwise
          */
-        $this->_dependencyInjector->set('modelsMetadata', function () use ($config) {
+        $di->set('modelsMetadata', function () use ($config) {
             if (!$config->application->debug && isset($config->models->metadata)) {
                 $metaDataConfig = $config->models->metadata;
                 $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                return new $metadataAdapter();
+                return new $metadataAdapter($config->models->metadata->toArray());
             } else {
                 return new \Phalcon\Mvc\Model\MetaData\Memory();
             }
@@ -345,22 +365,27 @@ class Application extends \Phalcon\Mvc\Application
     /**
      * Initializes the session
      */
-    protected function initSession($config)
+    protected function initSession($di, $config, $eventsManager)
     {
-        if (!isset($config->application->session))
+        if (!isset($config->application->session)) {
             return;
+        }
 
         $sessionOptions = array(
-            'db' => $this->_dependencyInjector->get('db'),
+            'db' => $di->get('db'),
             'table' => $config->application->session->tableName
         );
+
         if (isset($config->application->session->lifetime)) {
             $sessionOptions['lifetime'] = $config->application->session->lifetime;
         }
 
-        $session = new \Engine\Session\Database($sessionOptions);
+        //$session = new \Engine\Session\Database($sessionOptions);
+
+        $session = new \Phalcon\Session\Adapter\Files();
+
         $session->start();
-        $this->_dependencyInjector->set('session', $session, true);
+        $di->set('session', $session, true);
     }
 
     /**
@@ -368,9 +393,11 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initCache($config)
+    protected function initCache($di, $config, $eventsManager)
     {
+
         if (!$config->application->debug) {
+
             // Get the parameters
             $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
             $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
@@ -380,27 +407,28 @@ class Application extends \Phalcon\Mvc\Application
 
             // Cache:View
             $viewCache = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $this->_dependencyInjector->set('viewCache', $viewCache, true);
+            $di->set('viewCache', $viewCache, false);
 
             // Cache:Output
             $cacheOutput = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $this->_dependencyInjector->set('cacheOutput', $cacheOutput, true);
+            $di->set('cacheOutput', $cacheOutput, true);
 
             // Cache:Data
             $cacheData = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $this->_dependencyInjector->set('cacheData', $cacheData, true);
+            $di->set('cacheData', $cacheData, true);
 
             // Cache:Models
             $cacheModels = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $this->_dependencyInjector->set('modelsCache', $cacheModels, true);
+            $di->set('modelsCache', $cacheModels, true);
+
         } else {
             // Create a dummy cache for system.
             // System will work correctly and the data will be always current for all adapters
             $dummyCache = new \Engine\Cache\Dummy(null);
-            $this->_dependencyInjector->set('viewCache', $dummyCache);
-            $this->_dependencyInjector->set('cacheOutput', $dummyCache);
-            $this->_dependencyInjector->set('cacheData', $dummyCache);
-            $this->_dependencyInjector->set('modelsCache', $dummyCache);
+            $di->set('viewCache', $dummyCache);
+            $di->set('cacheOutput', $dummyCache);
+            $di->set('cacheData', $dummyCache);
+            $di->set('modelsCache', $dummyCache);
         }
     }
 
@@ -409,9 +437,9 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initFlash($config)
+    protected function initFlash($di, $config, $eventsManager)
     {
-        $this->_dependencyInjector->set('flash', function () {
+        $di->set('flash', function () {
             $flash = new \Phalcon\Flash\Direct(array(
                 'error' => 'alert alert-error',
                 'success' => 'alert alert-success',
@@ -420,7 +448,7 @@ class Application extends \Phalcon\Mvc\Application
             return $flash;
         });
 
-        $this->_dependencyInjector->set('flashSession', function () {
+        $di->set('flashSession', function () {
             $flash = new \Phalcon\Flash\Session(array(
                 'error' => 'alert alert-error',
                 'success' => 'alert alert-success',
@@ -435,17 +463,19 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \stdClass $config
      */
-    protected function initEngine($config)
+    protected function initEngine($di, $config, $eventsManager)
     {
-        $di = $this->_dependencyInjector;
+
         foreach ($di->get('modules') as $module => $enabled) {
-            if (!$enabled) continue;
+
+            if (!$enabled) {
+                continue;
+            }
 
             // initialize module api
             $di->set(strtolower($module), function () use ($module, $di) {
                 return new \Engine\Api\Container($module, $di);
             });
-
         }
     }
 
@@ -455,38 +485,46 @@ class Application extends \Phalcon\Mvc\Application
     public function clearCache(){
 
         // clear cache
-        $keys = $this->_dependencyInjector->get('viewCache')->queryKeys();
+        $viewCache = $this->_dependencyInjector->get('viewCache');
+        $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
+        $cacheData = $this->_dependencyInjector->get('cacheData');
+        $modelsCache = $this->_dependencyInjector->get('modelsCache');
+        $config = $this->_dependencyInjector->get('config');
+
+        $keys = $viewCache->queryKeys();
         foreach ($keys as $key) {
-            $this->_dependencyInjector->get('viewCache')->delete($key);
+            $viewCache->delete($key);
         }
 
-        $keys = $this->_dependencyInjector->get('cacheOutput')->queryKeys();
+        $keys = $cacheOutput->queryKeys();
         foreach ($keys as $key) {
-            $this->_dependencyInjector->get('cacheOutput')->delete($key);
+            $cacheOutput->delete($key);
         }
 
-        $keys = $this->_dependencyInjector->get('cacheData')->queryKeys();
+        $keys = $cacheData->queryKeys();
         foreach ($keys as $key) {
-            $this->_dependencyInjector->get('cacheData')->delete($key);
+            $cacheData->delete($key);
         }
 
-        $keys = $this->_dependencyInjector->get('modelsCache')->queryKeys();
+        $keys = $modelsCache->queryKeys();
         foreach ($keys as $key) {
-            $this->_dependencyInjector->get('modelsCache')->delete($key);
+            $modelsCache->delete($key);
         }
 
         // clear files cache
-        $files = glob($this->_dependencyInjector->get('config')->application->cache->cacheDir . '*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file))
+        $files = glob($config->application->cache->cacheDir . '*'); // get all file names
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
                 @unlink($file); // delete file
+            }
         }
 
         // clear view cache
-        $files = glob($this->_dependencyInjector->get('config')->application->view->compiledPath . '*'); // get all file names
-        foreach($files as $file){ // iterate files
-            if(is_file($file))
+        $files = glob($config->application->view->compiledPath . '*'); // get all file names
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
                 @unlink($file); // delete file
+            }
         }
     }
 
@@ -495,7 +533,8 @@ class Application extends \Phalcon\Mvc\Application
      *
      * @param \Phalcon\Config $config
      */
-    public function saveConfig($config = null){
+    public function saveConfig($config = null)
+    {
         if ($config === null){
             $config = $this->_config;
         }
@@ -523,7 +562,6 @@ class Application extends \Phalcon\Mvc\Application
 * Be careful when changing settings!
 *
 */
-
 
 return new \\Phalcon\\Config(' . $configText . ');';
         file_put_contents(ROOT_PATH . '/app/config/config.php', $configText);
