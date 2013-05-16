@@ -60,7 +60,6 @@ class Form extends \Phalcon\Forms\Form
         'validators'
     );
 
-
     protected $_action = '';
     private $_title = '';
     private $_description = '';
@@ -366,14 +365,17 @@ class Form extends \Phalcon\Forms\Form
         $name = str_replace('[]', '', $name);
 
         $value = parent::getValue($name);
-        if ($value !== null)
+        if ($value !== null) {
             return $value;
+        }
 
-        if (!isset($this->_elementsData[$name]))
+        if (!isset($this->_elementsData[$name])) {
             throw new \Engine\Exception('Form has no element "' . $name . '"');
+        }
 
-        if (!isset($this->_elementsData[$name]['attributes']['value']))
+        if (!isset($this->_elementsData[$name]['attributes']['value'])) {
             return null;
+        }
 
         return $this->_elementsData[$name]['attributes']['value'];
     }
@@ -387,10 +389,11 @@ class Form extends \Phalcon\Forms\Form
         if ($this->_elementsPrepared) return;
 
         $this->_orderedElements = $this->_elementsData;
+
         // sort elements by order
-        usort($this->_orderedElements, function ($a, $b) {
-            return $a['order'] - $b['order'];
-        });
+        //usort($this->_orderedElements, function ($a, $b) {
+        //    return $a['order'] - $b['order'];
+        //});
 
         // add elements to Phalcon form class
         foreach ($this->_orderedElements as $element) {
@@ -451,8 +454,9 @@ class Form extends \Phalcon\Forms\Form
             }
 
             if ($this->_useNullValue) {
-                if (isset($data[$name]) && empty($data[$name]))
+                if (isset($data[$name]) && empty($data[$name])) {
                     $data[$name] = null;
+                }
             }
         }
 
@@ -480,7 +484,6 @@ class Form extends \Phalcon\Forms\Form
             }
         }
 
-
         $this->_validationFinished = true;
         return $modelIsValid && $parentIsValid;
     }
@@ -494,16 +497,21 @@ class Form extends \Phalcon\Forms\Form
      */
     public function render($name = null, $attributes = null)
     {
-        if (empty($this->_elementsData)) return "";
+        if (empty($this->_elementsData)) {
+            return "";
+        }
+
+        $trans = $this->_trans;
+
         $this->prepareElements();
 
-        $content = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
+        $content = Tag::form(array_merge($this->_attribs, array('method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
 
         ///////////////////////////////////////////
         /// Title and Description
         //////////////////////////////////////////
         if (!empty($this->_title) || !empty($this->_description)) {
-            $content .= sprintf('<div class="form_header"><h3>%s</h3><p>%s</p></div>', $this->_trans->_($this->_title), $this->_trans->_($this->_description));
+            $content .= '<div class="form_header"><h3>' . $trans->_($this->_title) . '</h3><p>' . $trans->_($this->_description) . '</p></div>';
         }
 
         ///////////////////////////////////////////
@@ -513,16 +521,16 @@ class Form extends \Phalcon\Forms\Form
         if (!empty($this->_errors) || count($this->_messages) != 0 || ($this->_entity != null && count($this->_entity->getMessages()) != 0)) {
             $content .= '<ul class="form_errors">';
             foreach ($this->_errors as $error) {
-                $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error));
+                $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error));
             }
             if (count($this->_messages) != 0) {
                 foreach ($this->getMessages() as $error) {
-                    $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error->getMessage()));
+                    $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error->getMessage()));
                 }
             }
             if ($this->_entity != null && $this->_entity->getMessages()) {
                 foreach ($this->_entity->getMessages() as $error) {
-                    $content .= sprintf('<li class="alert alert-error">%s</li>', $this->_trans->_($error));
+                    $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error));
                 }
             }
             $content .= '</ul>';
@@ -534,7 +542,7 @@ class Form extends \Phalcon\Forms\Form
         if (!empty($this->_notices)) {
             $content .= '<ul class="form_notices">';
             foreach ($this->_notices as $notice) {
-                $content .= sprintf('<li class="alert alert-success">%s</li>', $this->_trans->_($notice));
+                $content .= sprintf('<li class="alert alert-success">%s</li>', $trans->_($notice));
             }
             $content .= '</ul>';
         }
@@ -542,6 +550,7 @@ class Form extends \Phalcon\Forms\Form
         ///////////////////////////////////////////
         /// Elements
         //////////////////////////////////////////
+
         $content .= '<div class="form_elements">';
         $hiddenFields = array();
         /* @var \Phalcon\Forms\Element|Form_ElementInterface $element */
@@ -555,12 +564,13 @@ class Form extends \Phalcon\Forms\Form
             }
 
             // multiple option specific
-            if (isset($elementData['attributes']['multiple']))
+            if (isset($elementData['attributes']['multiple'])) {
                 $element->setName($element->getName() . '[]');
+            }
 
             $content .= '<div>';
-            $label = (!empty($elementData['params']['label']) ? sprintf('<label for="%s">%s</label>', $element->getName(), $this->_trans->_($elementData['params']['label'])) : '');
-            $description = (!empty($elementData['params']['description']) ? sprintf('<p>%s</p>', $this->_trans->_($elementData['params']['description'])) : '');
+            $label = (!empty($elementData['params']['label']) ? sprintf('<label for="%s">%s</label>', $element->getName(), $trans->_($elementData['params']['label'])) : '');
+            $description = (!empty($elementData['params']['description']) ? sprintf('<p>%s</p>', $trans->_($elementData['params']['description'])) : '');
 
             if ($element->useDefaultLayout()) {
                 $content .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
@@ -582,8 +592,8 @@ class Form extends \Phalcon\Forms\Form
         /// Token
         //////////////////////////////////////////
         if ($this->_useToken) {
-            $tokenKey = $this->di->get('security')->getTokenKey();
-            $token = $this->di->get('security')->getToken();
+            $tokenKey = $this->security->getTokenKey();
+            $token = $this->security->getToken();
             $content .= sprintf('<input type="hidden" name="%s" value="%s">', $tokenKey, $token);
         }
 
@@ -591,8 +601,10 @@ class Form extends \Phalcon\Forms\Form
         /// Buttons
         //////////////////////////////////////////
         if (!empty($this->_buttons)) {
+            $url = $this->di->get('url');
             $content .= '<div class="form_footer">';
             foreach ($this->_buttons as $button) {
+
                 $attribs = "";
                 if (!empty($button['params']['class'])) {
                     $button['params']['class'] .= ' btn';
@@ -604,13 +616,12 @@ class Form extends \Phalcon\Forms\Form
                     $button['params']['class'] .= ' btn-primary';
                 }
 
-
                 foreach ($button['params'] as $key => $param) {
                     $attribs .= ' ' . $key . '="' . $param . '"';
                 }
 
                 if (!empty($button['is_link']) && $button['is_link'] == true) {
-                    $content .= sprintf('<a href="%s" %s>%s</a>', $this->di->get('url')->get($button['href']), $attribs, $this->_trans->_($button['name']));
+                    $content .= sprintf('<a href="%s" %s>%s</a>', $url->get($button['href']), $attribs, $trans->_($button['name']));
                 } else {
                     $content .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
                 }
@@ -619,7 +630,7 @@ class Form extends \Phalcon\Forms\Form
             $content .= '</div>';
         }
 
-        $content .= '</div>' . Tag::endForm();
+        $content .= '</div></form>';
 
 
         return $content;

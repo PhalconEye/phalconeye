@@ -11,13 +11,13 @@
    to phalconeye@gmail.com so we can send you a copy immediately.
 #}
 
-{% extends "../../View/layouts/widget.volt" %}
+{%- extends "../../View/layouts/widget.volt" -%}
 
-{% block content %}
+{%- block content -%}
     <div class="header_widget">
         <div class="header_logo">
             <a href="/">
-                <img alt='{{ site_title }}' src="{{ logo }}"/>
+                <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
                 {% if show_title is 1 %}{{ site_title }}{% endif %}
             </a>
         </div>
@@ -35,4 +35,4 @@
         {% endif %}
         <div class="clear"></div>
     </div>
-{% endblock %}
+{%- endblock -%}

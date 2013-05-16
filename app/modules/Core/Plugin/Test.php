@@ -17,7 +17,8 @@ namespace Core\Plugin;
 
 class Test extends \Phalcon\Mvc\User\Plugin
 {
-    public function afterStartModule(){
+    public function afterStartModule()
+    {
         echo 'CORE HELLO';
     }
 

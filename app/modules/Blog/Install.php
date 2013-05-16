@@ -1,4 +1,5 @@
 <?php
+
 /**
  * PhalconEye
  *
@@ -13,9 +14,7 @@
  *
  */
 
-namespace Blog;
-
-class Bootstrap extends \Engine\Bootstrap
+class Install extends \Engine\Installer
 {
-    protected $_moduleName = "Blog";
+
 }
