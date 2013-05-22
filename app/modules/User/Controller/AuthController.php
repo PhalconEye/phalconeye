@@ -90,7 +90,7 @@ class AuthController extends \Core\Controller\Base
             return;
         }
 
-        $user = new \Core\Model\User();
+        $user = new \User\Model\User();
         $data = $form->getValues();
         $data['password'] = $this->security->hash($data['password']);
         if (!$user->save($data)) {
