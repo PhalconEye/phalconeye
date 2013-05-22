@@ -51,7 +51,8 @@ class Utilities
                     continue;
                 }
 
-                @mkdir(dirname($fDest), 0755, true);
+                if (!is_dir($fDest))
+                    @mkdir(dirname($fDest), 0755, true);
                 if (!copy($itemPath, $fDest)) {
                     throw new Exception('Unable to copy.');
                 }
