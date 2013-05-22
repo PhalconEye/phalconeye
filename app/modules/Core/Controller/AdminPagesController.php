@@ -148,6 +148,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
      */
     public function manageAction($id)
     {
+        $this->view->headerNavigation->setActiveItem('admin/pages');
         $page = null;
         if ($id)
             $page = \Core\Model\Page::find($id)->getFirst();

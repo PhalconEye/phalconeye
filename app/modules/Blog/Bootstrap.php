@@ -18,4 +18,5 @@ namespace Blog;
 class Bootstrap extends \Engine\Bootstrap
 {
     protected $_moduleName = "Blog";
+
 }

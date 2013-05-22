@@ -100,7 +100,7 @@ class Performance extends \Engine\Form
 
         $this->addElement('check', 'clear_cache', array(
             'label' => 'Clear cache',
-            'description' => 'All system cache will be cleared.',
+            'description' => 'All system cache will be cleaned.',
             'options' => 1
         ));
 

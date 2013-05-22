@@ -25,7 +25,6 @@ class IndexController extends \Core\Controller\Base
      */
     public function indexAction()
     {
-
     }
 
 }

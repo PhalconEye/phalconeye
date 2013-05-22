@@ -44,7 +44,8 @@ abstract class Bootstrap implements BootstrapInterface
         $this->_config = $this->_di->get('config');
     }
 
-    public static function dependencyInjection(DiInterface $di){
+    public static function dependencyInjection(DiInterface $di)
+    {
 
     }
 
@@ -74,7 +75,7 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         //  Initialize view
         /*************************************************/
-        $di->set('view', function() use ($moduleDirectory, $eventsManager, $config) {
+        $di->set('view', function () use ($moduleDirectory, $eventsManager, $config) {
 
             $view = new View();
             $view->setViewsDir($moduleDirectory . '/View/');
@@ -87,7 +88,8 @@ abstract class Bootstrap implements BootstrapInterface
                     $volt->setOptions(array(
                         "compiledPath" => $config->application->view->compiledPath,
                         "compiledExtension" => $config->application->view->compiledExtension,
-                        'compiledSeparator' => '_'
+                        'compiledSeparator' => '_',
+//                        'compileAlways' => $config->application->debug
                     ));
 
                     $compiler = $volt->getCompiler();
@@ -102,6 +104,11 @@ abstract class Bootstrap implements BootstrapInterface
                         return '$this->trans->query(' . $resolvedArgs . ')';
                     });
 
+                    $compiler->addFilter('dump', function ($resolvedArgs) {
+                        return 'var_dump(' . $resolvedArgs . ')';
+                    });
+
+
                     return $volt;
                 }
             ));
@@ -111,7 +118,7 @@ abstract class Bootstrap implements BootstrapInterface
 
                 $eventsManager->attach("view", function ($event, $view) {
                     if ($event->getType() == 'notFoundView') {
-                        \Phalcon\DI::getDefault()->get('logger')->error('View not found - "' . $view->getActiveRenderPath().'"');
+                        \Phalcon\DI::getDefault()->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
                     }
                 });
 

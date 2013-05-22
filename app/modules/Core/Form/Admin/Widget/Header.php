@@ -24,7 +24,7 @@ class Header extends \Engine\Form
         $this
             ->setOption('description', "Settings for header of you site.");
 
-        $this->addElement('text', 'logo', array(
+        $this->addElement('RemoteFile', 'logo', array(
             'label' => 'Logo image (url)'
         ));
 

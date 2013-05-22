@@ -17,7 +17,7 @@
 
     {% if title is defined and title is not null %}
     <div class="widget_header">
-        <span class="icon-th-large"></span>{{ title|trans }}
+        <h3>{{ title|trans }}</h3>
     </div>
     {% endif %}
 

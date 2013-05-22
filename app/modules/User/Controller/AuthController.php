@@ -50,7 +50,7 @@ class AuthController extends \Core\Controller\Base
             }
         }
 
-        $form->addError('Login or password are incorrect!');
+        $form->addError('Email or password are incorrect!');
         $this->view->form = $form;
 
     }

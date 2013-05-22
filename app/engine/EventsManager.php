@@ -21,7 +21,10 @@ class EventsManager extends \Phalcon\Events\Manager
 
     public function __construct($config)
     {
+        self::initEngineEvents($this, $config);
+    }
 
+    public static function initEngineEvents($eventsManager, $config){
         // Attach modules plugins events
         $modules = $config->get('events')->toArray();
 
@@ -29,11 +32,11 @@ class EventsManager extends \Phalcon\Events\Manager
         if (!empty($modules)){
             foreach ($modules as $module => $events) {
                 if (!in_array($module, $loadedModules)) {
-                     continue;
+                    continue;
                 }
                 foreach ($events as $event) {
                     $pluginClass = $event['namespace'] . '\\' . $event['class'];
-                    $this->attach($event['type'], new $pluginClass());
+                    $eventsManager->attach($event['type'], new $pluginClass());
                 }
             }
         }
@@ -49,7 +52,7 @@ class EventsManager extends \Phalcon\Events\Manager
 
                 $pluginClass = '\Plugin\\'.ucfirst($pluginName) . '\\' .ucfirst($pluginName);
                 foreach ($plugin['events'] as $event) {
-                    $this->attach($event, new $pluginClass());
+                    $eventsManager->attach($event, new $pluginClass());
                 }
             }
         }

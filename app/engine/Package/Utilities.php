@@ -19,24 +19,40 @@ class Utilities
 {
     // Fs helpers
 
-    static public function fsCheckLocation($path){
-        if (!is_dir($path)){
-            @mkdir(dirname($path), 0755, true);
+    static public function fsCheckLocation($path)
+    {
+        if (!is_dir($path)) {
+            @mkdir($path, 0755, true);
         }
     }
 
-    static public function fsCopyRecursive($source, $dest)
+    static public function fsCopyRecursive($source, $dest, $statFiles = false, $excludeNames = array())
     {
+        if (!is_dir($source)) {
+            return;
+        }
+
         $it = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::KEY_AS_PATHNAME), \RecursiveIteratorIterator::SELF_FIRST);
         foreach ($it as $item) {
-            $partial = str_replace($source, '', $item->getPathname());
+            $itemPath = $item->getPathname();
+            $partial = str_replace($source, '', $itemPath);
+            if (in_array($partial, $excludeNames)) {
+                continue;
+            }
+            if ($partial == '.' || $partial == '..') continue;
+
             $fDest = rtrim($dest, '/\\') . $partial;
             // Ignore errors on mkdir (only fail if the file fails to copy
             if ($item->isDir()) {
-                @mkdir($fDest, $item->getPerms(), true);
+                if (!is_dir($fDest))
+                    @mkdir($fDest, $item->getPerms(), true);
             } else if ($item->isFile()) {
+                if ($statFiles && (is_file($fDest) && filemtime($itemPath) <= filemtime($fDest))) {
+                    continue;
+                }
+
                 @mkdir(dirname($fDest), 0755, true);
-                if (!copy($item->getPathname(), $fDest)) {
+                if (!copy($itemPath, $fDest)) {
                     throw new Exception('Unable to copy.');
                 }
             }

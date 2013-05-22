@@ -21,6 +21,14 @@ use \Phalcon\Exception as PhException;
 
 class Error
 {
+    /**
+     * Log normal error
+     *
+     * @param $type
+     * @param $message
+     * @param $file
+     * @param $line
+     */
     public static function normal($type, $message, $file, $line)
     {
         // Log it
@@ -34,11 +42,14 @@ class Error
         // Display it under regular circumstances
     }
 
+    /**
+     * Trigger error_get_last
+     */
     public static function shutdown()
     {
         $error = error_get_last();
         if (!$error)
-           return;
+            return;
 
         // Log it
         self::logError(
@@ -51,6 +62,11 @@ class Error
         // Display it under regular circumstances
     }
 
+    /**
+     * Log exception
+     *
+     * @param \Exception $exception
+     */
     public static function exception($exception)
     {
         // Log the error
@@ -66,13 +82,13 @@ class Error
 
     protected static function logError($type, $message, $file, $line, $trace = '')
     {
-        $di        = Di::getDefault();
+        $di = Di::getDefault();
         $template = "[%s] %s (File: %s Line: [%s])";
         if ($trace) {
-            $template . PHP_EOL . $trace;
+            $template .= PHP_EOL . $trace;
         }
 
-        $logMessage = sprintf($template, $type, $message, $file, $line);
+        $logMessage = sprintf($template, $type, $message, $file, $line) . PHP_EOL;
 
         if ($di->has('logger')) {
             $logger = $di->get('logger');

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * PhalconEye
  *
@@ -16,6 +15,12 @@
 
 namespace Engine\Package;
 
+/**
+ * Provides package management
+ *
+ * Class Manager
+ * @package Engine\Package
+ */
 class Manager
 {
     const PACKAGE_TYPE_MODULE = 'module';
@@ -24,6 +29,11 @@ class Manager
     const PACKAGE_TYPE_WIDGET = 'widget';
     const PACKAGE_TYPE_LIBRARY = 'library';
 
+    /**
+     * Allowed types of packages
+     *
+     * @var array
+     */
     public static $allowedTypes = array(
         self::PACKAGE_TYPE_MODULE => 'Module',
         self::PACKAGE_TYPE_PLUGIN => 'Plugin',
@@ -83,16 +93,20 @@ class Manager
             }
     }
 
+    /**
+     * Get package location in system
+     *
+     * @param $type
+     * @return string
+     */
     public function getPackageLocation($type)
     {
-        $application = $this->_config->application;
-
         $locations = array(
-            self::PACKAGE_TYPE_MODULE => $application->modulesDir,
-            self::PACKAGE_TYPE_PLUGIN => $application->pluginsDir,
+            self::PACKAGE_TYPE_MODULE => $this->_config->application->modulesDir,
+            self::PACKAGE_TYPE_PLUGIN => $this->_config->application->pluginsDir,
             self::PACKAGE_TYPE_THEME => ROOT_PATH . '/public/themes/',
-            self::PACKAGE_TYPE_WIDGET => $application->widgetsDir,
-            self::PACKAGE_TYPE_LIBRARY => $applicationn->librariesDir
+            self::PACKAGE_TYPE_WIDGET => $this->_config->application->widgetsDir,
+            self::PACKAGE_TYPE_LIBRARY => $this->_config->application->librariesDir
         );
         if (isset($locations[$type])) {
             return $locations[$type];
@@ -101,6 +115,11 @@ class Manager
         return '';
     }
 
+    /**
+     * Create new package according to data
+     *
+     * @param $data
+     */
     public function createPackage($data)
     {
         $data['nameUpper'] = ucfirst($data['name']);
@@ -120,6 +139,7 @@ class Manager
             @rename($packageLocation . '/plugin.php', $packageLocation . '/' . $data['nameUpper'] . '.php');
         }
 
+
         // replace placholders in package
         $placeholders = array_keys($data);
         $placeholdersValues = array_values($data);
@@ -130,6 +150,7 @@ class Manager
             }
 
             $placeholders[$key] = '%' . $placeholder . '%';
+
         }
 
         foreach (Utilities::fsRecursiveGlob($packageLocation . "/", '*.*') as $filename) {
@@ -138,6 +159,13 @@ class Manager
         }
     }
 
+    /**
+     * Install package using zip archive
+     *
+     * @param $package zip archive filepath
+     * @return \Phalcon\Config
+     * @throws Exception
+     */
     public function installPackage($package)
     {
         $zip = new \ZipArchive;
@@ -218,6 +246,13 @@ class Manager
         return $manifest;
     }
 
+    /**
+     * Remove package from system
+     *
+     * @param $name Package name
+     * @param $type Package type
+     * @throws Exception
+     */
     public function removePackage($name, $type)
     {
         $fullName = ucfirst($name);
@@ -234,6 +269,12 @@ class Manager
 
     }
 
+    /**
+     * Export package with data
+     *
+     * @param $name Package name
+     * @param $data
+     */
     public function exportPackage($name, $data)
     {
         $location = $this->getPackageLocation($data['type']);
@@ -271,6 +312,12 @@ class Manager
         readfile($filepath);
     }
 
+    /**
+     * Get temporary directory. This directory is used for unziping package files
+     *
+     * @param bool $checkDir
+     * @return string
+     */
     public function getTempDirectory($checkDir = true)
     {
         $directory = ROOT_PATH . '/app/var/temp/packages/';
@@ -279,11 +326,20 @@ class Manager
         return $directory;
     }
 
+    /**
+     * Clear temporary directory
+     */
     public function clearTempDirectory()
     {
         Utilities::fsRmdirRecursive($this->getTempDirectory());
     }
 
+    /**
+     * Create manifest file for package
+     *
+     * @param $filepath
+     * @param $data
+     */
     private function _createManifest($filepath, $data)
     {
         $manifestData = $this->_manifestDefaultData;
@@ -302,6 +358,8 @@ class Manager
     }
 
     /**
+     * Read package information from manifest file
+     *
      * @param $manifestLocation
      * @return \Phalcon\Config
      * @throws Exception\NoManifest
@@ -323,6 +381,12 @@ class Manager
         return $manifest;
     }
 
+    /**
+     * Checks package manifest file
+     *
+     * @param \Phalcon\Config $manifest
+     * @return bool
+     */
     private function _checkPackageManifest(\Phalcon\Config $manifest)
     {
         foreach ($this->_manifestMinimumData as $key) {
@@ -333,6 +397,13 @@ class Manager
         return true;
     }
 
+    /**
+     * Zip files
+     *
+     * @param $source
+     * @param $destination
+     * @return bool
+     */
     private function _zip($source, $destination)
     {
         if (!extension_loaded('zip') || !file_exists($source)) {

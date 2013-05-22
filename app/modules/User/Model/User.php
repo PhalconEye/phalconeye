@@ -210,7 +210,7 @@ class User extends \Phalcon\Mvc\Model
     }
 
     public function isAdmin(){
-        return $this->getRole()->getType() == \Engine\Api\Acl::ROLE_TYPE_ADMIN;
+        return $this->getRole()->getType() == \Core\Api\Acl::ROLE_TYPE_ADMIN;
     }
 
     /**

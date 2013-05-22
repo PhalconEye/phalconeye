@@ -505,7 +505,7 @@ class Form extends \Phalcon\Forms\Form
 
         $this->prepareElements();
 
-        $content = Tag::form(array_merge($this->_attribs, array('method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
+        $content = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
 
         ///////////////////////////////////////////
         /// Title and Description

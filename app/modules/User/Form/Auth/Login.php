@@ -29,7 +29,7 @@ class Login extends \Engine\Form
 
 
         $this->addElement('text', 'login', array(
-            'label' => 'Login (email or username)',
+            'label' => 'Email',
             'required' => true
         ));
 

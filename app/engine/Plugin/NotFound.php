@@ -18,20 +18,25 @@ namespace Engine\Plugin;
 
 class NotFound extends \Phalcon\Mvc\User\Plugin
 {
-
-    public function beforeException($dispatcher, $exception)
+    /**
+     * @param \Phalcon\Events\Event $event
+     * @param \Phalcon\Dispatcher $dispatcher
+     * @param \Phalcon\Exception $exception
+     * @return bool
+     */
+    public function beforeException($event, $dispatcher, $exception)
     {
         switch ($exception->getCode()) {
             case \Phalcon\Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
             case \Phalcon\Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                            $dispatcher->forward(array(
-                                'module' => Application::$defaultModule,
-                                'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
-                                'controller' => 'Error',
-                                'action' => 'show404'
-                            ));
-                            return false;
-                    }
+                $dispatcher->forward(array(
+                    'module' => \Engine\Application::$defaultModule,
+                    'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',
+                    'controller' => 'Error',
+                    'action' => 'show404'
+                ));
+                return false;
+        }
     }
 
 }

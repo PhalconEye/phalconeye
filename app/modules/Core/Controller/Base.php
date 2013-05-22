@@ -21,6 +21,7 @@ namespace Core\Controller;
  * @property \Phalcon\Cache\Backend $cacheData
  * @property \Core\Api\Acl $acl
  * @property \Engine\Application $app
+ * @property \Phalcon\Assets\Manager $assets
  */
 class Base extends \Phalcon\Mvc\Controller
 {

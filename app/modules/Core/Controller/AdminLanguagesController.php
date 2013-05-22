@@ -21,7 +21,7 @@ namespace Core\Controller;
  */
 class AdminLanguagesController extends \Core\Controller\BaseAdmin
 {
-    CONST FLAGS_DIR = '/public/img/phalconeye/languages/';
+    CONST FLAGS_DIR = '/public/files/languages/';
 
     public function init()
     {
@@ -135,7 +135,7 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]->getName(), -4);
             @unlink(ROOT_PATH . $iconPath);
             $files[0]->moveTo(ROOT_PATH . $iconPath);
-            $lang->setIcon($iconPath);
+            $lang->setIcon(str_replace('/public/', '', $iconPath));
             $lang->save();
         }
 

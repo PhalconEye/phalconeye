@@ -17,7 +17,7 @@
     <div class="header_widget">
         <div class="header_logo">
             <a href="/">
-                <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
+                <img alt='{{ site_title }}' src="{{ logo }}"/>
                 {% if show_title is 1 %}{{ site_title }}{% endif %}
             </a>
         </div>
@@ -26,10 +26,13 @@
             <div class="header_auth">
                 {% if helper('core').viewer().getId() is 0 %}
                 <a href="{{ url('login') }}">{{ 'Login' | trans }}</a>&nbsp;|
-                <a href="{{ url('register') }}">{{ 'Register' | trans }}</a> </span>
+                <a href="{{ url('register') }}">{{ 'Register' | trans }}</a>
                 {% else %}
                     {{ 'Welcome, ' |trans }}{{ helper('core').viewer().getUserName() }}&nbsp;|
-                    <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a> </span>
+                    {% if helper('core').viewer().isAdmin() %}
+                    <a href="{{ url('admin') }}">{{ 'Admin panel' | trans }}</a>
+                    {% endif %}
+                    <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a>
                 {% endif %}
             </div>
         {% endif %}

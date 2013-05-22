@@ -157,7 +157,7 @@ class Language extends \Phalcon\Mvc\Model
 
     public function beforeDelete()
     {
-        $languageFile = ROOT_PATH . '/app/var/languages/' . $this->locale . '.php';
+        $languageFile = ROOT_PATH . '/app/var/cache/languages/' . $this->locale . '.php';
         @unlink($languageFile);
 
         $this->getLanguageTranslation()->delete();
@@ -171,7 +171,7 @@ class Language extends \Phalcon\Mvc\Model
             $messages[$translation->getOriginal()] = $translation->getTranslated();
         }
 
-        $file = ROOT_PATH . '/app/var/languages/' . $this->locale . '.php';
+        $file = ROOT_PATH . '/app/var/cache/languages/' . $this->locale . '.php';
         file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true).';');
     }
 

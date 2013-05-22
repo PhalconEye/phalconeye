@@ -18,16 +18,16 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url("css/bootstrap/bootstrap.min.css") }}"/>
-    <link rel="stylesheet" href="{{ url("css/admin.css") }}"/>
-    {{ javascript_include("js/jquery/jquery-1.8.3.min.js") }}
-    {{ javascript_include("js/jquery/jquery-ui-1.9.0.custom.min.js") }}
-    {{ javascript_include("js/bootstrap/bootstrap.min.js") }}
-    {{ javascript_include("js/ckeditor/ckeditor.js") }}
-    {{ javascript_include("js/phalconeye/core.js") }}
-    {{ javascript_include("js/phalconeye/admin.js") }}
-    {{ javascript_include("js/phalconeye/modal.js") }}
-    {{ javascript_include("js/phalconeye/ajaxplorer.js") }}
+    <link rel="stylesheet" href="{{ url("external/bootstrap/bootstrap.min.css") }}"/>
+    <link rel="stylesheet" href="{{ url("external/peadmin/style.css") }}"/>
+    {{ javascript_include("external/jquery/jquery-1.8.3.min.js") }}
+    {{ javascript_include("external/jquery/jquery-ui-1.9.0.custom.min.js") }}
+    {{ javascript_include("external/bootstrap/bootstrap.min.js") }}
+    {{ javascript_include("external/ckeditor/ckeditor.js") }}
+    {{ javascript_include("assets/js/core/1-core.js") }}
+    {{ javascript_include("assets/js/core/2-modal.js") }}
+    {{ javascript_include("external/peadmin/javascript.js") }}
+    {{ javascript_include("external/peadmin/ajaxplorer.js") }}
 
     {% block head %}
 
@@ -40,8 +40,8 @@
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
         <div class="container">
-            <a class="brand" href="{{ url("admin") }}"><img alt="Pahlcon Eye"
-                                                            src="{{ url('img/phalconeye/PE_logo_white.png') }}"/></a>
+            <a class="brand" href="{{ url("admin") }}"><img alt="Phalcon Eye"
+                                                            src="{{ url('assets/img/core/pe_logo_white.png') }}"/></a>
 
             <div class="nav-collapse collapse">
                 {{ headerNavigation.render() }}

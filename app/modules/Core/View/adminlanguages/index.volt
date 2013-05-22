@@ -65,7 +65,7 @@
                             {{ item.getLocale() }}
                         </td>
                         <td>
-                            <img alt='' src='{{ item.getIcon() }}'/>
+                            <img alt='' src='{{ url(item.getIcon()) }}'/>
                         </td>
                         <td>
                             {{ link_to(['for':'admin-languages-manage', 'id':item.getId()], 'Manage' | trans) }}

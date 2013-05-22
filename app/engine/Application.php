@@ -16,10 +16,12 @@
 
 namespace Engine;
 
+use Core\Model\Package;
+use Engine\Package\Exception;
+
 /**
  * @property \Phalcon\DiInterface $_dependencyInjector
  */
-
 class Application extends \Phalcon\Mvc\Application
 {
 
@@ -45,7 +47,7 @@ class Application extends \Phalcon\Mvc\Application
     }
 
     /**
-     * Runs the application performing all initializations
+     * Runs the application, performing all initializations
      *
      * @return mixed
      */
@@ -83,7 +85,7 @@ class Application extends \Phalcon\Mvc\Application
         );
 
         $enabledModules = $this->_config->get('modules');
-        if (!$enabledModules){
+        if (!$enabledModules) {
             $enabledModules = array();
         } else {
             $enabledModules = $enabledModules->toArray();
@@ -94,7 +96,7 @@ class Application extends \Phalcon\Mvc\Application
 
         $modules = array_merge($modules, $enabledModules);
 
-        $di->set('modules', function() use ($modules){
+        $di->set('modules', function () use ($modules) {
             return $modules;
         });
 
@@ -138,7 +140,8 @@ class Application extends \Phalcon\Mvc\Application
             }
         );
 
-        // Set default events manager
+        // Set default services to the DI
+        EventsManager::initEngineEvents($eventsManager, $config);
         $this->setEventsManager($eventsManager);
         $di->setShared('eventsManager', $eventsManager);
         $di->setShared('app', $this);
@@ -226,9 +229,12 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initAnnotations($di, $config, $eventsManager)
     {
-        $adapter = new \Phalcon\Annotations\Adapter\Files(array(
-            'annotationsDir' => ROOT_PATH . '/app/var/annotations/'
-        ));
+//        $adapter = new \Phalcon\Annotations\Adapter\Files(array(
+//            'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/'
+//        ));
+
+//        $adapter = new \Phalcon\Annotations\Adapter\Apc();
+        $adapter = new \Phalcon\Annotations\Adapter\Memory();
         $di->set('annotations', $adapter, true);
     }
 
@@ -368,22 +374,19 @@ class Application extends \Phalcon\Mvc\Application
     protected function initSession($di, $config, $eventsManager)
     {
         if (!isset($config->application->session)) {
-            return;
+            $session = new \Phalcon\Session\Adapter\Files();
+        } else {
+            $sessionOptions = array(
+                'db' => $di->get('db'),
+                'table' => $config->application->session->tableName
+            );
+
+            if (isset($config->application->session->lifetime)) {
+                $sessionOptions['lifetime'] = $config->application->session->lifetime;
+            }
+
+            $session = new \Engine\Session\Database($sessionOptions);
         }
-
-        $sessionOptions = array(
-            'db' => $di->get('db'),
-            'table' => $config->application->session->tableName
-        );
-
-        if (isset($config->application->session->lifetime)) {
-            $sessionOptions['lifetime'] = $config->application->session->lifetime;
-        }
-
-        //$session = new \Engine\Session\Database($sessionOptions);
-
-        $session = new \Phalcon\Session\Adapter\Files();
-
         $session->start();
         $di->set('session', $session, true);
     }
@@ -477,12 +480,186 @@ class Application extends \Phalcon\Mvc\Application
                 return new \Engine\Api\Container($module, $di);
             });
         }
+
+        $assetsManager = $di->get('assets');
+
+        if ($this->_config->application->debug) {
+            $assetsManager
+                ->collection('js')
+                ->addJs('external/jquery/jquery-1.8.3.min.js')
+                ->addJs('external/jquery/jquery-ui-1.9.0.custom.min.js');
+
+            $this->installAssets($assetsManager, $di, $config);
+        } else {
+            $remote = $this->_config->application->assets->get('remote');
+            if ($remote) {
+                $assetsManager
+                    ->collection('css')
+                    ->setPrefix($remote)
+                    ->setLocal(false);
+                $assetsManager
+                    ->collection('js')
+                    ->setPrefix($remote)
+                    ->setLocal(false);
+
+            }
+            $assetsManager
+                ->collection('css')
+                ->addCss('assets/style.css');
+
+            $assetsManager
+                ->collection('js')
+                ->addJs('external/jquery/jquery-1.8.3.min.js')
+                ->addJs('external/jquery/jquery-ui-1.9.0.custom.min.js')
+                ->addJs('assets/javascript.js');
+
+
+        }
+    }
+
+    /**
+     * Install assets from all modules
+     */
+    public function installAssets($assetsManager = null, $di = null, $config = null)
+    {
+        if ($di === null) {
+            $di = $this->_dependencyInjector;
+        }
+        if ($assetsManager === null) {
+            $assetsManager = $di->get('assets');
+        }
+        if ($config === null) {
+            $config = $this->_config;
+        }
+
+        $location = $config->application->assets->local;
+
+        // compile themes css
+        $less = \Engine\Css\Less::factory();
+        $collectedCss = array();
+        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme');
+        $themeFiles = glob($themeDirectory . '/*.less');
+        \Engine\Package\Utilities::fsCheckLocation($location . 'css/');
+        foreach ($themeFiles as $file) {
+            $newFileName = $location . 'css/' .  basename($file, '.less') . '.css';
+            $collectedCss[] = $newFileName;
+            $less->checkedCompile($file, $newFileName);
+        }
+
+        // collect js/img from modules
+        foreach ($di->get('modules') as $module => $enabled) {
+            if (!$enabled) continue;
+
+            // CSS
+            $assetsPath = $config->application->modulesDir . ucfirst($module) . '/Assets/';
+            $path = $location . 'css/' . $module . '/';
+            \Engine\Package\Utilities::fsCheckLocation($path);
+            $cssFiles = glob($assetsPath . 'css/*.less');
+            $less->addImportDir($themeDirectory);
+            foreach ($cssFiles as $file) {
+                $newFileName = $path . basename($file, '.less') . '.css';
+                $collectedCss[] = $newFileName;
+                $less->checkedCompile($file, $newFileName);
+            }
+
+            // JS
+            $path = $location . 'js/' . $module . '/';
+            \Engine\Package\Utilities::fsCopyRecursive($assetsPath . 'js', $path, true);
+
+            // IMAGES
+            $path = $location . 'img/' . $module . '/';
+            \Engine\Package\Utilities::fsCopyRecursive($assetsPath . 'img', $path, true);
+        }
+
+        // add css/js into assets manager
+        // css
+        $collection = $assetsManager->collection('css');
+        foreach ($collectedCss as $css) {
+            $collection->addCss(str_replace(ROOT_PATH . '/public/', '', $css));
+        }
+        $assetsManager->set('css', $collection);
+
+        // js
+        $collection = $assetsManager->collection('js');
+        $collectedJs = \Engine\Package\Utilities::fsRecursiveGlob($location . 'js', '*.js');
+        $sortedJs = array();
+        foreach ($collectedJs as $file) {
+            $sortedJs[basename($file)] = $file;
+        }
+
+        ksort($sortedJs);
+        foreach ($sortedJs as $js) {
+            $collection->addJs(str_replace(ROOT_PATH . '/public/', '', $js));
+        }
+        $assetsManager->set('js', $collection);
+    }
+
+    /**
+     * Compile all assets (css/js)
+     */
+    public function compileAssets($di = null, $config = null)
+    {
+        if ($di === null) {
+            $di = $this->_dependencyInjector;
+        }
+        if ($config === null) {
+            $config = $this->_config;
+        }
+
+        $modules = $di->get('modules');
+        $location = $config->application->assets->local;
+
+        /////////////////////////////////////////
+        // CSS
+        /////////////////////////////////////////
+        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme').'/';
+        $outputPath = $location . 'style.css';
+
+        $less = new \Engine\Css\Less();
+        $less->addImportDir($themeDirectory);
+        $less->addDir($themeDirectory);
+
+        // modules style files
+        foreach ($modules as $module => $enabled) {
+            if (!$enabled) continue;
+            $less->addDir(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/css/');
+        }
+
+        // compile
+        $less->compileTo($outputPath);
+
+
+        /////////////////////////////////////////
+        // JS
+        /////////////////////////////////////////
+        // @TODO: minify
+        $outputPath = $location . 'javascript.js';
+        file_put_contents($outputPath, "");
+        $files = array();
+
+        foreach ($modules as $module => $enabled) {
+            if (!$enabled) continue;
+
+            $files = array_merge($files, glob(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/js/*.js'));
+        }
+
+        $sortedFiles = array();
+        foreach ($files as $file) {
+            $sortedFiles[basename($file)] = $file;
+        }
+
+        ksort($sortedFiles);
+        foreach ($sortedFiles as $file) {
+            file_put_contents($outputPath, PHP_EOL . PHP_EOL . file_get_contents($file), FILE_APPEND);
+        }
+
     }
 
     /**
      * Clear application cache
      */
-    public function clearCache(){
+    public function clearCache()
+    {
 
         // clear cache
         $viewCache = $this->_dependencyInjector->get('viewCache');
@@ -526,6 +703,26 @@ class Application extends \Phalcon\Mvc\Application
                 @unlink($file); // delete file
             }
         }
+
+        // clear metadata cache
+        $files = glob($config->models->metadata->metaDataDir . '*'); // get all file names
+        foreach ($files as $file) { // iterate files
+            if (is_file($file)) {
+                @unlink($file); // delete file
+            }
+        }
+
+        //@TODO: clear annotations cache
+
+        // clear assets cache
+        $files = \Engine\Package\Utilities::fsRecursiveGlob(ROOT_PATH . '/public/assets/', '*'); // get all file names
+        foreach ($files as $file) { // iterate files
+            if (is_file($file))
+                @unlink($file); // delete file
+        }
+
+        $this->installAssets();
+        $this->compileAssets();
     }
 
     /**
@@ -535,12 +732,13 @@ class Application extends \Phalcon\Mvc\Application
      */
     public function saveConfig($config = null)
     {
-        if ($config === null){
+        if ($config === null) {
             $config = $this->_config;
         }
         $configText = var_export($config->toArray(), true);
         $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
         $configText = '<?php
+
 /**
 * PhalconEye
 *

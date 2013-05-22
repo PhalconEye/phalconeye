@@ -16,3 +16,4 @@ Third Party
 -----------
 * CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
 * AjaXplorer: http://ajaxplorer.info/ (GPL)
+* lessphp: http://leafo.net/lessphp/ (GPL3/MIT)
