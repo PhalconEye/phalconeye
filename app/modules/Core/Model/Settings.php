@@ -16,36 +16,28 @@
 
 namespace Core\Model;
 
-class Settings extends \Phalcon\Mvc\Model
+/**
+ * @Source("settings")
+ */
+class Settings extends \Engine\Model
 {
 
     /**
-     * @var string
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="value")
      */
-    protected $value;
-
+    public $value;
 
     /**
-     * Method to set the value of field name
+     * Set value of current setting and save to db
      *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Method to set the value of field value
-     *
-     * @param string $value
+     * @param $value
      */
     public function setValue($value)
     {
@@ -53,33 +45,9 @@ class Settings extends \Phalcon\Mvc\Model
         $this->save();
     }
 
-
     /**
-     * Returns the value of field name
+     * Get setting by name
      *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the value of field value
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    public function getSource()
-    {
-        return "settings";
-    }
-
-    /**
      * @param $name
      * @param null $default
      * @return null|string
@@ -91,10 +59,12 @@ class Settings extends \Phalcon\Mvc\Model
             return $default;
         }
 
-        return $setting->getValue();
+        return $setting->value;
     }
 
     /**
+     * Get setting object by name
+     *
      * @param $name
      * @return null|Settings
      */
@@ -112,18 +82,29 @@ class Settings extends \Phalcon\Mvc\Model
         return $setting;
     }
 
+    /**
+     * Set setting by name
+     *
+     * @param $name
+     * @param $value
+     */
     public static function setSetting($name, $value)
     {
         $setting = self::getSettingObject($name);
 
         if (!$setting) {
             $setting = new Settings();
-            $setting->setName($name);
+            $setting->name = $name;
         }
 
         $setting->setValue($value);
     }
 
+    /**
+     * Set array settings with key related values
+     *
+     * @param array $settings
+     */
     public static function setSettings($settings)
     {
         foreach ($settings as $key => $value) {

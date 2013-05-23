@@ -14,7 +14,7 @@
  *
  */
 
-namespace Core\Form\Admin\User;
+namespace User\Form\Admin;
 
 class Create extends \Engine\Form
 {
@@ -34,7 +34,8 @@ class Create extends \Engine\Form
     {
         $this
             ->setOption('title', "User Creation")
-            ->setOption('description', "Create new user.");
+            ->setOption('description', "Create new user.")
+            ->setAttrib('autocomplete', 'off');
 
 
         $this->addElement('text', 'username', array(

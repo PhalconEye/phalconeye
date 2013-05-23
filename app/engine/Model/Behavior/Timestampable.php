@@ -17,6 +17,16 @@ namespace Engine\Model\Behavior;
 
 trait Timestampable
 {
+    /**
+     * @Column(type="string", nullable=true, column="creation_date")
+     */
+    public $creation_date;
+
+    /**
+     * @Column(type="string", nullable=true, column="modified_date")
+     */
+    public $modified_date;
+
     public function beforeCreate()
     {
         $this->creation_date = date('Y-m-d H:i:s');

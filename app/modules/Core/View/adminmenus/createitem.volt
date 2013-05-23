@@ -42,7 +42,7 @@
     {% if created is defined %}
         <script type="text/javascript">
 
-            addItem({{ created.getId() }}, '{{ created.getTitle() }}');
+            addItem({{ created.id }}, '{{ created.getTitle() }}');
             $('#modal').modal('hide');
 
         </script>

@@ -56,21 +56,21 @@
                 {% for item in paginator.items %}
                     <tr>
                         <td>
-                            {{ item.getId() }}
+                            {{ item.id }}
                         </td>
                         <td>
-                            {{ item.getName() }}
+                            {{ item.name }}
                         </td>
                         <td>
-                            {{ item.getLocale() }}
+                            {{ item.locale }}
                         </td>
                         <td>
-                            <img alt='' src='{{ url(item.getIcon()) }}'/>
+                            <img alt='' src='{{ url(item.icon) }}'/>
                         </td>
                         <td>
-                            {{ link_to(['for':'admin-languages-manage', 'id':item.getId()], 'Manage' | trans) }}
-                            {{ link_to(['for':'admin-languages-edit', 'id':item.getId()], 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {{ link_to(['for':'admin-languages-manage', 'id':item.id], 'Manage' | trans) }}
+                            {{ link_to(['for':'admin-languages-edit', 'id':item.id], 'Edit' | trans) }}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
                         </td>
                     </tr>
                 {% endfor %}

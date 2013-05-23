@@ -19,240 +19,63 @@ namespace Core\Model;
 /**
  * Dynamic Page
  *
+ * @Source("pages")
  * @Acl(actions={"show_views"}, options={"page_footer"})
  */
-class Page extends \Phalcon\Mvc\Model
+class Page extends \Engine\Model
 {
 
     /**
-     * @var int
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="title")
      */
-    protected $title;
+    public $title;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="type")
      */
-    protected $type = null;
+    public $type = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="url")
      */
-    protected $url;
+    public $url;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="description")
      */
-    protected $description;
+    public $description;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="keywords")
      */
-    protected $keywords;
+    public $keywords;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="layout")
      */
-    protected $layout = 'middle';
+    public $layout = 'middle';
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="controller")
      */
-    protected $controller = null;
+    public $controller = null;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=true, column="roles")
      */
     protected $roles = null;
 
     /**
-     * @var int
-     *
+     * @Column(type="integer", nullable=false, column="view_count")
      */
-    protected $view_count = 0;
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field title
-     *
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * Method to set the value of field url
-     *
-     * @param string $url
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * Method to set the value of field description
-     *
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * Method to set the value of field keywords
-     *
-     * @param string $keywords
-     */
-    public function setKeywords($keywords)
-    {
-        $this->keywords = $keywords;
-    }
-
-    /**
-     * Method to set the value of field layout
-     *
-     * @param string $layout
-     */
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
-    }
-
-    /**
-     * Method to set the value of field controller
-     *
-     * @param string $controller
-     */
-    public function setController($controller)
-    {
-        $this->controller = $controller;
-    }
-
-    /**
-     * Method to set the value of field roles
-     *
-     * @param string $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-    }
-
-    /**
-     * Method to set the value of field view_count
-     *
-     * @param int $view_count
-     */
-    public function setViewCount($view_count)
-    {
-        $this->view_count = $view_count;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Get type of the special page, like Header and Footer
-     *
-     * @return null|string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Returns the value of field url
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
-    }
-
-    /**
-     * Returns the value of field description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Returns the value of field keywords
-     *
-     * @return string
-     */
-    public function getKeywords()
-    {
-        return $this->keywords;
-    }
-
-    /**
-     * Returns the value of field layout
-     *
-     * @return string
-     */
-    public function getLayout()
-    {
-        return $this->layout;
-    }
-
-    /**
-     * Returns the value of field controller
-     *
-     * @return string
-     */
-    public function getController()
-    {
-        return $this->controller;
-    }
+    public $view_count = 0;
 
     /**
      * Returns the value of field roles
@@ -270,21 +93,17 @@ class Page extends \Phalcon\Mvc\Model
     /**
      * Prepare json string to object to interract
      */
-    public function prepareRoles(){
+    public function prepareRoles()
+    {
         if (!is_array($this->roles))
             $this->roles = json_decode($this->roles);
     }
 
     /**
-     * Returns the value of field view_count
+     * Set widgets data related to page
      *
-     * @return int
+     * @param array $widgets
      */
-    public function getViewCount()
-    {
-        return $this->view_count;
-    }
-
     public function setWidgets($widgets = array())
     {
         if (!$widgets)
@@ -312,9 +131,9 @@ class Page extends \Phalcon\Mvc\Model
                 else
                     $orders[$item["layout"]]++;
 
-                if ($ex_widget->getId() == $itemData["id"]) {
-                    $ex_widget->setLayout($item["layout"]);
-                    $ex_widget->setWidgetOrder($orders[$item["layout"]]);
+                if ($ex_widget->id == $itemData["id"]) {
+                    $ex_widget->layout = $item["layout"];
+                    $ex_widget->widget_order = $orders[$item["layout"]];
                     $ex_widget->setParams($itemData["params"]);
                     $ex_widget->save();
                     $founded = true;
@@ -322,21 +141,21 @@ class Page extends \Phalcon\Mvc\Model
             }
 
             if (!$founded) {
-                $widgets_ids_to_remove[] = $ex_widget->getId();
+                $widgets_ids_to_remove[] = $ex_widget->id;
             }
         }
 
         // inserting
         $orders = array();
         foreach ($widgets as $item) {
-            if (empty($currentPageWidgets[$item['widget_index']])){
-                if ($item['widget_index'] == 'NaN'){ // insert with empty parameters
+            if (empty($currentPageWidgets[$item['widget_index']])) {
+                if ($item['widget_index'] == 'NaN') { // insert with empty parameters
                     $content = new Content();
-                    $content->setPageId($this->id);
-                    $content->setWidgetId($item["widget_id"]);
-                    $content->setLayout($item["layout"]);
+                    $content->page_id = $this->id;
+                    $content->widget_id = $item["widget_id"];
+                    $content->layout = $item["layout"];
                     $content->setParams(array());
-                    $content->setWidgetOrder($orders[$item["layout"]]);
+                    $content->widget_order = $orders[$item["layout"]];
                     $content->save();
                 }
                 continue;
@@ -350,11 +169,11 @@ class Page extends \Phalcon\Mvc\Model
 
             if ($itemData["id"] == 0) { // need to be inserted
                 $content = new Content();
-                $content->setPageId($this->id);
-                $content->setWidgetId($itemData["widget_id"]);
-                $content->setLayout($item["layout"]);
+                $content->page_id = $this->id;
+                $content->widget_id = $item["widget_id"];
+                $content->layout = $item["layout"];
                 $content->setParams($itemData["params"]);
-                $content->setWidgetOrder($orders[$item["layout"]]);
+                $content->widget_order = $orders[$item["layout"]];
                 $content->save();
             }
         }
@@ -367,6 +186,11 @@ class Page extends \Phalcon\Mvc\Model
 
     }
 
+    /**
+     * Get related widgets data
+     *
+     * @return \Engine\Model\ResultsetInterface
+     */
     public function getWidgets()
     {
         return Content::find(array(
@@ -375,21 +199,23 @@ class Page extends \Phalcon\Mvc\Model
         ));
     }
 
-    public function incrementViews(){
+    public function incrementViews()
+    {
         $this->view_count++;
         $this->save();
     }
 
-    public function isAllowed(){
+    /**
+     * Check if this page is allowed to view
+     *
+     * @return bool
+     */
+    public function isAllowed()
+    {
         $viewer = \User\Model\User::getViewer();
         $roles = $this->getRoles();
         if (empty($roles)) return true;
         return in_array($viewer->getRoleId(), $roles);
-    }
-
-    public function getSource()
-    {
-        return "pages";
     }
 
     public function validation()
@@ -415,15 +241,16 @@ class Page extends \Phalcon\Mvc\Model
         }
     }
 
-    public function beforeDelete()
+    protected function beforeDelete()
     {
         $this->getWidgets()->delete();
     }
 
-    public function beforeSave(){
-        if (is_array($this->roles) && !empty($this->roles)){
+    protected function beforeSave()
+    {
+        if (is_array($this->roles) && !empty($this->roles)) {
             $this->roles = json_encode($this->roles);
-        }else{
+        } else {
             $this->roles = null;
         }
     }

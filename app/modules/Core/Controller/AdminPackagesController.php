@@ -140,7 +140,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 if (!$manifest->isUpdate) {
                     $package = new Package();
                     $package->save($manifest->toArray());
-                    $this->_enablePackageConfig($package->getName(), $package->getType(), $manifest->toArray());
+                    $this->_enablePackageConfig($package->name, $package->type, $manifest->toArray());
 
                     // install package dependencies
                     if ($manifest->get('dependencies')) {
@@ -150,7 +150,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                             if ($needPackage) {
                                 $packageDependency = new \Core\Model\PackageDependency();
                                 $packageDependency->package_id = $package->id;
-                                $packageDependency->dependency_id = $needPackage->id;
+                                $packageDependency->dependencyId = $needPackage->id;
                                 $packageDependency->save();
                             }
                         }
@@ -177,7 +177,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                                 $iterations++;
                             }
                             $package = $this->_getPackage($manifest->type, $manifest->name);
-                            $package->setVersion($newPackageVersion);
+                            $package->version = $newPackageVersion;
                             $package->save();
                         }
                     } else if (method_exists($packageInstaller, 'install')) {
@@ -308,7 +308,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     $data['dependencies'][] = array(
                         'name' => $dependecy,
                         'type' => \Engine\Package\Manager::PACKAGE_TYPE_MODULE,
-                        'version' => $package->getVersion(),
+                        'version' => $package->version,
                     );
                 }
 
@@ -320,7 +320,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     $data['dependencies'][] = array(
                         'name' => $dependecy,
                         'type' => \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY,
-                        'version' => $package->getVersion(),
+                        'version' => $package->version,
                     );
                 }
 
@@ -348,13 +348,13 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $widgets = $query->getQuery()->execute();
                 foreach ($widgets as $widget) {
                     $data['widgets'][] = array(
-                        'name' => $widget->getName(),
+                        'name' => $widget->name,
                         'module' => $name,
-                        'description' => $widget->getDescription(),
-                        'is_paginated' => $widget->getIsPaginated(),
-                        'is_acl_controlled' => $widget->getIsAclControlled(),
-                        'admin_form' => $widget->getAdminForm(),
-                        'enabled' => $widget->isEnabled(),
+                        'description' => $widget->description,
+                        'is_paginated' => $widget->isPaginated,
+                        'is_acl_controlled' => $widget->isAclControlled,
+                        'admin_form' => $widget->adminForm,
+                        'enabled' => (bool)$widget->enabled,
                     );
                 }
             }
@@ -387,11 +387,11 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 }
 
                 $packageManager = new \Engine\Package\Manager();
-                $packageManager->removePackage($package->getName(), $package->getType());
+                $packageManager->removePackage($package->name, $package->type);
 
                 $package->delete();
 
-                $this->_removePackageConfig($name, $package->getType());
+                $this->_removePackageConfig($name, $package->type);
                 $this->app->clearCache();
                 $this->flashSession->success('Package "' . $name . '" removed!');
             } catch (Exception $e) {
@@ -413,11 +413,11 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         $this->view->disable();
 
         $package = $this->_getPackage($type, $name);
-        if ($package && !$package->isSystem()) {
-            $package->setEnabled();
+        if ($package && !$package->is_system) {
+            $package->enabled = 1;
             $package->save();
 
-            $this->_enablePackageConfig($name, $package->getType());
+            $this->_enablePackageConfig($name, $package->type);
             $this->app->clearCache();
         }
 
@@ -432,14 +432,14 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         $this->view->disable();
 
         $package = $this->_getPackage($type, $name);
-        if ($package && !$package->isSystem()) {
+        if ($package && !$package->is_system) {
             if ($this->_hasDependencies($package))
                 return $this->response->redirect(array('for' => $return));
 
-            $package->setEnabled(false);
+            $package->enabled = 0;
             $package->save();
 
-            $this->_disablePackageConfig($name, $package->getType());
+            $this->_disablePackageConfig($name, $package->type);
             $this->app->clearCache();
         }
 
@@ -469,7 +469,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $this->config->events = new \Phalcon\Config($events);
 
                 // remove widgets
-                $this->db->delete(\Core\Model\Widget::getSourceStatic(), 'module = ?', array($name));
+                $this->db->delete(\Core\Model\Widget::getTableName(), 'module = ?', array($name));
             }
                 break;
             case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
@@ -538,7 +538,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 }
 
                 // enable module widgets
-                $this->db->update(\Core\Model\Widget::getSourceStatic(), array('enabled'), array(1), "module = '{$name}'");
+                $this->db->update(\Core\Model\Widget::getTableName(), array('enabled'), array(1), "module = '{$name}'");
             }
                 break;
             case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
@@ -550,7 +550,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             {
                 $widget = \Core\Model\Widget::findFirstByName($name);
                 if ($widget) {
-                    $widget->setEnabled();
+                    $widget->enabled = 1;
                     $widget->save();
                 } else {
                     $widget = new \Core\Model\Widget();
@@ -598,7 +598,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $this->config->modules = new \Phalcon\Config($modules);
 
                 // disable module widgets
-                $this->db->update(\Core\Model\Widget::getSourceStatic(), array('enabled'), array(0), "module = '{$name}'");
+                $this->db->update(\Core\Model\Widget::getTableName(), array('enabled'), array(0), "module = '{$name}'");
             }
                 break;
             case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
@@ -610,7 +610,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             {
                 $widget = \Core\Model\Widget::findFirstByName($name);
                 if ($widget) {
-                    $widget->setEnabled(false);
+                    $widget->enabled = 0;
                     $widget->save();
                 }
             }
@@ -643,7 +643,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             $message = 'You can\'t uninstall or disable this package, because it\'s related to:<br/>';
             foreach ($dependencies as $dependency) {
                 $dependencyPackage = $dependency->getDependencyPackage();
-                $message .= " - {$dependencyPackage->getType()} '{$dependencyPackage->getName()}'";
+                $message .= " - {$dependencyPackage->type} '{$dependencyPackage->name}'";
             }
             $this->flashSession->error($message);
             return true;

@@ -41,7 +41,7 @@ class Bootstrap extends \Engine\Bootstrap
             $widgetObjects = \Core\Model\Widget::find();
             $widgets = array();
             foreach($widgetObjects as $object){
-                $widgets[$object->getId()] = $object;
+                $widgets[$object->id] = $object;
             }
 
             $cache->save($cacheKey, $widgets, 2592000); // 30 days

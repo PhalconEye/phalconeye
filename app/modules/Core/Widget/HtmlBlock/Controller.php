@@ -92,13 +92,13 @@ class Controller extends \Engine\Widget\Controller
         $order = 3; // all textarea's must be ordered together
         foreach($languages as $language){
             $selectedLanguage = '';
-            if ($language->getLocale() == $defaultLocale){
+            if ($language->locale == $defaultLocale){
                 $selectedLanguage = 'selected="selected"';
             }
 
-            $form->addElement('textArea', 'html_'.$language->getLocale(), array(), $order++);
-            $languageTextCode .= 'CKEDITOR.replace("html_'.$language->getLocale().'");';
-            $languageHtmlItems .= '<option '.$selectedLanguage.' value='.$language->getLocale().'>'.$language->getName().'</option>';
+            $form->addElement('textArea', 'html_'.$language->locale, array(), $order++);
+            $languageTextCode .= 'CKEDITOR.replace("html_'.$language->locale.'");';
+            $languageHtmlItems .= '<option '.$selectedLanguage.' value='.$language->locale.'>'.$language->name.'</option>';
         }
 
         $languageSelectorHtml = sprintf($languageSelectorHtml, $defaultLocale, $languageTextCode, $this->di->get('trans')->_('HTML block, for:'), $languageHtmlItems);

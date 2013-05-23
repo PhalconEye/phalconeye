@@ -16,19 +16,33 @@
 
 namespace Core\Model;
 
-class PackageDependency extends \Phalcon\Mvc\Model
+/**
+ * @Source("package_dependencies")
+ */
+class PackageDependency extends \Engine\Model
 {
+    /**
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
+     */
     public $id;
 
+    /**
+     * @Column(type="integer", nullable=false, column="package_id")
+     */
     public $package_id;
 
+    /**
+     * @Column(type="integer", nullable=false, column="dependency_id")
+     */
     public $dependency_id;
 
-    public function getSource()
-    {
-        return "package_dependencies";
-    }
-
+    /**
+     * Get related package
+     *
+     * @return \Engine\Model
+     */
     public function getDependencyPackage(){
         return Package::findFirst($this->dependency_id);
     }

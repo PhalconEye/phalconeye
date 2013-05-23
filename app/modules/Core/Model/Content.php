@@ -16,107 +16,56 @@
 
 namespace Core\Model;
 
-class Content extends \Phalcon\Mvc\Model 
+/**
+ * @Source("content")
+ * @BelongsTo("widget_id", "\Core\Model\Widget", "id", {
+ *  "alias": "Widget"
+ * })
+ */
+class Content extends \Engine\Model
 {
 
     /**
-     * @var int
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var int
-     *
+     * @Column(type="integer", nullable=false, column="page_id")
      */
-    protected $page_id;
+    public $page_id;
 
     /**
-     * @var int
-     *
+     * @Column(type="integer", nullable=false, column="widget_id")
      */
-    protected $widget_id;
+    public $widget_id;
 
     /**
-     * @var int
-     *
+     * @Column(type="integer", nullable=false, column="widget_order")
      */
-    protected $widget_order;
+    public $widget_order = 0;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="layout")
      */
-    protected $layout;
+    public $layout;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="params")
      */
     protected $params;
 
-    public function initialize()
-    {
-        $this->belongsTo("widget_id", '\Core\Model\Widget', "id");
-    }
 
     /**
      * Return the related "Widget"
      *
      * @return \Core\Model\Widget
      */
-    public function getWidget($arguments = array()){
-        return $this->getRelated('\Core\Model\Widget', $arguments);
-    }
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param int $id
-     */
-    public function setId($id)
+    public function getWidget($arguments = array())
     {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field page_id
-     *
-     * @param int $page_id
-     */
-    public function setPageId($page_id)
-    {
-        $this->page_id = $page_id;
-    }
-
-    /**
-     * Method to set the value of field widget_id
-     *
-     * @param int $widget_id
-     */
-    public function setWidgetId($widget_id)
-    {
-        $this->widget_id = $widget_id;
-    }
-
-    /**
-     * Method to set the value of field widget_order
-     *
-     * @param int $widget_order
-     */
-    public function setWidgetOrder($widget_order)
-    {
-        $this->widget_order = $widget_order;
-    }
-
-    /**
-     * Method to set the value of field layout
-     *
-     * @param string $layout
-     */
-    public function setLayout($layout)
-    {
-        $this->layout = $layout;
+        return $this->getRelated('Widget', $arguments);
     }
 
     /**
@@ -129,60 +78,9 @@ class Content extends \Phalcon\Mvc\Model
     {
         if ($encode)
             $this->params = json_encode($params);
-        else{
+        else {
             $this->params = $params;
         }
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field page_id
-     *
-     * @return int
-     */
-    public function getPageId()
-    {
-        return $this->page_id;
-    }
-
-    /**
-     * Returns the value of field widget_id
-     *
-     * @return int
-     */
-    public function getWidgetId()
-    {
-        return $this->widget_id;
-    }
-
-    /**
-     * Returns the value of field widget_order
-     *
-     * @return int
-     */
-    public function getWidgetOrder()
-    {
-        return $this->widget_order;
-    }
-
-    /**
-     * Returns the value of field layout
-     *
-     * @return string
-     */
-    public function getLayout()
-    {
-        return $this->layout;
     }
 
     /**
@@ -193,12 +91,8 @@ class Content extends \Phalcon\Mvc\Model
     public function getParams()
     {
         $params = (array)json_decode($this->params);
-        $params['content_id'] = $this->getId();
+        $params['content_id'] = $this->id;
         return $params;
     }
 
-    public function getSource()
-    {
-        return "content";
-    }
 }

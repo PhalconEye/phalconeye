@@ -14,7 +14,7 @@
  *
  */
 
-namespace Core\Form\Admin\User;
+namespace User\Form\Admin;
 
 class RoleCreate extends \Engine\Form
 {

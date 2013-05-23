@@ -18,38 +18,9 @@ namespace Engine\Model\Behavior;
 
 trait Sortable
 {
-    private $sort = 1;
-
-    private $reordered = false;
-
     /**
-     * Get sort.
-     *
-     * @return sort.
+     * @Column(type="integer", nullable=false, column="item_order")
      */
-    public function getSort()
-    {
-        return $this->sort;
-    }
+    public $item_order = 0;
 
-    /**
-     * Set sort.
-     *
-     * @param sort the value to set.
-     */
-    public function setSort($sort)
-    {
-        $this->reordered = $this->sort !== $sort;
-        $this->sort      = $sort;
-    }
-
-    public function isReordered()
-    {
-        return $this->reordered;
-    }
-
-    public function setReordered()
-    {
-        $this->reordered = true;
-    }
 }

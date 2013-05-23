@@ -72,8 +72,8 @@ class Acl implements ContainerInterface
                 $roles = \User\Model\Role::find();
                 $roleNames = array();
                 foreach ($roles as $role) {
-                    $roleNames[$role->getId()] = $role->getName();
-                    $acl->addRole($role->getName());
+                    $roleNames[$role->id] = $role->name;
+                    $acl->addRole($role->name);
                 }
 
                 // Defining admin area
@@ -81,7 +81,7 @@ class Acl implements ContainerInterface
                 $roleAdmin = \User\Model\Role::getRoleByType(self::ROLE_TYPE_ADMIN);
                 // Add "admin area" resource
                 $acl->addResource($adminArea, "access");
-                $acl->allow($roleAdmin->getName(), self::ACL_ADMIN_AREA, 'access');
+                $acl->allow($roleAdmin->name, self::ACL_ADMIN_AREA, 'access');
 
 
                 // Getting objects that is in acl
@@ -132,10 +132,10 @@ class Acl implements ContainerInterface
 
                 foreach ($access as $item) {
 
-                    $value = $item->getValue();
+                    $value = $item->value;
 
-                    if (array_key_exists($item->getObject(), $objects) && in_array($item->getAction(), $objects[$item->getObject()]['actions']) && ($value == "allow" || $value == "deny")){
-                        $acl->$value($roleNames[$item->getRoleId()], $item->getObject(), $item->getAction());
+                    if (array_key_exists($item->object, $objects) && in_array($item->action, $objects[$item->object]['actions']) && ($value == "allow" || $value == "deny")){
+                        $acl->$value($roleNames[$item->role_id], $item->object, $item->action);
                     }
                 }
 
@@ -154,12 +154,12 @@ class Acl implements ContainerInterface
             "bind"       => array(
                 1 => $objectName,
                 2 => $option,
-                3 => $role->getId()
+                3 => $role->id
             )
         ));
 
         if ($result) {
-            return $result->getValue();
+            return $result->value;
         }
 
         return null;
@@ -218,9 +218,11 @@ class Acl implements ContainerInterface
 
         // check admin area
         if (substr($controller,0, 5) == 'admin'){
-            if ($acl->isAllowed($viewer->getRole()->getName(), self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
-                return  $dispatcher->forward(array(
-                    "controller" => '\Core\Controller\Error',
+            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+                return $dispatcher->forward(array(
+                    'module' => \Engine\Application::$defaultModule,
+                    'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',
+                    "controller" => 'error',
                     "action" => 'show404'
                 ));
             }

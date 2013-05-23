@@ -128,6 +128,11 @@ class Form extends \Phalcon\Forms\Form
         /* @var \Phalcon\Forms\Element $element */
         $element = new $elementClass($name, $attributes);
 
+        // Set default value
+        if ($this->_entity && isset($this->_entity->$name)){
+            $element->setDefault($this->_entity->$name);
+        }
+
         $this->_elementsData[$name] = array(
             'type' => $type,
             'element' => $element,
@@ -336,9 +341,9 @@ class Form extends \Phalcon\Forms\Form
      *
      * @return array
      */
-    public function getValues($checkEntity = true)
+    public function getValues($getEntity = true)
     {
-        if ($checkEntity && $this->_entity !== null) {
+        if ($getEntity && $this->_entity !== null) {
             return $this->_entity;
         } else {
             $values = array();

@@ -89,7 +89,7 @@ class Manager
         $this->_installedPackages = array();
         if (!empty($packages))
             foreach ($packages as $package) {
-                $this->_installedPackages[$package->getType()][$package->getName()] = $package->getVersion();
+                $this->_installedPackages[$package->type][$package->name] = $package->version;
             }
     }
 

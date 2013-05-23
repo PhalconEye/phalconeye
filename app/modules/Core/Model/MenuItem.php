@@ -16,98 +16,100 @@
 
 namespace Core\Model;
 
-class MenuItem extends \Phalcon\Mvc\Model
+/**
+ * @Source("menu_items")
+ * @BelongsTo("menu_id", '\Core\Model\Menu', "id", {
+ *  "alias": "Menu"
+ * })
+ * @HasMany("id", '\Core\Model\MenuItem', "parent_id", {
+ *  "alias": "MenuItem"
+ * })
+ */
+class MenuItem extends \Engine\Model
 {
 
-    /**
-     * @var integer
-     *
-     */
-    protected $id;
+    use \Engine\Model\Behavior\Sortable;
 
     /**
-     * @var string
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $title;
+    public $id;
 
     /**
-     * @var integer
-     *
+     * @Column(type="string", nullable=false, column="title")
      */
-    protected $menu_id;
+    public $title;
 
     /**
-     * @var integer
-     *
+     * @Column(type="integer", nullable=false, column="menu_id")
      */
-    protected $parent_id = null;
+    public $menu_id;
 
     /**
-     * @var integer
-     *
+     * @Column(type="integer", nullable=true, column="parent_id")
      */
-    protected $page_id = null;
+    public $parent_id = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="integer", nullable=true, column="page_id")
      */
-    protected $url = null;
+    public $page_id = null;
 
     /**
-     * Onclick js action
+     * @Column(type="string", nullable=true, column="url")
+     */
+    public $url = null;
+
+    /**
+     * @Column(type="string", nullable=true, column="onclick")
      */
     protected $onclick = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="target")
      */
-    protected $target = null;
+    public $target = null;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=true, column="tooltip")
      */
     protected $tooltip = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="tooltip_position")
      */
-    protected $tooltip_position = 'top';
+    public $tooltip_position = 'top';
 
     /**
-     * @var string
+     * @Column(type="string", nullable=true, column="icon")
      */
-    protected $icon = null;
+    public $icon = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="icon_position")
      */
-    protected $icon_position = 'left';
+    public $icon_position = 'left';
 
     /**
-     * @var integer
-     *
-     */
-    protected $item_order = 0;
-
-    /**
-     * @var string
+     * @Column(type="string", nullable=true, column="languages")
      */
     protected $languages = null;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=true, column="roles")
      */
     protected $roles = null;
 
-    public function initialize()
+    /**
+     * Return the related "Menu"
+     *
+     * @return \Core\Model\Menu
+     */
+    public function getMenu($arguments = array())
     {
-        $this->belongsTo("menu_id", '\Core\Model\Menu', "id");
-        $this->hasMany("id", '\Core\Model\MenuItem', "parent_id");
+        return $this->getRelated('Menu', $arguments);
     }
 
     /**
@@ -115,157 +117,9 @@ class MenuItem extends \Phalcon\Mvc\Model
      *
      * @return \Core\Model\Menu
      */
-    public function getMenu($arguments = array()){
-        return $this->getRelated('\Core\Model\Menu', $arguments);
-    }
-
-    /**
-     * Return the related "Menu"
-     *
-     * @return \Core\Model\Menu
-     */
-    public function getMenuItem($arguments = array()){
-        return $this->getRelated('\Core\Model\MenuItem', $arguments);
-    }
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
+    public function getMenuItems($arguments = array())
     {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field title
-     *
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * Method to set the value of field menu_id
-     *
-     * @param integer $menu_id
-     */
-    public function setMenuId($menu_id)
-    {
-        $this->menu_id = $menu_id;
-    }
-
-    /**
-     * Method to set the value of field parent_id
-     *
-     * @param integer $parent_id
-     */
-    public function setParentId($parent_id)
-    {
-        $this->parent_id = $parent_id;
-    }
-
-    /**
-     * Method to set the value of field page_id
-     *
-     * @param integer $page_id
-     */
-    public function setPageId($page_id)
-    {
-        $this->page_id = $page_id;
-    }
-
-    /**
-     * Method to set the value of field url
-     *
-     * @param string $url
-     */
-    public function setUrl($url)
-    {
-        $this->url = $url;
-    }
-
-    /**
-     * Method to set the value of field position
-     *
-     * @param string $position
-     */
-    public function setTooltipPosition($position)
-    {
-        $this->tooltip_position = $position;
-    }
-
-    /**
-     * Method to set the value of field item_order
-     *
-     * @param integer $item_order
-     */
-    public function setItemOrder($item_order)
-    {
-        $this->item_order = $item_order;
-    }
-
-    /**
-     * Method to set the value of field languages
-     *
-     * @param string $languages
-     */
-    public function setLanguages($languages)
-    {
-        $this->languages = $languages;
-    }
-
-    /**
-     * Method to set the value of field roles
-     *
-     * @param string $roles
-     */
-    public function setRoles($roles)
-    {
-        $this->roles = $roles;
-    }
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Returns the value of field menu_id
-     *
-     * @return integer
-     */
-    public function getMenuId()
-    {
-        return $this->menu_id;
-    }
-
-    /**
-     * Returns the value of field parent_id
-     *
-     * @return integer
-     */
-    public function getParentId()
-    {
-        return $this->parent_id;
+        return $this->getRelated('MenuItem', $arguments);
     }
 
     /**
@@ -280,26 +134,6 @@ class MenuItem extends \Phalcon\Mvc\Model
         } else {
             return Menu::findFirst($this->menu_id);
         }
-    }
-
-    /**
-     * Returns the value of field page_id
-     *
-     * @return integer
-     */
-    public function getPageId()
-    {
-        return $this->page_id;
-    }
-
-    /**
-     * Returns the value of field url
-     *
-     * @return string
-     */
-    public function getUrl()
-    {
-        return $this->url;
     }
 
     /**
@@ -322,41 +156,6 @@ class MenuItem extends \Phalcon\Mvc\Model
         return str_replace('"', "'", $this->tooltip); // we need html to work well in attribute "title"
     }
 
-    public function getTooltipPosition()
-    {
-        return $this->tooltip_position;
-    }
-
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
-    public function getIconPosition()
-    {
-        return $this->icon_position;
-    }
-
-    /**
-     * Returns the value of field target
-     *
-     * @return string
-     */
-    public function getTarget()
-    {
-        return $this->target;
-    }
-
-    /**
-     * Returns the value of field item_order
-     *
-     * @return integer
-     */
-    public function getItemOrder()
-    {
-        return $this->item_order;
-    }
-
     /**
      * Returns the value of field languages
      *
@@ -373,7 +172,8 @@ class MenuItem extends \Phalcon\Mvc\Model
     /**
      * Prepare json string to object to interract
      */
-    public function prepareLanguages(){
+    public function prepareLanguages()
+    {
         if (!is_array($this->languages))
             $this->languages = json_decode($this->languages);
     }
@@ -394,60 +194,37 @@ class MenuItem extends \Phalcon\Mvc\Model
     /**
      * Prepare json string to object to interract
      */
-    public function prepareRoles(){
+    public function prepareRoles()
+    {
         if (!is_array($this->roles))
             $this->roles = json_decode($this->roles);
     }
 
-    public function getSource()
+    /**
+     * Get menu item href
+     *
+     * @return null|string
+     */
+    public function getHref()
     {
-        return "menu_items";
-    }
-
-    public static function getSourceStatic()
-    {
-        return "menu_items";
-    }
-
-    public function beforeDelete()
-    {
-        $flag = true;
-        foreach ($this->getMenuItem() as $item) {
-            $flag = $item->delete();
-            if (!$flag) break;
-        }
-        return $flag;
-    }
-
-
-    public function beforeSave(){
-        if (is_array($this->roles) && !empty($this->roles)){
-            $this->roles = json_encode($this->roles);
-        }else{
-            $this->roles = null;
-        }
-
-        if (is_array($this->languages) && !empty($this->languages)){
-            $this->languages = json_encode($this->languages);
-        }
-        else{
-            $this->languages = null;
-        }
-    }
-
-    public function getHref(){
-        if ($this->page_id){
+        if ($this->page_id) {
             return "page/{$this->page_id}";
         }
 
-        if ($this->url){
+        if ($this->url) {
             return $this->url;
         }
 
         return 'javascript:;';
     }
 
-    public function isAllowed(){
+    /**
+     * Check if menu item output is allowed
+     *
+     * @return bool
+     */
+    public function isAllowed()
+    {
         $valid = true;
         $viewer = \User\Model\User::getViewer();
         $roles = $this->getRoles();
@@ -466,5 +243,30 @@ class MenuItem extends \Phalcon\Mvc\Model
             $valid = in_array($locale, $languages);
 
         return $valid;
+    }
+
+    protected function beforeDelete()
+    {
+        $flag = true;
+        foreach ($this->getMenuItems() as $item) {
+            $flag = $item->delete();
+            if (!$flag) break;
+        }
+        return $flag;
+    }
+
+    protected function beforeSave()
+    {
+        if (is_array($this->roles) && !empty($this->roles)) {
+            $this->roles = json_encode($this->roles);
+        } else {
+            $this->roles = null;
+        }
+
+        if (is_array($this->languages) && !empty($this->languages)) {
+            $this->languages = json_encode($this->languages);
+        } else {
+            $this->languages = null;
+        }
     }
 }

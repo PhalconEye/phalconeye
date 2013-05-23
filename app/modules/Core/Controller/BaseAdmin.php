@@ -95,10 +95,10 @@ class BaseAdmin extends Base
         if ($modules->count()) {
             $modulesMenuItems = array();
             foreach ($modules as $module) {
-                if ($module->isSystem()) continue;
-                $href = 'admin/module/' . $module->getName();
+                if ($module->is_system) continue;
+                $href = 'admin/module/' . $module->name;
                 $modulesMenuItems[$href] = array(
-                    'title' => $module->getTitle(),
+                    'title' => $module->title,
                     'href' => $href,
                     'prepend' => '<i class="icon-th-large icon-white"></i>'
                 );

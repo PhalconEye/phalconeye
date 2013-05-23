@@ -54,8 +54,8 @@
         var requestAddItem = function () {
             var url = '{{ url(['for':'admin-menus-create-item'])}}';
             var data = {
-                'menu_id': {{ menu.getId() }}
-                {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
+                'menu_id': {{ menu.id }}
+                {% if parent is defined %}, 'parent_id': {{ parent.id }}
                 {% endif %}
             };
 
@@ -65,7 +65,7 @@
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this menu item?" | trans }}')) {
             {% if parent is defined %}
-                window.location.href = '{{ url(['for':'admin-menus-delete-item'])}}' + id + '?parent_id={{ parent.getId() }}';
+                window.location.href = '{{ url(['for':'admin-menus-delete-item'])}}' + id + '?parent_id={{ parent.id }}';
             {% else %}
                 window.location.href = '{{ url(['for':'admin-menus-delete-item'])}}' + id;
             {% endif %}
@@ -76,8 +76,8 @@
         var editItem = function (id) {
             var url = '{{ url(['for':'admin-menus-edit-item'])}}' + id;
             var data = {
-                'menu_id': {{ menu.getId() }}
-                {% if parent is defined %}, 'parent_id': {{ parent.getId() }}
+                'menu_id': {{ menu.id }}
+                {% if parent is defined %}, 'parent_id': {{ parent.id }}
                 {% endif %}
             };
 
@@ -107,29 +107,29 @@
             <h3><a href="{{ url("admin/menus")}}">{{ "Menus" | trans }}</a> >
                 {% if parent is defined %}
                     {% for p in parents %}
-                        <a href="{{ url(['for':'admin-menus-manage'])}}{{ menu.getId() }}{% if p.getParentId() is not null %}?parent_id={{ p.getParentId() }}{% endif %}"
-                           class='btn'>{{ p.getTitle() }}</a>
+                        <a href="{{ url(['for':'admin-menus-manage'])}}{{ menu.id }}{% if p.parent_id is not null %}?parent_id={{ p.parent_id }}{% endif %}"
+                           class='btn'>{{ p.title }}</a>
                         >
                     {% endfor %}
                 {% endif %}
                 {{ "Manage menu" | trans }}
-                "{{ menu.getName() }}"</h3>
+                "{{ menu.name }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
             <div id="label-saved" class="label label-success">{{ 'Saved...'|trans }}</div>
         </div>
         <div class="menu_manage_body">
             <ul id="items">
                 {% for item in items %}
-                    <li element_id="{{ item.getId() }}">
-                        <div class="item_title"><i class="icon-move"></i>{{ item.getTitle() }}
-                            | {{ 'Items: '|trans }}{{ item.getMenuItem().count() }}</div>
+                    <li element_id="{{ item.id }}">
+                        <div class="item_title"><i class="icon-move"></i>{{ item.title }}
+                            | {{ 'Items: '|trans }}{{ item.getMenuItems().count() }}</div>
                         <div class="item_options">
                             <a class="btn btn-success" href="javascript:;"
-                               onclick="manageItem({{ item.getId() }});">{{ 'Manage'|trans }}</a>
+                               onclick="manageItem({{ item.id }});">{{ 'Manage'|trans }}</a>
                             <a class="btn btn-success" href="javascript:;"
-                               onclick="editItem({{ item.getId() }});">{{ 'Edit'|trans }}</a>
+                               onclick="editItem({{ item.id }});">{{ 'Edit'|trans }}</a>
                             <a class="btn btn-success" href="javascript:;"
-                               onclick="deleteItem({{ item.getId() }});">{{ 'Remove'|trans }}</a>
+                               onclick="deleteItem({{ item.id }});">{{ 'Remove'|trans }}</a>
                         </div>
                     </li>
                 {% endfor %}

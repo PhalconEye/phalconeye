@@ -16,47 +16,44 @@
 
 namespace User\Model;
 
-class User extends \Phalcon\Mvc\Model
+/**
+ * @Source("users")
+ * @BelongsTo("role_id", '\User\Model\Role', "id", {
+ *  "alias": "Role"
+ * })
+ */
+class User extends \Engine\Model
 {
 
     // use trait Timestampable for creation_date and modified_date fields
     use \Engine\Model\Behavior\Timestampable;
 
     /**
-     * @var int
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var int
-     *
+     * @Column(type="integer", nullable=true, column="role_id")
      */
-    protected $role_id;
+    public $role_id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="username")
      */
-    protected $username;
+    public $username;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="password")
      */
-    protected $password;
+    public $password;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="email")
      */
-    protected $email;
-
-    /**
-     * @var string
-     *
-     */
-    protected $creation_date;
+    public $email;
 
     /**
      * Current viewer
@@ -65,92 +62,9 @@ class User extends \Phalcon\Mvc\Model
      */
     private static $_viewer = null;
 
-
-    public function initialize()
-    {
-        $this->belongsTo("role_id", '\User\Model\Role', "id");
-    }
-
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param int $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field role_id
-     *
-     * @param int $role_id
-     */
-    public function setRoleId($role_id)
-    {
-        $this->role_id = $role_id;
-    }
-
-    /**
-     * Method to set the value of field username
-     *
-     * @param string $username
-     */
-    public function setUsername($username)
-    {
-        $this->username = $username;
-    }
-
-    /**
-     * Method to set the value of field password
-     *
-     * @param string $password
-     */
-    public function setPassword($password)
-    {
-        $this->password = $password;
-    }
-
-    /**
-     * Method to set the value of field email
-     *
-     * @param string $email
-     */
-    public function setEmail($email)
-    {
-        $this->email = $email;
-    }
-
-    /**
-     * Method to set the value of field creation_date
-     *
-     * @param string $creation_date
-     */
-    public function setCreationDate($creation_date)
-    {
-        $this->creation_date = $creation_date;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return int
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field role_id
-     *
-     * @return int
-     */
-    public function getRoleId()
-    {
-        return $this->role_id;
+    public function setPassword($password){
+        if (!empty($password) && $this->password != $password)
+            $this->password = $this->getDI()->get('security')->hash($password);
     }
 
     /**
@@ -159,7 +73,7 @@ class User extends \Phalcon\Mvc\Model
      * @return \User\Model\Role
      */
     public function getRole($arguments = array()){
-        $role = $this->getRelated('\User\Model\Role', $arguments);
+        $role = $this->getRelated('Role', $arguments);
         if (!$role){
             $role = new Role();
             $role->id = 0;
@@ -170,47 +84,12 @@ class User extends \Phalcon\Mvc\Model
     }
 
     /**
-     * Returns the value of field username
+     * Will check if user have Admin role
      *
-     * @return string
+     * @return bool
      */
-    public function getUsername()
-    {
-        return $this->username;
-    }
-
-    /**
-     * Returns the value of field password
-     *
-     * @return string
-     */
-    public function getPassword()
-    {
-        return $this->password;
-    }
-
-    /**
-     * Returns the value of field email
-     *
-     * @return string
-     */
-    public function getEmail()
-    {
-        return $this->email;
-    }
-
-    /**
-     * Returns the value of field creation_date
-     *
-     * @return string
-     */
-    public function getCreationDate()
-    {
-        return $this->creation_date;
-    }
-
     public function isAdmin(){
-        return $this->getRole()->getType() == \Core\Api\Acl::ROLE_TYPE_ADMIN;
+        return $this->getRole()->type == \Core\Api\Acl::ROLE_TYPE_ADMIN;
     }
 
     /**
@@ -226,8 +105,8 @@ class User extends \Phalcon\Mvc\Model
             self::$_viewer = self::findFirst($identity);
             if (!self::$_viewer){
                 self::$_viewer = new User();
-                self::$_viewer->setId(0);
-                self::$_viewer->setRoleId(Role::getRoleByType(\Core\Api\Acl::ROLE_TYPE_GUEST)->getId());
+                self::$_viewer->id = 0;
+                self::$_viewer->role_id = Role::getRoleByType(\Core\Api\Acl::ROLE_TYPE_GUEST)->id;
             }
         }
 
@@ -262,8 +141,4 @@ class User extends \Phalcon\Mvc\Model
         }
     }
 
-    public function getSource()
-    {
-        return "users";
-    }
 }

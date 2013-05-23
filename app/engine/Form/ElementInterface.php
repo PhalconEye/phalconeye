@@ -36,7 +36,7 @@ interface ElementInterface{
      * Sets the element description
      *
      * @param string $description
-     * @return Form_ElementInterface
+     * @return \Engine\Form\ElementInterface
      */
     public function setDescription($description);
 
@@ -53,7 +53,7 @@ interface ElementInterface{
      * Sets the parent form to the element
      *
      * @param \Phalcon\Forms\Form $form
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function setForm($form);
 
@@ -61,7 +61,7 @@ interface ElementInterface{
     /**
      * Returns the parent form to the element
      *
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function getForm();
 
@@ -70,7 +70,7 @@ interface ElementInterface{
      * Sets the element's name
      *
      * @param string $name
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function setName($name);
 
@@ -87,7 +87,7 @@ interface ElementInterface{
      * Adds a group of validators
      *
      * @param \Phalcon\Validation\ValidatorInterface[]
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function addValidators($validators, $merge=null);
 
@@ -96,7 +96,7 @@ interface ElementInterface{
      * Adds a validator to the element
      *
      * @param \Phalcon\Validation\ValidatorInterface
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function addValidator($validator);
 
@@ -124,7 +124,7 @@ interface ElementInterface{
      *
      * @param string $attribute
      * @param mixed $value
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function setAttribute($attribute, $value);
 
@@ -133,7 +133,7 @@ interface ElementInterface{
      * Sets default attributes for the element
      *
      * @param array $attributes
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function setAttributes($attributes);
 
@@ -150,7 +150,7 @@ interface ElementInterface{
      * Sets the element label
      *
      * @param string $label
-     * @return \Phalcon\Forms\ElementInterface
+     * @return \Phalcon\Forms\Form
      */
     public function setLabel($label);
 

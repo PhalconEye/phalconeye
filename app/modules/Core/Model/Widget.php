@@ -16,63 +16,56 @@
 
 namespace Core\Model;
 
-class Widget extends \Phalcon\Mvc\Model
+/**
+ * @Source("widgets")
+ * @HasMany("id", '\Core\Model\Content', "widget_id", {
+ *  "alias": "Content"
+ * })
+ */
+class Widget extends \Engine\Model
 {
 
     /**
-     * @var integer
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="module")
      */
-    protected $module = null;
+    public $module = null;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="description")
      */
-    protected $description;
+    public $description;
 
     /**
-     * @var integer
-     *
+     * @Column(type="boolean", nullable=false, column="is_paginated")
      */
-    protected $is_paginated = 0;
-
+    public $is_paginated = false;
 
     /**
-     * @var integer
-     *
+     * @Column(type="integer", nullable=false, column="is_acl_controlled")
      */
-    protected $is_acl_controlled = 0;
+    public $is_acl_controlled = false;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="admin_form")
      */
-    protected $admin_form = 'action';
+    public $admin_form = 'action';
 
     /**
-     * @var integer
-     *
+     * @Column(type="boolean", nullable=false, column="enabled")
      */
-    protected $enabled = 1;
-
-
-    public function initialize()
-    {
-        $this->hasMany("id", '\Core\Model\Content', "widget_id");
-    }
+    public $enabled = true;
 
     /**
      * Return the related "Content"
@@ -80,181 +73,10 @@ class Widget extends \Phalcon\Mvc\Model
      * @return \Core\Model\Content[]
      */
     public function getContent($arguments = array()){
-        return $this->getRelated('\Core\Model\Content', $arguments);
+        return $this->getRelated('Content', $arguments);
     }
 
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field module
-     *
-     * @param string $module
-     */
-    public function setModule($module)
-    {
-        $this->module = $module;
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-
-    /**
-     * Method to set the value of field description
-     *
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * Method to set the value of field is_paginated
-     *
-     * @param integer $is_paginated
-     */
-    public function setIsPaginated($is_paginated)
-    {
-        $this->is_paginated = $is_paginated;
-    }
-
-    /**
-     * Method to set the value of field is_acl_controlled
-     *
-     * @param integer $is_acl_controlled
-     */
-    public function setIsAclControlled($is_acl_controlled)
-    {
-        $this->is_acl_controlled = $is_acl_controlled;
-    }
-    /**
-     * Method to set the value of field admin_form
-     *
-     * @param string $admin_form
-     */
-    public function setAdminForm($admin_form)
-    {
-        $this->admin_form = $admin_form;
-    }
-
-    /**
-     * Method to set the value of field enabled
-     *
-     * @param bool $flag
-     */
-    public function setEnabled($flag = true)
-    {
-        $this->enabled = (int)$flag;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field module
-     *
-     * @return string
-     */
-    public function getModule()
-    {
-        return $this->module;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the value of field description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Returns the value of field is_paginated
-     *
-     * @return integer
-     */
-    public function getIsPaginated()
-    {
-        return $this->is_paginated;
-    }
-
-    /**
-     * Returns the value of field is_acl_controlled
-     *
-     * @return integer
-     */
-    public function getIsAclControlled()
-    {
-        return $this->is_acl_controlled;
-    }
-
-    /**
-     * Returns the value of field admin_form
-     *
-     * @return string
-     */
-    public function getAdminForm()
-    {
-        return $this->admin_form;
-    }
-
-    /**
-     * Checks if module is enabled
-     *
-     * @return string
-     */
-    public function isEnabled()
-    {
-        return (bool)$this->enabled;
-    }
-
-    public function getSource()
-    {
-        return "widgets";
-    }
-
-    public static function getSourceStatic()
-    {
-        return "widgets";
-    }
-
-    public function beforeDelete(){
+    protected function beforeDelete(){
         $flag = true;
         foreach ($this->getContent() as $item) {
             $flag = $item->delete();

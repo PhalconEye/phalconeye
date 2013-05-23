@@ -32,7 +32,7 @@ class NotFound extends \Phalcon\Mvc\User\Plugin
                 $dispatcher->forward(array(
                     'module' => \Engine\Application::$defaultModule,
                     'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',
-                    'controller' => 'Error',
+                    'controller' => 'error',
                     'action' => 'show404'
                 ));
                 return false;

@@ -45,7 +45,7 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
      * Sets the element description
      *
      * @param string $description
-     * @return Form_ElementInterface
+     * @return \Engine\Form\ElementInterface
      */
     public function setDescription($description)
     {

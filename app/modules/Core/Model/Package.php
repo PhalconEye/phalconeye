@@ -16,70 +16,69 @@
 
 namespace Core\Model;
 
-class Package extends \Phalcon\Mvc\Model
+/**
+ * @Source("packages")
+ * @HasMany("id", '\Core\Model\PackageDependency', "package_id", {
+ *  "alias": "PackageDependency"
+ * })
+ * @HasMany("id", '\Core\Model\PackageDependency', "dependency_id", {
+ *  "alias": "RelatedPackages"
+ * })
+ */
+class Package extends \Engine\Model
 {
 
+    /**
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
+     */
     public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="type")
      */
-    protected $type;
+    public $type;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="title")
      */
-    protected $title;
+    public $title;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="description")
      */
-    protected $description;
+    public $description;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="version")
      */
-    protected $version;
+    public $version;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="author")
      */
-    protected $author;
+    public $author;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=true, column="website")
      */
-    protected $website;
+    public $website;
 
     /**
-     * @var integer
-     *
+     * @Column(type="boolean", nullable=false, column="enabled")
      */
-    protected $enabled = 1;
+    public $enabled = true;
 
     /**
-     * @var integer
-     *
+     * @Column(type="boolean", nullable=false, column="is_system")
      */
-    protected $is_system = 0;
-
-    public function initialize()
-    {
-        $this->hasMany("id", '\Core\Model\PackageDependency', "package_id", array('alias' => 'PackageDependency'));
-        $this->hasMany("id", '\Core\Model\PackageDependency', "dependency_id", array('alias' => 'RelatedPackages'));
-    }
+    public $is_system = false;
 
     /**
      * Return the related "PackageDependency"
@@ -97,181 +96,6 @@ class Package extends \Phalcon\Mvc\Model
      */
     public function getRelatedPackages($arguments = array()){
         return $this->getRelated('RelatedPackages', $arguments);
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Method to set the value of field type
-     *
-     * @param string $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Method to set the value of field title
-     *
-     * @param string $title
-     */
-    public function setTitle($title)
-    {
-        $this->title = $title;
-    }
-
-    /**
-     * Method to set the value of field description
-     *
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * Method to set the value of field version
-     *
-     * @param string $version
-     */
-    public function setVersion($version)
-    {
-        $this->version = $version;
-    }
-
-    /**
-     * Method to set the value of field author
-     *
-     * @param string $author
-     */
-    public function setAuthor($author)
-    {
-        $this->author = $author;
-    }
-
-    /**
-     * Method to set the value of field website
-     *
-     * @param string $website
-     */
-    public function setWebsite($website)
-    {
-        $this->website = $website;
-    }
-
-    /**
-     * Method to set the value of field enabled
-     *
-     * @param bool $flag
-     */
-    public function setEnabled($flag = true)
-    {
-        $this->enabled = (int)$flag;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the value of field type
-     *
-     * @return string
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * Returns the value of field title
-     *
-     * @return string
-     */
-    public function getTitle()
-    {
-        return $this->title;
-    }
-
-    /**
-     * Returns the value of field description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Returns the value of field version
-     *
-     * @return string
-     */
-    public function getVersion()
-    {
-        return $this->version;
-    }
-
-    /**
-     * Returns the value of field author
-     *
-     * @return string
-     */
-    public function getAuthor()
-    {
-        return $this->author;
-    }
-
-    /**
-     * Returns the value of field website
-     *
-     * @return string
-     */
-    public function getWebsite()
-    {
-        return $this->website;
-    }
-
-    /**
-     * Checks if module is enabled
-     *
-     * @return string
-     */
-    public function isEnabled()
-    {
-        return (bool)$this->enabled;
-    }
-
-    /**
-     * Checks if module is a part of system
-     *
-     * @return string
-     */
-    public function isSystem()
-    {
-        return (bool)$this->is_system;
-    }
-
-    public function getSource()
-    {
-        return "packages";
     }
 
     /**
@@ -298,7 +122,7 @@ class Package extends \Phalcon\Mvc\Model
         return $query->getQuery()->execute();
     }
 
-    public function beforeDelete()
+    protected function beforeDelete()
     {
         $this->getPackageDependency()->delete();
     }

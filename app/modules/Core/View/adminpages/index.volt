@@ -52,27 +52,27 @@
                 {% for item in paginator.items %}
                     <tr>
                         <td>
-                            {{ item.getId() }}
+                            {{ item.id }}
                         </td>
                         <td>
-                            {{ item.getTitle() }}
+                            {{ item.title }}
                         </td>
                         <td>
-                            {{ item.getUrl() }}
+                            {{ item.url }}
                         </td>
                         <td>
-                            {{ item.getLayout() }}
+                            {{ item.layout }}
                         </td>
                         <td>
-                            {{ item.getController() }}
+                            {{ item.controller }}
                         </td>
                         <td>
-                            {{ link_to(['for':'admin-pages-manage', 'id':item.getId()], 'Manage' | trans) }}
-                            {% if item.getType() is null %}
-                                {{ link_to(['for':'admin-pages-edit', 'id':item.getId()], 'Edit' | trans) }}
-                                {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
-                            {% elseif item.getType() is 'home' %}
-                                {{ link_to(['for':'admin-pages-edit', 'id':item.getId()], 'Edit' | trans) }}
+                            {{ link_to(['for':'admin-pages-manage', 'id':item.id], 'Manage' | trans) }}
+                            {% if item.type is null %}
+                                {{ link_to(['for':'admin-pages-edit', 'id':item.id], 'Edit' | trans) }}
+                                {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
+                            {% elseif item.type is 'home' %}
+                                {{ link_to(['for':'admin-pages-edit', 'id':item.id], 'Edit' | trans) }}
                             {% endif %}
                         </td>
                     </tr>

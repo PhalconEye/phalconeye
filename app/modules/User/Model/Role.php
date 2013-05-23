@@ -16,63 +16,59 @@
 
 namespace User\Model;
 
-class Role extends \Phalcon\Mvc\Model
+/**
+ * @Source("roles")
+ * @HasMany("id", '\User\Model\User', "role_id", {
+ *  "alias": "User"
+ * })
+ * @HasMany("id", '\Core\Model\Access', "role_id", {
+ *  "alias": "Access"
+ * })
+ */
+class Role extends \Engine\Model
 {
 
     /**
-     * @var integer
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="description")
      */
-    protected $description;
+    public $description;
 
     /**
-     * @var int
-     *
+     * @Column(type="boolean", nullable=false, column="is_default")
      */
-    protected $is_default = 0;
-
+    public $is_default = false;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="type")
      */
-    protected $type = 'user';
-
+    public $type = 'user';
 
     /**
-     * @var integer
-     *
+     * @Column(type="boolean", nullable=false, column="undeletable")
      */
-    protected $undeletable = 0;
+    public $undeletable = false;
 
-
-    public function initialize()
-    {
-        $this->hasMany("id", '\User\Model\User', "role_id");
-        $this->hasMany("id", '\Core\Model\Access', "role_id");
-    }
 
     /**
      * Return the related "User"
      *
-     * @return \Core\Model\User[]
+     * @return \User\Model\User[]
      */
     public function getUser($arguments = array()){
-        return $this->getRelated('\User\Model\User', $arguments);
+        return $this->getRelated('User', $arguments);
     }
-
 
     /**
      * Return the related "Access"
@@ -80,144 +76,19 @@ class Role extends \Phalcon\Mvc\Model
      * @return \Core\Model\Access[]
      */
     public function getAccess($arguments = array()){
-        return $this->getRelated('\Core\Model\Access', $arguments);
+        return $this->getRelated('Access', $arguments);
     }
 
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
-    {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Method to set the value of field description
-     *
-     * @param string $description
-     */
-    public function setDescription($description)
-    {
-        $this->description = $description;
-    }
-
-    /**
-     * Method to set the value of field is_default
-     *
-     * @param integer $is_default
-     */
-    public function setIsDefault($is_default)
-    {
-        $this->is_default = $is_default;
-    }
-
-    /**
-     * Method to set the value of field type
-     *
-     * @param integer $type
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-    }
-
-    /**
-     * Method to set the value of field undeletable
-     *
-     * @param integer $undeletable
-     */
-    public function setUndeletable($undeletable)
-    {
-        $this->undeletable = $undeletable;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {return $this->name;
-    }
-
-    /**
-     * Returns the value of field description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->description;
-    }
-
-    /**
-     * Returns the value of field is_default
-     *
-     * @return integer
-     */
-    public function getIsDefault()
-    {
-        return $this->is_default;
-    }
-
-    /**
-     * Returns the value of field undeletable
-     *
-     * @return integer
-     */
-    public function getUndeletable()
-    {
-        return $this->undeletable;
-    }
-
-    /**
-     * Returns the value of field type
-     *
-     * @return string
-     */
-    public function getType(){
-        return $this->type;
-    }
-
-    public function getSource()
-    {
-        return "roles";
-    }
-
-    public function beforeValidation(){
+    protected function beforeValidation(){
         if (empty($this->is_default)){
             $this->is_default = 0;
         }
     }
 
-    public function beforeDelete(){
+    protected function beforeDelete(){
         // cleanup acl
         $this->_modelsManager->executeQuery(
-            "DELETE FROM Core\\Model\\Access WHERE role_id = ".$this->getId().""
+            "DELETE FROM Core\\Model\\Access WHERE role_id = ".$this->id.""
         );
     }
 
@@ -230,10 +101,10 @@ class Role extends \Phalcon\Mvc\Model
         $role = Role::findFirst("type = '{$type}'");
         if (!$role){
             $role = new Role();
-            $role->setName(ucfirst($type));
-            $role->setDescription(ucfirst($type). ' role.');
-            $role->setType($type);
-            $role->setUndeletable(1);
+            $role->name = ucfirst($type);
+            $role->description = ucfirst($type). ' role.';
+            $role->type = $type;
+            $role->undeletable = 1;
             $role->save();
         }
 
@@ -249,10 +120,10 @@ class Role extends \Phalcon\Mvc\Model
         $role = Role::findFirst("is_default = 1");
         if (!$role){
             $role = new Role();
-            $role->setName("User");
-            $role->setDescription('Default user role.');
-            $role->setType('user');
-            $role->setUndeletable(1);
+            $role->name = "User";
+            $role->description = 'Default user role.';
+            $role->type = 'user';
+            $role->undeletable = 1;
             $role->save();
         }
 

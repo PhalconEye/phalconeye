@@ -16,85 +16,39 @@
 
 namespace Core\Model;
 
-class Menu extends \Phalcon\Mvc\Model
+/**
+ * @Source("menus")
+ * @HasMany("id", '\Core\Model\MenuItem', "menu_id", {
+ *  "alias": "MenuItem"
+ * })
+ */
+class Menu extends \Engine\Model
 {
 
     /**
-     * @var integer
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
-
-
-    public function initialize()
-    {
-        $this->hasMany("id", '\Core\Model\MenuItem', "menu_id");
-    }
+    public $name;
 
     /**
      * Return the related "MenuItem"
      *
      * @return \Core\Model\MenuItem[]
      */
-    public function getMenuItem($arguments = array()){
-        return $this->getRelated('\Core\Model\MenuItem', $arguments);
-    }
-
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
+    public function getMenuItems($arguments = array())
     {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    public function getSource()
-    {
-        return "menus";
+        return $this->getRelated('MenuItem', $arguments);
     }
 
     public function beforeDelete()
     {
-        $this->getMenuItem()->delete();
+        $this->getMenuItems()->delete();
     }
 }

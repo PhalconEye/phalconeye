@@ -81,7 +81,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         }
 
         $this->flashSession->success('New object created successfully!');
-        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getValues()->getId()));
+        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getValues()->id));
     }
 
     /**
@@ -141,7 +141,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
             $parents = array();
             $parents[] = $currentParent = $parent;
             while ($flag) {
-                if ($currentParent->getParentId()) {
+                if ($currentParent->parent_id) {
                     $parents[] = $currentParent = $currentParent->getParent();
                 } else {
                     $flag = false;
@@ -151,9 +151,9 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
 
             $this->view->parent = $parent;
             $this->view->parents = $parents;
-            $this->view->items = $parent->getMenuItem(array('order' => 'item_order ASC'));
+            $this->view->items = $parent->getMenuItems(array('order' => 'item_order ASC'));
         } else {
-            $this->view->items = $item->getMenuItem(array(
+            $this->view->items = $item->getMenuItems(array(
                 'parent_id IS NULL',
                 'order' => 'item_order ASC'
             ));
@@ -187,9 +187,9 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
 
         // clear url type
         if ($urlType == 0) {
-            $item->setPageId(null);
+            $item->pageId = null;
         } else {
-            $item->setUrl(null);
+            $item->url = null;
         }
 
         // set proper order
@@ -202,8 +202,8 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         }
         $orderItem = \Core\Model\MenuItem::findFirst($orderData);
 
-        if ($orderItem->getId() != $item->getId())
-            $item->setItemOrder($orderItem->getItemOrder() + 1);
+        if ($orderItem->id != $item->id)
+            $item->itemOrder = $orderItem->itemOrder + 1;
 
 //        $roles = $this->request->get('roles');
 //        if ($roles == null) {
@@ -228,14 +228,14 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $data = array(
             'menu_id' => $this->request->get('menu_id'),
             'parent_id' => $this->request->get('parent_id'),
-            'url_type' => ($item->getPageId() == null ? 0 : 1),
+            'url_type' => ($item->pageId == null ? 0 : 1),
         );
 
-        if ($item->getPageId()) {
-            $page = \Core\Model\Page::findFirst($item->getPageId());
+        if ($item->pageId) {
+            $page = \Core\Model\Page::findFirst($item->pageId);
             if ($page) {
-                $data['page_id'] = $page->getId();
-                $data['page'] = $page->getTitle();
+                $data['page_id'] = $page->id;
+                $data['page'] = $page->title;
             }
         }
 
@@ -252,19 +252,19 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         // clear url type
         $urlType = $this->request->getPost('url_type', 'int', 0);
         if ($urlType == 0) {
-            $item->setPageId(null);
+            $item->pageId = null;
         } else {
-            $item->setUrl(null);
+            $item->url = null;
         }
 
         $roles = $this->request->get('roles');
         if ($roles == null) {
-            $item->setRoles(array());
+            $item->roles = array();
         }
 
         $languages = $this->request->get('languages');
         if ($languages == null) {
-            $item->setLanguages(array());
+            $item->languages = array();
         }
 
         $item->save();
@@ -280,7 +280,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $item = \Core\Model\MenuItem::findFirst($id);
         $menuId = null;
         if ($item) {
-            $menuId = $item->getMenuId();
+            $menuId = $item->menuId;
             $item->delete();
         }
 
@@ -302,7 +302,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
     {
         $order = $this->request->get('order', null, array());
         foreach ($order as $index => $id) {
-            $this->db->update(\Core\Model\MenuItem::getSourceStatic(), array('item_order'), array($index), "id = {$id}");
+            $this->db->update(\Core\Model\MenuItem::getTableName(), array('item_order'), array($index), "id = {$id}");
         }
         $this->view->disable();
     }
@@ -330,8 +330,8 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $data = array();
         foreach ($results as $result) {
             $data[] = array(
-                'id' => $result->getId(),
-                'label' => $result->getName()
+                'id' => $result->id,
+                'label' => $result->name
             );
         }
 

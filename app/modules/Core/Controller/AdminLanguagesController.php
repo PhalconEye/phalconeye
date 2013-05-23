@@ -93,15 +93,15 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
 
         // upload flag
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]->getName(), -4);
+            $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
             @unlink(ROOT_PATH . $iconPath);
             $files[0]->moveTo(ROOT_PATH . $iconPath);
-            $lang->setIcon($iconPath);
+            $lang->icon = $iconPath;
             $lang->save();
         }
 
         // check language file
-        $file = ROOT_PATH . '/app/var/languages/' . $lang->getLocale() . '.php';
+        $file = ROOT_PATH . '/app/var/languages/' . $lang->locale . '.php';
         if (!file_exists($file)) {
             file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = array();');
         }
@@ -132,10 +132,10 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         $lang = $form->getValues();
 
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->getLocale() . substr($files[0]->getName(), -4);
+            $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
             @unlink(ROOT_PATH . $iconPath);
             $files[0]->moveTo(ROOT_PATH . $iconPath);
-            $lang->setIcon(str_replace('/public/', '', $iconPath));
+            $lang->icon = str_replace('/public/', '', $iconPath);
             $lang->save();
         }
 
@@ -176,9 +176,9 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         $search = $this->request->get('search');
         if ($search != null) {
             $builder = $this->modelsManager->createBuilder()
-                ->from('\Core\Model\LanguageTranslation')
-                ->where("\\Core\\Model\\LanguageTranslation.original LIKE '%{$search}%'")
-                ->orWhere("\\Core\\Model\\LanguageTranslation.translated LIKE '%{$search}%'");
+                ->from(array('t' => '\Core\Model\LanguageTranslation'))
+                ->where("t.original LIKE '%{$search}%'")
+                ->orWhere("t.translated LIKE '%{$search}%'");
         } else {
             $builder = $this->modelsManager->createBuilder()
                 ->from('\Core\Model\LanguageTranslation');
@@ -252,7 +252,7 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
      */
     public function deleteItemAction($id)
     {
-        $item = LanguageTranslation::findFirst($id);
+        $item = \Core\Model\LanguageTranslation::findFirst($id);
         if ($item)
             $item->delete();
 

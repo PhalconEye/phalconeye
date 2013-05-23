@@ -51,25 +51,25 @@
                 {% for item in paginator.items %}
                     <tr>
                         <td>
-                            {{ item.getId() }}
+                            {{ item.id }}
                         </td>
                         <td>
-                            {{ item.getName() }}
+                            {{ item.name }}
                         </td>
                         <td>
-                            {{ item.getDescription() }}
+                            {{ item.description }}
                         </td>
                         <td>
-                            {% if item.getIsDefault() %}
+                            {% if item.is_default %}
                             {{ 'Yes' |trans }}
                             {% else %}
                             {{ 'No' |trans }}
                             {% endif %}
                         </td>
                         <td>
-                            {{ link_to(['for':'admin-roles-edit', 'id':item.getId()], 'Edit' | trans) }}
-                            {% if not item.getUndeletable() %}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {{ link_to(['for':'admin-roles-edit', 'id':item.id], 'Edit' | trans) }}
+                            {% if not item.undeletable %}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
                             {% endif %}
                         </td>
                     </tr>

@@ -18,8 +18,8 @@
 {% block head %}
     <script type="text/javascript">
     //var currentLayoutType =  'top,right,middle,left,bottom';
-    var currentLayoutType = '{{currentPage.getLayout()}}';
-    var currentPageId = '{{currentPage.getId()}}';
+    var currentLayoutType = '{{currentPage.layout}}';
+    var currentPageId = '{{currentPage.id}}';
     var notSaved = false;
     var bundlesWidgetsMetadata = [];
     var widgetsListData = [];
@@ -84,7 +84,7 @@
     var savePage = function () {
         if (!notSaved) return;
 
-        $.post("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.getId()}}", {
+        $.post("{{ url(['for':'admin-pages-save-layout'])}}{{currentPage.id}}", {
             format: "json",
             layout: currentLayoutType,
             items: getWidgetsList(true)
@@ -305,8 +305,8 @@
                     <div class="manage_page_header_label">
                         <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
                             > {{ "Manage page" | trans }}</h3>
-                        <a href="{% if currentPage.getType() is null and currentPage.getUrl() is not null %}/page/{{ currentPage.getUrl() }}{% else %}javascript:;{% endif %}"
-                           target="_blank">{{ currentPage.getTitle() }}</a>
+                        <a href="{% if currentPage.type is null and currentPage.url is not null %}/page/{{ currentPage.url }}{% else %}javascript:;{% endif %}"
+                           target="_blank">{{ currentPage.title }}</a>
                     </div>
 
                     <div class="widget_options_panel">

@@ -23,14 +23,17 @@ namespace Engine\Model\Behavior;
  */
 trait Sluggable
 {
-    private $slug;
+    /**
+     * @Column(type="string", nullable=false, column="slug")
+     */
+    public $slug;
 
-    public function beforeCreate()
+    protected function beforeCreate()
     {
         $this->generateSlug();
     }
 
-    public function beforeUpdate()
+    protected function beforeUpdate()
     {
         if ($this->getRegenerateSlugOnUpdate() || empty($this->slug)) {
             $this->generateSlug();
@@ -57,14 +60,8 @@ trait Sluggable
         return true;
     }
 
-    /**
-     * Returns the entity's slug.
-     *
-     * @return string
-     */
-    public function getSlug()
-    {
-        return $this->slug;
+    private function getSluggableFields(){
+        return array('title');
     }
 
     /**

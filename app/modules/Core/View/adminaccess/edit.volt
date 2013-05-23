@@ -24,13 +24,13 @@
 
                 <div class="btn-group">
                     <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
-                        {{ currentRole.getName() }}
+                        {{ currentRole.name }}
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         {% for role in roles %}
-                            {% if currentRole.getId() == role.getId() %} {% continue %} {% endif %}
-                            <li><a href="javascript:;" onclick="window.location.href += '&role={{ role.getId() }}';">{{ role.getName() }}</a></li>
+                            {% if currentRole.id == role.id %} {% continue %} {% endif %}
+                            <li><a href="javascript:;" onclick="window.location.href += '&role={{ role.id }}';">{{ role.name }}</a></li>
                         {% endfor %}
                     </ul>
                 </div>

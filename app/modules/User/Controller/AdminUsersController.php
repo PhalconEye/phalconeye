@@ -85,7 +85,7 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
      */
     public function createAction()
     {
-        $form = new \Core\Form\Admin\User\Create();
+        $form = new \User\Form\Admin\Create();
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -93,8 +93,8 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
         }
 
         $user = $form->getValues();
-        $user->setPassword($this->security->hash($user->getPassword()));
-        $user->role_id = \User\Model\Role::getDefaultRole()->getId();
+        $user->setPassword($user->password);
+        $user->role_id = \User\Model\Role::getDefaultRole()->id;
         $user->save();
 
         $this->flashSession->success('New object created successfully!');
@@ -110,20 +110,18 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
         if (!$item)
             return $this->response->redirect(array('for' => 'admin-users'));
 
+        $lastPassword = $item->password;
+        $item->password = 'emptypassword';
 
-        $form = new \Core\Form\Admin\User\Edit($item);
+        if (isset($_POST['password']) && $_POST['password'] == 'emptypassword'){
+            $_POST['password'] = $item->password = $lastPassword;
+        }
+
+        $form = new \User\Form\Admin\Edit($item);
         $this->view->form = $form;
-
-        $lastPassword = $item->getPassword();
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
-        }
-
-        $user = $form->getValues();
-        if ($lastPassword != $item->getPassword()) {
-            $user->setPassword($this->security->hash($user->getPassword()));
-            $user->save();
         }
 
         $this->flashSession->success('Object saved!');
@@ -178,22 +176,20 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
      */
     public function rolesCreateAction()
     {
-        $form = new \Core\Form\Admin\User\RoleCreate();
+        $form = new \User\Form\Admin\RoleCreate();
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        return;
-
         $item = $form->getValues();
-        if ($item->getIsDefault()) {
+        if ($item->is_default) {
             $this->db->update(
                 $item->getSource(),
                 array('is_default'),
                 array(0),
-                "id != {$item->getId()}"
+                "id != {$item->id}"
             );
         }
 
@@ -211,7 +207,7 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
             return $this->response->redirect(array('for' => 'admin-users-roles'));
 
 
-        $form = new \Core\Form\Admin\User\RoleEdit($item);
+        $form = new \User\Form\Admin\RoleEdit($item);
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -219,12 +215,12 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
         }
 
         $item = $form->getValues();
-        if ($item->getIsDefault()) {
+        if ($item->is_default) {
             $this->db->update(
-                $item->getSource(),
+                \User\Model\Role::getTableName(),
                 array('is_default'),
                 array(0),
-                "id != {$item->getId()}"
+                "id != {$item->id}"
             );
         }
 
@@ -239,10 +235,10 @@ class AdminUsersController extends \Core\Controller\BaseAdmin
     {
         $item = \User\Model\Role::findFirst($id);
         if ($item) {
-            if ($item->getIsDefault()) {
+            if ($item->is_default) {
                 $anotherRole = \User\Model\Role::findFirst();
                 if ($anotherRole){
-                    $anotherRole->setIsDefault(1);
+                    $anotherRole->is_default = 1;
                     $anotherRole->save();
                 }
             }

@@ -26,7 +26,7 @@ class RenderContent extends \Phalcon\Tag implements \Engine\HelperInterface
         $widgetRender = new RenderWidget();
 
         foreach ($widgets as $widget) {
-            $content .= $widgetRender->_(array($widget->getWidgetId(), $widget->getParams()));
+            $content .= $widgetRender->_(array($widget->widget_id, $widget->getParams()));
         }
 
         return $content;

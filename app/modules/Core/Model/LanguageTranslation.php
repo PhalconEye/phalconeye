@@ -16,133 +16,45 @@
 
 namespace Core\Model;
 
-class LanguageTranslation extends \Phalcon\Mvc\Model
+/**
+ * @Source("language_translations")
+ * @BelongsTo("language_id", "\Core\Model\Language", "id", {
+ *  "alias": "Language"
+ * })
+ */
+class LanguageTranslation extends \Engine\Model
 {
 
     /**
-     * @var integer
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var integer
-     *
+     * @Column(type="integer", nullable=false, column="language_id")
      */
-    protected $language_id;
+    public $language_id;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=false, column="original")
      */
-    protected $original;
-
+    public $original;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=false, column="translated")
      */
-    protected $translated = NULL;
-
-
-
-    public function initialize()
-    {
-        $this->belongsTo("language_id", '\Core\Model\Language', "id");
-    }
+    public $translated = NULL;
 
     /**
      * Return the related "Language"
      *
      * @return \Core\Model\Language
      */
-    public function getLanguage($arguments = array()){
-        return $this->getRelated('\Core\Model\Language', $arguments);
-    }
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
+    public function getLanguage($arguments = array())
     {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field language_id
-     *
-     * @param integer $language_id
-     */
-    public function setLanguageId($language_id)
-    {
-        $this->language_id = $language_id;
-    }
-
-    /**
-     * Method to set the value of field original
-     *
-     * @param string $original
-     */
-    public function setOriginal($original)
-    {
-        $this->original = $original;
-    }
-
-    /**
-     * Method to set the value of field translated
-     *
-     * @param string $translated
-     */
-    public function setTranslated($translated)
-    {
-        $this->translated = $translated;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field language_id
-     *
-     * @return integer
-     */
-    public function getLanguageId()
-    {
-        return $this->language_id;
-    }
-
-    /**
-     * Returns the value of field original
-     *
-     * @return string
-     */
-    public function getOriginal()
-    {
-        return $this->original;
-    }
-
-    /**
-     * Returns the value of field translated
-     *
-     * @return string
-     */
-    public function getTranslated()
-    {
-        return $this->translated;
-    }
-
-
-    public function getSource()
-    {
-        return "language_translations";
+        return $this->getRelated('Language', $arguments);
     }
 
 }

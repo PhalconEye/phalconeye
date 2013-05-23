@@ -16,7 +16,6 @@
 
 namespace Engine;
 
-use Core\Model\Package;
 use Engine\Package\Exception;
 
 /**
@@ -229,13 +228,16 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initAnnotations($di, $config, $eventsManager)
     {
-//        $adapter = new \Phalcon\Annotations\Adapter\Files(array(
-//            'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/'
-//        ));
+        $di->set('annotations', function () use ($config) {
+            if (!$config->application->debug && isset($config->annotations)) {
+                $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->annotations->adapter;
+                $adapter = new $annotationsAdapter($config->annotations->toArray());
+            } else {
+                $adapter = new \Phalcon\Annotations\Adapter\Memory();
+            }
 
-//        $adapter = new \Phalcon\Annotations\Adapter\Apc();
-        $adapter = new \Phalcon\Annotations\Adapter\Memory();
-        $di->set('annotations', $adapter, true);
+            return $adapter;
+        }, true);
     }
 
     /**
@@ -272,6 +274,7 @@ class Application extends \Phalcon\Mvc\Application
 
             $router->notFound(array(
                 'module' => self::$defaultModule,
+                'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',
                 'controller' => 'error',
                 'action' => 'show404'
             ));
@@ -353,6 +356,16 @@ class Application extends \Phalcon\Mvc\Application
 
         $di->set('db', $connection);
 
+        $di->set('modelsManager', function () use ($config, $eventsManager) {
+            $modelsManager = new \Phalcon\Mvc\Model\Manager();
+            $modelsManager->setEventsManager($eventsManager);
+
+            //Attach a listener to models-manager
+            $eventsManager->attach('modelsManager', new \Engine\Model\AnnotationsInitializer());
+
+            return $modelsManager;
+        }, true);
+
         /**
          * If the configuration specify the use of metadata adapter use it or use memory otherwise
          */
@@ -360,10 +373,13 @@ class Application extends \Phalcon\Mvc\Application
             if (!$config->application->debug && isset($config->models->metadata)) {
                 $metaDataConfig = $config->models->metadata;
                 $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                return new $metadataAdapter($config->models->metadata->toArray());
+                $metaData = new $metadataAdapter($config->models->metadata->toArray());
             } else {
-                return new \Phalcon\Mvc\Model\MetaData\Memory();
+                $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
             }
+
+            $metaData->setStrategy(new \Engine\Model\AnnotationsMetaDataInitializer());
+            return $metaData;
         }, true);
 
     }
@@ -541,7 +557,7 @@ class Application extends \Phalcon\Mvc\Application
         $themeFiles = glob($themeDirectory . '/*.less');
         \Engine\Package\Utilities::fsCheckLocation($location . 'css/');
         foreach ($themeFiles as $file) {
-            $newFileName = $location . 'css/' .  basename($file, '.less') . '.css';
+            $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
             $collectedCss[] = $newFileName;
             $less->checkedCompile($file, $newFileName);
         }
@@ -612,7 +628,7 @@ class Application extends \Phalcon\Mvc\Application
         /////////////////////////////////////////
         // CSS
         /////////////////////////////////////////
-        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme').'/';
+        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme') . '/';
         $outputPath = $location . 'style.css';
 
         $less = new \Engine\Css\Less();
@@ -705,10 +721,22 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         // clear metadata cache
-        $files = glob($config->models->metadata->metaDataDir . '*'); // get all file names
-        foreach ($files as $file) { // iterate files
-            if (is_file($file)) {
-                @unlink($file); // delete file
+        if ($config->models->metadata && $config->models->metadata->metaDataDir) {
+            $files = glob($config->models->metadata->metaDataDir . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file)) {
+                    @unlink($file); // delete file
+                }
+            }
+        }
+
+        // clear annotations cache
+        if ($config->annotations && $config->annotations->annotationsDir) {
+            $files = glob($config->annotations->annotationsDir . '*'); // get all file names
+            foreach ($files as $file) { // iterate files
+                if (is_file($file)) {
+                    @unlink($file); // delete file
+                }
             }
         }
 

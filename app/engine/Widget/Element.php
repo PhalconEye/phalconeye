@@ -51,13 +51,13 @@ class Element
     }
 
     public function render($action = 'index'){
-        if (!$this->_widget || !$this->_widget->isEnabled()){
+        if (!$this->_widget || !$this->_widget->enabled){
             return '';
         }
 
-        $widgetName = $this->_widget->getName();
-        if ($this->_widget->getModule() !== null){
-            $widgetModule = ucfirst($this->_widget->getModule());
+        $widgetName = $this->_widget->name;
+        if ($this->_widget->module !== null){
+            $widgetModule = ucfirst($this->_widget->module);
             $controllerClass = "\\{$widgetModule}\\Widget\\{$widgetName}\\Controller";
         }
         else{

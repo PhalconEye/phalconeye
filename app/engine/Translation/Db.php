@@ -110,15 +110,15 @@ class Db implements AdapterInterface
             // remember this translation
             $translationModel = $this->_translationModel;
             $translation = new $translationModel();
-            $translation->setLanguageId($this->_locale->getId());
-            $translation->setOriginal($index);
-            $translation->setTranslated($index);
+            $translation->languageId = $this->_locale->id;
+            $translation->original = $index;
+            $translation->translated = $index;
             $translation->save();
 
             return $index;
         }
 
-        $translated = $translation->getTranslated();
+        $translated = $translation->translated;
 
         if ($placeholders == null) {
             return $translated;
@@ -152,7 +152,7 @@ class Db implements AdapterInterface
             'conditions' => 'original = :content: AND language_id = :id:',
             'bind' => (array(
                 "content" => $index,
-                "id" => $this->_locale->getId()
+                "id" => $this->_locale->id
             )),
             'bindTypes' => (array(
                 "content" => \Phalcon\Db\Column::BIND_PARAM_STR,

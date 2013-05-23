@@ -33,7 +33,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => true,
+    'debug' => false,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/engine/',
     'modulesDir' => ROOT_PATH . '/app/modules/',
@@ -45,7 +45,7 @@ return new \Phalcon\Config(array (
       'lifetime' => '86400',
       'prefix' => 'pe_',
       'adapter' => 'File',
-      'cacheDir' => ROOT_PATH . '/app/var/cache/',
+      'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
     ),
     'logger' => 
     array (
@@ -68,9 +68,14 @@ return new \Phalcon\Config(array (
   array (
     'metadata' => 
     array (
-      'adapter' => 'Files',
+      'adapter' => 'Memory',
       'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
     ),
+  ),
+  'annotations' => 
+  array (
+    'adapter' => 'Memory',
+    'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
   ),
   'modules' => 
   array (

@@ -20,6 +20,6 @@ class Allowed extends \Phalcon\Tag implements \Engine\HelperInterface
 {
     static public function _(array $args){
         $viewer = \User\Model\User::getViewer();
-        return \Phalcon\DI::getDefault()->get('core')->acl()->_()->isAllowed($viewer->getRole()->getName(), $args[0], $args[1]) == \Phalcon\Acl::ALLOW;
+        return \Phalcon\DI::getDefault()->get('core')->acl()->_()->isAllowed($viewer->getRole()->name, $args[0], $args[1]) == \Phalcon\Acl::ALLOW;
     }
 }

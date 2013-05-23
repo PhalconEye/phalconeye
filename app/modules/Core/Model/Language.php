@@ -16,135 +16,50 @@
 
 namespace Core\Model;
 
-class Language extends \Phalcon\Mvc\Model
+/**
+ * @Source("languages")
+ * @HasMany("id", "\Core\Model\LanguageTranslation", "language_id", {
+ *  "alias": "LanguageTranslation"
+ * })
+ */
+class Language extends \Engine\Model
 {
 
     /**
-     * @var integer
-     *
+     * @Primary
+     * @Identity
+     * @Column(type="string", nullable=false, column="id")
      */
-    protected $id;
+    public $id;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="name")
      */
-    protected $name;
+    public $name;
 
     /**
-     * @var string
-     *
+     * @Column(type="string", nullable=false, column="locale")
      */
-    protected $locale;
+    public $locale;
 
     /**
-     * @var string
+     * @Column(type="string", nullable=true, column="icon")
      */
-    protected $icon = null;
+    public $icon = null;
 
-    public function initialize()
-    {
-        $this->hasMany("id", '\Core\Model\LanguageTranslation', "language_id");
-    }
 
     /**
      * Return the related "LanguageTranslation"
      *
      * @return \Core\Model\LanguageTranslation[]
      */
-    public function getLanguageTranslation($arguments = array()){
-        return $this->getRelated('\Core\Model\LanguageTranslation', $arguments);
-    }
-
-    /**
-     * Method to set the value of field id
-     *
-     * @param integer $id
-     */
-    public function setId($id)
+    public function getLanguageTranslation($arguments = array())
     {
-        $this->id = $id;
-    }
-
-    /**
-     * Method to set the value of field name
-     *
-     * @param string $name
-     */
-    public function setName($name)
-    {
-        $this->name = $name;
-    }
-
-    /**
-     * Method to set the value of field locale
-     *
-     * @param string $locale
-     */
-    public function setLocale($locale)
-    {
-        $this->locale = $locale;
-    }
-
-    /**
-     * Method to set the value of field icon
-     *
-     * @param string $icon
-     */
-    public function setIcon($icon)
-    {
-        $this->icon = $icon;
-    }
-
-
-    /**
-     * Returns the value of field id
-     *
-     * @return integer
-     */
-    public function getId()
-    {
-        return $this->id;
-    }
-
-    /**
-     * Returns the value of field name
-     *
-     * @return string
-     */
-    public function getName()
-    {
-        return $this->name;
-    }
-
-    /**
-     * Returns the value of field locale
-     *
-     * @return string
-     */
-    public function getLocale()
-    {
-        return $this->locale;
-    }
-
-    /**
-     * Returns the value of field icon
-     *
-     * @return string
-     */
-    public function getIcon()
-    {
-        return $this->icon;
-    }
-
-    public function getSource()
-    {
-        return "languages";
+        return $this->getRelated('LanguageTranslation', $arguments);
     }
 
     public function validation()
     {
-
         $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
             'field' => 'locale'
         )));
@@ -167,16 +82,11 @@ class Language extends \Phalcon\Mvc\Model
     {
         $translations = $this->getLanguageTranslation();
         $messages = array();
-        foreach($translations as $translation){
-            $messages[$translation->getOriginal()] = $translation->getTranslated();
+        foreach ($translations as $translation) {
+            $messages[$translation->original] = $translation->translated;
         }
 
         $file = ROOT_PATH . '/app/var/cache/languages/' . $this->locale . '.php';
-        file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true).';');
-    }
-
-    private function quote($string)
-    {
-        return '"' . str_replace(array("\r", "\n", '"'), array('', '\n', '\\"'), $string) . '"';
+        file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true) . ';');
     }
 }

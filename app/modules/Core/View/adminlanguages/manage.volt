@@ -19,14 +19,14 @@
     <script type="text/javascript">
         var deleteItem = function (id) {
             if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
-                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.getId() }}{% if search is defined %}&search={{ search }}{% endif %}';
+                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.id }}{% if search is defined %}&search={{ search }}{% endif %}';
             }
         }
 
         var requestAddItem = function () {
             var url = '{{ url(['for':'admin-languages-create-item'])}}';
             var data = {
-                'language_id': {{ lang.getId() }}
+                'language_id': {{ lang.id }}
             };
 
             PE.modal.open(url, data);
@@ -36,7 +36,7 @@
             var url = '{{ url(['for':'admin-languages-edit-item'])}}' + id;
             var data = {
                 'id':id,
-                'language_id': {{ lang.getId() }}
+                'language_id': {{ lang.id }}
             };
 
             PE.modal.open(url, data);
@@ -59,11 +59,11 @@
         <div class="language_manage_header">
             <h3><a href="{{ url(['for': 'admin-languages']) }}">{{ "Languages" | trans }}</a>
                 > {{ "Manage language" | trans }}
-                "{{ lang.getName() }}"</h3>
+                "{{ lang.name }}"</h3>
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
-            <form class="navbar-search pull-right" method="GET" action="{{ url(['for': 'admin-languages-manage'])~lang.getId() }}">
+            <form class="navbar-search pull-right" method="GET" action="{{ url(['for': 'admin-languages-manage'])~lang.id }}">
                 {% if search is defined %}
-                <div class="icon-remove" onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.getId() }}'"></div>
+                <div class="icon-remove" onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.id }}'"></div>
                 {% endif %}
                 <input name="search" type="text" class="search-query" placeholder="{{ 'Search' |trans }}" value="{{ search }}"/>
                 <div class="icon-search" onclick="$(this).parent().submit();"></div>
@@ -82,14 +82,14 @@
                 {% for item in paginator.items %}
                     <tr>
                         <td>
-                            {{ item.getOriginal() }}
+                            {{ item.original }}
                         </td>
                         <td>
-                            {{ item.getTranslated() }}
+                            {{ item.translated }}
                         </td>
                         <td>
-                            {{ link_to(null, 'Edit' | trans, "onclick" : 'editItem(' ~ item.getId() ~ ');return false;') }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {{ link_to(null, 'Edit' | trans, "onclick" : 'editItem(' ~ item.id ~ ');return false;') }}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
                         </td>
                     </tr>
                 {% endfor %}

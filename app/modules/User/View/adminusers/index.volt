@@ -54,23 +54,23 @@
                 {% for item in paginator.items %}
                     <tr>
                         <td>
-                            {{ item.getId() }}
+                            {{ item.id }}
                         </td>
                         <td>
-                            {{ item.getUsername() }}
+                            {{ item.username }}
                         </td>
                         <td>
-                            {{ item.getEmail() }}
+                            {{ item.email }}
                         </td>
                         <td>
-                            {{ item.getRole().getName() }}
+                            {{ item.getRole().name }}
                         </td>
                         <td>
-                            {{ item.getCreationDate() }}
+                            {{ item.creation_date }}
                         </td>
                         <td>
-                            {{ link_to(['for':'admin-users-edit', 'id':item.getId()], 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.getId() ~');return false;') }}
+                            {{ link_to(['for':'admin-users-edit', 'id':item.id], 'Edit' | trans) }}
+                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
                         </td>
                     </tr>
                 {% endfor %}

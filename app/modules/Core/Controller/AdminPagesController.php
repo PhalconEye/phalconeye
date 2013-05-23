@@ -82,14 +82,14 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         }
 
         $page = $form->getValues();
-        $url = $page->getUrl();
+        $url = $page->url;
         if (!empty($url)) {
-            $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
+            $page->url = str_replace('/', '', str_replace('\\', '', $url));
         }
 
         $page->save();
         $this->flashSession->success('New object created successfully!');
-        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getValues()->getId()));
+        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getValues()->id));
     }
 
     /**
@@ -112,14 +112,14 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         }
 
         $page = $form->getValues();
-        $url = $page->getUrl();
+        $url = $page->url;
         if (!empty($url) && $url != '/') {
-            $page->setUrl(str_replace('/', '', str_replace('\\', '', $url)));
+            $page->url = str_replace('/', '', str_replace('\\', '', $url));
         }
 
         $roles = $this->request->get('roles');
         if ($roles == null) {
-            $page->setRoles(array());
+            $page->roles =array();
         }
 
         $page->save();
@@ -169,17 +169,17 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         }
         $bundlesWidgetsMetadata = array();
         foreach ($widgets as $widget) {
-            $moduleName = $widget->getModule();
+            $moduleName = $widget->module;
             if (!$moduleName){
                 $moduleName = 'Other';
             }
             else{
                 $moduleName = $modules[$moduleName];
             }
-            $bundlesWidgetsMetadata[$moduleName][$widget->getId()] = array(
-                'widget_id' => $widget->getId(),
-                'description' => $widget->getDescription(),
-                'name' => $widget->getName()
+            $bundlesWidgetsMetadata[$moduleName][$widget->id] = array(
+                'widget_id' => $widget->id,
+                'description' => $widget->description,
+                'name' => $widget->name
             );
         }
 
@@ -202,9 +202,9 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         foreach ($content as $widget){
             $currentPageWidgets[$widgetIndex] = array(
                 'widget_index' => $widgetIndex, // indification for this array
-                'id' => $widget->getId(),
-                'layout' => $widget->getLayout(),
-                'widget_id' => $widget->getWidgetId(),
+                'id' => $widget->id,
+                'layout' => $widget->layout,
+                'widget_id' => $widget->widget_id,
                 'params' => $widget->getParams()
             );
             $widgetIndex++;
@@ -255,15 +255,15 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         $form = new \Engine\Form();
 
         // building widget form
-        $adminForm = $widgetMetadata->getAdminForm();
+        $adminForm = $widgetMetadata->admin_form;
         if (empty($adminForm)) {
             $form->addElement('text', 'title', array(
                 'label' => 'Title'
             ));
         } elseif ($adminForm == 'action') {
-            $widgetName = $widgetMetadata->getName();
-            if ($widgetMetadata->getModule() !== null){
-                $widgetClass = '\\'.ucfirst($widgetMetadata->getModule()).'\Widget\\'.$widgetName.'\Controller';
+            $widgetName = $widgetMetadata->name;
+            if ($widgetMetadata->module !== null){
+                $widgetClass = '\\'.ucfirst($widgetMetadata->module).'\Widget\\'.$widgetName.'\Controller';
             }
             else{
                 $widgetClass = '\Widget\\'.$widgetName.'\Controller';
@@ -275,14 +275,14 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
             $form = new $adminForm();
         }
 
-        if ($widgetMetadata->getIsPaginated() == 1) {
+        if ($widgetMetadata->is_paginated == 1) {
             $form->addElement('text', 'count', array(
                 'label' => 'Items count',
                 'value' => 10
             ), 10000);
         }
 
-        if ($widgetMetadata->getIsAclControlled() == 1) {
+        if ($widgetMetadata->is_acl_controlled == 1) {
             $form->addElement('select', 'roles', array(
                 'label' => 'Roles',
                 'options' => \User\Model\Role::find(),
@@ -299,7 +299,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             $this->view->form = $form;
             $this->view->id = $id;
-            $this->view->name = $widgetMetadata->getName();
+            $this->view->name = $widgetMetadata->name;
 
             return;
         }
@@ -310,7 +310,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
 
         $this->view->form = $form;
         $this->view->id = $id;
-        $this->view->name = $widgetMetadata->getName();
+        $this->view->name = $widgetMetadata->name;
 
         $this->session->set('admin-pages-manage', $currentPageWidgets);
         $this->session->set('admin-pages-widget-index', ++$widgetIndex);
@@ -329,7 +329,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         $items = $this->request->get("items");
 
         $page = \Core\Model\Page::findFirst($id);
-        $page->setLayout($layout);
+        $page->layout = $layout;
         $page->setWidgets($items);
         $page->save();
 
@@ -360,8 +360,8 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
         $data = array();
         foreach ($results as $result) {
             $data[] = array(
-                'id' => $result->getId(),
-                'label' => $result->getTitle()
+                'id' => $result->id,
+                'label' => $result->title
             );
         }
 

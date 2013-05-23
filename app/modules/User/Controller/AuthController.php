@@ -22,7 +22,7 @@ class AuthController extends \Core\Controller\Base
      */
     public function loginAction()
     {
-        if (\User\Model\User::getViewer()->getId()) {
+        if (\User\Model\User::getViewer()->id) {
             $this->response->redirect()->send();
         }
 
@@ -43,9 +43,8 @@ class AuthController extends \Core\Controller\Base
         ));
 
         if ($user) {
-            $userPassword = $user->getPassword();
-            if ($this->security->checkHash($password, $userPassword)) {
-                $this->core->auth()->authenticate($user->getId());
+            if ($this->security->checkHash($password, $user->password)) {
+                $this->core->auth()->authenticate($user->id);
                 return $this->response->redirect()->send();
             }
         }
@@ -60,7 +59,7 @@ class AuthController extends \Core\Controller\Base
      */
     public function logoutAction()
     {
-        if (\User\Model\User::getViewer()->getId())
+        if (\User\Model\User::getViewer()->id)
             $this->core->auth()->clearAuth();
 
         $this->response->redirect()->send();
@@ -71,7 +70,7 @@ class AuthController extends \Core\Controller\Base
      */
     public function registerAction()
     {
-        if (\User\Model\User::getViewer()->getId()) {
+        if (\User\Model\User::getViewer()->id) {
             $this->response->redirect()->send();
         }
 
@@ -92,7 +91,6 @@ class AuthController extends \Core\Controller\Base
 
         $user = new \User\Model\User();
         $data = $form->getValues();
-        $data['password'] = $this->security->hash($data['password']);
         if (!$user->save($data)) {
             foreach ($user->getMessages() as $message) {
                 $form->addError($message);
@@ -101,10 +99,10 @@ class AuthController extends \Core\Controller\Base
             return;
         }
 
-        $user->role_id = \User\Model\Role::getDefaultRole()->getId();
+        $user->role_id = \User\Model\Role::getDefaultRole()->id;
         $user->save();
 
-        $this->auth->authenticate($user->getId());
+        $this->core->auth()->authenticate($user->id);
         $this->response->redirect()->send();
 
     }

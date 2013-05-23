@@ -38,21 +38,21 @@
         <div class="row-fluid">
             <ul class="package_list">
                 {% for package in packages %}
-                    <li {% if not package.isEnabled() %}class="disabled"{% endif %}>
+                    <li {% if not package.enabled %}class="disabled"{% endif %}>
                         <div class="package_info">
-                            <h3>{{ package.getTitle() }} <span>v.{{ package.getVersion() }}</span></h3>
+                            <h3>{{ package.title }} <span>v.{{ package.version }}</span></h3>
 
-                            <div class="author">{{ package.getAuthor() }}</div>
-                            <div class="website"><a href="{{ package.getWebsite() }}">{{ package.getWebsite() }}</a>
+                            <div class="author">{{ package.author }}</div>
+                            <div class="website"><a href="{{ package.website }}">{{ package.website }}</a>
                             </div>
-                            <div class="description">{{ package.getDescription() }}</div>
+                            <div class="description">{{ package.description }}</div>
                         </div>
-                        {% if not package.isSystem() %}
+                        {% if not package.is_system() %}
                             <div class="package_options">
-                                {{ link_to(['for':'admin-packages-edit', 'type':package.getType(), 'name':package.getName(), 'return':'admin-packages-themes'], 'Edit' | trans, 'class': 'btn btn-inverse') }}
-                                {{ link_to(['for':'admin-packages-export', 'type':package.getType(), 'name':package.getName()], 'Export' | trans, 'class': 'btn btn-inverse') }}
+                                {{ link_to(['for':'admin-packages-edit', 'type':package.type, 'name':package.name, 'return':'admin-packages-themes'], 'Edit' | trans, 'class': 'btn btn-inverse') }}
+                                {{ link_to(['for':'admin-packages-export', 'type':package.type, 'name':package.name], 'Export' | trans, 'class': 'btn btn-inverse') }}
                                 <a class="btn btn-danger" href="javascript:;"
-                                   onclick="removePackage('{{package.getType()}}', '{{ package.getName() }}');">{{ 'Uninstall' | trans }}</a>
+                                   onclick="removePackage('{{package.type}}', '{{ package.name }}');">{{ 'Uninstall' | trans }}</a>
                             </div>
                         {% endif %}
                         <div class="clear"></div>

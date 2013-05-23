@@ -19,7 +19,6 @@ namespace Core\Controller;
 /**
  * @property \Phalcon\Db\Adapter\Pdo $db
  * @property \Phalcon\Cache\Backend $cacheData
- * @property \Core\Api\Acl $acl
  * @property \Engine\Application $app
  * @property \Phalcon\Assets\Manager $assets
  */
@@ -94,7 +93,7 @@ class Base extends \Phalcon\Mvc\Controller
         // resort content by sides
         $content = array();
         foreach ($page->getWidgets() as $widget) {
-            $content[$widget->getLayout()][] = $widget;
+            $content[$widget->layout][] = $widget;
         }
 
         $this->view->content = $content;
