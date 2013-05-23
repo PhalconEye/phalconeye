@@ -33,7 +33,7 @@ return new \Phalcon\Config(array (
   ),
   'application' => 
   array (
-    'debug' => false,
+    'debug' => true,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/engine/',
     'modulesDir' => ROOT_PATH . '/app/modules/',

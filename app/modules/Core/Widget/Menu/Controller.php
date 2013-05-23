@@ -89,9 +89,9 @@ class Controller extends \Engine\Widget\Controller
 
             if (!empty($item->icon)) {
                 if ($item->icon_position == 'left') {
-                    $navigationItems[$index]['prepend'] = "<img class='nav-icon' alt='{$item->title}' src='{$item->icon}'/>";
+                    $navigationItems[$index]['prepend'] = "<img class='nav-icon nav-icon-left' alt='{$item->title}' src='{$item->icon}'/>";
                 } else {
-                    $navigationItems[$index]['append'] = "<img class='nav-icon' alt='{$item->title}' src='{$item->icon}'/>";
+                    $navigationItems[$index]['append'] = "<img class='nav-icon nav-icon-right' alt='{$item->title}' src='{$item->icon}'/>";
                 }
             }
 

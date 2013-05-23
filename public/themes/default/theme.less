@@ -334,6 +334,55 @@
 
     /*CONTENT RELATED STYLES*/
 
+  .ui-tooltip, .arrow:after {
+    background: rgba(0, 0, 0, 0.75);
+  }
+  .ui-tooltip {
+    float: left;
+    padding: 5px;
+    color: white;
+    font: bold 14px "Helvetica Neue", Sans-Serif;
+    box-shadow: 0 0 7px black;
+    max-width: 400px;
+  }
+  .ui-tooltip p{
+    margin: 0;
+  }
+  .arrow {
+    width: 70px;
+    height: 16px;
+    overflow: hidden;
+    position: absolute;
+    left: 50%;
+    margin-left: -35px;
+    bottom: -16px;
+  }
+  .arrow.top {
+    top: -16px;
+    bottom: auto;
+  }
+  .arrow.left {
+    left: 20%;
+  }
+  .arrow:after {
+    content: "";
+    position: absolute;
+    left: 20px;
+    top: -20px;
+    width: 25px;
+    height: 25px;
+    box-shadow: 6px 5px 9px -9px black;
+    -webkit-transform: rotate(45deg);
+    -moz-transform: rotate(45deg);
+    -ms-transform: rotate(45deg);
+    -o-transform: rotate(45deg);
+    tranform: rotate(45deg);
+  }
+  .arrow.top:after {
+    bottom: -20px;
+    top: auto;
+  }
+
   .form_login {
     width: 420px;
     margin: 0 auto;
@@ -386,7 +435,15 @@
   }
 
   .nav .nav-icon {
-    margin: 0 5px;
-    max-width: 25px;
-    max-height: 25px;
+    max-width: 20px;
+    max-height: 20px;
+    vertical-align: middle;
+  }
+
+  .nav .nav-icon-left {
+    margin-right: 7px;
+  }
+
+  .nav .nav-icon-right {
+    margin-left: 7px;
   }
