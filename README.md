@@ -4,7 +4,6 @@ Phalcon Eye CMS
 Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cphalcon).
 
 ![HomePage Screenshot](https://raw.github.com/lantian/PhalconEye/master/gitdata/screenshot2.png)
-
 ![AdminPanel Screenshot](https://raw.github.com/lantian/PhalconEye/master/gitdata/screenshot1.png)
 
 * Current Version: 0.3.0
