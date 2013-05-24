@@ -113,4 +113,9 @@ class Controller extends \Engine\Widget\Controller
         return $form;
     }
 
+    public function isCached()
+    {
+        return true;
+    }
+
 }

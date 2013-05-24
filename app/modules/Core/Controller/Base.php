@@ -30,12 +30,22 @@ class Base extends \Phalcon\Mvc\Controller
      */
     public function initialize()
     {
+        if ($this->config->application->debug && $this->config->application->profiler){
+            $this->profiler->start();
+        }
+
         $this->view->setRenderLevel(\Phalcon\Mvc\View::LEVEL_ACTION_VIEW);
         $this->view->setPartialsDir('../../Core/View/partials/');
 
         // run init function
         if (method_exists($this, 'init'))
             $this->init();
+    }
+
+    public function afterExecuteRoute(){
+        if ($this->config->application->debug && $this->config->application->profiler){
+            $this->profiler->stop(get_called_class(), 'controller', $this);
+        }
     }
 
     public function renderContent($url = null, $controller = null, $type = null)
@@ -88,7 +98,7 @@ class Base extends \Phalcon\Mvc\Controller
         }
 
         // increment views
-        $page->incrementViews();
+//        $page->incrementViews();
 
         // resort content by sides
         $content = array();

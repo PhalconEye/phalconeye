@@ -44,9 +44,16 @@ abstract class Bootstrap implements BootstrapInterface
         $this->_config = $this->_di->get('config');
     }
 
-    public static function dependencyInjection(DiInterface $di)
+    public static function dependencyInjection(DiInterface $di, \Phalcon\Config $config)
     {
 
+    }
+
+    public function __destruct(){
+        if ($this->_config->application->debug){
+            $defaultModuleBootstrap = ucfirst(Application::$defaultModule) .'\Bootstrap';
+            $defaultModuleBootstrap::handleProfiler($this->_di, $this->_config);
+        }
     }
 
     public function registerAutoloaders()
@@ -75,7 +82,7 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         //  Initialize view
         /*************************************************/
-        $di->set('view', function () use ($moduleDirectory, $eventsManager, $config) {
+        $di->set('view', function () use ($di, $moduleDirectory, $eventsManager, $config) {
 
             $view = new View();
             $view->setViewsDir($moduleDirectory . '/View/');
@@ -116,9 +123,21 @@ abstract class Bootstrap implements BootstrapInterface
             //Attach a listener for type "view"
             if (!$config->application->debug) {
 
-                $eventsManager->attach("view", function ($event, $view) {
+                $eventsManager->attach("view", function ($event, $view) use ($di) {
                     if ($event->getType() == 'notFoundView') {
-                        \Phalcon\DI::getDefault()->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                        $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                    }
+                });
+
+                $view->setEventsManager($eventsManager);
+            }
+            elseif($config->application->profiler){
+                $eventsManager->attach("view", function ($event, $view) use ($di) {
+                    if ($event->getType() == 'beforeRender') {
+                        $di->get('profiler')->start();
+                    }
+                    if ($event->getType() == 'afterRender') {
+                        $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
                     }
                 });
 

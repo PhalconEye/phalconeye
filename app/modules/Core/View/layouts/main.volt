@@ -39,7 +39,7 @@
     </div>
 
     <div class="system-container">
-        {{ content() }}
+        {{ content() | trans }}
     </div>
 
     <div class="container">

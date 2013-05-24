@@ -18,8 +18,8 @@ namespace Core\Helper;
 
 class Allowed extends \Phalcon\Tag implements \Engine\HelperInterface
 {
-    static public function _(array $args){
+    static public function _(\Phalcon\DI $di, array $args){
         $viewer = \User\Model\User::getViewer();
-        return \Phalcon\DI::getDefault()->get('core')->acl()->_()->isAllowed($viewer->getRole()->name, $args[0], $args[1]) == \Phalcon\Acl::ALLOW;
+        return $di->get('core')->acl()->_()->isAllowed($viewer->getRole()->name, $args[0], $args[1]) == \Phalcon\Acl::ALLOW;
     }
 }

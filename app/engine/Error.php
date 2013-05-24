@@ -84,11 +84,20 @@ class Error
     {
         $di = Di::getDefault();
         $template = "[%s] %s (File: %s Line: [%s])";
-        if ($trace) {
-            $template .= PHP_EOL . $trace;
+        $logMessage = sprintf($template, $type, $message, $file, $line);
+
+        if ($di->has('profiler')) {
+            $profiler = $di->get('profiler');
+            if ($profiler) {
+                $profiler->addError($logMessage, $trace);
+            }
         }
 
-        $logMessage = sprintf($template, $type, $message, $file, $line) . PHP_EOL;
+        if ($trace) {
+            $logMessage .= $trace . PHP_EOL;
+        } else {
+            $logMessage .= PHP_EOL;
+        }
 
         if ($di->has('logger')) {
             $logger = $di->get('logger');

@@ -37,6 +37,11 @@ class Controller extends \Phalcon\Mvc\Controller
     private $_widgetName;
 
     /**
+     * @var string
+     */
+    private $_widgetModule;
+
+    /**
      * @var array Widget parameters
      */
     private $_params = array();
@@ -47,20 +52,27 @@ class Controller extends \Phalcon\Mvc\Controller
     private $_noRender = false;
 
     /**
+     * Set widget default data aka __construct()
+     */
+    public function setDefaults($widgetName = null, $widgetModule = null, $params = array()){
+        $this->_widgetName = $widgetName;
+        $this->_widgetModule = $widgetModule;
+        $this->_params = $params;
+    }
+
+    /**
      * Initializes the controller
      */
-    public function initialize($widgetName = null, $widgetModule = null, $params = array())
+    public function start()
     {
-        $this->_widgetName = $widgetName;
         $this->di = \Phalcon\DI::getDefault();
         $this->dispatcher = $this->di->get('dispatcher');
         $this->cacheData = $this->di->get('cacheData');
-        $this->_params = $params;
 
-        if ($widgetName !== null) {
-            if ($widgetModule !== null) {
+        if ($this->_widgetName !== null) {
+            if ($this->_widgetModule !== null) {
                 $config = $this->di->get('config');
-                $controllerDir = $config->application->modulesDir . $widgetModule . '/Widget/' . $widgetName . '/';
+                $controllerDir = $config->application->modulesDir . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/';
                 $defaultModuleName = ucfirst(\Engine\Application::$defaultModule);
 
                 /** @var \Phalcon\Mvc\View $view */
@@ -71,7 +83,7 @@ class Controller extends \Phalcon\Mvc\Controller
                 $view->setLayout('widget');
             } else {
                 $config = $this->di->get('config');
-                $controllerDir = $config->application->widgetsDir . $widgetName . '/';
+                $controllerDir = $config->application->widgetsDir . $this->_widgetName . '/';
                 $defaultModuleName = ucfirst(\Engine\Application::$defaultModule);
 
                 /** @var \Phalcon\Mvc\View $view */

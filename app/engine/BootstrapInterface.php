@@ -21,7 +21,7 @@ interface BootstrapInterface{
      *
      * @param \Phalcon\DiInterface $di
      */
-    public static function dependencyInjection(\Phalcon\DiInterface $di);
+    public static function dependencyInjection(\Phalcon\DiInterface $di, \Phalcon\Config $config);
 
     /**
      * Register module libraries autoloading

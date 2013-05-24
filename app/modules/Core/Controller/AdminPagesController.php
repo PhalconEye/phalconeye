@@ -269,7 +269,7 @@ class AdminPagesController extends \Core\Controller\BaseAdmin
                 $widgetClass = '\Widget\\'.$widgetName.'\Controller';
             }
             $widgetObject = new $widgetClass();
-            $widgetObject->initialize();
+            $widgetObject->start();
             $form = call_user_func_array(array($widgetObject, "adminAction"), $_REQUEST);
         } else {
             $form = new $adminForm();

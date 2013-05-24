@@ -74,11 +74,22 @@ class Form extends \Phalcon\Forms\Form
      */
     public function __construct(\Phalcon\Mvc\Model $entity = null)
     {
+        // collect profile info
+        $config = $this->di->get('config');
+        if ($config->application->debug && $config->application->profiler){
+            $this->di->get('profiler')->start();
+        }
+
         $this->_trans = $this->di->get('trans');
         $this->_action = substr($_SERVER['REQUEST_URI'], 1);
         parent::__construct($entity);
 
         $this->init();
+
+        // collect profile info
+        if ($config->application->debug && $config->application->profiler){
+            $this->di->get('profiler')->stop(get_called_class(), 'form', $this);
+        }
     }
 
     /**

@@ -34,6 +34,7 @@ return new \Phalcon\Config(array (
   'application' => 
   array (
     'debug' => true,
+    'profiler' => true,
     'baseUri' => '/',
     'engineDir' => ROOT_PATH . '/app/engine/',
     'modulesDir' => ROOT_PATH . '/app/modules/',
@@ -64,13 +65,10 @@ return new \Phalcon\Config(array (
       'remote' => '/',
     ),
   ),
-  'models' => 
+  'metadata' => 
   array (
-    'metadata' => 
-    array (
-      'adapter' => 'Memory',
-      'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
-    ),
+    'adapter' => 'Apc',
+    'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
   ),
   'annotations' => 
   array (

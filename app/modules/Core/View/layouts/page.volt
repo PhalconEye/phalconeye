@@ -99,11 +99,11 @@
     {% endif %}
 
 
-    {% if helper('core').allowed('\Core\Model\Page', 'show_views') %}
-        <div class="page_views">{{ 'View count:'|trans }}{{ page.view_count }}</div>
-    {% endif %}
+    {#{% if helper('core').allowed('\Core\Model\Page', 'show_views') %}#}
+        {#<div class="page_views">{{ 'View count:'|trans }}{{ page.view_count }}</div>#}
+    {#{% endif %}#}
 
-    {{ helper('core').getAllowed('\Core\Model\Page', 'page_footer') }}
+    {#{{ helper('core').getAllowed('\Core\Model\Page', 'page_footer') }}#}
 
 
     <div class="clear"></div>

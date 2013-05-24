@@ -62,7 +62,8 @@ class User extends \Engine\Model
      */
     private static $_viewer = null;
 
-    public function setPassword($password){
+    public function setPassword($password)
+    {
         if (!empty($password) && $this->password != $password)
             $this->password = $this->getDI()->get('security')->hash($password);
     }
@@ -72,9 +73,15 @@ class User extends \Engine\Model
      *
      * @return \User\Model\Role
      */
-    public function getRole($arguments = array()){
+    public function getRole($arguments = array())
+    {
+        $arguments = array_merge($arguments, array(
+            'cache' => array(
+                'key' => 'role_id_'.$this->role_id.'.cache'
+            )
+        ));
         $role = $this->getRelated('Role', $arguments);
-        if (!$role){
+        if (!$role) {
             $role = new Role();
             $role->id = 0;
             $role->name = '';
@@ -88,7 +95,8 @@ class User extends \Engine\Model
      *
      * @return bool
      */
-    public function isAdmin(){
+    public function isAdmin()
+    {
         return $this->getRole()->type == \Core\Api\Acl::ROLE_TYPE_ADMIN;
     }
 
@@ -99,11 +107,14 @@ class User extends \Engine\Model
      *
      * @return null|\Phalcon\Mvc\Model\ResultsetInterface|User
      */
-    public static function getViewer(){
+    public static function getViewer()
+    {
         if (null === self::$_viewer) {
             $identity = \Phalcon\DI::getDefault()->get('core')->auth()->getIdentity();
-            self::$_viewer = self::findFirst($identity);
-            if (!self::$_viewer){
+            if ($identity) {
+                self::$_viewer = self::findFirst($identity);
+            }
+            if (!self::$_viewer) {
                 self::$_viewer = new User();
                 self::$_viewer->id = 0;
                 self::$_viewer->role_id = Role::getRoleByType(\Core\Api\Acl::ROLE_TYPE_GUEST)->id;
@@ -114,7 +125,7 @@ class User extends \Engine\Model
     }
 
     /**
-     * Validations and business logic 
+     * Validations and business logic
      */
     public function validation()
     {

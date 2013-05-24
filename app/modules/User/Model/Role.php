@@ -98,7 +98,12 @@ class Role extends \Engine\Model
      * @return Role
      */
     public static function getRoleByType($type){
-        $role = Role::findFirst("type = '{$type}'");
+        $role = Role::findFirst(array(
+            "type = '{$type}'",
+            'cache' => array(
+                'key' => 'role_type_'.$type.'.cache'
+            )
+        ));
         if (!$role){
             $role = new Role();
             $role->name = ucfirst($type);
@@ -117,7 +122,12 @@ class Role extends \Engine\Model
      * @return Role
      */
     public static function getDefaultRole(){
-        $role = Role::findFirst("is_default = 1");
+        $role = Role::findFirst(array(
+            "is_default = 1",
+            'cache' => array(
+                'key' => 'role_default.cache'
+            )
+        ));
         if (!$role){
             $role = new Role();
             $role->name = "User";

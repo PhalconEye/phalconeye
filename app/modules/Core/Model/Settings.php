@@ -43,6 +43,9 @@ class Settings extends \Engine\Model
     {
         $this->value = $value;
         $this->save();
+
+        // clear cache
+        $this->getDI()->get('cacheData')->delete('setting_' . $this->name . '.cache');
     }
 
     /**
@@ -75,6 +78,9 @@ class Settings extends \Engine\Model
                 'name = :name:',
                 'bind' => array(
                     'name' => $name
+                ),
+                'cache' => array(
+                    'key' => 'setting_' . $name . '.cache'
                 )
             ));
 

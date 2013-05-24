@@ -34,7 +34,21 @@ class Helper
         if (!is_array($arguments))
             $arguments = array($arguments);
 
-        return $helperClassName::_($arguments);
+        // collect profile info
+        $di = \Phalcon\DI::getDefault();
+        $config = $di->get('config');
+        if ($config->application->debug && $config->application->profiler){
+            $di->get('profiler')->start();
+        }
+
+        $content = $helperClassName::_($di, $arguments);
+
+        // collect profile info
+        if ($config->application->debug && $config->application->profiler){
+            $di->get('profiler')->stop($helperClassName, 'helper');
+        }
+
+        return $content;
     }
 
 }

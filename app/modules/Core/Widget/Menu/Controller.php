@@ -21,7 +21,7 @@ class Controller extends \Engine\Widget\Controller
 
     public function indexAction()
     {
-        $this->view->title  =  $this->getParam('title');
+        $this->view->title = $this->getParam('title');
 
         $menuId = $this->getParam('menu_id');
         $menu = null;
@@ -35,26 +35,17 @@ class Controller extends \Engine\Widget\Controller
         if (empty($menuClass))
             $menuClass = 'nav';
 
-        $cacheKey = "menu_{$menuId}.cache";
-        $navigation = $this->cacheData->get($cacheKey);
+        $items = $this->_composeNavigation($menu->getMenuItems(array('parent_id IS NULL', 'order' => 'item_order ASC')));
 
-        if ($navigation === null) {
-
-            $items = $this->_composeNavigation($menu->getMenuItems(array('parent_id IS NULL', 'order' => 'item_order ASC')));
-
-            if (empty($items)) {
-                return $this->setNoRender();
-            }
-
-            $navigation = new \Engine\Navigation();
-            $navigation
-                ->setListClass($menuClass)
-                ->setItems($items)
-                ->setActiveItem($this->dispatcher->getActionName());
-
-            $this->cacheData->save($cacheKey, $navigation);
+        if (empty($items)) {
+            return $this->setNoRender();
         }
 
+        $navigation = new \Engine\Navigation();
+        $navigation
+            ->setListClass($menuClass)
+            ->setItems($items)
+            ->setActiveItem($this->dispatcher->getActionName());
 
         $this->view->navigation = $navigation;
     }
@@ -101,4 +92,8 @@ class Controller extends \Engine\Widget\Controller
         return $navigationItems;
     }
 
+    public function isCached()
+    {
+        return true;
+    }
 }

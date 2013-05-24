@@ -18,7 +18,7 @@ namespace Core\Helper;
 
 class Viewer extends \Phalcon\Tag implements \Engine\HelperInterface
 {
-    static public function _(array $args){
+    static public function _(\Phalcon\DI $di, array $args){
         return \User\Model\User::getViewer();
     }
 }

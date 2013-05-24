@@ -127,23 +127,25 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         // Attach event for modules DI
-        $eventsManager->attach("application:afterStartModule", function ($event, $application) {
+        $eventsManager->attach("application:afterStartModule", function ($event, $application) use($config) {
                 foreach ($application->getModules() as $module => $moduleDefinition) {
                     /** @var BootstrapInterface $moduleDi */
                     $moduleDi = '\\' . ucfirst($module) . '\Bootstrap';
 
                     if (class_exists($moduleDi)) {
-                        $moduleDi::dependencyInjection($application->getDI());
+                        $moduleDi::dependencyInjection($application->getDI(), $config);
                     }
                 }
             }
         );
+
 
         // Set default services to the DI
         EventsManager::initEngineEvents($eventsManager, $config);
         $this->setEventsManager($eventsManager);
         $di->setShared('eventsManager', $eventsManager);
         $di->setShared('app', $this);
+
     }
 
     public function getOutput()
@@ -160,7 +162,6 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initLoader($di, $config, $eventsManager)
     {
-
         $modules = $di->get('modules');
         foreach ($modules as $module => $enabled) {
             if (!$enabled) {
@@ -198,10 +199,13 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initEnvironment($di, $config)
     {
-        if (!$config->application->debug) {
-            set_error_handler(array('\Engine\Error', 'normal'));
-            register_shutdown_function(array('\Engine\Error', 'shutdown'));
-            set_exception_handler(array('\Engine\Error', 'exception'));
+        set_error_handler(array('\Engine\Error', 'normal'));
+        register_shutdown_function(array('\Engine\Error', 'shutdown'));
+        set_exception_handler(array('\Engine\Error', 'exception'));
+
+        if ($config->application->debug && $config->application->profiler){
+            $profiler = new Profiler();
+            $di->set('profiler', $profiler);
         }
     }
 
@@ -340,17 +344,28 @@ class Application extends \Phalcon\Mvc\Application
             "dbname" => $config->database->name,
         ));
 
+
+
         if ($config->application->debug) {
-
+            // Attach logger & profiler
             $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "db.log");
+            $profiler = new \Phalcon\Db\Profiler();
 
-            //Listen all the database events
-            $eventsManager->attach('db', function ($event, $connection) use ($logger) {
+            $eventsManager->attach('db', function ($event, $connection) use ($logger, $profiler) {
                 if ($event->getType() == 'beforeQuery') {
-                    $logger->log($connection->getSQLStatement(), \Phalcon\Logger::INFO);
+                    $statement = $connection->getSQLStatement();
+                    $logger->log($statement, \Phalcon\Logger::INFO);
+                    $profiler->startProfile($statement);
+                }
+                if ($event->getType() == 'afterQuery') {
+                    //Stop the active profile
+                    $profiler->stopProfile();
                 }
             });
 
+            if ($config->application->profiler && $di->has('profiler')){
+                $di->get('profiler')->setDbProfiler($profiler);
+            }
             $connection->setEventsManager($eventsManager);
         }
 
@@ -370,10 +385,10 @@ class Application extends \Phalcon\Mvc\Application
          * If the configuration specify the use of metadata adapter use it or use memory otherwise
          */
         $di->set('modelsMetadata', function () use ($config) {
-            if (!$config->application->debug && isset($config->models->metadata)) {
-                $metaDataConfig = $config->models->metadata;
+            if (!$config->application->debug && isset($config->metadata)) {
+                $metaDataConfig = $config->metadata;
                 $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                $metaData = new $metadataAdapter($config->models->metadata->toArray());
+                $metaData = new $metadataAdapter($config->metadata->toArray());
             } else {
                 $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
             }
@@ -721,8 +736,8 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         // clear metadata cache
-        if ($config->models->metadata && $config->models->metadata->metaDataDir) {
-            $files = glob($config->models->metadata->metaDataDir . '*'); // get all file names
+        if ($config->metadata && $config->metadata->metaDataDir) {
+            $files = glob($config->metadata->metaDataDir . '*'); // get all file names
             foreach ($files as $file) { // iterate files
                 if (is_file($file)) {
                     @unlink($file); // delete file
@@ -739,8 +754,6 @@ class Application extends \Phalcon\Mvc\Application
                 }
             }
         }
-
-        //@TODO: clear annotations cache
 
         // clear assets cache
         $files = \Engine\Package\Utilities::fsRecursiveGlob(ROOT_PATH . '/public/assets/', '*'); // get all file names

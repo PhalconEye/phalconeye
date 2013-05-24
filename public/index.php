@@ -11,15 +11,13 @@ define('PE_VERSION', '0.3.0');
 require_once ROOT_PATH . "/app/engine/Application.php";
 require_once ROOT_PATH . "/app/engine/Error.php";
 
-try {
 
+try {
     $application = new Engine\Application();
     $application->run();
     echo $application->getOutput();
-
 } catch (Exception $e) {
     \Engine\Error::exception($e);
     throw $e;
 }
-
 

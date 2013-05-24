@@ -41,7 +41,8 @@ class Element
      * @param $id - widget id in widgets table
      * @param $params - widgets params in page
      */
-    public function __construct($id, $params = array()){
+    public function __construct($id, $params = array())
+    {
 
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
@@ -50,28 +51,24 @@ class Element
 
     }
 
-    public function render($action = 'index'){
-        if (!$this->_widget || !$this->_widget->enabled){
+    public function render($action = 'index')
+    {
+        if (!$this->_widget || !$this->_widget->enabled) {
             return '';
         }
 
         $widgetName = $this->_widget->name;
-        if ($this->_widget->module !== null){
+        if ($this->_widget->module !== null) {
             $widgetModule = ucfirst($this->_widget->module);
             $controllerClass = "\\{$widgetModule}\\Widget\\{$widgetName}\\Controller";
-        }
-        else{
+        } else {
             $widgetModule = null;
             $controllerClass = "\\Widget\\{$widgetName}\\Controller";
         }
 
-        /** @var \Engine\Widget\Controller $controller  */
+        /** @var \Engine\Widget\Controller $controller */
         $controller = new $controllerClass();
-        $controller->initialize($widgetName, $widgetModule, $this->_widgetParams);
-        $controller->{"{$action}Action"}();
-
-        if ($controller->getNoRender())
-           return '';
+        $controller->setDefaults($widgetName, $widgetModule, $this->_widgetParams);
 
         // check cache
         $output = null;
@@ -80,16 +77,34 @@ class Element
         /** @var \Phalcon\Cache\BackendInterface $cache */
         $cache = $this->_di->get('cacheOutput');
 
-        if ($controller->isCached()){
+        if ($controller->isCached()) {
             $output = $cache->get($cacheKey, $cacheLifetime);
         }
 
-        if ($output === null){
+        if ($output === null) {
+            // collect profile info
+            $config = $this->_di->get('config');
+            if ($config->application->debug && $config->application->profiler){
+                $this->_di->get('profiler')->start();
+            }
+
+            $controller->start();
+            $controller->{"{$action}Action"}();
+
+            // collect profile info
+            if ($config->application->debug && $config->application->profiler){
+                $this->_di->get('profiler')->stop($controllerClass, 'widget', $controller);
+            }
+
+            if ($controller->getNoRender()) {
+                return '';
+            }
             $output = trim($controller->view->getRender('', 'index'));
-            if ($controller->isCached()){
+            if ($controller->isCached()) {
                 $cache->save($cacheKey, $output, $cacheLifetime);
             }
         }
+
 
         return $output;
     }

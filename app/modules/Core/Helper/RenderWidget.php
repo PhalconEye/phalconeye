@@ -18,7 +18,7 @@ namespace Core\Helper;
 
 class RenderWidget extends \Phalcon\Tag implements \Engine\HelperInterface
 {
-    static public function _(array $args){
+    static public function _(\Phalcon\DI $di, array $args){
         if (!self::isAllowed($args[1])) return '';
 
         $widget = new \Engine\Widget\Element($args[0], $args[1]);

@@ -231,8 +231,8 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
             'url_type' => ($item->pageId == null ? 0 : 1),
         );
 
-        if ($item->pageId) {
-            $page = \Core\Model\Page::findFirst($item->pageId);
+        if ($item->page_id) {
+            $page = \Core\Model\Page::findFirst($item->page_id);
             if ($page) {
                 $data['page_id'] = $page->id;
                 $data['page'] = $page->title;

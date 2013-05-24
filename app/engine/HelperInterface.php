@@ -16,5 +16,5 @@
 namespace Engine;
 
 interface HelperInterface{
-    static public function _(array $args);
+    static public function _(\Phalcon\DI $di, array $args);
 }

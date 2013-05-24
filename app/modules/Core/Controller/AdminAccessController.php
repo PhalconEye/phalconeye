@@ -191,7 +191,7 @@ class AdminAccessController extends \Core\Controller\BaseAdmin
             $result->value = $data[$options];
             $result->save();
         }
-
+        $this->core->acl()->clearAcl();
         $this->flash->success('Settings saved!');
     }
 }
