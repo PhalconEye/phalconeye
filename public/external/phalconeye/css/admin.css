@@ -1,5 +1,5 @@
 body {
-    background-color: rgb(81, 81, 81);
+    background-color: #FFFFFF;
     min-width: 1000px;
 }
 
@@ -80,7 +80,8 @@ h3{
 }
 
 .content .row-fluid > [class*="span"]{
-    background-color: white;
+    background-color: #f4f4f4;
+    border: 1px solid #cdcdcd;
     padding: 20px 40px 20px 20px;
     margin-left: 20px;
     margin-top: 20px;
@@ -528,11 +529,12 @@ form .form_footer .btn + .btn{
 
 .dashboard > div{
     background-color: white;
-
+    border: 1px solid #cdcdcd;
     padding: 20px 40px 20px 20px;
     margin-left: 20px;
     margin-top: 20px;
     min-width: 240px;
+    background-color: #f4f4f4;
 }
 
 .dashboard-sidebar{
@@ -549,7 +551,7 @@ form .form_footer .btn + .btn{
 }
 
 .dashboard-sidebar h4 > span{
-    background-color: white;
+    background-color: #f4f4f4;
     padding-right: 5px;
 }
 
@@ -726,8 +728,12 @@ form .form_footer .btn + .btn{
 .navbar-header .nav>.active>a,
 .navbar-header .nav>.active>a:hover{
     box-shadow: none;
-    color: white;
-    background-color: rgb(81, 81, 81);
+    color: black;
+    background-color: white;
+}
+
+.navbar-header .nav>.active>a i{
+    background-image: url("/external/bootstrap/images/glyphicons-halflings.png") !important;
 }
 
 .btn{
