@@ -1,3 +1,19 @@
+Version 0.4.0
+ - Implemented isCached, cacheKey, cacheLifeTime methods for widgets caching
+ - Implemented modules system
+ - Implemented filters in forms
+ - Implemented external Plugins
+ - Implemented external Widgets
+ - Added Phalcon 1.2.0 support
+ - Added Less compiler
+ - Added Phalcon assets manager
+ - Added Profiler
+ - Fixed form validation and form getValues before isValid method
+ - Fixed widgets saving with empty parameters
+ - Fixed #11
+ - Fixed Exception trace logging
+ - New default theme
+
 Version 0.3.0
  - Some menu improvements: onclick action, icon, tooltip, language selector
  - Form class fully rewritten
