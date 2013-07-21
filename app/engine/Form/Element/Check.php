@@ -77,7 +77,7 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
         parent::setDefault($value);
     }
 
-    public function prepareAttributes($attributes = NULL){
+    public function prepareAttributes($attributes = NULL, $useChecked = NULL){
         if (!is_array($attributes))
             $attributes = array();
 

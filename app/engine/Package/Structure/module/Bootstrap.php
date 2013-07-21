@@ -17,8 +17,11 @@
 
 namespace %nameUpper%;
 
-class Bootstrap extends \Engine\Bootstrap{
+class Bootstrap extends \Core\Bootstrap{
     protected $_moduleName = "%nameUpper%";
 
-
+    public function registerServices($di)
+    {
+        parent::registerServices($di);
+    }
 }

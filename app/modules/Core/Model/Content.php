@@ -28,32 +28,32 @@ class Content extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="integer", nullable=false, column="page_id")
+     * @Column(type="integer", nullable=false, column="page_id", size="11")
      */
     public $page_id;
 
     /**
-     * @Column(type="integer", nullable=false, column="widget_id")
+     * @Column(type="integer", nullable=false, column="widget_id", size="11")
      */
     public $widget_id;
 
     /**
-     * @Column(type="integer", nullable=false, column="widget_order")
+     * @Column(type="integer", nullable=false, column="widget_order", size="5")
      */
     public $widget_order = 0;
 
     /**
-     * @Column(type="string", nullable=false, column="layout")
+     * @Column(type="string", nullable=false, column="layout", size="50")
      */
     public $layout;
 
     /**
-     * @Column(type="string", nullable=false, column="params")
+     * @Column(type="text", nullable=false, column="params")
      */
     protected $params;
 

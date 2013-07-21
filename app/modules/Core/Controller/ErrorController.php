@@ -15,7 +15,9 @@
 
 namespace Core\Controller;
 
-class ErrorController extends \Core\Controller\Base
+use \Core\Controller\Base as PeController;
+
+class ErrorController extends PeController
 {
     public function show404Action()
     {

@@ -104,7 +104,7 @@ class Manager
         $locations = array(
             self::PACKAGE_TYPE_MODULE => $this->_config->application->modulesDir,
             self::PACKAGE_TYPE_PLUGIN => $this->_config->application->pluginsDir,
-            self::PACKAGE_TYPE_THEME => ROOT_PATH . '/public/themes/',
+            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . '/themes/',
             self::PACKAGE_TYPE_WIDGET => $this->_config->application->widgetsDir,
             self::PACKAGE_TYPE_LIBRARY => $this->_config->application->librariesDir
         );

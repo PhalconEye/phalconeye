@@ -203,7 +203,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $orderItem = \Core\Model\MenuItem::findFirst($orderData);
 
         if ($orderItem->id != $item->id)
-            $item->itemOrder = $orderItem->itemOrder + 1;
+            $item->item_order = $orderItem->item_order + 1;
 
 //        $roles = $this->request->get('roles');
 //        if ($roles == null) {
@@ -228,7 +228,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $data = array(
             'menu_id' => $this->request->get('menu_id'),
             'parent_id' => $this->request->get('parent_id'),
-            'url_type' => ($item->pageId == null ? 0 : 1),
+            'url_type' => ($item->page_id == null ? 0 : 1),
         );
 
         if ($item->page_id) {
@@ -280,7 +280,7 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
         $item = \Core\Model\MenuItem::findFirst($id);
         $menuId = null;
         if ($item) {
-            $menuId = $item->menuId;
+            $menuId = $item->menu_id;
             $item->delete();
         }
 

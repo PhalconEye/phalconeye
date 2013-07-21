@@ -25,12 +25,12 @@ class Settings extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="string", nullable=false, column="name")
+     * @Column(type="string", nullable=false, column="name", size="60")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="value")
+     * @Column(type="string", nullable=false, column="value", size="255")
      */
     public $value;
 

@@ -15,7 +15,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title><?php echo \Core\Model\Settings::getSetting('system_title', '') ?> | {% block title %}{% endblock %}</title>
+    <title>{{ helper('core').Setting('system_title', '') }} | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="PhalconEye - Open Source Content Management System"/>
@@ -32,10 +32,14 @@
 </head>
 <body>
 <div id="wrapper">
+
     <div id="header">
+        {% if disableHeader is not defined %}
         {{ helper('core').renderContent('header') }}
-        {% block header %}
-        {% endblock %}
+        {% endif %}
+
+        {%- block header -%}
+        {%- endblock -%}
     </div>
 
     <div class="system-container">
@@ -48,7 +52,9 @@
     </div>
 
     <div id="footer">
+        {% if disableFooter is not defined %}
         {{ helper('core').renderContent('footer') }}
+        {% endif %}
         {%- block footer -%}
         {%- endblock -%}
     </div>

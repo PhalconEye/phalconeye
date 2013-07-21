@@ -28,22 +28,22 @@ class LanguageTranslation extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="integer", nullable=false, column="language_id")
+     * @Column(type="integer", nullable=false, column="language_id", size="11")
      */
     public $language_id;
 
     /**
-     * @Column(type="string", nullable=false, column="original")
+     * @Column(type="text", nullable=false, column="original")
      */
     public $original;
 
     /**
-     * @Column(type="string", nullable=false, column="translated")
+     * @Column(type="text", nullable=false, column="translated")
      */
     public $translated = NULL;
 

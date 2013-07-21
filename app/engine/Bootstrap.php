@@ -44,14 +44,10 @@ abstract class Bootstrap implements BootstrapInterface
         $this->_config = $this->_di->get('config');
     }
 
-    public static function dependencyInjection(DiInterface $di, \Phalcon\Config $config)
+    public function __destruct()
     {
-
-    }
-
-    public function __destruct(){
-        if ($this->_config->application->debug){
-            $defaultModuleBootstrap = ucfirst(Application::$defaultModule) .'\Bootstrap';
+        if ($this->_config->application->debug && $this->_config->installed) {
+            $defaultModuleBootstrap = ucfirst(Application::$defaultModule) . '\Bootstrap';
             $defaultModuleBootstrap::handleProfiler($this->_di, $this->_config);
         }
     }
@@ -96,7 +92,7 @@ abstract class Bootstrap implements BootstrapInterface
                         "compiledPath" => $config->application->view->compiledPath,
                         "compiledExtension" => $config->application->view->compiledExtension,
                         'compiledSeparator' => '_',
-//                        'compileAlways' => $config->application->debug
+                        'compileAlways' => $config->application->debug
                     ));
 
                     $compiler = $volt->getCompiler();
@@ -120,9 +116,8 @@ abstract class Bootstrap implements BootstrapInterface
                 }
             ));
 
-            //Attach a listener for type "view"
+            // Attach a listener for type "view"
             if (!$config->application->debug) {
-
                 $eventsManager->attach("view", function ($event, $view) use ($di) {
                     if ($event->getType() == 'notFoundView') {
                         $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
@@ -130,17 +125,20 @@ abstract class Bootstrap implements BootstrapInterface
                 });
 
                 $view->setEventsManager($eventsManager);
-            }
-            elseif($config->application->profiler){
+            } elseif ($config->application->profiler) {
                 $eventsManager->attach("view", function ($event, $view) use ($di) {
-                    if ($event->getType() == 'beforeRender') {
-                        $di->get('profiler')->start();
+                    if ($di->has('profiler')) {
+                        if ($event->getType() == 'beforeRender') {
+                            $di->get('profiler')->start();
+                        }
+                        if ($event->getType() == 'afterRender') {
+                            $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
+                        }
                     }
-                    if ($event->getType() == 'afterRender') {
-                        $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
+                    if ($event->getType() == 'notFoundView') {
+                        $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
                     }
                 });
-
                 $view->setEventsManager($eventsManager);
             }
 
@@ -152,7 +150,7 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         if (!$config->application->debug) {
             $eventsManager->attach("dispatch:beforeException", new \Engine\Plugin\NotFound());
-            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
+//            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
         }
 
         /**

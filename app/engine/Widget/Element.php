@@ -82,17 +82,17 @@ class Element
         }
 
         if ($output === null) {
-            // collect profile info
+            // collect profiler info
             $config = $this->_di->get('config');
-            if ($config->application->debug && $config->application->profiler){
+            if ($config->application->debug && $this->_di->has('profiler')){
                 $this->_di->get('profiler')->start();
             }
 
             $controller->start();
             $controller->{"{$action}Action"}();
 
-            // collect profile info
-            if ($config->application->debug && $config->application->profiler){
+            // collect profiler info
+            if ($config->application->debug && $this->_di->has('profiler')){
                 $this->_di->get('profiler')->stop($controllerClass, 'widget', $controller);
             }
 

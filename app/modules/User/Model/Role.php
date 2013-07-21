@@ -31,17 +31,17 @@ class Role extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=false, column="name")
+     * @Column(type="string", nullable=false, column="name", size="150")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="description")
+     * @Column(type="string", nullable=false, column="description", size="255")
      */
     public $description;
 
@@ -51,7 +51,7 @@ class Role extends \Engine\Model
     public $is_default = false;
 
     /**
-     * @Column(type="string", nullable=false, column="type")
+     * @Column(type="string", nullable=false, column="type", size="10")
      */
     public $type = 'user';
 

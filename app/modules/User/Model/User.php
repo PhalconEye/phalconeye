@@ -31,27 +31,27 @@ class User extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="integer", nullable=true, column="role_id")
+     * @Column(type="integer", nullable=true, column="role_id", size="11")
      */
     public $role_id;
 
     /**
-     * @Column(type="string", nullable=false, column="username")
+     * @Column(type="string", nullable=false, column="username", size="255")
      */
     public $username;
 
     /**
-     * @Column(type="string", nullable=false, column="password")
+     * @Column(type="string", nullable=false, column="password", size="255")
      */
     public $password;
 
     /**
-     * @Column(type="string", nullable=false, column="email")
+     * @Column(type="string", nullable=false, column="email", size="150")
      */
     public $email;
 

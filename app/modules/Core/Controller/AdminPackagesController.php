@@ -164,7 +164,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     include_once $packageManager->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php';
                 }
                 if (class_exists($installerClass)) {
-                    $packageInstaller = new $installerClass();
+                    $packageInstaller = new $installerClass($this->di, $manifest->name);
                     if ($manifest->isUpdate) {
                         if (method_exists($packageInstaller, 'update')) {
                             $newVersion = $packageInstaller->update($manifest->currentVersion);
@@ -380,7 +380,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
                 $installerClass = ucfirst($name) . '\Installer';
                 if (class_exists($installerClass)) {
-                    $packageInstaller = new $installerClass();
+                    $packageInstaller = new $installerClass($this->di, $name);
                     if (method_exists($packageInstaller, 'remove')) {
                         $packageInstaller->remove();
                     }

@@ -21,7 +21,7 @@ namespace Core\Controller;
  */
 class AdminLanguagesController extends \Core\Controller\BaseAdmin
 {
-    CONST FLAGS_DIR = '/public/files/languages/';
+    CONST FLAGS_DIR = '/files/languages/';
 
     public function init()
     {
@@ -84,8 +84,8 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             return;
         }
 
-        if (!is_dir(ROOT_PATH . self::FLAGS_DIR)) {
-            mkdir(ROOT_PATH . self::FLAGS_DIR, 766, true);
+        if (!is_dir(PUBLIC_PATH . self::FLAGS_DIR)) {
+            mkdir(PUBLIC_PATH . self::FLAGS_DIR, 766, true);
         }
 
         $files = $this->request->getUploadedFiles();
@@ -94,8 +94,8 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         // upload flag
         if (count($files) == 1) {
             $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
-            @unlink(ROOT_PATH . $iconPath);
-            $files[0]->moveTo(ROOT_PATH . $iconPath);
+            @unlink(PUBLIC_PATH . $iconPath);
+            $files[0]->moveTo(PUBLIC_PATH . $iconPath);
             $lang->icon = $iconPath;
             $lang->save();
         }
@@ -133,9 +133,9 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
 
         if (count($files) == 1) {
             $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
-            @unlink(ROOT_PATH . $iconPath);
-            $files[0]->moveTo(ROOT_PATH . $iconPath);
-            $lang->icon = str_replace('/public/', '', $iconPath);
+            @unlink(PUBLIC_PATH . $iconPath);
+            $files[0]->moveTo(PUBLIC_PATH . $iconPath);
+            $lang->icon = $iconPath;
             $lang->save();
         }
 

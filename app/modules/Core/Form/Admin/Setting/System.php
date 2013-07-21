@@ -18,7 +18,7 @@ namespace Core\Form\Admin\Setting;
 
 class System extends \Engine\Form
 {
-    CONST THEMES_DIR = '/public/themes/';
+    CONST THEMES_DIR = '/themes/';
 
     public function init()
     {
@@ -33,7 +33,7 @@ class System extends \Engine\Form
 
         $themes = array();
 
-        foreach (scandir(ROOT_PATH . self::THEMES_DIR) as $entry) {
+        foreach (scandir(PUBLIC_PATH . self::THEMES_DIR) as $entry) {
             if ($entry == '.' || $entry == '..') continue;
             $themes[$entry] = ucfirst($entry);
         }

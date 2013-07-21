@@ -28,52 +28,52 @@ class Page extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=false, column="title")
+     * @Column(type="string", nullable=false, column="title", size="255")
      */
     public $title;
 
     /**
-     * @Column(type="string", nullable=true, column="type")
+     * @Column(type="string", nullable=true, column="type", size="25")
      */
     public $type = null;
 
     /**
-     * @Column(type="string", nullable=true, column="url")
+     * @Column(type="string", nullable=true, column="url", size="255")
      */
     public $url;
 
     /**
-     * @Column(type="string", nullable=false, column="description")
+     * @Column(type="text", nullable=false, column="description")
      */
     public $description;
 
     /**
-     * @Column(type="string", nullable=false, column="keywords")
+     * @Column(type="text", nullable=false, column="keywords")
      */
     public $keywords;
 
     /**
-     * @Column(type="string", nullable=false, column="layout")
+     * @Column(type="string", nullable=false, column="layout", size="50")
      */
     public $layout = 'middle';
 
     /**
-     * @Column(type="string", nullable=true, column="controller")
+     * @Column(type="string", nullable=true, column="controller", size="50")
      */
     public $controller = null;
 
     /**
-     * @Column(type="string", nullable=true, column="roles")
+     * @Column(type="string", nullable=true, column="roles", size="150")
      */
     protected $roles = null;
 
     /**
-     * @Column(type="integer", nullable=false, column="view_count")
+     * @Column(type="integer", nullable=false, column="view_count", size="11")
      */
     public $view_count = 0;
 

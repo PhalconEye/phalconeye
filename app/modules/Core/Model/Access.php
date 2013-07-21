@@ -26,24 +26,24 @@ class Access extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="string", nullable=false, column="object")
+     * @Column(type="string", nullable=false, column="object", size="55")
      */
     public $object;
 
     /**
      * @Primary
-     * @Column(type="string", nullable=false, column="action")
+     * @Column(type="string", nullable=false, column="action", size="255")
      */
     public $action;
 
     /**
      * @Primary
-     * @Column(type="integer", nullable=false, column="role_id")
+     * @Column(type="integer", nullable=false, column="role_id", size="11")
      */
     public $role_id;
 
     /**
-     * @Column(type="string", nullable=true, column="value")
+     * @Column(type="string", nullable=true, column="value", size="25")
      */
     public $value;
 

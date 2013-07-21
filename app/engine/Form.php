@@ -76,7 +76,7 @@ class Form extends \Phalcon\Forms\Form
     {
         // collect profile info
         $config = $this->di->get('config');
-        if ($config->application->debug && $config->application->profiler){
+        if ($config->application->debug && $this->di->has('profiler')){
             $this->di->get('profiler')->start();
         }
 
@@ -87,7 +87,7 @@ class Form extends \Phalcon\Forms\Form
         $this->init();
 
         // collect profile info
-        if ($config->application->debug && $config->application->profiler){
+        if ($config->application->debug && $this->di->has('profiler')){
             $this->di->get('profiler')->stop(get_called_class(), 'form', $this);
         }
     }

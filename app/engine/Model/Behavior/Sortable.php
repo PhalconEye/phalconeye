@@ -19,7 +19,7 @@ namespace Engine\Model\Behavior;
 trait Sortable
 {
     /**
-     * @Column(type="integer", nullable=false, column="item_order")
+     * @Column(type="integer", nullable=false, column="item_order", size="11")
      */
     public $item_order = 0;
 

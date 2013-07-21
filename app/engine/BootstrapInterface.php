@@ -17,13 +17,6 @@ namespace Engine;
 
 interface BootstrapInterface{
     /**
-     * Initialize module di
-     *
-     * @param \Phalcon\DiInterface $di
-     */
-    public static function dependencyInjection(\Phalcon\DiInterface $di, \Phalcon\Config $config);
-
-    /**
      * Register module libraries autoloading
      */
     public function registerAutoloaders();

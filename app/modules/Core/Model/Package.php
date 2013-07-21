@@ -31,42 +31,42 @@ class Package extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=false, column="name")
+     * @Column(type="string", nullable=false, column="name", size="64")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="type")
+     * @Column(type="string", nullable=false, column="type", size="64")
      */
     public $type;
 
     /**
-     * @Column(type="string", nullable=false, column="title")
+     * @Column(type="string", nullable=false, column="title", size="64")
      */
     public $title;
 
     /**
-     * @Column(type="string", nullable=true, column="description")
+     * @Column(type="text", nullable=true, column="description")
      */
     public $description;
 
     /**
-     * @Column(type="string", nullable=false, column="version")
+     * @Column(type="string", nullable=false, column="version", size="32")
      */
     public $version;
 
     /**
-     * @Column(type="string", nullable=true, column="author")
+     * @Column(type="string", nullable=true, column="author", size="255")
      */
     public $author;
 
     /**
-     * @Column(type="string", nullable=true, column="website")
+     * @Column(type="string", nullable=true, column="website", size="255")
      */
     public $website;
 

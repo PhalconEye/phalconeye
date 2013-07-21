@@ -18,12 +18,12 @@ namespace Engine\Model\Behavior;
 trait Timestampable
 {
     /**
-     * @Column(type="string", nullable=true, column="creation_date")
+     * @Column(type="datetime", nullable=true, column="creation_date")
      */
     public $creation_date;
 
     /**
-     * @Column(type="string", nullable=true, column="modified_date")
+     * @Column(type="datetime", nullable=true, column="modified_date")
      */
     public $modified_date;
 

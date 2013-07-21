@@ -1,5 +1,5 @@
 .profiler{
-    position: absolute;
+    position: fixed;
     width: 100%;
     background: white;
     bottom: 0;

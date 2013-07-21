@@ -24,22 +24,65 @@ use Engine\Package\Exception;
 class Application extends \Phalcon\Mvc\Application
 {
 
+    // system config location
+    const SYSTEM_CONFIG_PATH = '/app/config/engine.php';
+
     /**
      * @var \Phalcon\Config
      */
     private $_config;
 
+    /**
+     * Default module name.
+     *
+     * @var string
+     */
     public static $defaultModule = 'core';
+
+    /**
+     * Loaders for different modes.
+     *
+     * @var array
+     */
+    private $_loaders = array(
+        'normal' => array(
+            'logger',
+            'loader',
+            'environment',
+            'url',
+            'cache',
+            'annotations',
+            'router',
+            'database',
+            'session',
+            'flash',
+            'engine'
+        ),
+        'mini' => array(
+            'logger',
+            'loader',
+            'database',
+            'session'
+        )
+    );
 
     /**
      * Constructor
      */
     public function __construct()
     {
+        // create default di
         $di = new \Phalcon\DI\FactoryDefault();
 
+        // get config
+        $this->_config = include_once(ROOT_PATH . self::SYSTEM_CONFIG_PATH);
+
+        if (!$this->_config->installed) {
+            define('CHECK_REQUIREMENTS', true);
+            require_once(PUBLIC_PATH . '/requirements.php');
+        }
+
         // Store config in the Di container
-        $this->_config = include_once(ROOT_PATH . "/app/config/config.php");
         $di->setShared('config', $this->_config);
 
         parent::__construct($di);
@@ -47,34 +90,10 @@ class Application extends \Phalcon\Mvc\Application
 
     /**
      * Runs the application, performing all initializations
-     *
-     * @return mixed
      */
     public function run($mode = 'normal')
     {
-        $loaders = array(
-            'normal' => array(
-                'logger',
-                'loader',
-                'environment',
-                'url',
-                'cache',
-                'annotations',
-                'router',
-                'database',
-                'session',
-                'flash',
-                'engine'
-            ),
-            'mini' => array(
-                'logger',
-                'loader',
-                'database',
-                'session'
-            )
-        );
-
-        if (empty($loaders[$mode]))
+        if (empty($this->_loaders[$mode]))
             $mode = 'normal';
 
         // add default module and engine modules
@@ -103,7 +122,7 @@ class Application extends \Phalcon\Mvc\Application
         $eventsManager = new \Phalcon\Events\Manager();
 
         // Init services and engine system
-        foreach ($loaders[$mode] as $service) {
+        foreach ($this->_loaders[$mode] as $service) {
             $this->{'init' . $service}($di, $config, $eventsManager);
         }
 
@@ -126,26 +145,11 @@ class Application extends \Phalcon\Mvc\Application
             }
         }
 
-        // Attach event for modules DI
-        $eventsManager->attach("application:afterStartModule", function ($event, $application) use($config) {
-                foreach ($application->getModules() as $module => $moduleDefinition) {
-                    /** @var BootstrapInterface $moduleDi */
-                    $moduleDi = '\\' . ucfirst($module) . '\Bootstrap';
-
-                    if (class_exists($moduleDi)) {
-                        $moduleDi::dependencyInjection($application->getDI(), $config);
-                    }
-                }
-            }
-        );
-
-
         // Set default services to the DI
         EventsManager::initEngineEvents($eventsManager, $config);
         $this->setEventsManager($eventsManager);
         $di->setShared('eventsManager', $eventsManager);
         $di->setShared('app', $this);
-
     }
 
     public function getOutput()
@@ -178,7 +182,7 @@ class Application extends \Phalcon\Mvc\Application
         $loader = new \Phalcon\Loader();
         $loader->registerNamespaces($modulesNamespaces);
 
-        if ($config->application->debug) {
+        if ($config->application->debug && $config->installed) {
             $eventsManager->attach('loader', function ($event, $loader, $className) use ($di) {
                 if ($event->getType() == 'afterCheckClass') {
                     $di->get('logger')->error("Can't load class '" . $className . "'");
@@ -203,7 +207,7 @@ class Application extends \Phalcon\Mvc\Application
         register_shutdown_function(array('\Engine\Error', 'shutdown'));
         set_exception_handler(array('\Engine\Error', 'exception'));
 
-        if ($config->application->debug && $config->application->profiler){
+        if ($config->application->debug && $config->application->profiler && $config->installed) {
             $profiler = new Profiler();
             $di->set('profiler', $profiler);
         }
@@ -285,14 +289,12 @@ class Application extends \Phalcon\Mvc\Application
 
             //Read the annotations from controllers
             foreach ($modules as $module => $enabled) {
-
                 if (!$enabled) {
                     continue;
                 }
 
                 $files = scandir($config->application->modulesDir . ucfirst($module) . '/Controller'); // get all file names
                 foreach ($files as $file) { // iterate files
-
                     if ($file == "." || $file == "..") {
                         continue;
                     }
@@ -302,9 +304,7 @@ class Application extends \Phalcon\Mvc\Application
                         $router->addModuleResource(strtolower($module), $controller);
                     }
                 }
-
             }
-
             if ($saveToCache) {
                 $cacheData->save($routerCacheKey, $router, 2592000); // 30 days cache
             }
@@ -320,11 +320,19 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initLogger($di, $config, $eventsManager)
     {
-        if ($config->application->logger->enabled) {
+        if ($config->application->logger->enabled && $config->installed) {
             $di->set('logger', function () use ($config) {
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "main.log");
                 $formatter = new \Phalcon\Logger\Formatter\Line($config->application->logger->format);
                 $logger->setFormatter($formatter);
+                return $logger;
+            });
+        } else {
+            $di->set('logger', function () use ($config) {
+                $logger = new \Phalcon\Logger\Adapter\Syslog("PhalconEye", array(
+                    'option' => LOG_NDELAY,
+                    'facility' => LOG_DAEMON
+                ));
                 return $logger;
             });
         }
@@ -337,14 +345,17 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initDatabase($di, $config, $eventsManager)
     {
-        $connection = new \Phalcon\Db\Adapter\Pdo\Mysql(array(
+        if (!$config->installed) {
+            return;
+        }
+
+        $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
+        $connection = new $adapter(array(
             "host" => $config->database->host,
             "username" => $config->database->username,
             "password" => $config->database->password,
-            "dbname" => $config->database->name,
+            "dbname" => $config->database->dbname,
         ));
-
-
 
         if ($config->application->debug) {
             // Attach logger & profiler
@@ -363,7 +374,7 @@ class Application extends \Phalcon\Mvc\Application
                 }
             });
 
-            if ($config->application->profiler && $di->has('profiler')){
+            if ($config->application->profiler && $di->has('profiler')) {
                 $di->get('profiler')->setDbProfiler($profiler);
             }
             $connection->setEventsManager($eventsManager);
@@ -553,6 +564,9 @@ class Application extends \Phalcon\Mvc\Application
      */
     public function installAssets($assetsManager = null, $di = null, $config = null)
     {
+        if ($config && !$config->installed) {
+            return;
+        }
         if ($di === null) {
             $di = $this->_dependencyInjector;
         }
@@ -568,7 +582,7 @@ class Application extends \Phalcon\Mvc\Application
         // compile themes css
         $less = \Engine\Css\Less::factory();
         $collectedCss = array();
-        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme');
+        $themeDirectory = PUBLIC_PATH . '/themes/' . \Core\Model\Settings::getSetting('system_theme');
         $themeFiles = glob($themeDirectory . '/*.less');
         \Engine\Package\Utilities::fsCheckLocation($location . 'css/');
         foreach ($themeFiles as $file) {
@@ -606,7 +620,7 @@ class Application extends \Phalcon\Mvc\Application
         // css
         $collection = $assetsManager->collection('css');
         foreach ($collectedCss as $css) {
-            $collection->addCss(str_replace(ROOT_PATH . '/public/', '', $css));
+            $collection->addCss(str_replace(PUBLIC_PATH . '/', '', $css));
         }
         $assetsManager->set('css', $collection);
 
@@ -620,7 +634,7 @@ class Application extends \Phalcon\Mvc\Application
 
         ksort($sortedJs);
         foreach ($sortedJs as $js) {
-            $collection->addJs(str_replace(ROOT_PATH . '/public/', '', $js));
+            $collection->addJs(str_replace(PUBLIC_PATH . '/', '', $js));
         }
         $assetsManager->set('js', $collection);
     }
@@ -643,7 +657,7 @@ class Application extends \Phalcon\Mvc\Application
         /////////////////////////////////////////
         // CSS
         /////////////////////////////////////////
-        $themeDirectory = ROOT_PATH . '/public/themes/' . \Core\Model\Settings::getSetting('system_theme') . '/';
+        $themeDirectory = PUBLIC_PATH . '/themes/' . \Core\Model\Settings::getSetting('system_theme') . '/';
         $outputPath = $location . 'style.css';
 
         $less = new \Engine\Css\Less();
@@ -756,7 +770,7 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         // clear assets cache
-        $files = \Engine\Package\Utilities::fsRecursiveGlob(ROOT_PATH . '/public/assets/', '*'); // get all file names
+        $files = \Engine\Package\Utilities::fsRecursiveGlob(PUBLIC_PATH . '/assets/', '*'); // get all file names
         foreach ($files as $file) { // iterate files
             if (is_file($file))
                 @unlink($file); // delete file
@@ -776,33 +790,6 @@ class Application extends \Phalcon\Mvc\Application
         if ($config === null) {
             $config = $this->_config;
         }
-        $configText = var_export($config->toArray(), true);
-        $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
-        $configText = '<?php
-
-/**
-* PhalconEye
-*
-* LICENSE
-*
-* This source file is subject to the new BSD license that is bundled
-* with this package in the file LICENSE.txt.
-*
-* If you did not receive a copy of the license and are unable to
-* obtain it through the world-wide-web, please send an email
-* to phalconeye@gmail.com so we can send you a copy immediately.
-*
-*/
-
-/**
-* WARNING
-*
-* Manual changes to this file may cause a malfunction of the system.
-* Be careful when changing settings!
-*
-*/
-
-return new \\Phalcon\\Config(' . $configText . ');';
-        file_put_contents(ROOT_PATH . '/app/config/config.php', $configText);
+        Config::save($config);
     }
 }

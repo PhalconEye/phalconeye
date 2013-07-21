@@ -28,22 +28,22 @@ class Widget extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=true, column="module")
+     * @Column(type="string", nullable=true, column="module", size="64")
      */
     public $module = null;
 
     /**
-     * @Column(type="string", nullable=false, column="name")
+     * @Column(type="string", nullable=false, column="name", size="150")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="description")
+     * @Column(type="string", nullable=false, column="description", size="255")
      */
     public $description;
 
@@ -53,12 +53,12 @@ class Widget extends \Engine\Model
     public $is_paginated = false;
 
     /**
-     * @Column(type="integer", nullable=false, column="is_acl_controlled")
+     * @Column(type="boolean", nullable=false, column="is_acl_controlled")
      */
     public $is_acl_controlled = false;
 
     /**
-     * @Column(type="string", nullable=true, column="admin_form")
+     * @Column(type="string", nullable=true, column="admin_form", size="255")
      */
     public $admin_form = 'action';
 

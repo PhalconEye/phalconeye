@@ -33,72 +33,72 @@ class MenuItem extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="integer", nullable=false, column="id")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=false, column="title")
+     * @Column(type="string", nullable=false, column="title", size="255")
      */
     public $title;
 
     /**
-     * @Column(type="integer", nullable=false, column="menu_id")
+     * @Column(type="integer", nullable=false, column="menu_id", size="11")
      */
     public $menu_id;
 
     /**
-     * @Column(type="integer", nullable=true, column="parent_id")
+     * @Column(type="integer", nullable=true, column="parent_id", size="11")
      */
     public $parent_id = null;
 
     /**
-     * @Column(type="integer", nullable=true, column="page_id")
+     * @Column(type="integer", nullable=true, column="page_id", size="11")
      */
     public $page_id = null;
 
     /**
-     * @Column(type="string", nullable=true, column="url")
+     * @Column(type="string", nullable=true, column="url", size="255")
      */
     public $url = null;
 
     /**
-     * @Column(type="string", nullable=true, column="onclick")
+     * @Column(type="string", nullable=true, column="onclick", size="255")
      */
     protected $onclick = null;
 
     /**
-     * @Column(type="string", nullable=true, column="target")
+     * @Column(type="string", nullable=true, column="target", size="10")
      */
     public $target = null;
 
     /**
-     * @Column(type="string", nullable=true, column="tooltip")
+     * @Column(type="string", nullable=true, column="tooltip", size="255")
      */
     protected $tooltip = null;
 
     /**
-     * @Column(type="string", nullable=true, column="tooltip_position")
+     * @Column(type="string", nullable=true, column="tooltip_position", size="10")
      */
     public $tooltip_position = 'top';
 
     /**
-     * @Column(type="string", nullable=true, column="icon")
+     * @Column(type="string", nullable=true, column="icon", size="255")
      */
     public $icon = null;
 
     /**
-     * @Column(type="string", nullable=false, column="icon_position")
+     * @Column(type="string", nullable=false, column="icon_position", size="10")
      */
     public $icon_position = 'left';
 
     /**
-     * @Column(type="string", nullable=true, column="languages")
+     * @Column(type="string", nullable=true, column="languages", size="150")
      */
     protected $languages = null;
 
     /**
-     * @Column(type="string", nullable=true, column="roles")
+     * @Column(type="string", nullable=true, column="roles", size="150")
      */
     protected $roles = null;
 

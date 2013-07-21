@@ -14,6 +14,6 @@
         </resources>
     </client_settings>
 	<clientForm id="ck_box"><![CDATA[
-		<script type="text/javascript">window.CKEDITOR_BASEPATH = '/public/js/ckeditor/';</script>
+		<script type="text/javascript">window.CKEDITOR_BASEPATH = '/external/ckeditor/';</script>
 	]]></clientForm>		
 </editor>

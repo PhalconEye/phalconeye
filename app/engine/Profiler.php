@@ -86,10 +86,12 @@ class Profiler
         return $data[$objectType];
     }
 
+
     /**
      * Collect errors
      *
      * @param $error
+     * @param $trace
      */
     public function addError($error, $trace){
         $this->_errorData[] = array(

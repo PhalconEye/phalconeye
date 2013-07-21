@@ -18,32 +18,42 @@ namespace Core;
 use Phalcon\DiInterface,
     Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 
+use \User\Model\User;
+
 class Bootstrap extends \Engine\Bootstrap
 {
     protected $_moduleName = "Core";
 
-    public static function dependencyInjection(DiInterface $di, \Phalcon\Config $config)
-    {
-        self::_initWidgets($di);
-        self::_initLocale($di);
+    public function registerServices($di){
+        parent::registerServices($di);
 
-        if ($config->application->debug) {
+        $config = $di->get('config');
+        self::_initLocale($di, $config);
+        if (!$config->installed) {
+            return;
+        }
+
+        // remove profiler for non-user
+        if (!User::getViewer()->id) {
+            $di->remove('profiler');
+        }
+        self::_initWidgets($di);
+
+        if ($config->application->debug && $di->has('profiler')) {
             $di->get('assets')
                 ->collection('css')
-                ->addCss('external/phalconeye/css/profiler.css');
-            ;
+                ->addCss('external/phalconeye/css/profiler.css');;
 
             $di->get('assets')
                 ->collection('js')
-                ->addCss('external/phalconeye/js/profiler.js');
-            ;
+                ->addCss('external/phalconeye/js/profiler.js');;
         }
     }
 
     /**
      * Prepare widgets metadata for Engine
      */
-    private static function _initWidgets(\Phalcon\DI $di)
+    private function _initWidgets(\Phalcon\DI $di)
     {
         $cache = $di->get('cacheData');
         $cacheKey = "widgets_metadata.cache";
@@ -66,12 +76,17 @@ class Bootstrap extends \Engine\Bootstrap
      *
      * @param $di
      */
-    private static function _initLocale(\Phalcon\DI $di)
+    private function _initLocale(\Phalcon\DI $di, \Phalcon\Config $config)
     {
-        $locale = $di->get('session')->get('locale', \Core\Model\Settings::getSetting('system_default_language'));
+        if ($config->installed) {
+            $locale = $di->get('session')->get('locale', \Core\Model\Settings::getSetting('system_default_language'));
+        } else {
+            $locale = $di->get('session')->get('locale', 'en');
+        }
+
         $translate = null;
 
-        if (!$di->get('config')->application->debug) {
+        if (!$di->get('config')->application->debug || !$config->installed) {
             $messages = array();
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
@@ -99,17 +114,17 @@ class Bootstrap extends \Engine\Bootstrap
 
     public static function handleProfiler(\Phalcon\DI $di, \Phalcon\Config $config)
     {
-        if (!$config->application->debug || !$di->has('profiler')){
+        if (!$config->application->debug || !$di->has('profiler')) {
             return;
         }
 
         // check admin area
-        if (substr($di->get('dispatcher')->getControllerName(),0, 5) == 'admin'){
+        if (substr($di->get('dispatcher')->getControllerName(), 0, 5) == 'admin') {
             return;
         }
 
         $viewer = \User\Model\User::getViewer();
-        if (!$viewer->id || !$viewer->isAdmin()){
+        if (!$viewer->id || !$viewer->isAdmin()) {
             return;
         }
 
@@ -125,22 +140,21 @@ class Bootstrap extends \Engine\Bootstrap
         // Config
         $configData = $config->toArray();
         $description = '';
-        foreach($configData as $key => $data){
-            if (empty($data)){
+        foreach ($configData as $key => $data) {
+            if (!is_array($data) || empty($data)) {
                 continue;
             }
 
-            $description .= '<h2 class="label">'.ucfirst($key).'</h2>';
-            foreach($data as $key2 => $data2){
-                if (is_array($data2)){
-                    foreach($data2 as $key3 => $data3){
-                        if (!is_array($data2)){
-                            $description .= '<span class="label">'.ucfirst($key2).': </span><span class="code">'.$data2.'</span><br/>';
+            $description .= '<h2 class="label">' . ucfirst($key) . '</h2>';
+            foreach ($data as $key2 => $data2) {
+                if (is_array($data2)) {
+                    foreach ($data2 as $key3 => $data3) {
+                        if (!is_array($data2)) {
+                            $description .= '<span class="label">' . ucfirst($key2) . ': </span><span class="code">' . $data2 . '</span><br/>';
                         }
                     }
-                }
-                else{
-                    $description .= '<span class="label">'.ucfirst($key2).': </span><span class="code">'.$data2.'</span><br/>';
+                } else {
+                    $description .= '<span class="label">' . ucfirst($key2) . ': </span><span class="code">' . $data2 . '</span><br/>';
                 }
             }
 
@@ -217,15 +231,26 @@ class Bootstrap extends \Engine\Bootstrap
 
         // SQL
         $sql = '<div window="sql" class="item item-right item-sql">' . $dbProfiler->getNumberTotalStatements() . '</div>';
+
         $description = 'No Sql';
         if (!empty($dbProfiles)) {
+            $longestQuery = '';
+            $longestQueryTime = 0;
+
             $description = '<span class="label">Total count: </span>' . $dbProfiler->getNumberTotalStatements() . '<br/>';
-            $description .= '<span class="label">Total time: </span>' . round($dbProfiler->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/><br/>';
+            $description .= '<span class="label">Total time: </span>' . round($dbProfiler->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>';
+            $description .= '<span class="label">Longest query: </span>%s<br/><br/>';
 
             foreach ($dbProfiles as $profile) {
+                if ($profile->getTotalElapsedSeconds() > $longestQueryTime) {
+                    $longestQueryTime = $profile->getTotalElapsedSeconds();
+                    $longestQuery = $profile->getSQLStatement();
+                }
                 $description .= '<span class="label">SQL: </span><span class="code">' . $profile->getSQLStatement() . '</span><br/>';
                 $description .= '<span class="label">Time: </span>' . round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/><br/>';
             }
+
+            $description = sprintf($description, '<span class="code">' . $longestQuery . '</span> (' . round($longestQueryTime * 1000, 4) . ' ms)');
         }
         echo sprintf($htmlWindow, 'sql', 'Sql Statements', $description);
 
@@ -234,7 +259,7 @@ class Bootstrap extends \Engine\Bootstrap
         $errorsCount = count($errorsData);
         $colorClass = ($errorsCount == 0 ? 'item-good' : 'item-bad');
         $errors = '<div window="errors" class="item item-right item-errors ' . $colorClass . '">' . $errorsCount . '</div>';
-        $description = 'No Errors';
+        $description = ($errorsCount == 0 ? 'No Errors' : '');
         foreach ($errorsData as $data) {
             $description .= '<span class="label">' . $data['error'] . '</span><span class="code">' . str_replace('#', '<br/>#', $data['trace']) . '</span><br/><br/>';
         }

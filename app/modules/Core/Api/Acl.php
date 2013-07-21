@@ -57,13 +57,12 @@ class Acl implements ContainerInterface
      */
     public function _()
     {
-        if (!$this->_acl)
-        {
+        if (!$this->_acl) {
 
             $cacheData = $this->_di->get('cacheData');
 
             $acl = $cacheData->get(self::ACL_CACHE_KEY);
-            if ($acl === null){
+            if ($acl === null) {
 
                 $acl = new AclMemory();
                 $acl->setDefaultAction(PhAcl::DENY);
@@ -95,7 +94,7 @@ class Acl implements ContainerInterface
                 foreach ($this->_di->get('modules') as $module => $enabled) {
 
                     if (!$enabled) {
-                         continue;
+                        continue;
                     }
 
                     $moduleName = ucfirst($module);
@@ -134,7 +133,7 @@ class Acl implements ContainerInterface
 
                     $value = $item->value;
 
-                    if (array_key_exists($item->object, $objects) && in_array($item->action, $objects[$item->object]['actions']) && ($value == "allow" || $value == "deny")){
+                    if (array_key_exists($item->object, $objects) && in_array($item->action, $objects[$item->object]['actions']) && ($value == "allow" || $value == "deny")) {
                         $acl->$value($roleNames[$item->role_id], $item->object, $item->action);
                     }
                 }
@@ -151,7 +150,7 @@ class Acl implements ContainerInterface
     {
         $result = \Core\Model\Access::findFirst(array(
             "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
-            "bind"       => array(
+            "bind" => array(
                 1 => $objectName,
                 2 => $option,
                 3 => $role->id
@@ -181,17 +180,16 @@ class Acl implements ContainerInterface
         $reader = new \Phalcon\Annotations\Adapter\Memory();
         $reflector = $reader->get($objectName);
         $annotations = $reflector->getClassAnnotations();
-        if ($annotations && $annotations->has('Acl')){
+        if ($annotations && $annotations->has('Acl')) {
             $annotation = $annotations->get('Acl');
 
-            if ($annotation->hasNamedArgument('actions')){
+            if ($annotation->hasNamedArgument('actions')) {
                 $object->actions = $annotation->getNamedParameter('actions');
             }
-            if ($annotation->hasNamedArgument('options')){
+            if ($annotation->hasNamedArgument('options')) {
                 $object->options = $annotation->getNamedParameter('options');
             }
-        }
-        else{
+        } else {
             return null;
         }
 
@@ -211,14 +209,28 @@ class Acl implements ContainerInterface
      */
     public function beforeDispatch(\Phalcon\Events\Event $event, \Phalcon\Mvc\Dispatcher $dispatcher)
     {
+        // check installation
+        if (!$this->_di->get('config')->installed) {
+            $this->_di->set('installationRequired', true);
+            if ($dispatcher->getControllerName() != 'install') {
+                return $dispatcher->forward(array(
+                    'module' => 'core',
+                    "controller" => "install",
+                    "action" => "index"
+                ));
+            }
+            return;
+        }
+
         $viewer = \User\Model\User::getViewer();
         $acl = $this->_();
 
         $controller = $dispatcher->getControllerName();
 
         // check admin area
-        if (substr($controller,0, 5) == 'admin'){
-            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW){
+        if (substr($controller, 0, 5) == 'admin') {
+
+            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW) {
                 return $dispatcher->forward(array(
                     'module' => \Engine\Application::$defaultModule,
                     'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',

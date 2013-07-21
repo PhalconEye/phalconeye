@@ -28,22 +28,22 @@ class Language extends \Engine\Model
     /**
      * @Primary
      * @Identity
-     * @Column(type="string", nullable=false, column="id")
+     * @Column(type="string", nullable=false, column="id", size="11")
      */
     public $id;
 
     /**
-     * @Column(type="string", nullable=false, column="name")
+     * @Column(type="string", nullable=false, column="name", size="50")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="locale")
+     * @Column(type="string", nullable=false, column="locale", size="50")
      */
     public $locale;
 
     /**
-     * @Column(type="string", nullable=true, column="icon")
+     * @Column(type="string", nullable=true, column="icon", size="255")
      */
     public $icon = null;
 
