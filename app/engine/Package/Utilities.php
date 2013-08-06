@@ -45,14 +45,12 @@ class Utilities
             // Ignore errors on mkdir (only fail if the file fails to copy
             if ($item->isDir()) {
                 if (!is_dir($fDest))
-                    @mkdir($fDest, $item->getPerms(), true);
+                    @mkdir($fDest, $item->getPerms(), 0755, true);
             } else if ($item->isFile()) {
                 if ($statFiles && (is_file($fDest) && filemtime($itemPath) <= filemtime($fDest))) {
                     continue;
                 }
-
-                if (!is_dir($fDest))
-                    @mkdir(dirname($fDest), 0755, true);
+                
                 if (!copy($itemPath, $fDest)) {
                     throw new Exception('Unable to copy.');
                 }

@@ -17,6 +17,8 @@ namespace Engine\Api;
 
 class Container
 {
+    protected $_instances = array();
+
     protected $_moduleName;
     protected $_di;
 
@@ -26,13 +28,18 @@ class Container
         $this->_di = $di;
     }
 
-    public function __call($name, $arguments){
-        $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
-        if (!class_exists($apiClassName)){
-            throw new \Engine\Exception(sprintf('Can not find Api with name "%s".', $name));
+    public function __call($name, $arguments)
+    {
+        if (!isset($this->_instances[$name])) {
+            $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
+            if (!class_exists($apiClassName)) {
+                throw new \Engine\Exception(sprintf('Can not find Api with name "%s".', $name));
+            }
+
+            $this->_instances[$name] = new $apiClassName($this->_di);
         }
 
-        return new $apiClassName($this->_di);
+        return $this->_instances[$name];
     }
 
 }

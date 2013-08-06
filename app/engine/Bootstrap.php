@@ -92,7 +92,7 @@ abstract class Bootstrap implements BootstrapInterface
                         "compiledPath" => $config->application->view->compiledPath,
                         "compiledExtension" => $config->application->view->compiledExtension,
                         'compiledSeparator' => '_',
-                        'compileAlways' => $config->application->debug
+//                        'compileAlways' => $config->application->debug
                     ));
 
                     $compiler = $volt->getCompiler();
@@ -150,7 +150,7 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         if (!$config->application->debug) {
             $eventsManager->attach("dispatch:beforeException", new \Engine\Plugin\NotFound());
-//            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
+            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
         }
 
         /**

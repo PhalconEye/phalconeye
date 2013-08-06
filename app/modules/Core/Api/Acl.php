@@ -16,13 +16,13 @@
 
 namespace Core\Api;
 
-use Engine\Api\ContainerInterface,
+use Engine\Api\ApiInterface,
     Phalcon\DiInterface,
     Phalcon\Acl as PhAcl,
     Phalcon\Acl\Resource as AclResource,
     Phalcon\Acl\Adapter\Memory as AclMemory;
 
-class Acl implements ContainerInterface
+class Acl implements ApiInterface
 {
 
     const ACL_CACHE_KEY = "acl_data.cache";

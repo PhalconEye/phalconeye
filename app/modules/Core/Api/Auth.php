@@ -19,7 +19,7 @@ namespace Core\Api;
 /**
  * Provides small layer between session and services
  */
-class Auth implements \Engine\Api\ContainerInterface{
+class Auth implements \Engine\Api\ApiInterface{
 
     private $_identity = 0;
 

@@ -18,17 +18,6 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url("external/bootstrap/bootstrap.min.css") }}"/>
-    <link rel="stylesheet" href="{{ url("external/phalconeye/css/admin.css") }}"/>
-    {{ javascript_include("external/jquery/jquery-1.8.3.min.js") }}
-    {{ javascript_include("external/jquery/jquery-ui-1.9.0.custom.min.js") }}
-    {{ javascript_include("external/bootstrap/bootstrap.min.js") }}
-    {{ javascript_include("external/ckeditor/ckeditor.js") }}
-    {{ javascript_include("assets/js/core/1-core.js") }}
-    {{ javascript_include("assets/js/core/2-modal.js") }}
-    {{ javascript_include("external/phalconeye/js/admin.js") }}
-    {{ javascript_include("external/phalconeye/js/ajaxplorer.js") }}
-
     {% block head %}
 
     {% endblock %}
@@ -79,6 +68,19 @@
 <div id="footer">
     Phalcon Eye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
+
+
+<link rel="stylesheet" href="{{ url("external/bootstrap/bootstrap.min.css") }}"/>
+<link rel="stylesheet" href="{{ url("external/phalconeye/css/admin.css") }}"/>
+{{ javascript_include("assets/js/core/1-jquery-1.8.3.js") }}
+{{ javascript_include("assets/js/core/1-jquery-ui-1.9.0.js") }}
+{{ javascript_include("external/bootstrap/bootstrap.min.js") }}
+{{ javascript_include("external/ckeditor/ckeditor.js") }}
+{{ javascript_include("assets/js/core/2-core.js") }}
+{{ javascript_include("assets/js/core/3-modal.js") }}
+{{ javascript_include("external/phalconeye/js/admin.js") }}
+{{ javascript_include("external/phalconeye/js/ajaxplorer.js") }}
+
 
 </body>
 </html>

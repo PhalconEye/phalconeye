@@ -14,7 +14,7 @@
  *
  */
 
-namespace Engine\Css;
+namespace Engine\Asset\Css;
 
 class Less
 {
@@ -37,7 +37,8 @@ class Less
         return new \lessc;
     }
 
-    public function getCompiler(){
+    public function getCompiler()
+    {
         return $this->_lessc;
     }
 
@@ -45,6 +46,7 @@ class Less
      * Add file for compilation
      *
      * @param $file
+     *
      * @return $this
      */
     public function addFile($file)
@@ -57,6 +59,7 @@ class Less
      * Add directory for compilation
      *
      * @param $directory
+     *
      * @return $this
      */
     public function addDir($directory)
@@ -73,9 +76,11 @@ class Less
      * Add import directory for compilation
      *
      * @param $directory
+     *
      * @return $this
      */
-    public function addImportDir($directory) {
+    public function addImportDir($directory)
+    {
         $this->_importDirs[] = $directory;
         return $this;
     }
@@ -85,22 +90,19 @@ class Less
      *
      * @param $filepath - out put file
      */
-    public function compileTo($filepath, $format = 'compressed'){
+    public function compileTo($filepath, $format = 'compressed')
+    {
         $less = '';
         foreach ($this->_files as $file) {
             $less .= file_get_contents($file) . "\n\n";
         }
 
-        try {
-            $this->_lessc->setImportDir($this->_importDirs);
-            $this->_lessc->setFormatter($format);
-            $result = $this->_lessc->compile($less);
+        $this->_lessc->setImportDir($this->_importDirs);
+        $this->_lessc->setFormatter($format);
+        $result = $this->_lessc->compile($less);
 
-            file_put_contents($filepath, $result);
-        }
-        catch (\Engine\Exception $e) {
-            error_log('Exception: ' . $e->getMessage());
-        }
+        file_put_contents($filepath, $result);
+
     }
 
 }

@@ -15,7 +15,7 @@
 
 namespace Engine\Api;
 
-interface ContainerInterface{
+interface ApiInterface{
 
     public function __construct(\Phalcon\DiInterface $di);
 }

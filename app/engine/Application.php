@@ -16,7 +16,9 @@
 
 namespace Engine;
 
+use Engine\Asset\Manager;
 use Engine\Package\Exception;
+use Phalcon\DI;
 
 /**
  * @property \Phalcon\DiInterface $_dependencyInjector
@@ -506,6 +508,8 @@ class Application extends \Phalcon\Mvc\Application
     /**
      * Initializes engine services
      *
+     * @param DI $di
+     *
      * @param \stdClass $config
      */
     protected function initEngine($di, $config, $eventsManager)
@@ -518,186 +522,12 @@ class Application extends \Phalcon\Mvc\Application
             }
 
             // initialize module api
-            $di->set(strtolower($module), function () use ($module, $di) {
+            $di->setShared(strtolower($module), function () use ($module, $di) {
                 return new \Engine\Api\Container($module, $di);
             });
         }
 
-        $assetsManager = $di->get('assets');
-
-        if ($this->_config->application->debug) {
-            $assetsManager
-                ->collection('js')
-                ->addJs('external/jquery/jquery-1.8.3.min.js')
-                ->addJs('external/jquery/jquery-ui-1.9.0.custom.min.js');
-
-            $this->installAssets($assetsManager, $di, $config);
-        } else {
-            $remote = $this->_config->application->assets->get('remote');
-            if ($remote) {
-                $assetsManager
-                    ->collection('css')
-                    ->setPrefix($remote)
-                    ->setLocal(false);
-                $assetsManager
-                    ->collection('js')
-                    ->setPrefix($remote)
-                    ->setLocal(false);
-
-            }
-            $assetsManager
-                ->collection('css')
-                ->addCss('assets/style.css');
-
-            $assetsManager
-                ->collection('js')
-                ->addJs('external/jquery/jquery-1.8.3.min.js')
-                ->addJs('external/jquery/jquery-ui-1.9.0.custom.min.js')
-                ->addJs('assets/javascript.js');
-
-
-        }
-    }
-
-    /**
-     * Install assets from all modules
-     */
-    public function installAssets($assetsManager = null, $di = null, $config = null)
-    {
-        if ($config && !$config->installed) {
-            return;
-        }
-        if ($di === null) {
-            $di = $this->_dependencyInjector;
-        }
-        if ($assetsManager === null) {
-            $assetsManager = $di->get('assets');
-        }
-        if ($config === null) {
-            $config = $this->_config;
-        }
-
-        $location = $config->application->assets->local;
-
-        // compile themes css
-        $less = \Engine\Css\Less::factory();
-        $collectedCss = array();
-        $themeDirectory = PUBLIC_PATH . '/themes/' . \Core\Model\Settings::getSetting('system_theme');
-        $themeFiles = glob($themeDirectory . '/*.less');
-        \Engine\Package\Utilities::fsCheckLocation($location . 'css/');
-        foreach ($themeFiles as $file) {
-            $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
-            $collectedCss[] = $newFileName;
-            $less->checkedCompile($file, $newFileName);
-        }
-
-        // collect js/img from modules
-        foreach ($di->get('modules') as $module => $enabled) {
-            if (!$enabled) continue;
-
-            // CSS
-            $assetsPath = $config->application->modulesDir . ucfirst($module) . '/Assets/';
-            $path = $location . 'css/' . $module . '/';
-            \Engine\Package\Utilities::fsCheckLocation($path);
-            $cssFiles = glob($assetsPath . 'css/*.less');
-            $less->addImportDir($themeDirectory);
-            foreach ($cssFiles as $file) {
-                $newFileName = $path . basename($file, '.less') . '.css';
-                $collectedCss[] = $newFileName;
-                $less->checkedCompile($file, $newFileName);
-            }
-
-            // JS
-            $path = $location . 'js/' . $module . '/';
-            \Engine\Package\Utilities::fsCopyRecursive($assetsPath . 'js', $path, true);
-
-            // IMAGES
-            $path = $location . 'img/' . $module . '/';
-            \Engine\Package\Utilities::fsCopyRecursive($assetsPath . 'img', $path, true);
-        }
-
-        // add css/js into assets manager
-        // css
-        $collection = $assetsManager->collection('css');
-        foreach ($collectedCss as $css) {
-            $collection->addCss(str_replace(PUBLIC_PATH . '/', '', $css));
-        }
-        $assetsManager->set('css', $collection);
-
-        // js
-        $collection = $assetsManager->collection('js');
-        $collectedJs = \Engine\Package\Utilities::fsRecursiveGlob($location . 'js', '*.js');
-        $sortedJs = array();
-        foreach ($collectedJs as $file) {
-            $sortedJs[basename($file)] = $file;
-        }
-
-        ksort($sortedJs);
-        foreach ($sortedJs as $js) {
-            $collection->addJs(str_replace(PUBLIC_PATH . '/', '', $js));
-        }
-        $assetsManager->set('js', $collection);
-    }
-
-    /**
-     * Compile all assets (css/js)
-     */
-    public function compileAssets($di = null, $config = null)
-    {
-        if ($di === null) {
-            $di = $this->_dependencyInjector;
-        }
-        if ($config === null) {
-            $config = $this->_config;
-        }
-
-        $modules = $di->get('modules');
-        $location = $config->application->assets->local;
-
-        /////////////////////////////////////////
-        // CSS
-        /////////////////////////////////////////
-        $themeDirectory = PUBLIC_PATH . '/themes/' . \Core\Model\Settings::getSetting('system_theme') . '/';
-        $outputPath = $location . 'style.css';
-
-        $less = new \Engine\Css\Less();
-        $less->addImportDir($themeDirectory);
-        $less->addDir($themeDirectory);
-
-        // modules style files
-        foreach ($modules as $module => $enabled) {
-            if (!$enabled) continue;
-            $less->addDir(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/css/');
-        }
-
-        // compile
-        $less->compileTo($outputPath);
-
-
-        /////////////////////////////////////////
-        // JS
-        /////////////////////////////////////////
-        // @TODO: minify
-        $outputPath = $location . 'javascript.js';
-        file_put_contents($outputPath, "");
-        $files = array();
-
-        foreach ($modules as $module => $enabled) {
-            if (!$enabled) continue;
-
-            $files = array_merge($files, glob(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/js/*.js'));
-        }
-
-        $sortedFiles = array();
-        foreach ($files as $file) {
-            $sortedFiles[basename($file)] = $file;
-        }
-
-        ksort($sortedFiles);
-        foreach ($sortedFiles as $file) {
-            file_put_contents($outputPath, PHP_EOL . PHP_EOL . file_get_contents($file), FILE_APPEND);
-        }
-
+        $di->setShared('assets', new Manager($di));
     }
 
     /**
@@ -770,14 +600,7 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         // clear assets cache
-        $files = \Engine\Package\Utilities::fsRecursiveGlob(PUBLIC_PATH . '/assets/', '*'); // get all file names
-        foreach ($files as $file) { // iterate files
-            if (is_file($file))
-                @unlink($file); // delete file
-        }
-
-        $this->installAssets();
-        $this->compileAssets();
+        $this->_dependencyInjector->getShared('assets')->clear();
     }
 
     /**

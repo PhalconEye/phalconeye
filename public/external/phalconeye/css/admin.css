@@ -600,7 +600,7 @@ form .form_footer .btn + .btn{
 }
 
 .navbar_panel{
-    background: #262729;
+    background: #2d2d2d;
     height: 100%;
     margin-bottom: 0px;
     overflow: auto;
@@ -610,7 +610,7 @@ form .form_footer .btn + .btn{
 }
 
 .navbar_panel .navbar-inner{
-    background: #262729;
+    background: #2d2d2d;
     border:none;
     padding: 0px;
     box-shadow: none;
@@ -700,12 +700,13 @@ form .form_footer .btn + .btn{
 }
 
 .navbar-header{
-    background: #262729;
+    background: #2d2d2d;
     margin-bottom: 0px;
 }
 
 .navbar-header .navbar-inner{
-    background: #262729;
+    background: #2d2d2d;
+    border-radius: 0;
     border: none;
     box-shadow: none;
 }
@@ -809,4 +810,13 @@ form .form_footer .btn + .btn{
 
 .package_list .package_options{
     float: right;
+}
+
+.modal-header{
+    background: #2d2d2d;
+}
+
+.modal-header h3,
+.modal-header .close{
+    color: #fff;
 }

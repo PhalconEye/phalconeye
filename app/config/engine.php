@@ -59,11 +59,11 @@ return new \Phalcon\Config(array (
     'view' => 
     array (
       'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
-      'compiledExtension' => '.php'
+      'compiledExtension' => '.php',
     ),
     'assets' => 
     array (
-      'local' => ROOT_PATH . '/public/assets/',
+      'local' => PUBLIC_PATH . '/assets/',
       'remote' => '/',
     ),
   ),

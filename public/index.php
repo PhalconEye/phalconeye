@@ -11,7 +11,6 @@ if (!defined('PUBLIC_PATH')) {
     define('PUBLIC_PATH', dirname(__FILE__));
 }
 
-
 require_once ROOT_PATH . "/app/engine/Error.php";
 
 try {

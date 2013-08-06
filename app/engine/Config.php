@@ -25,6 +25,7 @@ class Config
     public static function save($config = null)
     {
         $configText = var_export($config->toArray(), true);
+        $configText = str_replace("'" . PUBLIC_PATH, "PUBLIC_PATH . '", $configText);
         $configText = str_replace("'" . ROOT_PATH, "ROOT_PATH . '", $configText);
         $configText = '<?php
 

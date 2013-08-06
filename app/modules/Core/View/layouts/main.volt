@@ -20,11 +20,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="PhalconEye - Open Source Content Management System"/>
 
-    {{ assets.outputCss() }}
-
-    {{ assets.outputJs() }}
-
-
     {%- block head -%}
 
     {%- endblock -%}
@@ -32,7 +27,6 @@
 </head>
 <body>
 <div id="wrapper">
-
     <div id="header">
         {% if disableHeader is not defined %}
         {{ helper('core').renderContent('header') }}
@@ -43,7 +37,7 @@
     </div>
 
     <div class="system-container">
-        {{ content() | trans }}
+        {{ content() }}
     </div>
 
     <div class="container">
@@ -59,6 +53,10 @@
         {%- endblock -%}
     </div>
 </div>
+
+
+{{ assets.outputCss() }}
+{{ assets.outputJs() }}
 
 </body>
 </html>

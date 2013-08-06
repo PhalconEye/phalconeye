@@ -24,7 +24,8 @@ class Bootstrap extends \Engine\Bootstrap
 {
     protected $_moduleName = "Core";
 
-    public function registerServices($di){
+    public function registerServices($di)
+    {
         parent::registerServices($di);
 
         $config = $di->get('config');
@@ -171,7 +172,9 @@ class Bootstrap extends \Engine\Bootstrap
         $description .= '<span class="label">Module: </span><span class="code">' . ucfirst($router->getModuleName()) . 'Controller</span><br/>';
         $description .= '<span class="label">Controller: </span><span class="code">' . ucfirst($router->getControllerName()) . 'Controller</span><br/>';
         $description .= '<span class="label">Action: </span><span class="code">' . ucfirst($router->getActionName()) . 'Action</span><br/>';
-        $description .= '<span class="label">Matched Route: </span><span class="code">' . ucfirst($router->getMatchedRoute()->getName()) . '</span><br/>';
+        if ($router->getMatchedRoute()) {
+            $description .= '<span class="label">Matched Route: </span><span class="code">' . ucfirst($router->getMatchedRoute()->getName()) . '</span><br/>';
+        }
         echo sprintf($htmlWindow, 'router', 'Router', $description);
 
         // Memory
