@@ -76,7 +76,7 @@ class InstallController extends PeController
                 $passed = version_compare($installedVersion, $version, '>=');
             } else {
                 $passed = extension_loaded($req);
-                $comparison = ($req == 'phalcon' ? '==' : '>=');
+                $comparison = '>='; // ($req == 'phalcon' ? '==' : '>=');
                 if ($passed && $version !== false) {
                     $installedVersion = phpversion($req);
                     $passed = version_compare($installedVersion, $version, $comparison);
