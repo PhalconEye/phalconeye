@@ -73,7 +73,7 @@ class CreateItem extends \Engine\Form
             'data-link' => $this->di->get('url')->get('admin/pages/suggest'),
             'data-target' => '#page_id',
             'autocomplete' => 'off',
-            'class' => 'autocomplete',
+            'data-autocomplete' => 'true',
         ));
 
         $this->addElement('textArea', 'onclick', array(

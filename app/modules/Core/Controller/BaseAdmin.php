@@ -15,6 +15,8 @@
 
 namespace Core\Controller;
 
+use Phalcon\Assets\Collection;
+
 class BaseAdmin extends Base
 {
     public function initialize()
@@ -124,6 +126,29 @@ class BaseAdmin extends Base
             ->setEnabledDropDownHighlight(false);
 
         $this->view->headerNavigation = $navigation;
+
+        // Assets setup.
+
+        $cssCollection = new Collection();
+        $cssCollection
+            ->addCss('external/bootstrap/bootstrap.min.css')
+            ->addCss('external/phalconeye/css/admin.css')
+        ;
+
+        $jsCollection = new Collection();
+        $jsCollection
+            ->addJs('assets/js/core/1-jquery-1.8.3.js')
+            ->addJs('assets/js/core/1-jquery-ui-1.9.0.js')
+            ->addJs('external/bootstrap/bootstrap.min.js')
+            ->addJs('external/ckeditor/ckeditor.js')
+            ->addJs('assets/js/core/2-core.js')
+            ->addJs('assets/js/core/2-i18n.js')
+            ->addJs('assets/js/core/4-autocomplete.js')
+            ->addJs('assets/js/core/3-modal.js')
+        ;
+
+        $this->assets->set('css', $cssCollection);
+        $this->assets->set('js', $jsCollection);
     }
 
 }

@@ -91,8 +91,8 @@ abstract class Bootstrap implements BootstrapInterface
                     $volt->setOptions(array(
                         "compiledPath" => $config->application->view->compiledPath,
                         "compiledExtension" => $config->application->view->compiledExtension,
-                        'compiledSeparator' => '_',
-//                        'compileAlways' => $config->application->debug
+                        'compiledSeparator' => $config->application->view->compiledSeparator,
+                        'compileAlways' => $config->application->view->compileAlways
                     ));
 
                     $compiler = $volt->getCompiler();

@@ -37,7 +37,7 @@ class Menu extends \Engine\Form
             'data-link' => $this->di->get('url')->get('admin/menus/suggest'),
             'data-target' => '#menu_id',
             'autocomplete' => 'off',
-            'class' => 'autocomplete',
+            'data-autocomplete' => 'true',
         ));
 
 

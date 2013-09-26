@@ -1,74 +1,45 @@
 /**
- * PhalconEye
+ * Main javascript.
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
+ * @category  PhalconEye
+ * @package   PhalconEye Core Module
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright Copyright (c) 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
  */
-
 var PE = PE || {};
+(function (window, $, root, undefined) {
+    $(function () {
+        //////////////////////////
+        // Initializations.
+        //////////////////////////
+        /**
+         * Create namespace for path.
+         *
+         * @param path
+         * @param root
+         * @returns {*}
+         */
+        root.ns = function (path, root) {
+            var parts = path.split('\\')
+                , len = parts.length
+                , i = 0;
 
-PE.core = {
-    initButtonLoading:function () {
-        $('.button-loading')
-            .click(function () {
-                var btn = $(this);
-                btn.button('loading');
-            });
-    },
+            root || (root = window);
 
-    initAutocomplete:function () {
-        var autocomplete = $('.autocomplete').autocomplete({
-            source:function (request, response) {
-                $.ajax({
-                    url:$(this)[0].element[0].dataset.link,
-                    type:'get',
-                    data:{query:request.term},
-                    dataType:'json',
-                    success:function (json) {
-                        response($.map(json, function (item) {
-                            return {
-                                label:item.label,
-                                value:item.id
-                            }
-                        }));
-                    }
-                });
-            },
-            open:function () {
-                $(this).data("autocomplete").menu.element.attr('class', "typeahead dropdown-menu");
-            },
-            select: function( event, ui ) {
-                $(event.target).val( ui.item.label );
-
-                var targetElement = $(event.target)[0].dataset.target;
-
-                if (targetElement){
-                    $(targetElement).val(ui.item.value);
-                }
-                return false;
+            for (; i < len; i++) {
+                root = root[parts[i]] || (root[parts[i]] = {})
             }
-        }).data("autocomplete");
 
-        if (autocomplete) {
-            autocomplete._resizeMenu = function () { // fix position of dropdown
-                var ul = this.menu.element;
-                ul.outerWidth(this.element.outerWidth());
-            }
-        }
-    }
+            return root;
+        };
 
-};
+        //////////////////////////
+        // Private methods.
+        //////////////////////////
 
+        // ... will be here.
+    });
+}(window, jQuery, PE));
 
-$(document).ready(function () {
-    PE.core.initButtonLoading();
-    PE.core.initAutocomplete();
-    PE.modal.init('[data-toggle="modal"]');
-});

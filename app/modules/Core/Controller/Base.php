@@ -24,7 +24,7 @@ use \Phalcon\Db\Column as PhDbColumn;
  * @property \Phalcon\Db\Adapter\Pdo $db
  * @property \Phalcon\Cache\Backend  $cacheData
  * @property \Engine\Application     $app
- * @property \Phalcon\Assets\Manager $assets
+ * @property \Engine\Asset\Manager   $assets
  * @property \Phalcon\Config         $config
  */
 class Base extends PhController
@@ -51,7 +51,7 @@ class Base extends PhController
     public function afterExecuteRoute()
     {
         if ($this->config->application->debug && $this->di->has('profiler')) {
-            $this->profiler->stop(get_called_class(), 'controller', $this);
+            $this->profiler->stop(get_called_class(), 'controller');
         }
     }
 

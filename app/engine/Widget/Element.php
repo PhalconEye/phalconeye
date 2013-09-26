@@ -93,7 +93,7 @@ class Element
 
             // collect profiler info
             if ($config->application->debug && $this->_di->has('profiler')){
-                $this->_di->get('profiler')->stop($controllerClass, 'widget', $controller);
+                $this->_di->get('profiler')->stop($controllerClass, 'widget');
             }
 
             if ($controller->getNoRender()) {
@@ -104,7 +104,6 @@ class Element
                 $cache->save($cacheKey, $output, $cacheLifetime);
             }
         }
-
 
         return $output;
     }

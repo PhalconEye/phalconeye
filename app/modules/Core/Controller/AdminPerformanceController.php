@@ -25,6 +25,7 @@ class AdminPerformanceController extends \Core\Controller\BaseAdmin
      */
     public function indexAction()
     {
+        $this->assets->addJs('external/phalconeye/js/admin/performance.js');
         $form = new \Core\Form\Admin\Setting\Performance();
         $this->view->form = $form;
 

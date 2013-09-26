@@ -69,18 +69,8 @@
     Phalcon Eye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
 
-
-<link rel="stylesheet" href="{{ url("external/bootstrap/bootstrap.min.css") }}"/>
-<link rel="stylesheet" href="{{ url("external/phalconeye/css/admin.css") }}"/>
-{{ javascript_include("assets/js/core/1-jquery-1.8.3.js") }}
-{{ javascript_include("assets/js/core/1-jquery-ui-1.9.0.js") }}
-{{ javascript_include("external/bootstrap/bootstrap.min.js") }}
-{{ javascript_include("external/ckeditor/ckeditor.js") }}
-{{ javascript_include("assets/js/core/2-core.js") }}
-{{ javascript_include("assets/js/core/3-modal.js") }}
-{{ javascript_include("external/phalconeye/js/admin.js") }}
-{{ javascript_include("external/phalconeye/js/ajaxplorer.js") }}
-
+{{ assets.outputCss() }}
+{{ assets.outputJs() }}
 
 </body>
 </html>

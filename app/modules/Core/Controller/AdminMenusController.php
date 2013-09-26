@@ -111,11 +111,10 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
     public function deleteAction($id)
     {
         $item = \Core\Model\Menu::findFirst($id);
-        if ($item){
-            if ($item->delete()){
+        if ($item) {
+            if ($item->delete()) {
                 $this->flashSession->notice('Object deleted!');
-            }
-            else{
+            } else {
                 $this->flashSession->error($item->getMessages());
             }
         }
@@ -128,6 +127,10 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
      */
     public function manageAction($id)
     {
+        $this->assets
+            ->addJs('assets/js/core/5-admin-menu.js')
+            ->addJs('external/phalconeye/js/admin/files.js');
+
         $item = \Core\Model\Menu::findFirst($id);
         if (!$item)
             return $this->response->redirect(array('for' => "admin-menus"));

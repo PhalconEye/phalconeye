@@ -32,7 +32,7 @@ class Profiler
     );
 
     /**
-     * Start profiling
+     * Start profiling.
      */
     public function start()
     {
@@ -41,13 +41,12 @@ class Profiler
     }
 
     /**
-     * Stop profiling and collect data
+     * Stop profiling and collect data.
      *
-     * @param $class
-     * @param $objectType
-     * @param null $object
+     * @param      $class
+     * @param      $objectType
      */
-    public function stop($class, $objectType, $object = null)
+    public function stop($class, $objectType)
     {
         if (!isset($this->_timeData[$objectType])) {
             $this->_timeData[$objectType] = array();
@@ -55,8 +54,8 @@ class Profiler
         $this->_timeData[$objectType][$class] = microtime(true) - $this->_time;
 
         $memory = memory_get_usage() - $this->_memory;
-        if ($object) {
-            $memory = $this->getObjectMemoryUsage($object);
+        if ($memory < 0) {
+            $memory = 0;
         }
         if (!isset($this->_memoryData[$objectType])) {
             $this->_memoryData[$objectType] = array();
@@ -65,21 +64,23 @@ class Profiler
     }
 
     /**
-     * Get collected data
+     * Get collected data.
      *
-     * @param $type - profiling type (time, memory, etc)
-     * @param $objectType - object type (controller, widget, etc)
+     * @param $type       - profiling type (time, memory, etc).
+     * @param $objectType - object type (controller, widget, etc).
+     *
      * @return array
      */
-    public function getData($type, $objectType = null){
+    public function getData($type, $objectType = null)
+    {
         $var = "_{$type}Data";
         $data = $this->$var;
 
-        if (!$objectType){
+        if (!$objectType) {
             return $data;
         }
 
-        if (empty($data[$objectType])){
+        if (empty($data[$objectType])) {
             return array();
         }
 
@@ -93,7 +94,8 @@ class Profiler
      * @param $error
      * @param $trace
      */
-    public function addError($error, $trace){
+    public function addError($error, $trace)
+    {
         $this->_errorData[] = array(
             'error' => $error,
             'trace' => $trace
@@ -118,34 +120,5 @@ class Profiler
     public function getDbProfiler()
     {
         return $this->_dbProfiler;
-    }
-
-    /**
-     * Get object memory usage
-     *
-     * @param $object
-     * @return int
-     */
-    public function getObjectMemoryUsage($object)
-    {
-        $memory = 0;
-        if (!is_scalar($object)) {
-            while (list($prop, $propVal) = each($object)) {
-                if ((is_object($propVal) || is_array($propVal))) {
-                    $memory += $this->getObjectMemoryUsage($propVal);
-                } else {
-                    if (is_object($propVal) && get_class($propVal) == 'Closure') {
-                        $serializableClosure = new \SerializableClosure($propVal);
-                        $memory += strlen($serializableClosure->serialize());
-                    } else {
-                        $memory += strlen(serialize($propVal));
-                    }
-                }
-            }
-        } else {
-            $memory += strlen(serialize($object));
-        }
-
-        return $memory;
     }
 }

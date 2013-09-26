@@ -37,14 +37,15 @@ class Helper
         // collect profile info
         $di = \Phalcon\DI::getDefault();
         $config = $di->get('config');
-        if ($config->application->debug && $di->has('profiler')){
+        $profilerIsActive = $config->application->debug && $di->has('profiler');
+        if ($profilerIsActive){
             $di->get('profiler')->start();
         }
 
         $content = $helperClassName::_($di, $arguments);
 
         // collect profile info
-        if ($config->application->debug && $di->has('profiler')){
+        if ($profilerIsActive){
             $di->get('profiler')->stop($helperClassName, 'helper');
         }
 

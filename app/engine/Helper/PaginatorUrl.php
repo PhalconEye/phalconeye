@@ -18,33 +18,34 @@ namespace Engine\Helper;
 
 class PaginatorUrl extends \Phalcon\Tag implements \Engine\HelperInterface
 {
-    static public function _(array $args){
-        $page = $args[0];
+    static public function _(\Phalcon\DI $di, array $args)
+    {
+        $page = (isset($args[0]) ? $args[0] : 1);
         $vars = array();
         $url = '/';
-        foreach($_GET as $key => $get){
-            if ($key == '_url'){
+        foreach ($_GET as $key => $get) {
+            if ($key == '_url') {
                 $url = $get;
                 continue;
             }
 
-            if ($key == 'page'){
+            if ($key == 'page') {
                 continue;
             }
 
-            $vars[] = $key . '='. $get;
+            $vars[] = $key . '=' . $get;
         }
         unset($vars['_url']);
 
-        if (count($vars) == 0){
-            if ($page){
-                $page = '?page='.$page;
+        if (count($vars) == 0) {
+            if ($page) {
+                $page = '?page=' . $page;
             }
-            return  $url . $page;
+            return $url . $page;
         }
 
-        if ($page){
-            $page = '&page='.$page;
+        if ($page) {
+            $page = '&page=' . $page;
         }
 
         return sprintf('%s?%s%s', $url, implode('&', $vars), $page);

@@ -88,7 +88,7 @@ class Form extends \Phalcon\Forms\Form
 
         // collect profile info
         if ($config->application->debug && $this->di->has('profiler')){
-            $this->di->get('profiler')->stop(get_called_class(), 'form', $this);
+            $this->di->get('profiler')->stop(get_called_class(), 'form');
         }
     }
 
@@ -584,7 +584,7 @@ class Form extends \Phalcon\Forms\Form
                 $element->setName($element->getName() . '[]');
             }
 
-            $content .= '<div>';
+            $content .= '<div class="form_element_container">';
             $label = (!empty($elementData['params']['label']) ? sprintf('<label for="%s">%s</label>', $element->getName(), $trans->_($elementData['params']['label'])) : '');
             $description = (!empty($elementData['params']['description']) ? sprintf('<p>%s</p>', $trans->_($elementData['params']['description'])) : '');
 
