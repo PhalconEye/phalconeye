@@ -305,8 +305,8 @@
                     <div class="manage_page_header_label">
                         <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
                             > {{ "Manage page" | trans }}</h3>
-                        <a href="{% if currentPage.type is null and currentPage.url is not null %}/page/{{ currentPage.url }}{% else %}javascript:;{% endif %}"
-                           target="_blank">{{ currentPage.title }}</a>
+                        <a {% if currentPage.type is null and currentPage.url is not null %}href="/page/{{ currentPage.url }}" target="_blank" {% else %} href="javascript:;"{% endif %}
+                           >{{ currentPage.title }}</a>
                     </div>
 
                     <div class="widget_options_panel">
@@ -324,61 +324,61 @@
                                         </div>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols1_3.png') }}" alt="3 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols1_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('right,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols1_2left.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols1_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('middle,left');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols1_2right.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols1_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('right,middle');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols1_1.png') }}" alt="1 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols1_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('middle');">
                                             </li>
                                         </ul>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols2_3.png') }}" alt="3 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols2_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('top,right,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols2_2left.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols2_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('top,middle,left');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols2_2right.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols2_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('top,right,middle');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols2_1.png') }}" alt="1 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols2_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('top,middle');">
                                             </li>
                                         </ul>
                                         <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols3_3.png') }}" alt="3 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols3_3.png') }}" alt="3 columns"
                                                      onclick="changeCurrentLayoutType('right,middle,left,bottom');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols3_2left.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols3_2left.png') }}"
                                                      alt="2 columns - Left"
                                                      onclick="changeCurrentLayoutType('middle,left,bottom');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols3_2right.png') }}"
+                                                <img src="{{ url('external/phalconeye/images/content/cols3_2right.png') }}"
                                                      alt="2 columns - Right"
                                                      onclick="changeCurrentLayoutType('right,middle,bottom');">
                                             </li>
                                             <li>
-                                                <img src="{{ url('external/peadmin/images/content/cols3_1.png') }}" alt="1 columns"
+                                                <img src="{{ url('external/phalconeye/images/content/cols3_1.png') }}" alt="1 columns"
                                                      onclick="changeCurrentLayoutType('middle,bottom');">
                                             </li>
                                         </ul>

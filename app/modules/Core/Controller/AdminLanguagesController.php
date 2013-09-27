@@ -67,9 +67,7 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         );
 
         // Get the paginated results
-        $page = $paginator->getPaginate();
-
-        $this->view->paginator = $page;
+        $this->view->paginator = $paginator->getPaginate();
     }
 
     /**
