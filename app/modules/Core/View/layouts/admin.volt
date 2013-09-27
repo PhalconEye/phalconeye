@@ -52,8 +52,8 @@
 
     <div class="row-fluid row-after-header">
         <div>
-            {{ content() | trans }}
-            {{ flashSession.output() | trans }}
+            {{ content() }}
+            {{ flashSession.output() }}
         </div>
     </div>
 

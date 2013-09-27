@@ -215,11 +215,16 @@ class Bootstrap extends \Engine\Bootstrap
             $description .= '<span class="label">' . ucfirst($type) . 's</span><br/>';
             foreach ($data as $class => $timeValue) {
                 $msTime = round($timeValue * 1000, 2);
+                $timeData -= $msTime;
                 $description .= '<span class="code">' . str_replace(ROOT_PATH, '', $class) . '</span> <span class="label">' . $msTime . ' ms</span><br/>';
             }
 
             $description .= '<br/>';
         }
+        $description .= '<span class="label">Other</span><br/>';
+        $description .= '<span class="code">Time from request received: </span> <span class="label">' . $timeData . ' ms</span><br/>';
+        $description .= '<br/>';
+
         echo sprintf($htmlWindow, 'time', 'Time', $description);
 
         // Files

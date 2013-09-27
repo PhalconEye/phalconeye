@@ -29,15 +29,15 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
 
         // run Phalcon Eye to get session from database
         if (!defined('ROOT_PATH')) {
-            define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'].'../');
+            define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../');
         }
 
-        require_once $_SERVER['DOCUMENT_ROOT'] . "../app/engine/Application.php";
+        require_once ROOT_PATH . "app/engine/Application.php";
         $application = new \Engine\Application();
         $application->run('mini');
 
         $identity = Phalcon\DI::getDefault()->get('session')->get('identity');
-        if ($identity === null || empty($identity)){
+        if ($identity === null || empty($identity)) {
             die('401 Authorization Required');
         }
 
