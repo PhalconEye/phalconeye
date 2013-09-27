@@ -140,7 +140,9 @@ class Manager
                 'Structure' .
                 DIRECTORY_SEPARATOR .
                 $data['type'],
-            $packageLocation
+            $packageLocation,
+            false,
+            array('.gitignore')
         );
 
         if ($data['type'] == self::PACKAGE_TYPE_PLUGIN) {

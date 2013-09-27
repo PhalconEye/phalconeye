@@ -194,8 +194,8 @@ class Manager extends AssetManager
         /////////////////////////////////////////
         // CSS
         /////////////////////////////////////////
-        $themeDirectory = PUBLIC_PATH . ' / themes / ' . Settings::getSetting('system_theme') . ' / ';
-        $outputPath = $location . 'style . css';
+        $themeDirectory = PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme') . '/';
+        $outputPath = $location . 'style.css';
 
         $less = new Less();
         $less->addImportDir($themeDirectory);
@@ -204,7 +204,7 @@ class Manager extends AssetManager
         // modules style files
         foreach ($modules as $module => $enabled) {
             if (!$enabled) continue;
-            $less->addDir(ROOT_PATH . ' / app / modules / ' . ucfirst($module) . ' / Assets / css / ');
+            $less->addDir(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/css/');
         }
 
         // compile
@@ -214,7 +214,7 @@ class Manager extends AssetManager
         /////////////////////////////////////////
         // JS
         /////////////////////////////////////////
-        $outputPath = $location . 'javascript . js';
+        $outputPath = $location . 'javascript.js';
         file_put_contents($outputPath, "");
         $jsFilter = new Jsmin();
         $files = array();
@@ -222,7 +222,7 @@ class Manager extends AssetManager
         foreach ($modules as $module => $enabled) {
             if (!$enabled) continue;
 
-            $files = array_merge($files, glob(ROOT_PATH . ' / app / modules / ' . ucfirst($module) . ' / Assets / js/*.js'));
+            $files = array_merge($files, glob(ROOT_PATH . '/app/modules/' . ucfirst($module) . '/Assets/js/*.js'));
         }
 
         $sortedFiles = array();
@@ -238,7 +238,6 @@ class Manager extends AssetManager
             $jsBody .= $jsFilter->filter(file_get_contents($file)) . PHP_EOL . PHP_EOL;
             file_put_contents($outputPath, $jsBody, FILE_APPEND);
         }
-
     }
 
     /**

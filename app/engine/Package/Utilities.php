@@ -36,7 +36,7 @@ class Utilities
         foreach ($it as $item) {
             $itemPath = $item->getPathname();
             $partial = str_replace($source, '', $itemPath);
-            if (in_array($partial, $excludeNames)) {
+            if (in_array($partial, $excludeNames) || in_array(basename($itemPath), $excludeNames)) {
                 continue;
             }
             if ($partial == '.' || $partial == '..') continue;
