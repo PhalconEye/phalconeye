@@ -47,11 +47,11 @@
                             </div>
                             <div class="description">{{ package.description }}</div>
                         </div>
-                        {% if not package.is_system() %}
+                        {% if not package.is_system %}
                             <div class="package_options">
                                 {{ link_to(['for':'admin-packages-edit', 'type':package.type, 'name':package.name, 'return':'admin-packages-plugins'], 'Edit' | trans, 'class': 'btn btn-inverse') }}
                                 {{ link_to(['for':'admin-packages-export', 'type':package.type, 'name':package.name], 'Export' | trans, 'class': 'btn btn-inverse', 'data-toggle':'modal') }}
-                                {% if package.enabled() %}
+                                {% if package.enabled %}
                                     {{ link_to(['for':'admin-packages-disable', 'type':package.type, 'name':package.name, 'return':'admin-packages-plugins'], 'Disable' | trans, 'class': 'btn btn-warning') }}
                                 {% else %}
                                     {{ link_to(['for':'admin-packages-enable', 'type':package.type, 'name':package.name, 'return':'admin-packages-plugins'], 'Enable' | trans, 'class': 'btn btn-success') }}

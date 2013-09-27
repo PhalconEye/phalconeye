@@ -125,5 +125,7 @@
                 }), 1000);
             }
         };
+
+        root.modal.init('[data-toggle="modal"]');
     });
 }(window, jQuery, PE));

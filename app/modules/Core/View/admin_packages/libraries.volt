@@ -47,7 +47,7 @@
                             </div>
                             <div class="description">{{ package.description }}</div>
                         </div>
-                        {% if not package.is_system() %}
+                        {% if not package.is_system %}
                             <div class="package_options">
                                 {{ link_to(['for':'admin-packages-edit', 'type':package.type, 'name':package.name, 'return':'admin-packages-libraries'], 'Edit' | trans, 'class': 'btn btn-inverse') }}
                                 {{ link_to(['for':'admin-packages-export', 'type':package.type, 'name':package.name], 'Export' | trans, 'class': 'btn btn-inverse', 'data-toggle':'modal') }}

@@ -4,6 +4,7 @@ error_reporting(E_ALL);
 define('PE_VERSION', '0.4.0');
 define('PHALCON_VERSION_REQUIRED', '1.2.0');
 define('PHP_VERSION_REQUIRED', '5.4.0');
+define('DS', DIRECTORY_SEPARATOR);
 if (!defined('ROOT_PATH')) {
     define('ROOT_PATH', dirname(dirname(__FILE__)));
 }

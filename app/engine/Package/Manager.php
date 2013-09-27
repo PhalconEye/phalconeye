@@ -97,6 +97,7 @@ class Manager
      * Get package location in system
      *
      * @param $type
+     *
      * @return string
      */
     public function getPackageLocation($type)
@@ -104,12 +105,12 @@ class Manager
         $locations = array(
             self::PACKAGE_TYPE_MODULE => $this->_config->application->modulesDir,
             self::PACKAGE_TYPE_PLUGIN => $this->_config->application->pluginsDir,
-            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . '/themes/',
+            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
             self::PACKAGE_TYPE_WIDGET => $this->_config->application->widgetsDir,
             self::PACKAGE_TYPE_LIBRARY => $this->_config->application->librariesDir
         );
         if (isset($locations[$type])) {
-            return $locations[$type];
+            return str_replace('/', DS, $locations[$type]); // fix crossplatform issue directories paths that saved in config.
         }
 
         return '';
@@ -133,10 +134,17 @@ class Manager
         Utilities::fsCheckLocation($packageLocation);
 
         // copy package structure
-        Utilities::fsCopyRecursive(__DIR__ . '/Structure/' . $data['type'], $packageLocation);
+        Utilities::fsCopyRecursive(
+            __DIR__ .
+                DIRECTORY_SEPARATOR .
+                'Structure' .
+                DIRECTORY_SEPARATOR .
+                $data['type'],
+            $packageLocation
+        );
 
         if ($data['type'] == self::PACKAGE_TYPE_PLUGIN) {
-            @rename($packageLocation . '/plugin.php', $packageLocation . '/' . $data['nameUpper'] . '.php');
+            @rename($packageLocation . DS . 'plugin.php', $packageLocation . DS . $data['nameUpper'] . '.php');
         }
 
 
@@ -145,7 +153,7 @@ class Manager
         $placeholdersValues = array_values($data);
         foreach ($placeholders as $key => $placeholder) {
             // check header for comment block
-            if ($placeholder == 'header' && (strpos($placeholdersValues[$key], '/*') === false || strpos($placeholdersValues[$key], '*/') === false)) {
+            if ($placeholder == 'header' && (strpos($placeholdersValues[$key], DS . '*') === false || strpos($placeholdersValues[$key], '*/') === false)) {
                 $placeholdersValues[$key] = '';
             }
 
@@ -153,7 +161,7 @@ class Manager
 
         }
 
-        foreach (Utilities::fsRecursiveGlob($packageLocation . "/", '*.*') as $filename) {
+        foreach (Utilities::fsRecursiveGlob($packageLocation . DS, '*.*') as $filename) {
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
@@ -163,6 +171,7 @@ class Manager
      * Install package using zip archive
      *
      * @param $package zip archive filepath
+     *
      * @return \Phalcon\Config
      * @throws Exception
      */
@@ -180,16 +189,15 @@ class Manager
         $manifest->offsetSet('isUpdate', false);
 
         // check itself
-        if (isset($this->_installedPackages[$manifest->type][$manifest->name])){
-            if ($this->_installedPackages[$manifest->type][$manifest->name] == $manifest->version){
+        if (isset($this->_installedPackages[$manifest->type][$manifest->name])) {
+            if ($this->_installedPackages[$manifest->type][$manifest->name] == $manifest->version) {
                 throw new Exception('This package already installed.');
-            }
-            else{
+            } else {
                 $filter = new \Phalcon\Filter();
-                $installedVersion = $filter->sanitize( $this->_installedPackages[$manifest->type][$manifest->name], 'int');
+                $installedVersion = $filter->sanitize($this->_installedPackages[$manifest->type][$manifest->name], 'int');
                 $packageVersion = $filter->sanitize($manifest->version, 'int');
 
-                if ($installedVersion > $packageVersion){
+                if ($installedVersion > $packageVersion) {
                     throw new Exception('Newer version of this package already installed.');
                 }
 
@@ -235,11 +243,10 @@ class Manager
         }
 
         // copy files
-        if ($manifest->type == self::PACKAGE_TYPE_THEME){
-            $destinationDirectory = $this->getPackageLocation($manifest->type).strtolower($manifest->name);
-        }
-        else{
-            $destinationDirectory = $this->getPackageLocation($manifest->type).ucfirst($manifest->name);
+        if ($manifest->type == self::PACKAGE_TYPE_THEME) {
+            $destinationDirectory = $this->getPackageLocation($manifest->type) . strtolower($manifest->name);
+        } else {
+            $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
         Utilities::fsCopyRecursive($this->getTempDirectory(false) . 'package', $destinationDirectory);
 
@@ -251,6 +258,7 @@ class Manager
      *
      * @param $name Package name
      * @param $type Package type
+     *
      * @throws Exception
      */
     public function removePackage($name, $type)
@@ -286,12 +294,13 @@ class Manager
         }
 
         $temporaryDir = $this->getTempDirectory();
-        $temporaryPackageDir = $temporaryDir . $name . '/';
-        $temporaryPackageCopyDir = $temporaryPackageDir . 'package/';
+        $temporaryPackageDir = $temporaryDir . $name . DS;
+        $temporaryPackageCopyDir = $temporaryPackageDir . 'package' . DS;
 
 
-        if (is_dir($temporaryDir))
+        if (is_dir($temporaryDir)) {
             Utilities::fsRmdirRecursive($temporaryDir);
+        }
         mkdir($temporaryPackageCopyDir, 0755, true);
 
         if (is_dir($location)) {
@@ -316,11 +325,12 @@ class Manager
      * Get temporary directory. This directory is used for unziping package files
      *
      * @param bool $checkDir
+     *
      * @return string
      */
     public function getTempDirectory($checkDir = true)
     {
-        $directory = ROOT_PATH . '/app/var/temp/packages/';
+        $directory = ROOT_PATH . str_replace('_', DS, '_app_var_temp_packages_');
         if ($checkDir)
             Utilities::fsCheckLocation($directory);
         return $directory;
@@ -361,6 +371,7 @@ class Manager
      * Read package information from manifest file
      *
      * @param $manifestLocation
+     *
      * @return \Phalcon\Config
      * @throws Exception\NoManifest
      * @throws Exception\InvalidManifest
@@ -385,6 +396,7 @@ class Manager
      * Checks package manifest file
      *
      * @param \Phalcon\Config $manifest
+     *
      * @return bool
      */
     private function _checkPackageManifest(\Phalcon\Config $manifest)
@@ -402,6 +414,7 @@ class Manager
      *
      * @param $source
      * @param $destination
+     *
      * @return bool
      */
     private function _zip($source, $destination)
@@ -415,23 +428,23 @@ class Manager
             return false;
         }
 
-        $source = str_replace('\\', '/', realpath($source));
+        $source = str_replace('\\', DS, realpath($source));
         if (is_dir($source) === true) {
             $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::SELF_FIRST);
 
             foreach ($files as $file) {
-                $file = str_replace('\\', '/', $file);
+                $file = str_replace('\\', DS, $file);
 
                 // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, '/') + 1), array('.', '..')))
+                if (in_array(substr($file, strrpos($file, DS) + 1), array('.', '..')))
                     continue;
 
                 $file = realpath($file);
 
                 if (is_dir($file) === true) {
-                    $zip->addEmptyDir(str_replace($source . '/', '', $file . '/'));
+                    $zip->addEmptyDir(str_replace($source . DS, '', $file));
                 } else if (is_file($file) === true) {
-                    $zip->addFromString(str_replace($source . '/', '', $file), file_get_contents($file));
+                    $zip->addFromString(str_replace($source . DS, '', $file), file_get_contents($file));
                 }
             }
         } else if (is_file($source) === true) {
