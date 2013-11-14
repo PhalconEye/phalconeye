@@ -43,8 +43,7 @@ class Base extends PhController
 
         $this->assets->get('css')
             ->addCss('assets/css/constants.css')
-            ->addCss('assets/css/theme.css')
-        ;
+            ->addCss('assets/css/theme.css');
 
         $this->assets->get('js')
             ->addJs('assets/js/core/jquery.js')
@@ -52,8 +51,17 @@ class Base extends PhController
             ->addJs('assets/js/core/core.js')
             ->addJs('assets/js/core/i18n.js')
             ->addJs('assets/js/core/autocomplete.js')
-            ->addJs('assets/js/core/modal.js')
-        ;
+            ->addJs('assets/js/core/modal.js');
+
+        if ($this->config->application->debug && $this->di->has('profiler')) {
+            $this->di->get('assets')
+                ->collection('css')
+                ->addCss('assets/css/core/profiler.css');;
+
+            $this->di->get('assets')
+                ->collection('js')
+                ->addCss('assets/js/core/profiler.js');;
+        }
 
         // run init function
         if (method_exists($this, 'init')) {
@@ -76,36 +84,36 @@ class Base extends PhController
             $page = \Core\Model\Page::find(array(
                 'conditions' => 'url=:url1: OR url=:url2: OR id = :url3:',
                 'bind' => (array(
-                    "url1" => $url,
-                    "url2" => '/' . $url,
-                    "url3" => $url
-                )),
+                        "url1" => $url,
+                        "url2" => '/' . $url,
+                        "url3" => $url
+                    )),
                 'bindTypes' => (array(
-                    "url1" => PhDbColumn::BIND_PARAM_STR,
-                    "url2" => PhDbColumn::BIND_PARAM_STR,
-                    "url3" => PhDbColumn::BIND_PARAM_INT
-                ))
+                        "url1" => PhDbColumn::BIND_PARAM_STR,
+                        "url2" => PhDbColumn::BIND_PARAM_STR,
+                        "url3" => PhDbColumn::BIND_PARAM_INT
+                    ))
             ))->getFirst();
 
         } elseif ($controller !== null) {
             $page = \Core\Model\Page::find(array(
                 'conditions' => 'controller=:controller:',
                 'bind' => (array(
-                    "controller" => $controller
-                )),
+                        "controller" => $controller
+                    )),
                 'bindTypes' => (array(
-                    "controller" => PhDbColumn::BIND_PARAM_STR
-                ))
+                        "controller" => PhDbColumn::BIND_PARAM_STR
+                    ))
             ))->getFirst();
         } elseif ($type !== null) {
             $page = \Core\Model\Page::find(array(
                 'conditions' => 'type=:type:',
                 'bind' => (array(
-                    "type" => $type
-                )),
+                        "type" => $type
+                    )),
                 'bindTypes' => (array(
-                    "type" => PhDbColumn::BIND_PARAM_STR
-                ))
+                        "type" => PhDbColumn::BIND_PARAM_STR
+                    ))
             ))->getFirst();
         }
 

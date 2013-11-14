@@ -14,7 +14,7 @@
             $('.profiler .item').removeClass('active');
             $('.profiler_window').hide();
         }
-console.log(1);
+
         function setCookie(name, value, exp_y, exp_m, exp_d, path, domain, secure) {
             var cookie_string = name + "=" + escape(value);
             if (exp_y) {
@@ -55,7 +55,7 @@ console.log(1);
 
         $('.profiler .item').click(function () {
             console.log(2);
-            var id = '#profiler_window_' + $(this).attr('window');
+            var id = '#profiler_window_' + $(this).data('window');
             if ($(id)) {
                 hideWindow();
 
