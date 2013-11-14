@@ -18,6 +18,9 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    {{ assets.outputCss() }}
+
     {% block head %}
 
     {% endblock %}
@@ -69,7 +72,6 @@
     Phalcon Eye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
 
-{{ assets.outputCss() }}
 {{ assets.outputJs() }}
 
 </body>

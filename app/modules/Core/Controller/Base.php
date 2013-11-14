@@ -29,7 +29,6 @@ use \Phalcon\Db\Column as PhDbColumn;
  */
 class Base extends PhController
 {
-
     /**
      * Initializes the controller
      */
@@ -41,6 +40,21 @@ class Base extends PhController
 
         $this->view->setRenderLevel(PhView::LEVEL_ACTION_VIEW);
         $this->view->setPartialsDir('../../Core/View/partials/');
+
+        $this->assets->get('css')
+            ->addCss('assets/css/constants.css')
+            ->addCss('assets/css/theme.css')
+        ;
+
+        $this->assets->get('js')
+            ->addJs('assets/js/core/jquery.js')
+            ->addJs('assets/js/core/jquery-ui.js')
+            ->addJs('assets/js/core/core.js')
+            ->addJs('assets/js/core/i18n.js')
+            ->addJs('assets/js/core/autocomplete.js')
+            ->addJs('assets/js/core/modal.js')
+        ;
+
         // run init function
         if (method_exists($this, 'init')) {
             $this->init();

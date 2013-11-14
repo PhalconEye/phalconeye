@@ -128,27 +128,18 @@ class BaseAdmin extends Base
         $this->view->headerNavigation = $navigation;
 
         // Assets setup.
+        $this->assets->set(
+            'css',
+            $this->assets->getEmptyCssCollection()
+                ->addCss('external/bootstrap/bootstrap.min.css')
+                ->addCss('assets/css/core/admin/main.css')
+                ->join(false)
+        );
 
-        $cssCollection = new Collection();
-        $cssCollection
-            ->addCss('external/bootstrap/bootstrap.min.css')
-            ->addCss('external/phalconeye/css/admin.css')
-        ;
-
-        $jsCollection = new Collection();
-        $jsCollection
-            ->addJs('assets/js/core/1-jquery-1.8.3.js')
-            ->addJs('assets/js/core/1-jquery-ui-1.9.0.js')
+        $this->assets->get('js')
             ->addJs('external/bootstrap/bootstrap.min.js')
-            ->addJs('external/ckeditor/ckeditor.js')
-            ->addJs('assets/js/core/2-core.js')
-            ->addJs('assets/js/core/2-i18n.js')
-            ->addJs('assets/js/core/4-autocomplete.js')
-            ->addJs('assets/js/core/3-modal.js')
-        ;
+            ->addJs('external/ckeditor/ckeditor.js');
 
-        $this->assets->set('css', $cssCollection);
-        $this->assets->set('js', $jsCollection);
     }
 
 }

@@ -39,13 +39,13 @@ class CacheAnnotation extends \Phalcon\Mvc\User\Plugin
             $annotation = $annotations->get('Cache');
 
             //Get the lifetime
-            $lifetime = $annotation->getNamedParameter('lifetime');
+            $lifetime = $annotation->getNamedArgument('lifetime');
 
             $options = array('lifetime' => $lifetime);
 
             //Check if there is a user defined cache key
             if ($annotation->hasNamedArgument('key')) {
-                $options['key'] = $annotation->getNamedParameter('key');
+                $options['key'] = $annotation->getNamedArgument('key');
             }
 
             //Enable the cache for the current method

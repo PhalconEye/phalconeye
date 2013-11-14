@@ -12,7 +12,7 @@ SET time_zone = "+00:00";
 
 INSERT IGNORE INTO `access` (`object`, `action`, `role_id`, `value`) VALUES
 ('AdminArea', 'access', 2, 'allow'),
-('AdminArea', 'access', 3, 'allow');
+('AdminArea', 'access', 3, 'deny');
 
 --
 -- Dumping data for table `content`

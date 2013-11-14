@@ -151,17 +151,17 @@ class Cli extends PhConsole
      */
     public function printAvailableCommands()
     {
+        print Color::colorize('Available commands:', COLOR::FG_BROWN) . PHP_EOL;
         foreach ($this->_commands as $commands) {
             $providedCommands = $commands->getCommands();
-            print Color::colorize('Available commands:', COLOR::FG_BROWN) . PHP_EOL;
             print '  ' . Color::colorize($providedCommands[0], Color::FG_GREEN);
             unset($providedCommands[0]);
             if (count($providedCommands)) {
                 print ' (alias of: ' . Color::colorize(join(', ', $providedCommands)) . ')';
             }
             print PHP_EOL;
-            print PHP_EOL;
         }
+        print PHP_EOL;
     }
 
     /**

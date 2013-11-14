@@ -8,11 +8,9 @@
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
+var menuItemsData = menuItemsData || [];
 (function (window, $, root, data, undefined) {
     $(function () {
-        console.log(PE.i18n._('TEST'));
-        console.log(PE.i18n._('TEST {0} YES {1}', [11, 22]));
-
         var container = $("#items");
 
         var defaultItem = function () {

@@ -184,10 +184,10 @@ class Acl implements ApiInterface
             $annotation = $annotations->get('Acl');
 
             if ($annotation->hasNamedArgument('actions')) {
-                $object->actions = $annotation->getNamedParameter('actions');
+                $object->actions = $annotation->getNamedArgument('actions');
             }
             if ($annotation->hasNamedArgument('options')) {
-                $object->options = $annotation->getNamedParameter('options');
+                $object->options = $annotation->getNamedArgument('options');
             }
         } else {
             return null;

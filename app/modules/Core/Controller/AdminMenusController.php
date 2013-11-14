@@ -127,9 +127,9 @@ class AdminMenusController extends \Core\Controller\BaseAdmin
      */
     public function manageAction($id)
     {
-        $this->assets
-            ->addJs('assets/js/core/5-admin-menu.js')
-            ->addJs('external/phalconeye/js/admin/files.js');
+        $this->assets->get('js')
+            ->addJs('assets/js/core/admin/menu.js')
+            ->addJs('assets/js/core/admin/files.js');
 
         $item = \Core\Model\Menu::findFirst($id);
         if (!$item)
