@@ -354,7 +354,7 @@ INSERT IGNORE INTO `menus` (`id`, `name`) VALUES
 
 INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id`, `url`, `onclick`, `target`, `tooltip`, `tooltip_position`, `icon`, `icon_position`, `item_order`, `languages`, `roles`) VALUES
 (1, 'Home', 1, NULL, NULL, '/', NULL, NULL, NULL, 'top', '/files/PE_logo.png', 'left', 0, NULL, NULL),
-(2, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'left', '/files/github-10-512.gif', 'left', 1, NULL, NULL);
+(2, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'left', '/files/github.gif', 'left', 1, NULL, NULL);
 
 --
 -- Dumping data for table `packages`
