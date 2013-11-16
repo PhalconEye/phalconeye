@@ -6,7 +6,7 @@ Version 0.4.0
  - Implemented external Widgets
  - Implemented console commands.
  - Implemented migrations system for engine and modules.
- - Added Phalcon 1.2.0 support
+ - Added Phalcon 1.2.4 support
  - Added Less compiler
  - Added Phalcon assets manager
  - Added Profiler
