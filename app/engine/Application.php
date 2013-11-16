@@ -441,7 +441,7 @@ class Application extends \Phalcon\Mvc\Application
     }
 
     /**
-     * Initializes the cache
+     * Initializes the cache.
      *
      * @param \stdClass $config
      */

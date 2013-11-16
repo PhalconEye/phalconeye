@@ -51,7 +51,8 @@ class Cli extends PhConsole
     private $_loaders = array(
         'logger',
         'loader',
-        'database'
+        'database',
+        'cache'
     );
 
     /**
@@ -90,6 +91,7 @@ class Cli extends PhConsole
 
         // Init commands.
         $this->_commands[] = new \Engine\Console\Commands\Migration();
+        $this->_commands[] = new \Engine\Console\Commands\Assets();
 
         $eventsManager->attach('command', new CommandsListener());
         $this->setEventsManager($eventsManager);
@@ -122,7 +124,7 @@ class Cli extends PhConsole
             }
         }
 
-        //Check for alternatives
+        // Check for alternatives.
         $available = array();
         foreach ($this->_commands as $command) {
             $providedCommands = $command->getCommands();
@@ -179,7 +181,7 @@ class Cli extends PhConsole
         }
 
         //If run the commands fails abort too
-        if ($command->run($command->getParameters()) === false) {
+        if ($command->run($this->getDI()) === false) {
             return false;
         }
 
@@ -262,7 +264,7 @@ class Cli extends PhConsole
         $loader->registerNamespaces($modulesNamespaces, true);
         $loader->register();
 
-        $di->set('modules', $modules);
+        $di->set('modules', new \Phalcon\Config($modules));
         $di->set('loader', $loader);
     }
 
@@ -308,5 +310,49 @@ class Cli extends PhConsole
             return $metaData;
         }, true);
 
+    }
+
+    /**
+     * Initializes the cache.
+     *
+     * @param \stdClass $config
+     */
+    protected function initCache($di, $config, $eventsManager)
+    {
+
+        if (!$config->application->debug) {
+
+            // Get the parameters
+            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
+            $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+            $backEndOptions = $config->application->cache->toArray();
+            $frontOutputCache = new \Phalcon\Cache\Frontend\Output($frontEndOptions);
+            $frontDataCache = new \Phalcon\Cache\Frontend\Data($frontEndOptions);
+
+            // Cache:View
+            $viewCache = new $cacheAdapter($frontOutputCache, $backEndOptions);
+            $di->set('viewCache', $viewCache, false);
+
+            // Cache:Output
+            $cacheOutput = new $cacheAdapter($frontOutputCache, $backEndOptions);
+            $di->set('cacheOutput', $cacheOutput, true);
+
+            // Cache:Data
+            $cacheData = new $cacheAdapter($frontDataCache, $backEndOptions);
+            $di->set('cacheData', $cacheData, true);
+
+            // Cache:Models
+            $cacheModels = new $cacheAdapter($frontDataCache, $backEndOptions);
+            $di->set('modelsCache', $cacheModels, true);
+
+        } else {
+            // Create a dummy cache for system.
+            // System will work correctly and the data will be always current for all adapters
+            $dummyCache = new \Engine\Cache\Dummy(null);
+            $di->set('viewCache', $dummyCache);
+            $di->set('cacheOutput', $dummyCache);
+            $di->set('cacheData', $dummyCache);
+            $di->set('modelsCache', $dummyCache);
+        }
     }
 }

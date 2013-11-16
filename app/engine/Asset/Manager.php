@@ -65,27 +65,20 @@ class Manager extends AssetManager
      * Initialize assets manager.
      *
      * @param DI $di Dependency injection.
+     * @param bool $prepare Prepare manager (install assets if in debug and create default collections).
      */
-    public function __construct($di)
+    public function __construct($di, $prepare = true)
     {
         $this->_di = $di;
         $this->_config = $di->get('config');
-        $this->prepare();
-    }
+        if ($prepare) {
+            if ($this->_config->application->debug) {
+                $this->installAssets();
+            }
 
-    /**
-     * Prepare asset manager.
-     *
-     * @return void
-     */
-    public function prepare()
-    {
-        if ($this->_config->application->debug) {
-            $this->installAssets();
+            $this->set('css', $this->getEmptyCssCollection());
+            $this->set('js', $this->getEmptyJsCollection());
         }
-
-        $this->set('css', $this->getEmptyCssCollection());
-        $this->set('js', $this->getEmptyJsCollection());
     }
 
     /**

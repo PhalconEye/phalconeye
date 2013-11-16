@@ -1,5 +1,4 @@
 <?php
-
 /*
   +------------------------------------------------------------------------+
   | Phalcon Framework                                                      |
@@ -20,6 +19,8 @@
 
 namespace Engine\Console;
 
+use Phalcon\DI;
+
 /**
  * Phalcon\Commands\CommandInterface
  *
@@ -28,30 +29,33 @@ namespace Engine\Console;
 interface CommandsInterface
 {
 
-  /**
-   * Executes the command
-   *
-   */
-	public function run($parameters);
+    /**
+     * Executes the command.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void|bool
+     */
+    public function run($di);
 
-  /**
-   * Returns the command identifier
-   *
-   * @return string
-   */
-	public function getCommands();
+    /**
+     * Returns the command identifier
+     *
+     * @return string
+     */
+    public function getCommands();
 
-  /**
-   * Checks whether the command can be executed outside a Phalcon project
-   *
-   * @return boolean
-   */
-  public function canBeExternal();
+    /**
+     * Get possible parameters.
+     *
+     * @return array
+     */
+    public function getPossibleParams();
 
-  /**
-   * Prints help on the usage of the command
-   *
-   */
-	public function getHelp();
+    /**
+     * Prints help on the usage of the command
+     *
+     */
+    public function getHelp();
 
 }

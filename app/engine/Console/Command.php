@@ -107,15 +107,7 @@ abstract class Command
 	{
 
 		if (count($parameters) == 0) {
-			if (isset($this->_possibleParameters)) {
-				$parameters = $this->_possibleParameters;
-			} else {
-				if (method_exists($this, 'getPossibleParams')) {
-					$parameters = $this->getPossibleParams();
-				} else {
-					throw new CommandsException("Cannot load possible parameters for script: " . get_class($this));
-				}
-			}
+            $parameters = $this->getPossibleParams();
 		}
 
 		if (!is_array($parameters)) {
@@ -454,13 +446,13 @@ abstract class Command
 	}
 
 	/**
-	 * By default all commands must be external
+	 * Get possible parameters.
 	 *
-	 * @return boolean
+	 * @return array
 	 */
-	public function canBeExternal()
+	public function getPossibleParams()
 	{
-		return false;
+		return array();
 	}
 
 	/**

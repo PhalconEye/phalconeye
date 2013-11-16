@@ -25,6 +25,8 @@ use Engine\Console\Color,
     Engine\Console\CommandsInterface,
     Engine\Generator\Migrations;
 
+use Phalcon\DI;
+
 /**
  * Migration
  *
@@ -38,18 +40,14 @@ use Engine\Console\Color,
  */
 class Migration extends Command implements CommandsInterface
 {
-
-    protected $_possibleParameters = array(
-        'table=s' => "Table to migrate. Default: all.",
-        'version=s' => "Version to migrate.",
-        'module=s' => "Select module to use migration.",
-        'force' => "Forces to overwrite existing migrations.",
-    );
-
     /**
-     * Run the command
+     * Executes the command.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void|bool
      */
-    public function run($parameters)
+    public function run($di)
     {
         if ($this->isReceivedOption('table')) {
             $tableName = $this->getOption('table');
@@ -118,14 +116,6 @@ class Migration extends Command implements CommandsInterface
     }
 
     /**
-     * Checks whether the command can be executed outside a Phalcon project
-     */
-    public function canBeExternal()
-    {
-        return false;
-    }
-
-    /**
      * Prints the help for current command.
      *
      * @return void
@@ -142,11 +132,11 @@ class Migration extends Command implements CommandsInterface
         print Color::head('Usage: Run a Migration') . PHP_EOL;
         print Color::colorize('  migration run', Color::FG_GREEN) . PHP_EOL . PHP_EOL;
 
-        $this->printParameters($this->_possibleParameters);
+        $this->printParameters($this->getPossibleParams());
     }
 
     /**
-     * Returns number of required parameters for this command
+     * Returns number of required parameters for this command.
      *
      * @return int
      */
@@ -155,4 +145,18 @@ class Migration extends Command implements CommandsInterface
         return 1;
     }
 
+    /**
+     * Get possible parameters.
+     *
+     * @return array
+     */
+    public function getPossibleParams()
+    {
+        return array(
+            'table=s' => "Table to migrate. Default: all.",
+            'version=s' => "Version to migrate.",
+            'module=s' => "Select module to use migration.",
+            'force' => "Forces to overwrite existing migrations.",
+        );
+    }
 }

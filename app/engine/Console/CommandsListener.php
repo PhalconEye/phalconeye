@@ -20,9 +20,7 @@
 
 namespace Engine\Console;
 
-use Engine\Phalcon\Script,
-    Engine\Phalcon\Script\Color,
-	Phalcon\Events\Event;
+use Phalcon\Events\Event;
 
 /**
  * Phalcon\Commands\CommandListener
