@@ -29,7 +29,7 @@ class Bootstrap extends \Engine\Bootstrap
         parent::registerServices($di);
 
         $config = $di->get('config');
-        self::_initLocale($di, $config);
+        $this->_initLocale($di, $config);
         if (!$config->installed) {
             return;
         }
@@ -38,7 +38,7 @@ class Bootstrap extends \Engine\Bootstrap
         if (!User::getViewer()->id) {
             $di->remove('profiler');
         }
-        self::_initWidgets($di);
+        $this->_initWidgets($di);
     }
 
     /**

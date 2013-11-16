@@ -55,7 +55,7 @@ class InstallController extends PeController
         $this->disableFooter();
 
         $collection = new \Phalcon\Assets\Collection();
-        $collection->addCss('external/phalconeye/css/install.css');
+        $collection->addCss('assets/css/core/install.css');
         $this->assets->set('css', $collection);
     }
 
@@ -76,7 +76,7 @@ class InstallController extends PeController
                 $passed = version_compare($installedVersion, $version, '>=');
             } else {
                 $passed = extension_loaded($req);
-                $comparison = '>='; // ($req == 'phalcon' ? '==' : '>=');
+                $comparison = '>=';
                 if ($passed && $version !== false) {
                     $installedVersion = phpversion($req);
                     $passed = version_compare($installedVersion, $version, $comparison);

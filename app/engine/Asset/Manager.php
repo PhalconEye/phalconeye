@@ -98,10 +98,9 @@ class Manager extends AssetManager
      */
     public function installAssets()
     {
-        if ($this->_config && !$this->_config->installed) {
+        if (!$this->_config->installed) {
             return;
         }
-
         $location = $this->_config->application->assets->local;
 
         ///////////////////////////////////

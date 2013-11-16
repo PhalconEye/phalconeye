@@ -10,19 +10,19 @@
   obtain it through the world-wide-web, please send an email
   to lantian.ivan@gmail.com so we can send you a copy immediately.
 #}
-{% extends "install/layout.volt" %}
+{% extends "Install/layout.volt" %}
 
 {% block title %}
     {{ 'Installation | Database'|trans }}
 {% endblock %}
 
 {% block header %}
-    {{ partial('/install/header') }}
+    {{ partial('/Install/header') }}
 {% endblock %}
 
 {% block content %}
     {% set action = 'index' %}
-    {{ partial('/install/steps') }}
+    {{ partial('/Install/steps') }}
 
     <div>
         <table>
@@ -50,9 +50,9 @@
                     </td>
                     <td>
                         {% if req['passed'] %}
-                            <img alt="Passed" src="/external/phalconeye/images/install/good.png"/>
+                            <img alt="Passed" src="/assets/img/core/install/good.png"/>
                         {% else %}
-                            <img alt="Not Passed" src="/external/phalconeye/images/install/bad.png"/>
+                            <img alt="Not Passed" src="/assets/img/core/install/bad.png"/>
                         {% endif %}
                     </td>
                 </tr>
@@ -79,9 +79,9 @@
                     </td>
                     <td>
                         {% if path['is_writable'] %}
-                            <img alt="Passed" src="/external/phalconeye/images/install/good.png"/>
+                            <img alt="Passed" src="/assets/img/core/install/good.png"/>
                         {% else %}
-                            <img alt="Not Passed" src="/external/phalconeye/images/install/bad.png"/>
+                            <img alt="Not Passed" src="/assets/img/core/install/bad.png"/>
                         {% endif %}
                     </td>
                 </tr>

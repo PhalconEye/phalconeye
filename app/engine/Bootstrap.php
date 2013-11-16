@@ -86,34 +86,34 @@ abstract class Bootstrap implements BootstrapInterface
             $view->registerEngines(array(
                 ".volt" => function ($view, $di) use ($config) {
 
-                    $volt = new Volt($view, $di);
+                        $volt = new Volt($view, $di);
 
-                    $volt->setOptions(array(
-                        "compiledPath" => $config->application->view->compiledPath,
-                        "compiledExtension" => $config->application->view->compiledExtension,
-                        'compiledSeparator' => $config->application->view->compiledSeparator,
-                        'compileAlways' => $config->application->view->compileAlways
-                    ));
+                        $volt->setOptions(array(
+                            "compiledPath" => $config->application->view->compiledPath,
+                            "compiledExtension" => $config->application->view->compiledExtension,
+                            'compiledSeparator' => $config->application->view->compiledSeparator,
+                            'compileAlways' => $config->application->view->compileAlways
+                        ));
 
-                    $compiler = $volt->getCompiler();
+                        $compiler = $volt->getCompiler();
 
-                    //register helper
-                    $compiler->addFunction('helper', function ($resolvedArgs) use ($di) {
-                        return '(new \Engine\Helper(' . $resolvedArgs . '))';
-                    });
+                        //register helper
+                        $compiler->addFunction('helper', function ($resolvedArgs) use ($di) {
+                            return '(new \Engine\Helper(' . $resolvedArgs . '))';
+                        });
 
-                    // register translation filter
-                    $compiler->addFilter('trans', function ($resolvedArgs) {
-                        return '$this->trans->query(' . $resolvedArgs . ')';
-                    });
+                        // register translation filter
+                        $compiler->addFilter('trans', function ($resolvedArgs) {
+                            return '$this->trans->query(' . $resolvedArgs . ')';
+                        });
 
-                    $compiler->addFilter('dump', function ($resolvedArgs) {
-                        return 'var_dump(' . $resolvedArgs . ')';
-                    });
+                        $compiler->addFilter('dump', function ($resolvedArgs) {
+                            return 'var_dump(' . $resolvedArgs . ')';
+                        });
 
 
-                    return $volt;
-                }
+                        return $volt;
+                    }
             ));
 
             // Attach a listener for type "view"
@@ -157,7 +157,9 @@ abstract class Bootstrap implements BootstrapInterface
          * Listening to events in the dispatcher using the
          * Acl plugin
          */
-        $eventsManager->attach('dispatch', $di->get(Application::$defaultModule)->acl());
+        if ($di->get('config')->installed) {
+            $eventsManager->attach('dispatch', $di->get(Application::$defaultModule)->acl());
+        }
 
         // Create dispatcher
         $dispatcher = new \Phalcon\Mvc\Dispatcher();

@@ -209,19 +209,6 @@ class Acl implements ApiInterface
      */
     public function beforeDispatch(\Phalcon\Events\Event $event, \Phalcon\Mvc\Dispatcher $dispatcher)
     {
-        // check installation
-        if (!$this->_di->get('config')->installed) {
-            $this->_di->set('installationRequired', true);
-            if ($dispatcher->getControllerName() != 'install') {
-                return $dispatcher->forward(array(
-                    'module' => 'core',
-                    "controller" => "install",
-                    "action" => "index"
-                ));
-            }
-            return;
-        }
-
         $viewer = \User\Model\User::getViewer();
         $acl = $this->_();
 

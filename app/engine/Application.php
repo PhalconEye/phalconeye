@@ -106,7 +106,7 @@ class Application extends \Phalcon\Mvc\Application
 
         $enabledModules = $this->_config->get('modules');
         if (!$enabledModules) {
-            $enabledModules = array();
+            $enabledModules = array(self::$defaultModule);
         } else {
             $enabledModules = $enabledModules->toArray();
         }
@@ -273,7 +273,7 @@ class Application extends \Phalcon\Mvc\Application
             $router = new \Phalcon\Mvc\Router\Annotations(false);
             $router->setDefaultModule(self::$defaultModule);
             $router->setDefaultNamespace(ucfirst(self::$defaultModule) . '\Controller');
-            $router->setDefaultController("index");
+            $router->setDefaultController("Index");
             $router->setDefaultAction("index");
 
             $router->add('/:module/:controller/:action', array(
@@ -281,6 +281,14 @@ class Application extends \Phalcon\Mvc\Application
                 'controller' => 2,
                 'action' => 3,
             ));
+
+            if (!$di->get('config')->installed) {
+                $router->addModuleResource('core', 'Core\Controller\Install');
+                $router->setDefaultController("Install");
+                $di->set('installationRequired', true);
+                $di->set('router', $router);
+                return;
+            }
 
             $router->notFound(array(
                 'module' => self::$defaultModule,
@@ -322,19 +330,11 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initLogger($di, $config, $eventsManager)
     {
-        if ($config->application->logger->enabled && $config->installed) {
+        if ($config->application->logger->enabled) {
             $di->set('logger', function () use ($config) {
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "main.log");
                 $formatter = new \Phalcon\Logger\Formatter\Line($config->application->logger->format);
                 $logger->setFormatter($formatter);
-                return $logger;
-            });
-        } else {
-            $di->set('logger', function () use ($config) {
-                $logger = new \Phalcon\Logger\Adapter\Syslog("PhalconEye", array(
-                    'option' => LOG_NDELAY,
-                    'facility' => LOG_DAEMON
-                ));
                 return $logger;
             });
         }

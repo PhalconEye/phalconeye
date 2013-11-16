@@ -69,7 +69,6 @@ class Base extends PhController
         }
     }
 
-
     public function afterExecuteRoute()
     {
         if ($this->config->application->debug && $this->di->has('profiler')) {

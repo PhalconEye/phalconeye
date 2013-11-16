@@ -12,6 +12,6 @@
 #}
 
  <div class="header_container">
-     <img alt="" src="/external/phalconeye/images/install/pe_logo.png"/><br/>
+     <img alt="" src="/assets/img/core/install/pe_logo.png"/><br/>
      <span>{{ 'Installation...'|trans }}</span>
  </div>

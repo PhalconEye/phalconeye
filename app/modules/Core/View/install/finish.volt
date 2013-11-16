@@ -10,19 +10,19 @@
   obtain it through the world-wide-web, please send an email
   to lantian.ivan@gmail.com so we can send you a copy immediately.
 #}
-{% extends "install/layout.volt" %}
+{% extends "Install/layout.volt" %}
 
 {% block title %}
     {{ 'Installation'|trans }}
 {% endblock %}
 
 {% block header %}
-    {{ partial('/install/header') }}
+    {{ partial('/Install/header') }}
 {% endblock %}
 
 {% block content %}
     {% set action = 'finish' %}
-    {{ partial('/install/steps') }}
+    {{ partial('/Install/steps') }}
 
     <div class="thanks_message">
         {{ 'Specify admin account'|trans }}
