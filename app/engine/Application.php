@@ -257,6 +257,19 @@ class Application extends \Phalcon\Mvc\Application
      */
     protected function initRouter($di, $config, $eventsManager)
     {
+        // Check installation.
+        if (!$di->get('config')->installed) {
+            $router = new \Phalcon\Mvc\Router\Annotations(false);
+            $router->setDefaultModule(self::$defaultModule);
+            $router->setDefaultNamespace('Core\Controller');
+            $router->setDefaultController("Install");
+            $router->setDefaultAction("index");
+            $router->addModuleResource('core', 'Core\Controller\Install');
+            $di->set('installationRequired', true);
+            $di->set('router', $router);
+            return;
+        }
+
         $routerCacheKey = 'router_data.cache';
 
         $cacheData = $di->get('cacheData');
@@ -281,14 +294,6 @@ class Application extends \Phalcon\Mvc\Application
                 'controller' => 2,
                 'action' => 3,
             ));
-
-            if (!$di->get('config')->installed) {
-                $router->addModuleResource('core', 'Core\Controller\Install');
-                $router->setDefaultController("Install");
-                $di->set('installationRequired', true);
-                $di->set('router', $router);
-                return;
-            }
 
             $router->notFound(array(
                 'module' => self::$defaultModule,
@@ -508,7 +513,7 @@ class Application extends \Phalcon\Mvc\Application
     /**
      * Initializes engine services
      *
-     * @param DI $di
+     * @param DI        $di
      *
      * @param \stdClass $config
      */

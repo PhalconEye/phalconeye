@@ -30,7 +30,7 @@ return new \Phalcon\Config(array (
     'adapter' => 'Mysql',
     'host' => 'localhost',
     'username' => 'root',
-    'password' => 'root',
+    'password' => '',
     'dbname' => 'phalconeye',
   ),
   'application' =>
@@ -65,8 +65,8 @@ return new \Phalcon\Config(array (
     ),
     'assets' =>
     array (
-      'local' => PUBLIC_PATH . '/assets/',
-      'remote' => '/',
+      'local' => 'assets/',
+      'remote' => false,
     ),
   ),
   'metadata' =>

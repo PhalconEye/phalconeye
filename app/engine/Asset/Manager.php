@@ -41,9 +41,6 @@ use Core\Model\Settings;
 class Manager extends AssetManager
 {
     CONST
-        // Assets url.
-        ASSETS_PATH = 'assets/',
-
         // Style file name in url.
         FILENAME_STYLE = 'style.css',
 
@@ -184,6 +181,7 @@ class Manager extends AssetManager
     {
         $collection = new Collection();
 
+        $local = $this->_config->application->assets->get('local');
         $remote = $this->_config->application->assets->get('remote');
         if ($remote) {
             $collection
@@ -192,8 +190,8 @@ class Manager extends AssetManager
         }
 
         return $collection
-            ->setTargetPath(self::ASSETS_PATH . self::FILENAME_JAVASCRIPT)
-            ->setTargetUri(self::ASSETS_PATH . self::FILENAME_JAVASCRIPT)
+            ->setTargetPath($local . self::FILENAME_JAVASCRIPT)
+            ->setTargetUri($local . self::FILENAME_JAVASCRIPT)
             ->addFilter(new Jsmin())
             ->join(!$this->_config->application->debug);
     }
@@ -207,6 +205,7 @@ class Manager extends AssetManager
     {
         $collection = new Collection();
 
+        $local = $this->_config->application->assets->get('local');
         $remote = $this->_config->application->assets->get('remote');
         if ($remote) {
             $collection
@@ -215,8 +214,8 @@ class Manager extends AssetManager
         }
 
         return $collection
-            ->setTargetPath(self::ASSETS_PATH . self::FILENAME_STYLE)
-            ->setTargetUri(self::ASSETS_PATH . self::FILENAME_STYLE)
+            ->setTargetPath($local . self::FILENAME_STYLE)
+            ->setTargetUri($local . self::FILENAME_STYLE)
             ->addFilter(new Cssmin())
             ->join(!$this->_config->application->debug);
     }
