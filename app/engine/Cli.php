@@ -16,45 +16,13 @@
 
 namespace Engine;
 
-use Phalcon\CLI\Console as PhConsole,
-    Phalcon\DI\FactoryDefault\CLI as PhCliDi,
-    Phalcon\Config as PhConfig,
-    Phalcon\Events\Manager as PhEventsManager,
-    Phalcon\Logger\Adapter\File as PhLogFile,
-    Phalcon\Logger\Formatter\Line as PhLogFormatterLine,
-    Phalcon\Loader as PhLoader,
-    Phalcon\Mvc\Model\Manager as PhModelManager,
-    Phalcon\Mvc\Model\MetaData\Memory as PhMetaData;
-
-use Engine\Model\AnnotationsInitializer as PeAnnotationsInitializer,
-    Engine\Model\AnnotationsMetaDataInitializer as PeAnnotationsMetaDataInitializer,
-    Engine\Console\CommandsListener,
+use Engine\Console\CommandsListener,
     Engine\Console\Color,
     Engine\Console\Command as PeCommand;
 
 
-class Cli extends PhConsole
+class Cli extends Application
 {
-    // System config location.
-    const SYSTEM_CONFIG_PATH = '/app/config/engine.php';
-
-    /**
-     * @var Config
-     */
-    private $_config;
-
-    /**
-     * Loaders.
-     *
-     * @var array
-     */
-    private $_loaders = array(
-        'logger',
-        'loader',
-        'database',
-        'cache'
-    );
-
     /**
      * Defined engine commands.
      *
@@ -62,39 +30,22 @@ class Cli extends PhConsole
      */
     private $_commands = array();
 
-    public function __construct()
-    {
-        // Create default di.
-        $di = new PhCliDi();
-
-        // Get config.
-        $this->_config = include_once(ROOT_PATH . self::SYSTEM_CONFIG_PATH);
-
-        // Store config in the Di container.
-        $di->setShared('config', $this->_config);
-
-        parent::__construct($di);
-    }
-
     /**
      * Run application.
      */
-    public function run()
+    public function run($mode = 'console')
     {
-        // Set application event manager
-        $eventsManager = new PhEventsManager();
-
-        // Init services and engine system
-        foreach ($this->_loaders as $service) {
-            $this->{'init' . $service}($this->getDI(), $this->_config, $eventsManager);
-        }
+        parent::run($mode);
 
         // Init commands.
+        $this->_initCommands();
+        $this->getEventsManager()->attach('command', new CommandsListener());
+    }
+
+    protected function _initCommands()
+    {
         $this->_commands[] = new \Engine\Console\Commands\Migration();
         $this->_commands[] = new \Engine\Console\Commands\Assets();
-
-        $eventsManager->attach('command', new CommandsListener());
-        $this->setEventsManager($eventsManager);
     }
 
     /**
@@ -105,8 +56,15 @@ class Cli extends PhConsole
      */
     public function getOutput()
     {
-        $vendor = sprintf('PhalconEye Commands Manager');
-        print PHP_EOL . Color::colorize($vendor, Color::FG_GREEN, Color::AT_BOLD) . PHP_EOL . PHP_EOL;
+        print Color::infoLine('================================================================', true, 0);
+        print Color::infoLine("
+           ___  __       __              ____
+          / _ \/ / ___ _/ _______  ___  / ____ _____
+         / ___/ _ / _ `/ / __/ _ \/ _ \/ _// // / -_)
+        /_/  /_//_\_,_/_/\__/\___/_//_/___/\_, /\__/
+                                          /___/
+                                          Commands Manager", false, 1);
+        print Color::infoLine('================================================================', false, 2);
 
         if (!isset($_SERVER['argv'][1])) {
             $this->printAvailableCommands();
@@ -140,10 +98,10 @@ class Cli extends PhConsole
         // Show exception with/without alternatives
         $soundex = soundex($input);
         if (isset($available[$soundex])) {
-            print Color::colorize('Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?', Color::FG_RED, Color::AT_BOLD) . PHP_EOL . PHP_EOL;
+            print Color::warningLine('Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?');
             $this->printAvailableCommands();
         } else {
-            print Color::colorize('Command "' . $input . '" not found.', Color::FG_RED, Color::AT_BOLD) . PHP_EOL . PHP_EOL;
+            print Color::warningLine('Command "' . $input . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -153,15 +111,14 @@ class Cli extends PhConsole
      */
     public function printAvailableCommands()
     {
-        print Color::colorize('Available commands:', COLOR::FG_BROWN) . PHP_EOL;
+        print Color::headLine('Available commands:');
         foreach ($this->_commands as $commands) {
             $providedCommands = $commands->getCommands();
-            print '  ' . Color::colorize($providedCommands[0], Color::FG_GREEN);
-            unset($providedCommands[0]);
-            if (count($providedCommands)) {
-                print ' (alias of: ' . Color::colorize(join(', ', $providedCommands)) . ')';
+            $alias = '';
+            if (count($providedCommands) > 1) {
+                $alias = ' (Aliases: ' . Color::colorize(join(', ', $providedCommands)) . ')';
             }
-            print PHP_EOL;
+            print Color::commandLine($providedCommands[0], $alias);
         }
         print PHP_EOL;
     }
@@ -186,173 +143,5 @@ class Cli extends PhConsole
         }
 
         $this->_eventsManager->fire('command:afterCommand', $command);
-    }
-
-    /**
-     * Initializes the logger.
-     *
-     * @param PhCliDi       $di            Current DI.
-     * @param PhConfig      $config        Application config.
-     * @param EventsManager $eventsManager Application events manager.
-     *
-     * @return void
-     */
-    protected function initLogger($di, $config, $eventsManager)
-    {
-        if ($config->application->logger->enabled) {
-            $di->set('logger', function () use ($config) {
-                $logger = new PhLogFile($config->application->logger->path . "cli.log");
-                $formatter = new PhLogFormatterLine($config->application->logger->format);
-                $logger->setFormatter($formatter);
-                return $logger;
-            });
-        }
-    }
-
-    /**
-     * Initializes the loader.
-     *
-     * @param PhCliDi       $di            Current DI.
-     * @param PhConfig      $config        Application config.
-     * @param EventsManager $eventsManager Application events manager.
-     *
-     * @return void
-     */
-    protected function initLoader($di, $config, $eventsManager)
-    {
-        $engineNamespaces = array();
-        $engineNamespaces['Engine'] = $config->application->engineDir;
-        $engineNamespaces['Plugin'] = $config->application->pluginsDir;
-        $engineNamespaces['Widget'] = $config->application->widgetsDir;
-        $engineNamespaces['Library'] = $config->application->librariesDir;
-
-        $loader = new PhLoader();
-        $loader->registerNamespaces($engineNamespaces);
-
-        if ($config->application->debug) {
-            $eventsManager->attach('loader', function ($event, $loader, $className) use ($di) {
-                if ($event->getType() == 'afterCheckClass') {
-                    $di->get('logger')->error("Can't load class '" . $className . "'");
-                }
-            });
-            $loader->setEventsManager($eventsManager);
-        }
-
-        $loader->register();
-
-        $modulesNamespaces = array();
-        // add default module and engine modules
-        $modules = array(
-            Application::$defaultModule => true,
-            'user' => true,
-        );
-
-        $enabledModules = $this->_config->get('modules');
-        if (!$enabledModules) {
-            $enabledModules = array();
-        } else {
-            $enabledModules = $enabledModules->toArray();
-        }
-
-        $modules = array_merge($modules, $enabledModules);
-        foreach ($modules as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-            $modulesNamespaces[ucfirst($module)] = $this->_config->application->modulesDir . ucfirst($module);
-        }
-        $loader->registerNamespaces($modulesNamespaces, true);
-        $loader->register();
-
-        $di->set('modules', new \Phalcon\Config($modules));
-        $di->set('loader', $loader);
-    }
-
-    /**
-     * Initializes the database.
-     *
-     * @param PhCliDi       $di            Current DI.
-     * @param PhConfig      $config        Application config.
-     * @param EventsManager $eventsManager Application events manager.
-     *
-     * @return void
-     */
-    protected function initDatabase($di, $config, $eventsManager)
-    {
-        $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
-        $connection = new $adapter(array(
-            "host" => $config->database->host,
-            "username" => $config->database->username,
-            "password" => $config->database->password,
-            "dbname" => $config->database->dbname,
-        ));
-        $di->set('db', $connection);
-
-        /**
-         * Manager.
-         */
-        $di->set('modelsManager', function () use ($config, $eventsManager) {
-            $modelsManager = new PhModelManager();
-            $modelsManager->setEventsManager($eventsManager);
-
-            //Attach a listener to models-manager
-            $eventsManager->attach('modelsManager', new PeAnnotationsInitializer());
-
-            return $modelsManager;
-        }, true);
-
-        /**
-         * Metadata.
-         */
-        $di->set('modelsMetadata', function () use ($config) {
-            $metaData = new PhMetaData();
-            $metaData->setStrategy(new PeAnnotationsMetaDataInitializer());
-            return $metaData;
-        }, true);
-
-    }
-
-    /**
-     * Initializes the cache.
-     *
-     * @param \stdClass $config
-     */
-    protected function initCache($di, $config, $eventsManager)
-    {
-
-        if (!$config->application->debug) {
-
-            // Get the parameters
-            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
-            $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
-            $backEndOptions = $config->application->cache->toArray();
-            $frontOutputCache = new \Phalcon\Cache\Frontend\Output($frontEndOptions);
-            $frontDataCache = new \Phalcon\Cache\Frontend\Data($frontEndOptions);
-
-            // Cache:View
-            $viewCache = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $di->set('viewCache', $viewCache, false);
-
-            // Cache:Output
-            $cacheOutput = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $di->set('cacheOutput', $cacheOutput, true);
-
-            // Cache:Data
-            $cacheData = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $di->set('cacheData', $cacheData, true);
-
-            // Cache:Models
-            $cacheModels = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $di->set('modelsCache', $cacheModels, true);
-
-        } else {
-            // Create a dummy cache for system.
-            // System will work correctly and the data will be always current for all adapters
-            $dummyCache = new \Engine\Cache\Dummy(null);
-            $di->set('viewCache', $dummyCache);
-            $di->set('cacheOutput', $dummyCache);
-            $di->set('cacheData', $dummyCache);
-            $di->set('modelsCache', $dummyCache);
-        }
     }
 }

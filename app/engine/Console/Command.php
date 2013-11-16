@@ -428,7 +428,7 @@ abstract class Command
 			}
 		}
 
-		print Color::head('Options:') . PHP_EOL;
+		print Color::headLine('Options:');
 		foreach ($parameters as $parameter => $description) {
 			print Color::colorize(' --' . $parameter . str_repeat(' ', $length - strlen($parameter)), Color::FG_GREEN);
 			print Color::colorize("    " . $description) . PHP_EOL;
@@ -436,7 +436,7 @@ abstract class Command
 	}
 
 	/**
-	 * Returns the proccesed parameters
+	 * Returns the proccesed parameters.
 	 *
 	 * @param array
 	 */

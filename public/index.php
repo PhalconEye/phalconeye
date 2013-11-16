@@ -32,6 +32,7 @@ try {
         require_once ROOT_PATH . "/app/engine/Application.php";
         $application = new Engine\Application();
     } else {
+        require_once ROOT_PATH . "/app/engine/Application.php";
         require_once ROOT_PATH . "/app/engine/Cli.php";
         $application = new Engine\Cli();
     }

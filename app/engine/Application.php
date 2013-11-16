@@ -32,7 +32,7 @@ class Application extends \Phalcon\Mvc\Application
     /**
      * @var \Phalcon\Config
      */
-    private $_config;
+    protected $_config;
 
     /**
      * Default module name.
@@ -65,6 +65,12 @@ class Application extends \Phalcon\Mvc\Application
             'loader',
             'database',
             'session'
+        ),
+        'console' => array(
+            'logger',
+            'loader',
+            'database',
+            'cache'
         )
     );
 

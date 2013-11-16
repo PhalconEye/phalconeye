@@ -73,11 +73,12 @@ class Assets extends Command implements CommandsInterface
      */
     public function getHelp()
     {
-        print Color::head('Help:') . PHP_EOL;
-        print Color::colorize('  Assets management') . PHP_EOL . PHP_EOL;
+        print Color::headLine('Help:');
+        print Color::textLine('Assets management');
 
-        print Color::head('Usage: Install assets from all modules') . PHP_EOL;
-        print Color::colorize('  assets install', Color::FG_GREEN) . PHP_EOL;
+        print Color::headLine('Usage: Install assets from all modules');
+        print Color::commandLine('assets install');
+        print PHP_EOL;
     }
 
     /**

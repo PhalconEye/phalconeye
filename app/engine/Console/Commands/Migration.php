@@ -122,17 +122,20 @@ class Migration extends Command implements CommandsInterface
      */
     public function getHelp()
     {
-        print Color::head('Help:') . PHP_EOL;
-        print Color::colorize('  Generates/Run a Migration') . PHP_EOL . PHP_EOL;
+        print Color::headLine('Help:');
+        print Color::textLine('Generates/Run a Migration');
 
-        print Color::head('Usage: Generate a Migration') . PHP_EOL;
-        print Color::colorize('  migration generate', Color::FG_GREEN) . PHP_EOL;
-        print Color::colorize('  migration generate empty', Color::FG_GREEN) . PHP_EOL . PHP_EOL;
+        print Color::headLine('Usage: Generate a Migration');
+        print Color::commandLine('migration generate');
+        print Color::commandLine('migration generate empty');
+        print PHP_EOL;
 
-        print Color::head('Usage: Run a Migration') . PHP_EOL;
-        print Color::colorize('  migration run', Color::FG_GREEN) . PHP_EOL . PHP_EOL;
+        print Color::headLine('Usage: Run a Migration');
+        print Color::commandLine('migration run');
+        print PHP_EOL;
 
         $this->printParameters($this->getPossibleParams());
+        print PHP_EOL;
     }
 
     /**
