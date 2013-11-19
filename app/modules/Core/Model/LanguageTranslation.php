@@ -22,9 +22,8 @@ namespace Core\Model;
  *  "alias": "Language"
  * })
  */
-class LanguageTranslation extends \Engine\Model
+class LanguageTranslation extends \Engine\Db\Model
 {
-
     /**
      * @Primary
      * @Identity

@@ -87,7 +87,7 @@ class AdminAccessController extends \Core\Controller\BaseAdmin
         $currentRole = $this->session->get('admin-current-role');
         $currentRole = \User\Model\Role::findFirst($currentRole);
         if (!$currentRole) {
-            $currentRole = \User\Model\Role::getRoleByType(\Core\Api\Acl::ROLE_TYPE_ADMIN);
+            $currentRole = \User\Model\Role::getRoleByType(\Core\Api\Acl::DEFAULT_ROLE_ADMIN);
         }
 
         $objectAcl = $this->core->acl()->getObjectAcl($id);

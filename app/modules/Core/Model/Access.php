@@ -18,11 +18,10 @@ namespace Core\Model;
 
 /**
  * @Source("access")
- * @BelongsTo("role_id", "Role", "id")
+ * @BelongsTo("role_id", "User\Model\Role", "id")
  */
-class Access extends \Engine\Model
+class Access extends \Engine\Db\Model
 {
-
     /**
      * @Primary
      * @Identity

@@ -17,7 +17,7 @@
 namespace Engine;
 
 use Engine\Console\CommandsListener,
-    Engine\Console\Color,
+    Engine\Console\ConsoleUtil,
     Engine\Console\Command as PeCommand;
 
 
@@ -44,8 +44,8 @@ class Cli extends Application
 
     protected function _initCommands()
     {
-        $this->_commands[] = new \Engine\Console\Commands\Migration();
         $this->_commands[] = new \Engine\Console\Commands\Assets();
+        $this->_commands[] = new \Engine\Console\Commands\Database();
     }
 
     /**
@@ -56,15 +56,15 @@ class Cli extends Application
      */
     public function getOutput()
     {
-        print Color::infoLine('================================================================', true, 0);
-        print Color::infoLine("
+        print ConsoleUtil::infoLine('================================================================', true, 0);
+        print ConsoleUtil::infoLine("
            ___  __       __              ____
           / _ \/ / ___ _/ _______  ___  / ____ _____
          / ___/ _ / _ `/ / __/ _ \/ _ \/ _// // / -_)
         /_/  /_//_\_,_/_/\__/\___/_//_/___/\_, /\__/
                                           /___/
                                           Commands Manager", false, 1);
-        print Color::infoLine('================================================================', false, 2);
+        print ConsoleUtil::infoLine('================================================================', false, 2);
 
         if (!isset($_SERVER['argv'][1])) {
             $this->printAvailableCommands();
@@ -98,10 +98,10 @@ class Cli extends Application
         // Show exception with/without alternatives
         $soundex = soundex($input);
         if (isset($available[$soundex])) {
-            print Color::warningLine('Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?');
+            print ConsoleUtil::warningLine('Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?');
             $this->printAvailableCommands();
         } else {
-            print Color::warningLine('Command "' . $input . '" not found.');
+            print ConsoleUtil::warningLine('Command "' . $input . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -111,14 +111,14 @@ class Cli extends Application
      */
     public function printAvailableCommands()
     {
-        print Color::headLine('Available commands:');
+        print ConsoleUtil::headLine('Available commands:');
         foreach ($this->_commands as $commands) {
             $providedCommands = $commands->getCommands();
             $alias = '';
             if (count($providedCommands) > 1) {
-                $alias = ' (Aliases: ' . Color::colorize(join(', ', $providedCommands)) . ')';
+                $alias = 'Aliases: ' . ConsoleUtil::colorize(join(', ', $providedCommands)) . '';
             }
-            print Color::commandLine($providedCommands[0], $alias);
+            print ConsoleUtil::commandLine($providedCommands[0], $alias);
         }
         print PHP_EOL;
     }

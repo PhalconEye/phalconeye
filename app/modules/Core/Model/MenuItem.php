@@ -16,19 +16,20 @@
 
 namespace Core\Model;
 
+use Engine\Db\Model\Behavior\Sortable;
+
 /**
  * @Source("menu_items")
  * @BelongsTo("menu_id", '\Core\Model\Menu', "id", {
  *  "alias": "Menu"
  * })
- * @HasMany("id", '\Core\Model\MenuItem', "parent_id", {
+ * @BelongsTo("parent_id", '\Core\Model\MenuItem', "id", {
  *  "alias": "MenuItem"
  * })
  */
-class MenuItem extends \Engine\Model
+class MenuItem extends \Engine\Db\Model
 {
-
-    use \Engine\Model\Behavior\Sortable;
+    use Sortable;
 
     /**
      * @Primary
@@ -75,7 +76,7 @@ class MenuItem extends \Engine\Model
     /**
      * @Column(type="string", nullable=true, column="tooltip", size="255")
      */
-    protected $tooltip = null;
+    public $tooltip = null;
 
     /**
      * @Column(type="string", nullable=true, column="tooltip_position", size="10")

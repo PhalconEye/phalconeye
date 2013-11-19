@@ -13,7 +13,7 @@
  *
  */
 
-namespace Engine;
+namespace Engine\Db;
 
 class Model extends \Phalcon\Mvc\Model{
 

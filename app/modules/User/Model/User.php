@@ -16,17 +16,18 @@
 
 namespace User\Model;
 
+use Engine\Db\Model\Behavior\Timestampable;
+
 /**
  * @Source("users")
  * @BelongsTo("role_id", '\User\Model\Role', "id", {
  *  "alias": "Role"
  * })
  */
-class User extends \Engine\Model
+class User extends \Engine\Db\Model
 {
-
     // use trait Timestampable for creation_date and modified_date fields
-    use \Engine\Model\Behavior\Timestampable;
+    use Timestampable;
 
     /**
      * @Primary
@@ -36,11 +37,12 @@ class User extends \Engine\Model
     public $id;
 
     /**
-     * @Column(type="integer", nullable=true, column="role_id", size="11")
+     * @Column(type="integer", nullable=false, column="role_id", size="11")
      */
     public $role_id;
 
     /**
+     * @Index("USERNAME_INDEX")
      * @Column(type="string", nullable=false, column="username", size="255")
      */
     public $username;
@@ -51,6 +53,7 @@ class User extends \Engine\Model
     public $password;
 
     /**
+     * @Index("EMAIL_INDEX")
      * @Column(type="string", nullable=false, column="email", size="150")
      */
     public $email;
@@ -97,7 +100,7 @@ class User extends \Engine\Model
      */
     public function isAdmin()
     {
-        return $this->getRole()->type == \Core\Api\Acl::ROLE_TYPE_ADMIN;
+        return $this->getRole()->type == \Core\Api\Acl::DEFAULT_ROLE_ADMIN;
     }
 
     /**
@@ -117,7 +120,7 @@ class User extends \Engine\Model
             if (!self::$_viewer) {
                 self::$_viewer = new User();
                 self::$_viewer->id = 0;
-                self::$_viewer->role_id = Role::getRoleByType(\Core\Api\Acl::ROLE_TYPE_GUEST)->id;
+                self::$_viewer->role_id = Role::getRoleByType(\Core\Api\Acl::DEFAULT_ROLE_GUEST)->id;
             }
         }
 

@@ -15,6 +15,8 @@
 
 namespace Engine\Package;
 
+use Phalcon\Config;
+
 /**
  * Provides package management
  *
@@ -136,10 +138,10 @@ class Manager
         // copy package structure
         Utilities::fsCopyRecursive(
             __DIR__ .
-                DIRECTORY_SEPARATOR .
-                'Structure' .
-                DIRECTORY_SEPARATOR .
-                $data['type'],
+            DIRECTORY_SEPARATOR .
+            'Structure' .
+            DIRECTORY_SEPARATOR .
+            $data['type'],
             $packageLocation,
             false,
             array('.gitignore')
@@ -321,6 +323,45 @@ class Manager
         header('Content-type: application/zip');
         header('Content-Disposition: attachment; filename="' . $filename . '"');
         readfile($filepath);
+    }
+
+    /**
+     * Run package installation script.
+     *
+     * @param Config $manifest Module config.
+     *
+     * @return string
+     */
+    public function runInstallScript($manifest)
+    {
+        $installerClass = ucfirst($manifest->name) . '\Installer';
+        $newPackageVersion = '0';
+        if (file_exists($this->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php')) {
+            include_once $this->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php';
+        }
+        if (class_exists($installerClass)) {
+            $packageInstaller = new $installerClass($this->di, $manifest->name);
+            if ($manifest->isUpdate) {
+                if (method_exists($packageInstaller, 'update')) {
+                    $newVersion = $packageInstaller->update($manifest->currentVersion);
+                    $iterations = 0;
+                    while ($newVersion !== null && is_string($newVersion) && $iterations < 1000) {
+                        $newVersion = $packageInstaller->update($newVersion);
+                        if ($newVersion !== null) {
+                            $newPackageVersion = $newVersion;
+                        }
+                        $iterations++;
+                    }
+                    $package = $this->_getPackage($manifest->type, $manifest->name);
+                    $package->version = $newPackageVersion;
+                    $package->save();
+                }
+            } else if (method_exists($packageInstaller, 'install')) {
+                $packageInstaller->install();
+            }
+        }
+
+        return $newPackageVersion;
     }
 
     /**

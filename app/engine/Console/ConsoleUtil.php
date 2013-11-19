@@ -31,8 +31,9 @@ namespace Engine\Console;
  * @copyright   Copyright (c) 2011-2012 Phalcon Team (team@phalconphp.com)
  * @license     New BSD License
  */
-final class Color
+final class ConsoleUtil
 {
+    const COMMENT_START_POSITION = 42;
 
     const FG_BLACK = 1;
     const FG_DARK_GRAY = 2;
@@ -211,9 +212,9 @@ final class Color
     {
         $msg = 'Error: ' . $msg;
         $space = strlen($msg) + 4;
-        $out = self::colorize(str_pad(' ', $space), Color::FG_WHITE, Color::AT_BOLD, Color::BG_RED) . PHP_EOL;
-        $out .= self::colorize('  ' . $msg . '  ', Color::FG_WHITE, Color::AT_BOLD, Color::BG_RED) . PHP_EOL;
-        $out .= self::colorize(str_pad(' ', $space), Color::FG_WHITE, Color::AT_BOLD, Color::BG_RED) . PHP_EOL;
+        $out = self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
+        $out .= self::colorize('  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
+        $out .= self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
         return $out;
     }
 
@@ -230,9 +231,9 @@ final class Color
     {
         $msg = 'Success: ' . $msg;
         $space = strlen($msg) + 4;
-        $out = self::colorize(str_pad(' ', $space), Color::FG_WHITE, Color::AT_BOLD, Color::BG_GREEN) . PHP_EOL;
-        $out .= self::colorize('  ' . $msg . '  ', Color::FG_WHITE, Color::AT_BOLD, Color::BG_GREEN) . PHP_EOL;
-        $out .= self::colorize(str_pad(' ', $space), Color::FG_WHITE, Color::AT_BOLD, Color::BG_GREEN) . PHP_EOL;
+        $out = self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
+        $out .= self::colorize('  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
+        $out .= self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
         return $out;
     }
 
@@ -245,7 +246,7 @@ final class Color
      */
     public static function warningLine($msg)
     {
-        return self::colorize($msg, Color::FG_RED, Color::AT_BOLD) . PHP_EOL . PHP_EOL;
+        return self::colorize($msg, ConsoleUtil::FG_RED, ConsoleUtil::AT_BOLD) . PHP_EOL . PHP_EOL;
     }
 
     /**
@@ -264,7 +265,7 @@ final class Color
             $out .= PHP_EOL;
         }
 
-        $out .= self::colorize($msg, Color::FG_GREEN, Color::AT_BOLD);
+        $out .= self::colorize($msg, ConsoleUtil::FG_GREEN, ConsoleUtil::AT_BOLD);
 
         if ($afterLinesCount) {
             for ($i = 0; $i < $afterLinesCount; $i++) {
@@ -283,20 +284,23 @@ final class Color
      */
     public static function headLine($msg)
     {
-        return self::colorize($msg, Color::FG_BROWN) . PHP_EOL;
+        return self::colorize($msg, ConsoleUtil::FG_BROWN) . PHP_EOL;
     }
 
     /**
      * Get command line message.
      *
-     * @param string $msg   Message text.
-     * @param string $alias Command aliases text.
+     * @param string $msg          Message text.
+     * @param string $comment      Comment text.
+     * @param int    $commentColor Comment text color.
      *
      * @return string
      */
-    public static function commandLine($msg, $alias = '')
+    public static function commandLine($msg, $comment = '', $commentColor = ConsoleUtil::FG_BROWN)
     {
-        return self::colorize('  ' . $msg, Color::FG_GREEN) . $alias . PHP_EOL;
+        $messageLength = strlen($msg) + 3;
+        $startPosition = self::COMMENT_START_POSITION;
+        return self::colorize('  ' . $msg, ConsoleUtil::FG_GREEN) . "\033[{$messageLength}D\033[{$startPosition}C" . self::colorize($comment, $commentColor) . PHP_EOL;
     }
 
     /**

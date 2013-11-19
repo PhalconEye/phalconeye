@@ -18,8 +18,12 @@ namespace Core\Model;
 
 /**
  * @Source("package_dependencies")
+ * @BelongsTo("package_id", "Core\Model\Package", "id")
+ * @BelongsTo("dependency_id", "Core\Model\Package", "id", {
+ *  "alias": "Dependency"
+ * })
  */
-class PackageDependency extends \Engine\Model
+class PackageDependency extends \Engine\Db\Model
 {
     /**
      * @Primary
@@ -39,13 +43,14 @@ class PackageDependency extends \Engine\Model
     public $dependency_id;
 
     /**
-     * Get related package
+     * Get related package.
      *
-     * @return \Engine\Model
+     * @param array $arguments Arguments.
+     *
+     * @return \Core\Model\Package
      */
-    public function getDependencyPackage(){
-        return Package::findFirst($this->dependency_id);
+    public function getDependencyPackage($arguments = array())
+    {
+        return $this->getRelated('Dependency', $arguments);
     }
-
-
 }

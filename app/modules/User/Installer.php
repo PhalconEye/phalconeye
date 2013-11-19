@@ -16,77 +16,59 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Engine\Console\Commands;
+namespace User;
 
-use Engine\Asset\Manager,
-    Engine\Console\ConsoleUtil,
-    Engine\Console\Command,
-    Engine\Console\CommandsInterface,
-    Engine\Generator\Migrations;
-
-use Phalcon\DI;
+use Engine\Installer as EngineInstaller;
 
 /**
- * Assets command.
+ * User installer.
  *
  * @category  PhalconEye
- * @package   Engine\Console\Commands
+ * @package   User
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright Copyright (c) 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Assets extends Command implements CommandsInterface
+class Installer extends EngineInstaller
 {
-    /**
-     * Executes the command.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void|bool
-     */
-    public function run($di)
-    {
-        $action = $this->getOption(array('action', 1));
-        if ($action == 'install') {
-            $assetsManager = new Manager($di, false);
-            $assetsManager->installAssets();
-
-            print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
-        }
-    }
+    CONST
+        /**
+         * Current package version.
+         */
+        CURRENT_VERSION = '0.4.0';
 
     /**
-     * Returns the command identifier.
-     *
-     * @return string
-     */
-    public function getCommands()
-    {
-        return array('assets');
-    }
-
-    /**
-     * Prints the help for current command.
+     * Used to install specific database entities or other specific action.
      *
      * @return void
      */
-    public function getHelp()
+    public function install()
     {
-        print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Assets management');
 
-        print ConsoleUtil::commandLine('assets install', 'Install assets from all modules');
-        print PHP_EOL;
     }
 
     /**
-     * Returns number of required parameters for this command.
+     * Used before package will be removed from the system.
      *
-     * @return int
+     * @return void
      */
-    public function getRequiredParams()
+    public function remove()
     {
-        return 1;
+
     }
+
+    /**
+     * Used to apply some updates.
+     * Return 'string' (new version) if migration is not finished, 'null' if all updates were applied.
+     *
+     * @param string $currentVersion Current module version.
+     *
+     * @return string|null
+     */
+    public function update($currentVersion)
+    {
+        return null;
+    }
+
 }

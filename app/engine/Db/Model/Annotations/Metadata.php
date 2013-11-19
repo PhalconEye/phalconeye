@@ -1,28 +1,40 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
-namespace Engine\Model;
+namespace Engine\Db\Model\Annotations;
 
 use Phalcon\Mvc\ModelInterface,
     Phalcon\DiInterface,
-    Phalcon\Mvc\Model\MetaData,
+    Phalcon\Mvc\Model\MetaData as PhalconMetadata,
     Phalcon\Db\Column;
 
-class AnnotationsMetaDataInitializer
+/**
+ * Annotations metadata reader.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Db\Model\Annotations
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright Copyright (c) 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Metadata
 {
-
     /**
      * Initializes the model's meta-data
      *
@@ -33,7 +45,7 @@ class AnnotationsMetaDataInitializer
      */
     public function getMetaData(ModelInterface $model, DiInterface $di)
     {
-        $reflection = $di['annotations']->get($model);
+        $reflection = $di->get('annotations')->get($model);
         $properties = $reflection->getPropertiesAnnotations();
 
         $attributes = array();
@@ -133,35 +145,35 @@ class AnnotationsMetaDataInitializer
         return array(
 
             //Every column in the mapped table
-            MetaData::MODELS_ATTRIBUTES => $attributes,
+            PhalconMetadata::MODELS_ATTRIBUTES => $attributes,
 
             //Every column part of the primary key
-            MetaData::MODELS_PRIMARY_KEY => $primaryKeys,
+            PhalconMetadata::MODELS_PRIMARY_KEY => $primaryKeys,
 
             //Every column that isn't part of the primary key
-            MetaData::MODELS_NON_PRIMARY_KEY => $nonPrimaryKeys,
+            PhalconMetadata::MODELS_NON_PRIMARY_KEY => $nonPrimaryKeys,
 
             //Every column that doesn't allows null values
-            MetaData::MODELS_NOT_NULL => $nullables,
+            PhalconMetadata::MODELS_NOT_NULL => $nullables,
 
             //Every column and their data types
-            MetaData::MODELS_DATA_TYPES => $dataTypes,
+            PhalconMetadata::MODELS_DATA_TYPES => $dataTypes,
 
             //The columns that have numeric data types
-            MetaData::MODELS_DATA_TYPES_NUMERIC => $numericTypes,
+            PhalconMetadata::MODELS_DATA_TYPES_NUMERIC => $numericTypes,
 
             //The identity column, use boolean false if the model doesn't have
             //an identity column
-            MetaData::MODELS_IDENTITY_COLUMN => $identity,
+            PhalconMetadata::MODELS_IDENTITY_COLUMN => $identity,
 
             //How every column must be bound/casted
-            MetaData::MODELS_DATA_TYPES_BIND => $dataTypesBind,
+            PhalconMetadata::MODELS_DATA_TYPES_BIND => $dataTypesBind,
 
             //Fields that must be ignored from INSERT SQL statements
-            MetaData::MODELS_AUTOMATIC_DEFAULT_INSERT => array(),
+            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_INSERT => array(),
 
             //Fields that must be ignored from UPDATE SQL statements
-            MetaData::MODELS_AUTOMATIC_DEFAULT_UPDATE => array()
+            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_UPDATE => array()
 
         );
     }
@@ -176,7 +188,7 @@ class AnnotationsMetaDataInitializer
      */
     public function getColumnMaps(ModelInterface $model, DiInterface $di)
     {
-        $reflection = $di['annotations']->get($model);
+        $reflection = $di->get('annotations')->get($model);
 
         $columnMap = array();
         $reverseColumnMap = array();
@@ -210,8 +222,8 @@ class AnnotationsMetaDataInitializer
 
         if ($renamed) {
             return array(
-                MetaData::MODELS_COLUMN_MAP => $columnMap,
-                MetaData::MODELS_REVERSE_COLUMN_MAP => $reverseColumnMap
+                PhalconMetadata::MODELS_COLUMN_MAP => $columnMap,
+                PhalconMetadata::MODELS_REVERSE_COLUMN_MAP => $reverseColumnMap
             );
         }
 

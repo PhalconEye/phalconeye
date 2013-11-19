@@ -20,11 +20,13 @@ namespace Core\Model;
  * Dynamic Page
  *
  * @Source("pages")
+ * @HasMany("id", '\Core\Model\Content', "page_id", {
+ *  "alias": "Content"
+ * })
  * @Acl(actions={"show_views"}, options={"page_footer"})
  */
-class Page extends \Engine\Model
+class Page extends \Engine\Db\Model
 {
-
     /**
      * @Primary
      * @Identity

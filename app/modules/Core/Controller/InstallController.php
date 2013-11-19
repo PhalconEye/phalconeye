@@ -16,14 +16,15 @@
 
 namespace Core\Controller;
 
-use Phalcon\Mvc\View as PhView;
-
-use Engine\EventsManager,
-    Engine\Generator\Migrations,
-    Engine\Form\Validator\Email,
-    Engine\Form\Validator\StringLength;
-
 use Core\Controller\Base as PeController;
+use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
+use Engine\Db\Schema;
+use Engine\Form\Validator\Email;
+use Engine\Form\Validator\StringLength;
+use Engine\Generator\Migrations;
+use Engine\Package\Manager as PackageManager;
+use Phalcon\Config;
+use Phalcon\Mvc\View as PhView;
 
 class InstallController extends PeController
 {
@@ -131,17 +132,32 @@ class InstallController extends PeController
                     "dbname" => $data['dbname'],
                 );
 
-                $config = $this->config;
-                $config->database = new \Phalcon\Config($connectionSettings);
+                $this->_setupDatabase($connectionSettings);
 
-                Migrations::run(array(
-                    'config' => $config,
-                    'migrationsDir' => ROOT_PATH . '/app/migrations',
-                    'toVersion' => null,
-                    'force' => false
-                ));
+                // Install schema.
+                $schema = new Schema($this->di);
+                $schema->updateDatabase();
 
-                $this->app->saveConfig($config);
+                // Run modules installation scripts.
+                $packageManager = new PackageManager();
+                foreach ($this->di->get('modules') as $moduleName => $enabled) {
+                    if (!$enabled) {
+                        continue;
+                    }
+
+                    $packageManager->runInstallScript(
+                        new Config(
+                            array(
+                                'name' => $moduleName,
+                                'type' => PackageManager::PACKAGE_TYPE_MODULE,
+                                'currentVersion' => '0',
+                                'isUpdate' => false
+                            )
+                        )
+                    );
+                }
+
+                $this->app->saveConfig($this->config);
                 $this->_setPassed(__FUNCTION__, true);
             } catch (\Exception $ex) {
                 $form->addError($ex->getMessage());
@@ -367,8 +383,12 @@ class InstallController extends PeController
     /**
      * Setup database connection.
      */
-    private function _setupDatabase()
+    private function _setupDatabase($connectionSettings = null)
     {
+        if ($connectionSettings != null) {
+            $this->config->database = new \Phalcon\Config($connectionSettings);
+        }
+
         $config = $this->config;
         $eventsManager = new \Phalcon\Events\Manager();
 
@@ -387,7 +407,7 @@ class InstallController extends PeController
             $modelsManager->setEventsManager($eventsManager);
 
             //Attach a listener to models-manager
-            $eventsManager->attach('modelsManager', new \Engine\Model\AnnotationsInitializer());
+            $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
             return $modelsManager;
         }, true);

@@ -25,7 +25,7 @@ namespace Core\Model;
  *  "alias": "RelatedPackages"
  * })
  */
-class Package extends \Engine\Model
+class Package extends \Engine\Db\Model
 {
 
     /**

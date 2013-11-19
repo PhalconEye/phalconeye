@@ -16,17 +16,16 @@
 
 namespace Engine\Asset;
 
-use Phalcon\Assets\Collection;
-use Phalcon\Assets\Filters\Jsmin,
-    Phalcon\Assets\Filters\Cssmin,
-    Phalcon\Assets\Manager as AssetManager,
-    Phalcon\DI,
-    Phalcon\Config;
-
-use Engine\Asset\Css\Less,
-    Engine\Package\Utilities as FsUtilities;
-
 use Core\Model\Settings;
+use Engine\Asset\Css\Less;
+use Engine\Package\Utilities as FsUtilities;
+use Phalcon\Assets\Collection;
+use Phalcon\Assets\Filters\Cssmin;
+
+use Phalcon\Assets\Filters\Jsmin;
+use Phalcon\Assets\Manager as AssetManager;
+use Phalcon\Config;
+use Phalcon\DI;
 
 /**
  * Assets initializer.
@@ -64,7 +63,7 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DI $di Dependency injection.
+     * @param DI   $di      Dependency injection.
      * @param bool $prepare Prepare manager (install assets if in debug and create default collections).
      */
     public function __construct($di, $prepare = true)
@@ -72,7 +71,7 @@ class Manager extends AssetManager
         $this->_di = $di;
         $this->_config = $di->get('config');
         if ($prepare) {
-            if ($this->_config->application->debug) {
+            if ($this->_config->application->debug && !$this->_config->installed) {
                 $this->installAssets();
             }
 
@@ -88,21 +87,21 @@ class Manager extends AssetManager
      */
     public function installAssets()
     {
-        if (!$this->_config->installed) {
-            return;
-        }
         $location = $this->_config->application->assets->local;
+        $less = Less::factory();
 
         ///////////////////////////////////
         // Compile themes css.
         ///////////////////////////////////
-        $less = Less::factory();
-        $themeDirectory = PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme');
-        $themeFiles = glob($themeDirectory . '/*.less');
-        FsUtilities::fsCheckLocation($location . 'css/');
-        foreach ($themeFiles as $file) {
-            $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
-            $less->checkedCompile($file, $newFileName);
+        $themeDirectory = '';
+        if ($this->_config->installed) {
+            $themeDirectory = PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme');
+            $themeFiles = glob($themeDirectory . '/*.less');
+            FsUtilities::fsCheckLocation($location . 'css/');
+            foreach ($themeFiles as $file) {
+                $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
+                $less->checkedCompile($file, $newFileName);
+            }
         }
 
         ///////////////////////////////////

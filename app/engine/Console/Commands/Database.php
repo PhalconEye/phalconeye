@@ -24,10 +24,13 @@ use Engine\Asset\Manager,
     Engine\Console\CommandsInterface,
     Engine\Generator\Migrations;
 
+use Engine\Db\Schema;
 use Phalcon\DI;
+use Phalcon\Mvc\Model\MetaData\Strategy\Annotations;
+use User\Model\User;
 
 /**
- * Assets command.
+ * Database command.
  *
  * @category  PhalconEye
  * @package   Engine\Console\Commands
@@ -36,7 +39,7 @@ use Phalcon\DI;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Assets extends Command implements CommandsInterface
+class Database extends Command implements CommandsInterface
 {
     /**
      * Executes the command.
@@ -47,12 +50,33 @@ class Assets extends Command implements CommandsInterface
      */
     public function run($di)
     {
-        $action = $this->getOption(array('action', 1));
-        if ($action == 'install') {
-            $assetsManager = new Manager($di, false);
-            $assetsManager->installAssets();
+        $schema = new Schema($di);
 
-            print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
+        if ($this->isReceivedOption('model')) {
+            $modelClass = $this->getOption('model');
+            if (!class_exists($modelClass)) {
+                print ConsoleUtil::error('Model with class "' . $modelClass . '" doesn\'t exists.') . PHP_EOL;
+                return;
+            }
+            $count = current($schema->updateTable($modelClass));
+            if ($count) {
+                print ConsoleUtil::headLine('Table update for model: ' . $modelClass);
+                print ConsoleUtil::commandLine('Executed queries:', $count, ConsoleUtil::FG_CYAN);
+            } else {
+                print ConsoleUtil::success('Table is up to date');
+            }
+            print PHP_EOL;
+        } else {
+            $queriesCount = $schema->updateDatabase($this->isReceivedOption('cleanup'));
+            if (!empty($queriesCount)) {
+                print ConsoleUtil::headLine('Database update:');
+                foreach ($queriesCount as $model => $count) {
+                    print ConsoleUtil::commandLine($model . ':', $count, ConsoleUtil::FG_CYAN);
+                }
+            } else {
+                print ConsoleUtil::success('Database is up to date');
+            }
+            print PHP_EOL;
         }
     }
 
@@ -63,7 +87,7 @@ class Assets extends Command implements CommandsInterface
      */
     public function getCommands()
     {
-        return array('assets');
+        return array('database', 'db');
     }
 
     /**
@@ -74,9 +98,12 @@ class Assets extends Command implements CommandsInterface
     public function getHelp()
     {
         print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Assets management');
+        print ConsoleUtil::textLine('Database management');
 
-        print ConsoleUtil::commandLine('assets install', 'Install assets from all modules');
+        print ConsoleUtil::commandLine('database update', 'Update database according to models annotations.');
+        print PHP_EOL;
+
+        $this->printParameters($this->getPossibleParams());
         print PHP_EOL;
     }
 
@@ -88,5 +115,18 @@ class Assets extends Command implements CommandsInterface
     public function getRequiredParams()
     {
         return 1;
+    }
+
+    /**
+     * Get possible parameters.
+     *
+     * @return array
+     */
+    public function getPossibleParams()
+    {
+        return array(
+            'model=s' => "Model to update. Default: all.",
+            'cleanup' => "Drop not related tables."
+        );
     }
 }

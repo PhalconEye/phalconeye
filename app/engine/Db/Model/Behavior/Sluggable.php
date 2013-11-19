@@ -1,25 +1,32 @@
 <?php
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
+
+namespace Engine\Db\Model\Behavior;
 
 /**
- * PhalconEye
+ * Sluggable behaviour.
  *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
-
-namespace Engine\Model\Behavior;
-
-/**
- * Sluggable trait.
- *
- * Should be used inside entities for which slugs should automatically be generated on creation for SEO/permalinks.
+ * @category  PhalconEye
+ * @package   Engine\Db\Model\Behaviour
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright Copyright (c) 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
  */
 trait Sluggable
 {

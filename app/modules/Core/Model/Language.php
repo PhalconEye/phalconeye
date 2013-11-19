@@ -22,13 +22,13 @@ namespace Core\Model;
  *  "alias": "LanguageTranslation"
  * })
  */
-class Language extends \Engine\Model
+class Language extends \Engine\Db\Model
 {
 
     /**
      * @Primary
      * @Identity
-     * @Column(type="string", nullable=false, column="id", size="11")
+     * @Column(type="integer", nullable=false, column="id", size="11")
      */
     public $id;
 

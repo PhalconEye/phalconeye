@@ -20,7 +20,7 @@
 
 namespace Engine\Console;
 
-use Engine\Console\Color,
+use Engine\Console\ConsoleUtil,
 	Phalcon\Events\Manager as EventsManager;
 
 /**
@@ -428,10 +428,10 @@ abstract class Command
 			}
 		}
 
-		print Color::headLine('Options:');
+		print ConsoleUtil::headLine('Options:');
 		foreach ($parameters as $parameter => $description) {
-			print Color::colorize(' --' . $parameter . str_repeat(' ', $length - strlen($parameter)), Color::FG_GREEN);
-			print Color::colorize("    " . $description) . PHP_EOL;
+			print ConsoleUtil::colorize(' --' . $parameter . str_repeat(' ', $length - strlen($parameter)), ConsoleUtil::FG_GREEN);
+			print ConsoleUtil::colorize("    " . $description) . PHP_EOL;
 		}
 	}
 

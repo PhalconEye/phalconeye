@@ -16,9 +16,12 @@
 
 namespace Engine;
 
-use Engine\Asset\Manager;
-use Engine\Package\Exception;
-use Phalcon\DI;
+use Engine\Asset\Manager,
+    Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer,
+    Engine\Package\Exception;
+
+use Phalcon\DI,
+    Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
 
 /**
  * @property \Phalcon\DiInterface $_dependencyInjector
@@ -363,6 +366,7 @@ class Application extends \Phalcon\Mvc\Application
         }
 
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
+        /** @var \Phalcon\Db\Adapter\Pdo $connection */
         $connection = new $adapter(array(
             "host" => $config->database->host,
             "username" => $config->database->username,
@@ -400,7 +404,7 @@ class Application extends \Phalcon\Mvc\Application
             $modelsManager->setEventsManager($eventsManager);
 
             //Attach a listener to models-manager
-            $eventsManager->attach('modelsManager', new \Engine\Model\AnnotationsInitializer());
+            $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
             return $modelsManager;
         }, true);
@@ -417,7 +421,7 @@ class Application extends \Phalcon\Mvc\Application
                 $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
             }
 
-            $metaData->setStrategy(new \Engine\Model\AnnotationsMetaDataInitializer());
+            $metaData->setStrategy(new StrategyAnnotations());
             return $metaData;
         }, true);
 

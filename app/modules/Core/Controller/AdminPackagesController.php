@@ -156,35 +156,10 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     }
                 }
 
-                // run module install script
-                $installerClass = ucfirst($manifest->name) . '\Installer';
-                $newPackageVersion = '0';
-                if (file_exists($packageManager->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php')) {
-                    include_once $packageManager->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php';
-                }
-                if (class_exists($installerClass)) {
-                    $packageInstaller = new $installerClass($this->di, $manifest->name);
-                    if ($manifest->isUpdate) {
-                        if (method_exists($packageInstaller, 'update')) {
-                            $newVersion = $packageInstaller->update($manifest->currentVersion);
-                            $iterations = 0;
-                            while ($newVersion !== null && is_string($newVersion) && $iterations < 1000) {
-                                $newVersion = $packageInstaller->update($newVersion);
-                                if ($newVersion !== null) {
-                                    $newPackageVersion = $newVersion;
-                                }
-                                $iterations++;
-                            }
-                            $package = $this->_getPackage($manifest->type, $manifest->name);
-                            $package->version = $newPackageVersion;
-                            $package->save();
-                        }
-                    } else if (method_exists($packageInstaller, 'install')) {
-                        $packageInstaller->install();
-                    }
-                }
-
+                // Run module install script.
+                $newPackageVersion = $packageManager->runInstallScript($manifest);
                 $this->app->clearCache();
+
                 if ($manifest->isUpdate) {
                     $this->flash->success('Package updated to version ' . $newPackageVersion . '!');
                 } else {

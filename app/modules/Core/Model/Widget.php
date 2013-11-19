@@ -22,7 +22,7 @@ namespace Core\Model;
  *  "alias": "Content"
  * })
  */
-class Widget extends \Engine\Model
+class Widget extends \Engine\Db\Model
 {
 
     /**

@@ -19,9 +19,8 @@ namespace Core\Model;
 /**
  * @Source("settings")
  */
-class Settings extends \Engine\Model
+class Settings extends \Engine\Db\Model
 {
-
     /**
      * @Primary
      * @Identity
@@ -30,7 +29,7 @@ class Settings extends \Engine\Model
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="value", size="255")
+     * @Column(type="string", nullable=false, column="value", size="250")
      */
     public $value;
 

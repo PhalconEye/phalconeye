@@ -21,8 +21,11 @@ namespace Core\Model;
  * @BelongsTo("widget_id", "\Core\Model\Widget", "id", {
  *  "alias": "Widget"
  * })
+ * @BelongsTo("page_id", "\Core\Model\Page", "id", {
+ *  "alias": "Page"
+ * })
  */
-class Content extends \Engine\Model
+class Content extends \Engine\Db\Model
 {
 
     /**
@@ -56,7 +59,6 @@ class Content extends \Engine\Model
      * @Column(type="text", nullable=false, column="params")
      */
     protected $params;
-
 
     /**
      * Return the related "Widget"

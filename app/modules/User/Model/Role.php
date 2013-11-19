@@ -25,9 +25,8 @@ namespace User\Model;
  *  "alias": "Access"
  * })
  */
-class Role extends \Engine\Model
+class Role extends \Engine\Db\Model
 {
-
     /**
      * @Primary
      * @Identity

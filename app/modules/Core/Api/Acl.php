@@ -24,11 +24,10 @@ use Engine\Api\ApiInterface,
 
 class Acl implements ApiInterface
 {
-
     const ACL_CACHE_KEY = "acl_data.cache";
-    const ROLE_TYPE_ADMIN = 'admin';
-    const ROLE_TYPE_USER = 'user';
-    const ROLE_TYPE_GUEST = 'guest';
+    const DEFAULT_ROLE_ADMIN = 'admin';
+    const DEFAULT_ROLE_USER = 'user';
+    const DEFAULT_ROLE_GUEST = 'guest';
 
     const ACL_ADMIN_AREA = 'AdminArea';
 
@@ -77,7 +76,7 @@ class Acl implements ApiInterface
 
                 // Defining admin area
                 $adminArea = new AclResource(self::ACL_ADMIN_AREA);
-                $roleAdmin = \User\Model\Role::getRoleByType(self::ROLE_TYPE_ADMIN);
+                $roleAdmin = \User\Model\Role::getRoleByType(self::DEFAULT_ROLE_ADMIN);
                 // Add "admin area" resource
                 $acl->addResource($adminArea, "access");
                 $acl->allow($roleAdmin->name, self::ACL_ADMIN_AREA, 'access');
