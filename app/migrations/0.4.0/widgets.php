@@ -1,9 +1,8 @@
 <?php 
 
-use Phalcon\Db\Column,
-    Phalcon\Db\Index;
-
 use Engine\Generator\Migrations\Model as Migration;
+
+use Phalcon\Db\Column;use Phalcon\Db\Index;
 
 class WidgetsMigration_040 extends Migration
 {

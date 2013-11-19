@@ -19,7 +19,8 @@ namespace Core\Api;
 /**
  * Provides small layer between session and services
  */
-class Auth implements \Engine\Api\ApiInterface{
+class Auth implements \Engine\Api\ApiInterface
+{
 
     private $_identity = 0;
 
@@ -31,7 +32,8 @@ class Auth implements \Engine\Api\ApiInterface{
     /**
      * @param $identity Current session identity
      */
-    public function __construct(\Phalcon\DiInterface $di){
+    public function __construct(\Phalcon\DiInterface $di, $arguments)
+    {
         $this->_di = $di;
         $this->_identity = $this->_di->get('session')->get('identity', 0);
     }
@@ -43,7 +45,8 @@ class Auth implements \Engine\Api\ApiInterface{
      *
      * @return bool
      */
-    public function authenticate($identity){
+    public function authenticate($identity)
+    {
         $this->_identity = $identity;
         $this->_di->get('session')->set('identity', $identity);
     }
@@ -51,7 +54,8 @@ class Auth implements \Engine\Api\ApiInterface{
     /**
      * Clear identity, logout
      */
-    public function clearAuth(){
+    public function clearAuth()
+    {
         $this->_identity = 0;
         $this->_di->get('session')->set('identity', 0);
     }
@@ -61,7 +65,8 @@ class Auth implements \Engine\Api\ApiInterface{
      *
      * @return int
      */
-    public function getIdentity(){
+    public function getIdentity()
+    {
         return $this->_identity;
     }
 

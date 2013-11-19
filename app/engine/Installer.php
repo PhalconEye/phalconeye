@@ -15,9 +15,9 @@
 
 namespace Engine;
 
-use Phalcon\DI;
-
 use Engine\Generator\Migrations;
+
+use Phalcon\DI;
 
 abstract class Installer
 {

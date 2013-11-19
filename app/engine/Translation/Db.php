@@ -16,9 +16,7 @@
 
 namespace Engine\Translation;
 
-use Phalcon\Translate\Adapter,
-    Phalcon\Translate\AdapterInterface,
-    Phalcon\Translate\Exception;
+use Phalcon\Translate\Adapter;use Phalcon\Translate\AdapterInterface;use Phalcon\Translate\Exception;
 
 class Db implements AdapterInterface
 {
@@ -53,7 +51,8 @@ class Db implements AdapterInterface
      * Translation_Db constructor
      *
      * @throws Exception
-     * @param array $options
+     *
+*@param array $options
      */
     public function __construct($options)
     {
@@ -81,7 +80,8 @@ class Db implements AdapterInterface
      *
      * @param   string $translateKey
      * @param   array $placeholders
-     * @return  string
+     *
+*@return  string
      */
     public function _($translateKey, $placeholders = null)
     {
@@ -94,7 +94,8 @@ class Db implements AdapterInterface
      *
      * @param    string $index
      * @param    array $placeholders
-     * @return    string
+     *
+*@return    string
      */
     public function query($index, $placeholders = null)
     {
@@ -138,7 +139,8 @@ class Db implements AdapterInterface
      * Check whether is defined a translation key in the internal array
      *
      * @param     string $index
-     * @return    bool
+     *
+*@return    bool
      */
     public function exists($index)
     {

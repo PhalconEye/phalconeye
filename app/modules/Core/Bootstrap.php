@@ -15,10 +15,7 @@
 
 namespace Core;
 
-use Phalcon\DiInterface,
-    Phalcon\Translate\Adapter\NativeArray as TranslateArray;
-
-use \User\Model\User;
+use Phalcon\Translate\Adapter\NativeArray as TranslateArray;use User\Model\User;
 
 class Bootstrap extends \Engine\Bootstrap
 {

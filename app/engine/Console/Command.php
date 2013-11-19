@@ -100,6 +100,7 @@ abstract class Command
 	 *
 	 * @param	array $parameters
 	 * @param	array $possibleAlias
+     * 
 	 * @return	array
 	 * @throws	Exception
 	 */
@@ -305,6 +306,7 @@ abstract class Command
 	 * Indicates whether the script was a particular option.
 	 *
 	 * @param	string $option
+     * 
 	 * @return	boolean
 	 */
 	public function isReceivedOption($option)
@@ -316,6 +318,7 @@ abstract class Command
 	 * Filters a value
 	 *
 	 * @param	string $paramValue
+     * 
 	 * @return	mixed
 	 */
 	protected function filter($paramValue, $filters)

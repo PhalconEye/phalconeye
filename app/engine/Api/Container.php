@@ -1,42 +1,89 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Api;
 
+use Engine\Exception;
+use Phalcon\DI;
+
+/**
+ * Api container.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Api
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 class Container
 {
+    /**
+     * Api instances.
+     *
+     * @var array
+     */
     protected $_instances = array();
 
+    /**
+     * Current module name.
+     *
+     * @var string
+     */
     protected $_moduleName;
+
+    /**
+     * Dependency Injection.
+     *
+     * @var DI
+     */
     protected $_di;
 
+    /**
+     * Create api container.
+     *
+     * @param string $moduleName Module naming.
+     * @param DI     $di         Dependency injection.
+     */
     public function __construct($moduleName, $di)
     {
         $this->_moduleName = $moduleName;
         $this->_di = $di;
     }
 
+    /**
+     * Get api from container.
+     *
+     * @param string $name      Api name.
+     * @param array  $arguments Api params.
+     *
+     * @return mixed
+     * @throws Exception
+     */
     public function __call($name, $arguments)
     {
         if (!isset($this->_instances[$name])) {
             $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
             if (!class_exists($apiClassName)) {
-                throw new \Engine\Exception(sprintf('Can not find Api with name "%s".', $name));
+                throw new Exception(sprintf('Can not find Api with name "%s".', $name));
             }
 
-            $this->_instances[$name] = new $apiClassName($this->_di);
+            $this->_instances[$name] = new $apiClassName($this->_di, $arguments);
         }
 
         return $this->_instances[$name];

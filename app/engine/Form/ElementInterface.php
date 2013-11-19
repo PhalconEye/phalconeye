@@ -1,29 +1,43 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Form;
 
-interface ElementInterface{
+/**
+ * Form element interface.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Form
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+interface ElementInterface
+{
 
     /**
      * \Phalcon\Forms\Element constructor
      *
      * @param string $name
-     * @param array $attributes
+     * @param array  $attributes
      */
-    public function __construct($name, $attributes=null);
+    public function __construct($name, $attributes = null);
 
     /**
      * If element is need to be rendered in default layout
@@ -36,6 +50,7 @@ interface ElementInterface{
      * Sets the element description
      *
      * @param string $description
+     *
      * @return \Engine\Form\ElementInterface
      */
     public function setDescription($description);
@@ -53,6 +68,7 @@ interface ElementInterface{
      * Sets the parent form to the element
      *
      * @param \Phalcon\Forms\Form $form
+     *
      * @return \Phalcon\Forms\Form
      */
     public function setForm($form);
@@ -70,6 +86,7 @@ interface ElementInterface{
      * Sets the element's name
      *
      * @param string $name
+     *
      * @return \Phalcon\Forms\Form
      */
     public function setName($name);
@@ -87,15 +104,17 @@ interface ElementInterface{
      * Adds a group of validators
      *
      * @param \Phalcon\Validation\ValidatorInterface[]
+     *
      * @return \Phalcon\Forms\Form
      */
-    public function addValidators($validators, $merge=null);
+    public function addValidators($validators, $merge = null);
 
 
     /**
      * Adds a validator to the element
      *
      * @param \Phalcon\Validation\ValidatorInterface
+     *
      * @return \Phalcon\Forms\Form
      */
     public function addValidator($validator);
@@ -114,6 +133,7 @@ interface ElementInterface{
      * according to the element's parameters
      *
      * @param array $attributes
+     *
      * @return array
      */
     public function prepareAttributes($attributes);
@@ -123,7 +143,8 @@ interface ElementInterface{
      * Sets a default attribute for the element
      *
      * @param string $attribute
-     * @param mixed $value
+     * @param mixed  $value
+     *
      * @return \Phalcon\Forms\Form
      */
     public function setAttribute($attribute, $value);
@@ -133,6 +154,7 @@ interface ElementInterface{
      * Sets default attributes for the element
      *
      * @param array $attributes
+     *
      * @return \Phalcon\Forms\Form
      */
     public function setAttributes($attributes);
@@ -150,6 +172,7 @@ interface ElementInterface{
      * Sets the element label
      *
      * @param string $label
+     *
      * @return \Phalcon\Forms\Form
      */
     public function setLabel($label);

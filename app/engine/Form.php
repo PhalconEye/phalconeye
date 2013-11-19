@@ -169,7 +169,8 @@ class Form extends \Phalcon\Forms\Form
      * @param $name
      * @param bool $isSubmit
      * @param array $params
-     * @return $this
+     *
+*@return $this
      */
     public function addButton($name, $isSubmit = false, $params = array())
     {
@@ -188,7 +189,8 @@ class Form extends \Phalcon\Forms\Form
      * @param $name
      * @param string $href
      * @param array $params
-     * @return $this
+     *
+*@return $this
      */
     public function addButtonLink($name, $href = 'javascript:;', $params = array())
     {
@@ -207,7 +209,8 @@ class Form extends \Phalcon\Forms\Form
      * Remove element by name (short function, same as removeElement)
      *
      * @param $name
-     * @return $this
+     *
+*@return $this
      */
     public function remove($name)
     {
@@ -218,7 +221,8 @@ class Form extends \Phalcon\Forms\Form
      * Remove element by name
      *
      * @param $name
-     * @return $this
+     *
+*@return $this
      */
     public function removeElement($name)
     {
@@ -235,7 +239,8 @@ class Form extends \Phalcon\Forms\Form
      * Get element object
      *
      * @param $name
-     * @return \Engine\Form\Element
+     *
+*@return \Engine\Form\Element
      * @throws \Engine\Exception
      */
     public function getElement($name)
@@ -252,7 +257,8 @@ class Form extends \Phalcon\Forms\Form
      * @param $name
      * @param $key
      * @param $value
-     * @return $this
+     *
+*@return $this
      */
     public function setElementAttrib($name, $key, $value)
     {
@@ -267,7 +273,8 @@ class Form extends \Phalcon\Forms\Form
      *
      * @param $key
      * @param $value
-     * @return $this
+     *
+*@return $this
      */
     public function setOption($key, $value)
     {
@@ -283,7 +290,8 @@ class Form extends \Phalcon\Forms\Form
      *
      * @param $key
      * @param $value
-     * @return $this
+     *
+*@return $this
      */
     public function setAttrib($key, $value)
     {
@@ -295,7 +303,8 @@ class Form extends \Phalcon\Forms\Form
      * Add error message
      *
      * @param $message
-     * @return $this
+     *
+*@return $this
      */
     public function addError($message)
     {
@@ -307,7 +316,8 @@ class Form extends \Phalcon\Forms\Form
      * Add notice message
      *
      * @param $message
-     * @return $this
+     *
+*@return $this
      */
     public function addNotice($message)
     {
@@ -319,7 +329,8 @@ class Form extends \Phalcon\Forms\Form
      * Set form values
      *
      * @param $values
-     * @return $this
+     *
+*@return $this
      */
     public function setValues($values)
     {
@@ -339,7 +350,8 @@ class Form extends \Phalcon\Forms\Form
      *
      * @param $name
      * @param $value
-     * @return $this
+     *
+*@return $this
      */
     public function setValue($name, $value)
     {
@@ -373,7 +385,8 @@ class Form extends \Phalcon\Forms\Form
      * Get element value by name
      *
      * @param string $name
-     * @return mixed|null
+     *
+*@return mixed|null
      * @throws \Engine\Exception
      */
     public function getValue($name)
@@ -438,7 +451,8 @@ class Form extends \Phalcon\Forms\Form
      *
      * @param array $data
      * @param object $entity
-     * @return boolean
+     *
+*@return boolean
      */
     public function isValid($data = null, $entity = null, $skipEntityCreation = false)
     {
@@ -509,7 +523,8 @@ class Form extends \Phalcon\Forms\Form
      *
      * @param string $name
      * @param array $attributes
-     * @return string
+     *
+*@return string
      */
     public function render($name = null, $attributes = null)
     {

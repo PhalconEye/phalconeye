@@ -20,8 +20,7 @@
 
 namespace Engine\Generator\Migrations;
 
-use Phalcon\Db\Column,
-    Phalcon\Events\Manager as EventsManager;
+use Phalcon\Db\Column;use Phalcon\Events\Manager as EventsManager;
 
 /**
  * Phalcon\Mvc\Model\Migration

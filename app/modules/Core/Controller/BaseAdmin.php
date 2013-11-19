@@ -15,8 +15,6 @@
 
 namespace Core\Controller;
 
-use Phalcon\Assets\Collection;
-
 class BaseAdmin extends Base
 {
     public function initialize()

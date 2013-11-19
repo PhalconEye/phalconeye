@@ -16,11 +16,11 @@
 
 namespace Core\Api;
 
-use Engine\Api\ApiInterface,
-    Phalcon\DiInterface,
-    Phalcon\Acl as PhAcl,
-    Phalcon\Acl\Resource as AclResource,
-    Phalcon\Acl\Adapter\Memory as AclMemory;
+use Engine\Api\ApiInterface;
+use Phalcon\Acl as PhAcl;
+use Phalcon\Acl\Adapter\Memory as AclMemory;
+use Phalcon\Acl\Resource as AclResource;
+use Phalcon\DiInterface;
 
 class Acl implements ApiInterface
 {
@@ -44,7 +44,7 @@ class Acl implements ApiInterface
     /**
      * @param \Phalcon\DiInterface $di
      */
-    public function __construct(DiInterface $di)
+    public function __construct(DiInterface $di, $arguments)
     {
         $this->_di = $di;
     }

@@ -20,10 +20,8 @@
 
 namespace Engine\Generator;
 
-use Engine\Application;
-use Engine\Generator\Migrations\Exception\MigrationExists;
+use Engine\Generator\Migrations\Exception\MigrationExists;use Engine\Generator\Migrations\Model as ModelMigration;
 use Engine\Generator\Migrations\Version as VersionItem;
-use Engine\Generator\Migrations\Model as ModelMigration;
 
 class Migrations
 {

@@ -1,20 +1,33 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Form\Element;
 
+/**
+ * Form element - Remote File (Ajaxplorer seleciton mode).
+ *
+ * @category  PhalconEye
+ * @package   Engine\Form\Element
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInterface
 {
 
@@ -22,8 +35,9 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
     protected $_description;
     protected $_value;
 
-    public function __construct($name, $attributes=null){
-        if (!empty($attributes['value'])){
+    public function __construct($name, $attributes = null)
+    {
+        if (!empty($attributes['value'])) {
             $this->_value = $attributes['value'];
         }
 
@@ -44,6 +58,7 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
      * Sets the element description
      *
      * @param string $description
+     *
      * @return Form_ElementInterface
      */
     public function setDescription($description)
@@ -63,7 +78,8 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
         return $this->_description;
     }
 
-    public function setDefault($value){
+    public function setDefault($value)
+    {
         $this->_value = $value;
         parent::setDefault($value);
     }

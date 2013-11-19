@@ -16,9 +16,9 @@
 
 namespace Core\Controller;
 
+use Phalcon\Db\Column as PhDbColumn;
 use Phalcon\Mvc\Controller as PhController;
 use Phalcon\Mvc\View as PhView;
-use \Phalcon\Db\Column as PhDbColumn;
 
 /**
  * @property \Phalcon\Db\Adapter\Pdo $db
