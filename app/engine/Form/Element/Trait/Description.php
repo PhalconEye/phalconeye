@@ -16,32 +16,50 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form;
+namespace Engine\Form\Element;
 
-use Engine\Form\Element\Description;
-use Phalcon\Forms\Element as PhalconElement;
+use Engine\Form\ElementInterface;
 
 /**
- * Form element.
+ * Description trait.
  *
  * @category  PhalconEye
- * @package   Engine\Form
+ * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Element extends PhalconElement implements ElementInterface
+trait Description
 {
-    use Description;
+    /**
+     * Element description.
+     *
+     * @var string
+     */
+    private $_description;
 
     /**
-     * If element is need to be rendered in default layout.
+     * Sets the element description.
      *
-     * @return bool
+     * @param string $description Description text.
+     *
+     * @return ElementInterface
      */
-    public function useDefaultLayout()
+    public function setDescription($description)
     {
-        return true;
+        $this->_description = $description;
+
+        return $this;
+    }
+
+    /**
+     * Returns the element's description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->_description;
     }
 }

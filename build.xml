@@ -97,7 +97,7 @@
         <exec executable="phpmd" failonerror="true">
             <arg path="${check.dir}"/>
             <arg value="text"/>
-            <arg value="codesize,design,unusedcode"/>
+            <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
             <arg value="--exclude"/>
             <arg value="${ignor.dir}"/>
         </exec>
@@ -106,7 +106,7 @@
     <!-- phpcs - Detects standard violations on the code. -->
     <target name="phpcs" depends="build">
         <exec executable="phpcs" failonerror="true">
-            <arg value="--standard=${checkstyle-rules.dir}/Symfony2"/>
+            <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
             <arg value="--ignore=${ignor.dir}"/>
             <arg path="${check.dir}"/>
         </exec>

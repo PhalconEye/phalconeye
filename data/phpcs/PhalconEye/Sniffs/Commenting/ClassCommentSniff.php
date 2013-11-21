@@ -14,6 +14,24 @@
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
 
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
+
+
 if (class_exists('PHP_CodeSniffer_CommentParser_ClassCommentParser', true) === false) {
     $error = 'Class PHP_CodeSniffer_CommentParser_ClassCommentParser not found';
     throw new PHP_CodeSniffer_Exception($error);
@@ -47,7 +65,7 @@ if (class_exists('PEAR_Sniffs_Commenting_ClassCommentSniff', true) === false) {
  * @version   Release: 1.3.0RC2
  * @link      http://pear.php.net/package/PHP_CodeSniffer
  */
-class Symfony2_Sniffs_Commenting_ClassCommentSniff extends PEAR_Sniffs_Commenting_ClassCommentSniff
+class PhalconEye_Sniffs_Commenting_ClassCommentSniff extends PEAR_Sniffs_Commenting_ClassCommentSniff
 {
     /**
      * Tags in correct order and related info.

@@ -20,8 +20,8 @@ namespace Engine\Console\Commands;
 
 use Engine\Asset\Manager,
     Engine\Console\ConsoleUtil,
-    Engine\Console\Command,
-    Engine\Console\CommandsInterface,
+    Engine\Console\AbstractCommand,
+    Engine\Console\CommandInterface,
     Engine\Generator\Migrations;
 
 use Phalcon\DI;
@@ -32,11 +32,11 @@ use Phalcon\DI;
  * @category  PhalconEye
  * @package   Engine\Console\Commands
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Assets extends Command implements CommandsInterface
+class Assets extends AbstractCommand implements CommandInterface
 {
     /**
      * Executes the command.

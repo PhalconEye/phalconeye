@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\Element;
+use Engine\Form\ElementInterface;
+
 /**
  * Form element - Remote File (Ajaxplorer seleciton mode).
  *
@@ -28,13 +31,30 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInterface
+class RemoteFile extends Element implements ElementInterface
 {
+    use Description;
 
+    /**
+     * Ajaxplorer link.
+     *
+     * @var string
+     */
     private $_editorUrl = '/external/ajaxplorer/?external_selector_type=popup&relative_path=/files';
-    protected $_description;
+
+    /**
+     * Element value.
+     *
+     * @var
+     */
     protected $_value;
 
+    /**
+     * Create Remote element.
+     *
+     * @param string $name       Element name.
+     * @param null   $attributes Element attributes.
+     */
     public function __construct($name, $attributes = null)
     {
         if (!empty($attributes['value'])) {
@@ -45,7 +65,7 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
     }
 
     /**
-     * If element is need to be rendered in default layout
+     * If element is need to be rendered in default layout.
      *
      * @return bool
      */
@@ -55,40 +75,30 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
     }
 
     /**
-     * Sets the element description
+     * Set default value.
      *
-     * @param string $description
+     * @param mixed $value Element value.
      *
-     * @return Form_ElementInterface
+     * @return ElementInterface
      */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
     public function setDefault($value)
     {
         $this->_value = $value;
         parent::setDefault($value);
+
+        return $this;
     }
 
-
+    /**
+     * Render element.
+     *
+     * @return string
+     */
     public function render()
     {
-        if ($this->_value === null)
+        if ($this->_value === null) {
             $this->_value = $this->getForm()->getValue($this->getName());
+        }
 
         $attributes = $this->getAttributes();
         $buttonTitle = 'Select file';
@@ -96,6 +106,7 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
             $buttonTitle = $attributes['title'];
             unset($attributes['title']);
         }
+
         return sprintf('
             <div class="form_element_remote_file">
                 <input type="text" name="%s" id="%s" value="%s" />
@@ -103,5 +114,4 @@ class RemoteFile extends \Engine\Form\Element implements \Engine\Form\ElementInt
             </div>',
             $this->getName(), $this->getName(), $this->_value, $this->_editorUrl, $buttonTitle, $buttonTitle);
     }
-
 }

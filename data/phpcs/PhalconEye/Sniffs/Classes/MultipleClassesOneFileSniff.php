@@ -13,8 +13,25 @@
  * @link     https://github.com/opensky/Symfony2-coding-standard
  */
 
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
+
 /**
- * Symfony2_Sniffs_Classes_MultipleClassesOneFileSniff.
+ * PhalconEye_Sniffs_Classes_MultipleClassesOneFileSniff.
  *
  * Throws errors if multiple classes are defined in a single file.
  *
@@ -26,7 +43,7 @@
  * @license  http://spdx.org/licenses/MIT MIT License
  * @link     https://github.com/opensky/Symfony2-coding-standard
  */
-class Symfony2_Sniffs_Classes_MultipleClassesOneFileSniff implements PHP_CodeSniffer_Sniff
+class PhalconEye_Sniffs_Classes_MultipleClassesOneFileSniff implements PHP_CodeSniffer_Sniff
 {
     /**
      * The number of times the T_CLASS token is encountered in the file.

@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\ElementInterface;
+use Phalcon\Forms\Element\File as PhalconFile;
+
 /**
  * Form element - File selection.
  *
@@ -28,9 +31,9 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class File extends \Phalcon\Forms\Element\File implements \Engine\Form\ElementInterface
+class File extends PhalconFile implements ElementInterface
 {
-    protected $_description;
+    use Description;
 
     /**
      * If element is need to be rendered in default layout
@@ -41,29 +44,4 @@ class File extends \Phalcon\Forms\Element\File implements \Engine\Form\ElementIn
     {
         return true;
     }
-
-    /**
-     * Sets the element description
-     *
-     * @param string $description
-     *
-     * @return Form_ElementInterface
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
 }

@@ -13,7 +13,7 @@ Coming soon... PhalconEye CMS will have ant build file. You will be able to buil
 Build Status
 ------------
 PhalconEye CMS is built under Travis CI service. Every commit pushed to this repository will queue a build
-into the continuous integration service and will run: PHPUnit tests, phpmd, phpcs (Symfony2 standart).
+into the continuous integration service and will run: PHPUnit tests, phpmd, phpcs
 The current build status is:
 
 Coming soon...

@@ -18,7 +18,7 @@ namespace Engine;
 
 use Engine\Console\CommandsListener,
     Engine\Console\ConsoleUtil,
-    Engine\Console\Command as PeCommand;
+    Engine\Console\AbstractCommand as PeCommand;
 
 
 class Cli extends Application

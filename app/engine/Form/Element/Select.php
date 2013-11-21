@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\ElementInterface;
+use \Phalcon\Forms\Element\Select as PhalconSelect;
+
 /**
  * Form element - Select.
  *
@@ -28,51 +31,35 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Select extends \Phalcon\Forms\Element\Select implements \Engine\Form\ElementInterface
+class Select extends PhalconSelect implements ElementInterface
 {
-    protected $_description;
+    use Description;
 
+    /**
+     * Create select element.
+     *
+     * @param string $name       Element name.
+     * @param null   $options    Element options.
+     * @param null   $attributes Element attributes.
+     */
     public function __construct($name, $options = null, $attributes = null)
     {
         $optionsData = (!empty($options['options']) ? $options['options'] : null);
         unset($options['options']);
-        if (!is_array($attributes))
+        if (!is_array($attributes)) {
             $attributes = array();
+        }
         $options = array_merge($options, $attributes);
         parent::__construct($name, $optionsData, $options);
     }
 
     /**
-     * If element is need to be rendered in default layout
+     * If element is need to be rendered in default layout.
      *
      * @return bool
      */
     public function useDefaultLayout()
     {
         return true;
-    }
-
-    /**
-     * Sets the element description
-     *
-     * @param string $description
-     *
-     * @return Form_ElementInterface
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
     }
 }

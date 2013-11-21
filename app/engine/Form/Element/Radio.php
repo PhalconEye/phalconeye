@@ -34,17 +34,13 @@ use Phalcon\Forms\Element\Select;
  */
 class Radio extends Select implements ElementInterface
 {
+    use Description;
+
     const
         /**
          * Defines html patter for this element.
          */
         HTML_PATTERN = '<div class="form_element_radio"><input type="radio" value="%s" %s name="url_type" id="url_type"><label>%s</label></div>';
-    /**
-     * Radio description.
-     *
-     * @var string
-     */
-    protected $_description;
 
     /**
      * Create element.
@@ -57,8 +53,9 @@ class Radio extends Select implements ElementInterface
     {
         $optionsData = (!empty($options['options']) ? $options['options'] : null);
         unset($options['options']);
-        if (!is_array($attributes))
+        if (!is_array($attributes)) {
             $attributes = array();
+        }
         $options = array_merge($options, $attributes);
         parent::__construct($name, $optionsData, $options);
     }
@@ -71,29 +68,6 @@ class Radio extends Select implements ElementInterface
     public function useDefaultLayout()
     {
         return true;
-    }
-
-    /**
-     * Returns the element's description.
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
-    /**
-     * Sets the element description.
-     *
-     * @param string $description Description text.
-     *
-     * @return ElementInterface
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
     }
 
     /**

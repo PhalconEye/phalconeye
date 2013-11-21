@@ -18,16 +18,12 @@
 
 namespace Engine\Console\Commands;
 
-use Engine\Asset\Manager,
-    Engine\Console\ConsoleUtil,
-    Engine\Console\Command,
-    Engine\Console\CommandsInterface,
-    Engine\Generator\Migrations;
-
+use Engine\Console\AbstractCommand;
+use Engine\Console\CommandInterface;
+use Engine\Console\ConsoleUtil;
 use Engine\Db\Schema;
+use Engine\Generator\Migrations;
 use Phalcon\DI;
-use Phalcon\Mvc\Model\MetaData\Strategy\Annotations;
-use User\Model\User;
 
 /**
  * Database command.
@@ -35,11 +31,11 @@ use User\Model\User;
  * @category  PhalconEye
  * @package   Engine\Console\Commands
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Database extends Command implements CommandsInterface
+class Database extends AbstractCommand implements CommandInterface
 {
     /**
      * Executes the command.
@@ -56,6 +52,7 @@ class Database extends Command implements CommandsInterface
             $modelClass = $this->getOption('model');
             if (!class_exists($modelClass)) {
                 print ConsoleUtil::error('Model with class "' . $modelClass . '" doesn\'t exists.') . PHP_EOL;
+
                 return;
             }
             $count = current($schema->updateTable($modelClass));
@@ -108,16 +105,6 @@ class Database extends Command implements CommandsInterface
     }
 
     /**
-     * Returns number of required parameters for this command.
-     *
-     * @return int
-     */
-    public function getRequiredParams()
-    {
-        return 1;
-    }
-
-    /**
      * Get possible parameters.
      *
      * @return array
@@ -128,5 +115,15 @@ class Database extends Command implements CommandsInterface
             'model=s' => "Model to update. Default: all.",
             'cleanup' => "Drop not related tables."
         );
+    }
+
+    /**
+     * Returns number of required parameters for this command.
+     *
+     * @return int
+     */
+    public function getRequiredParams()
+    {
+        return 1;
     }
 }

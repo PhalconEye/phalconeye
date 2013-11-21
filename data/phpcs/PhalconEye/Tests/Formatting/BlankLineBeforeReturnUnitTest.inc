@@ -16,32 +16,35 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form;
-
-use Engine\Form\Element\Description;
-use Phalcon\Forms\Element as PhalconElement;
-
-/**
- * Form element.
- *
- * @category  PhalconEye
- * @package   Engine\Form
- * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
- * @license   New BSD License
- * @link      http://phalconeye.com/
- */
-class Element extends PhalconElement implements ElementInterface
+function validFunctionReturnOne()
 {
-    use Description;
-
-    /**
-     * If element is need to be rendered in default layout.
-     *
-     * @return bool
-     */
-    public function useDefaultLayout()
-    {
-        return true;
-    }
+    return;
 }
+
+function validFunctionReturnTwo()
+{
+
+    return;
+}
+
+function validFunctionReturnThree()
+{
+    echo "";
+
+    return;
+}
+
+function invalidFunctionReturnOne()
+{
+    echo "";
+    return;
+}
+
+switch ($condition) {
+    case 'foo':
+        return true;
+
+    default:
+        return false;
+}
+

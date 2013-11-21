@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\ElementInterface;
+use Phalcon\Forms\Element\Check as PhalconCheck;
+
 /**
  * Form element - Checkbox.
  *
@@ -28,10 +31,16 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\ElementInterface
+class Check extends PhalconCheck implements ElementInterface
 {
-    protected $_description;
+    use Description;
 
+    /**
+     * Create check element.
+     *
+     * @param string $name       Element name.
+     * @param null   $attributes Element attributes.
+     */
     public function __construct($name, $attributes = null)
     {
         if (isset($attributes['value']) && $attributes['value'] == true) {
@@ -57,29 +66,12 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
     }
 
     /**
-     * Sets the element description
+     * Set default value.
      *
-     * @param string $description
+     * @param mixed $value Element value.
      *
-     * @return \Engine\Form\ElementInterface
+     * @return ElementInterface
      */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
     public function setDefault($value)
     {
         if ($value == true) {
@@ -91,16 +83,25 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
         }
 
         parent::setDefault($value);
+
+        return $this;
     }
 
-    public function prepareAttributes($attributes = NULL, $useChecked = NULL)
+    /**
+     * Prepare attributes.
+     *
+     * @param null $attributes Element attributes.
+     *
+     * @return array
+     */
+    public function prepareAttributes($attributes = null)
     {
-        if (!is_array($attributes))
+        if (!is_array($attributes)) {
             $attributes = array();
+        }
 
         $attributes = array_merge(array($this->_name), $attributes);
+
         return array_merge($attributes, $this->getAttributes());
     }
-
-
 }

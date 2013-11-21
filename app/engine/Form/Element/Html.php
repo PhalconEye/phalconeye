@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\Element;
+use Engine\Form\ElementInterface;
+
 /**
  * Form element - HTML.
  *
@@ -28,12 +31,19 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Html extends \Engine\Form\Element implements \Engine\Form\ElementInterface
+class Html extends Element implements ElementInterface
 {
+    use Description;
+
+    /**
+     * Current element html.
+     *
+     * @var string
+     */
     protected $_html = '';
 
     /**
-     * If element is need to be rendered in default layout
+     * If element is need to be rendered in default layout.
      *
      * @return bool
      */
@@ -42,6 +52,12 @@ class Html extends \Engine\Form\Element implements \Engine\Form\ElementInterface
         return false;
     }
 
+    /**
+     * Create HTML element.
+     *
+     * @param string $name       Element name.
+     * @param null   $attributes Element attributes.
+     */
     public function __construct($name, $attributes = null)
     {
         if (isset($attributes['html'])) {
@@ -52,6 +68,11 @@ class Html extends \Engine\Form\Element implements \Engine\Form\ElementInterface
         parent::__construct($name, $attributes);
     }
 
+    /**
+     * Render this element.
+     *
+     * @return string
+     */
     public function render()
     {
         return $this->_html;

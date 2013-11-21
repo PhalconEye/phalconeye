@@ -31,7 +31,7 @@ if (class_exists('PEAR_Sniffs_Commenting_FunctionCommentSniff', true) === false)
  * @license  http://spdx.org/licenses/BSD-3-Clause BSD 3-clause "New" or "Revised" License
  * @link     http://pear.php.net/package/PHP_CodeSniffer
  */
-class Symfony2_Sniffs_Commenting_FunctionCommentSniff extends PEAR_Sniffs_Commenting_FunctionCommentSniff
+class PhalconEye_Sniffs_Commenting_FunctionCommentSniff extends PEAR_Sniffs_Commenting_FunctionCommentSniff
 {
 
     /**

@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\ElementInterface;
+use Phalcon\Forms\Element\TextArea as PhalconTextArea;
+
 /**
  * Form element - Text area.
  *
@@ -28,12 +31,12 @@ namespace Engine\Form\Element;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class TextArea extends \Phalcon\Forms\Element\TextArea implements \Engine\Form\ElementInterface
+class TextArea extends PhalconTextArea implements ElementInterface
 {
-    protected $_description;
+    use Description;
 
     /**
-     * If element is need to be rendered in default layout
+     * If element is need to be rendered in default layout.
      *
      * @return bool
      */
@@ -41,29 +44,4 @@ class TextArea extends \Phalcon\Forms\Element\TextArea implements \Engine\Form\E
     {
         return true;
     }
-
-    /**
-     * Sets the element description
-     *
-     * @param string $description
-     *
-     * @return Form_ElementInterface
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
-     *
-     * @return string
-     */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
 }
