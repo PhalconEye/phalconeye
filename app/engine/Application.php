@@ -540,13 +540,6 @@ class Application extends \Phalcon\Mvc\Application
             $di->setShared(strtolower($module), function () use ($module, $di) {
                 return new \Engine\Api\Container($module, $di);
             });
-
-            // Execute init method in bootstrap.
-            $bootstrapClass = ucfirst($module) . '\Bootstrap';
-            $bootstrap = new $bootstrapClass();
-            if (method_exists($bootstrap, 'init')) {
-                $bootstrap->init($di);
-            }
         }
 
         $di->setShared('assets', new Manager($di));
