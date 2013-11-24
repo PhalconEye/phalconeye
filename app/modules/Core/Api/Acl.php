@@ -214,7 +214,7 @@ class Acl implements ApiInterface
         $controller = $dispatcher->getControllerName();
 
         // check admin area
-        if (substr($controller, 0, 5) == 'admin') {
+        if (substr($controller, 0, 5) == 'Admin') {
 
             if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW) {
                 return $dispatcher->forward(array(
