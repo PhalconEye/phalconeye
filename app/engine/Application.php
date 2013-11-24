@@ -16,12 +16,11 @@
 
 namespace Engine;
 
-use Engine\Asset\Manager,
-    Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer,
-    Engine\Package\Exception;
-
-use Phalcon\DI,
-    Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
+use Engine\Asset\Manager;
+use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
+use Engine\Package\Exception;
+use Phalcon\DI;
+use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
 
 /**
  * @property \Phalcon\DiInterface $_dependencyInjector
@@ -541,6 +540,13 @@ class Application extends \Phalcon\Mvc\Application
             $di->setShared(strtolower($module), function () use ($module, $di) {
                 return new \Engine\Api\Container($module, $di);
             });
+
+            // Execute init method in bootstrap.
+            $bootstrapClass = ucfirst($module) . '\Bootstrap';
+            $bootstrap = new $bootstrapClass();
+            if (method_exists($bootstrap, 'init')) {
+                $bootstrap->init($di);
+            }
         }
 
         $di->setShared('assets', new Manager($di));
