@@ -73,7 +73,8 @@ class Application extends \Phalcon\Mvc\Application
             'logger',
             'loader',
             'database',
-            'cache'
+            'cache',
+            'engine'
         )
     );
 
