@@ -16,9 +16,7 @@
 
 namespace Engine;
 
-use Phalcon\Mvc\View\Engine\Volt,
-    Phalcon\Mvc\View,
-    Phalcon\DiInterface;
+use Phalcon\Mvc\View\Engine\Volt;use Phalcon\Mvc\View;
 
 abstract class Bootstrap implements BootstrapInterface
 {

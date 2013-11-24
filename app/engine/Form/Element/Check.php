@@ -1,30 +1,53 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Form\Element;
 
-class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\ElementInterface
-{
-    protected $_description;
+use Engine\Form\ElementInterface;
+use Phalcon\Forms\Element\Check as PhalconCheck;
 
-    public function __construct($name, $attributes=null){
-        if (isset($attributes['value']) && $attributes['value'] == true){
+/**
+ * Form element - Checkbox.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Form\Element
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Check extends PhalconCheck implements ElementInterface
+{
+    use Description;
+
+    /**
+     * Create check element.
+     *
+     * @param string $name       Element name.
+     * @param null   $attributes Element attributes.
+     */
+    public function __construct($name, $attributes = null)
+    {
+        if (isset($attributes['value']) && $attributes['value'] == true) {
             $attributes['checked'] = 'checked';
         }
 
-        if (isset($attributes['options'])){
+        if (isset($attributes['options'])) {
             $attributes['value'] = $attributes['options'];
             unset($attributes['options']);
         }
@@ -37,33 +60,18 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
      *
      * @return bool
      */
-    public function useDefaultLayout(){
+    public function useDefaultLayout()
+    {
         return true;
     }
 
     /**
-     * Sets the element description
+     * Set default value.
      *
-     * @param string $description
-     * @return \Engine\Form\ElementInterface
-     */
-    public function setDescription($description)
-    {
-        $this->_description = $description;
-        return $this;
-    }
-
-
-    /**
-     * Returns the element's description
+     * @param mixed $value Element value.
      *
-     * @return string
+     * @return ElementInterface
      */
-    public function getDescription()
-    {
-        return $this->_description;
-    }
-
     public function setDefault($value)
     {
         if ($value == true) {
@@ -75,15 +83,25 @@ class Check extends \Phalcon\Forms\Element\Check implements \Engine\Form\Element
         }
 
         parent::setDefault($value);
+
+        return $this;
     }
 
-    public function prepareAttributes($attributes = NULL, $useChecked = NULL){
-        if (!is_array($attributes))
+    /**
+     * Prepare attributes.
+     *
+     * @param null $attributes Element attributes.
+     *
+     * @return array
+     */
+    public function prepareAttributes($attributes = null)
+    {
+        if (!is_array($attributes)) {
             $attributes = array();
+        }
 
         $attributes = array_merge(array($this->_name), $attributes);
+
         return array_merge($attributes, $this->getAttributes());
     }
-
-
 }

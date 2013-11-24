@@ -1,64 +1,104 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Asset\Css;
 
+/**
+ * Less layer.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Asset\Css
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 class Less
 {
+    /**
+     * Less compiler.
+     *
+     * @var \lessc
+     */
     protected $_lessc;
+
+    /**
+     * Files to compile.
+     *
+     * @var array
+     */
     protected $_files = array();
+
+    /**
+     * Import directories.
+     *
+     * @var array
+     */
     protected $_importDirs = array();
 
+    /**
+     * Create less layer.
+     */
     public function __construct()
     {
         $this->_lessc = self::factory();
     }
 
     /**
-     * Returns Less compiler
+     * Returns Less compiler.
+     *
      * @return \lessc
      */
     public static function factory()
     {
         require_once "lessc.inc.php";
+
         return new \lessc;
     }
 
+    /**
+     * Get compiler object.
+     *
+     * @return \lessc
+     */
     public function getCompiler()
     {
         return $this->_lessc;
     }
 
     /**
-     * Add file for compilation
+     * Add file for compilation.
      *
-     * @param $file
+     * @param string $file File path.
      *
      * @return $this
      */
     public function addFile($file)
     {
         $this->_files[] = $file;
+
         return $this;
     }
 
     /**
-     * Add directory for compilation
+     * Add directory for compilation.
      *
-     * @param $directory
+     * @param string $directory Directory path.
      *
      * @return $this
      */
@@ -69,28 +109,33 @@ class Less
         foreach ($files as $file) {
             $this->addFile($file);
         }
+
         return $this;
     }
 
     /**
-     * Add import directory for compilation
+     * Add import directory for compilation.
      *
-     * @param $directory
+     * @param string $directory Directory path.
      *
      * @return $this
      */
     public function addImportDir($directory)
     {
         $this->_importDirs[] = $directory;
+
         return $this;
     }
 
     /**
-     * Compile all files into one file
+     * Compile all files into one file.
      *
-     * @param $filepath - out put file
+     * @param string $filePath File location.
+     * @param string $format   Formatter for less.
+     *
+     * @return void
      */
-    public function compileTo($filepath, $format = 'compressed')
+    public function compileTo($filePath, $format = 'compressed')
     {
         $less = '';
         foreach ($this->_files as $file) {
@@ -101,8 +146,6 @@ class Less
         $this->_lessc->setFormatter($format);
         $result = $this->_lessc->compile($less);
 
-        file_put_contents($filepath, $result);
-
+        file_put_contents($filePath, $result);
     }
-
 }

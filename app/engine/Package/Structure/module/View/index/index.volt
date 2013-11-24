@@ -17,6 +17,6 @@
 
 {% extends "../../Core/View/layouts/main.volt" %}
 
- {% block content %}
+{% block content %}
 
- {% endblock %}
+{% endblock %}

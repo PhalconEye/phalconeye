@@ -15,5 +15,5 @@
 
 {% block title %}{{ 'Register you account!'|trans }}{% endblock %}
 {% block content %}
-    {{ form.render() }}
+{{ form.render() }}
 {% endblock %}

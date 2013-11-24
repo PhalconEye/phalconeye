@@ -1,5 +1,4 @@
 <?php
-
 /*
   +------------------------------------------------------------------------+
   | Phalcon Framework                                                      |
@@ -16,63 +15,107 @@
   | Authors: Andres Gutierrez <andres@phalconphp.com>                      |
   |          Eduar Carvajal <eduar@phalconphp.com>                         |
   +------------------------------------------------------------------------+
+
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
 */
 
 namespace Engine\Console;
 
 /**
- * \Phalcon\Script\Color
+ * Console utils.
  *
- * Allows to generate messages using colors on xterm, ddterm, linux, etc.
- *
- * @category    Phalcon
- * @package     Script
- * @subpackage  Color
- * @copyright   Copyright (c) 2011-2012 Phalcon Team (team@phalconphp.com)
- * @license     New BSD License
+ * @category  PhalconEye
+ * @package   Engine\Console
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
  */
 final class ConsoleUtil
 {
     const COMMENT_START_POSITION = 42;
 
     const FG_BLACK = 1;
+
     const FG_DARK_GRAY = 2;
+
     const FG_BLUE = 3;
+
     const FG_LIGHT_BLUE = 4;
+
     const FG_GREEN = 5;
+
     const FG_LIGHT_GREEN = 6;
+
     const FG_CYAN = 7;
+
     const FG_LIGHT_CYAN = 8;
+
     const FG_RED = 9;
+
     const FG_LIGHT_RED = 10;
+
     const FG_PURPLE = 11;
+
     const FG_LIGHT_PURPLE = 12;
+
     const FG_BROWN = 13;
+
     const FG_YELLOW = 14;
+
     const FG_LIGHT_GRAY = 15;
+
     const FG_WHITE = 16;
 
     const BG_BLACK = 1;
+
     const BG_RED = 2;
+
     const BG_GREEN = 3;
+
     const BG_YELLOW = 4;
+
     const BG_BLUE = 5;
+
     const BG_MAGENTA = 6;
+
     const BG_CYAN = 7;
+
     const BG_LIGHT_GRAY = 8;
 
     const AT_NORMAL = 1;
+
     const AT_BOLD = 2;
+
     const AT_ITALIC = 3;
+
     const AT_UNDERLINE = 4;
+
     const AT_BLINK = 5;
+
     const AT_OUTLINE = 6;
+
     const AT_REVERSE = 7;
+
     const AT_NONDISP = 8;
+
     const AT_STRIKE = 9;
 
     /**
-     * @var array Map of supported foreground colors
+     * @var array Map of supported foreground colors.
      */
     private static $_fg = array(
         self::FG_BLACK => '0;30',
@@ -94,7 +137,7 @@ final class ConsoleUtil
     );
 
     /**
-     * @var array Map of supported background colors
+     * @var array Map of supported background colors.
      */
     private static $_bg = array(
         self::BG_BLACK => '40',
@@ -108,7 +151,7 @@ final class ConsoleUtil
     );
 
     /**
-     * @var array Map of supported attributes
+     * @var array Map of supported attributes.
      */
     private static $_at = array(
         self::AT_NORMAL => '0',
@@ -123,7 +166,7 @@ final class ConsoleUtil
     );
 
     /**
-     * Supported terminals
+     * Supported terminals.
      *
      * @var string
      */
@@ -134,38 +177,41 @@ final class ConsoleUtil
     );
 
     /**
-     * Identify if console supports colors
+     * Color style for error messages.
      *
-     * @return boolean
+     * @param string $msg Message to print.
+     *
+     * @return string
      */
-    public static function isSupportedShell()
+    public static function error($msg)
     {
-        $flag = false;
+        $msg = 'Error: ' . $msg;
+        $space = strlen($msg) + 4;
+        $out = self::colorize(
+            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+        );
+        print  PHP_EOL;
 
-        if (isset($_ENV['TERM'])) {
-            if (isset(self::$_supportedShells[$_ENV['TERM']])) {
-                $flag = true;
-            }
-        } else {
-            if (isset($_SERVER['TERM'])) {
-                if (isset(self::$_supportedShells[$_SERVER['TERM']])) {
-                    $flag = true;
-                }
-            }
-        }
+        $out .= self::colorize(
+            '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+        );
+        print  PHP_EOL;
 
-        return $flag;
+        $out .= self::colorize(
+            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+        );
+        print  PHP_EOL;
+
+        return $out;
     }
 
     /**
      * Colorizes the string using provided colors.
      *
-     * @static
-     *
-     * @param              $string
-     * @param null|integer $fg
-     * @param null|integer $at
-     * @param null|integer $bg
+     * @param string       $string String to colorize.
+     * @param null|integer $fg     Foreground.
+     * @param null|integer $at     Attribute.
+     * @param null|integer $bg     Background.
      *
      * @return string
      */
@@ -200,30 +246,33 @@ final class ConsoleUtil
     }
 
     /**
-     * Color style for error messages.
+     * Identify if console supports colors.
      *
-     * @static
-     *
-     * @param $msg
-     *
-     * @return string
+     * @return boolean
      */
-    public static function error($msg)
+    public static function isSupportedShell()
     {
-        $msg = 'Error: ' . $msg;
-        $space = strlen($msg) + 4;
-        $out = self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
-        $out .= self::colorize('  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
-        $out .= self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED) . PHP_EOL;
-        return $out;
+        $flag = false;
+
+        if (isset($_ENV['TERM'])) {
+            if (isset(self::$_supportedShells[$_ENV['TERM']])) {
+                $flag = true;
+            }
+        } else {
+            if (isset($_SERVER['TERM'])) {
+                if (isset(self::$_supportedShells[$_SERVER['TERM']])) {
+                    $flag = true;
+                }
+            }
+        }
+
+        return $flag;
     }
 
     /**
      * Color style for success messages.
      *
-     * @static
-     *
-     * @param $msg
+     * @param string $msg Message to print.
      *
      * @return string
      */
@@ -231,9 +280,21 @@ final class ConsoleUtil
     {
         $msg = 'Success: ' . $msg;
         $space = strlen($msg) + 4;
-        $out = self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
-        $out .= self::colorize('  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
-        $out .= self::colorize(str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN) . PHP_EOL;
+        $out = self::colorize(
+            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+        );
+        print  PHP_EOL;
+
+        $out .= self::colorize(
+            '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+        );
+        print  PHP_EOL;
+
+        $out .= self::colorize(
+            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+        );
+        print  PHP_EOL;
+
         return $out;
     }
 
@@ -272,6 +333,7 @@ final class ConsoleUtil
                 $out .= PHP_EOL;
             }
         }
+
         return $out;
     }
 
@@ -300,7 +362,11 @@ final class ConsoleUtil
     {
         $messageLength = strlen($msg) + 3;
         $startPosition = self::COMMENT_START_POSITION;
-        return self::colorize('  ' . $msg, ConsoleUtil::FG_GREEN) . "\033[{$messageLength}D\033[{$startPosition}C" . self::colorize($comment, $commentColor) . PHP_EOL;
+
+        return self::colorize('  ' . $msg, ConsoleUtil::FG_GREEN) .
+        "\033[{$messageLength}D\033[{$startPosition}C" .
+        self::colorize($comment, $commentColor) .
+        PHP_EOL;
     }
 
     /**

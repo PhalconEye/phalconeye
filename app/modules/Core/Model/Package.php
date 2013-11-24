@@ -102,7 +102,8 @@ class Package extends \Engine\Db\Model
      * @param string $type
      * @param null $enabled
      * @param null $order
-     * @return \Phalcon\Mvc\Model\Resultset\Simple
+     *
+*@return \Phalcon\Mvc\Model\Resultset\Simple
      */
     public static function findByType($type = \Engine\Package\Manager::PACKAGE_TYPE_MODULE, $enabled = null, $order = null)
     {

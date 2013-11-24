@@ -1,0 +1,161 @@
+<project name="PhalconEye" basedir="." default="info">
+
+    <property file="build.properties"/>
+
+    <target name="info">
+        <echo>
+            info - Shows this help
+            prepare - Prepares the file estructure for the build of the project
+            build - Prepares environment for distribution
+            dist - Generates distributable package
+            clean - Deletes previously generated files under build/ and dist/
+            test - Tests if the code syntax is correct and executes phpunit tests
+            doc - Generates the project documentation using PHP Documentor.
+            check - Executes the tasks: phpmd, phpcs
+            analyze - Executes the tasks: phpcpd, pdepend, phpcb, phploc
+            phpcpd - Detects copy/pastes in the code.
+            pdepend - Calculates some code metrics using PHP Depend.
+            phpmd - Analyzes the code to discover potential problems on it.
+            phpcb - Generates a browsable report of code violations using PHP CodeBrowser.
+            phploc - Calculates the size of the code using phploc.
+            phpcs - Detects standard violations on the code.
+        </echo>
+    </target>
+
+    <!-- clean - Deletes previously generated files under build/ and dist/ -->
+    <target name="clean">
+        <delete dir="${build.dir}"/>
+        <delete dir="${dist.dir}"/>
+    </target>
+
+    <!-- prepare - Prepares the file estructure for the build of the project -->
+    <target name="prepare">
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.dir}"/>
+        <mkdir dir="${build.src.dir}"/>
+        <mkdir dir="${report.dir}"/>
+        <mkdir dir="${report.dir}/code-browser"/>
+    </target>
+
+    <!-- build - Prepares environment for distribution -->
+    <target name="build" depends="prepare">
+        <copy todir="${build.src.dir}/app">
+            <fileset dir="${src.dir}"/>
+        </copy>
+        <copy todir="${build.src.dir}/public">
+            <fileset dir="${public.dir}"/>
+        </copy>
+        <copy file="CHANGELOG.txt" todir="${build.src.dir}"/>
+        <copy file="LICENSE.txt" todir="${build.src.dir}"/>
+        <copy file="README.md" todir="${build.src.dir}"/>
+
+        <!--<exec executable="php">-->
+        <!--<arg value="${build.src.dir}/app/console"/>-->
+        <!--<arg value="assets:install"/>-->
+        <!--<arg value="${build.src.dir}/web/"/>-->
+        <!--</exec>-->
+    </target>
+
+    <!-- dist - Generates distributable package -->
+    <target name="dist" depends="build">
+        <mkdir dir="${dist.dir}"/>
+        <tar destfile="${dist.dir}/${project.name}.tar.gz" basedir="${build.src.dir}" compression="gzip"
+             longfile="gnu"/>
+    </target>
+
+    <!-- test - Tests if the code syntax is correct and executes phpunit tests -->
+    <target name="test" depends="build">
+        <!--
+        <exec executable="phpunit" failonerror="true">
+            <arg value="-c"/>
+            <arg path="${build.src.dir}"/>
+            <arg value="-\-log-junit"/>
+            <arg path="${report.dir}/phpunit.xml"/>
+            <arg value="-\-coverage-clover"/>
+            <arg path=" ${report.dir}/clover.xml"/>
+        </exec>
+        -->
+    </target>
+
+    <!-- doc - Generates the project documentation using PHP Documentor. -->
+    <target name="doc" depends="build">
+        <exec executable="phpdoc">
+            <arg value="-d"/>
+            <arg path="${build.src.dir}"/>
+            <arg value="-t"/>
+            <arg path="${doc.dir}"/>
+        </exec>
+    </target>
+
+
+
+    <!-- check  -->
+    <target name="check" depends="test,phpmd,phpcs"/>
+
+    <!-- phpmd - Analyzes the code to discover potential problems on it. -->
+    <target name="phpmd" depends="build">
+        <exec executable="phpmd" failonerror="true">
+            <arg path="${check.dir}"/>
+            <arg value="text"/>
+            <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
+            <arg value="--exclude"/>
+            <arg value="${ignor.dir}"/>
+        </exec>
+    </target>
+
+    <!-- phpcs - Detects standard violations on the code. -->
+    <target name="phpcs" depends="build">
+        <exec executable="phpcs" failonerror="true">
+            <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
+            <arg value="--ignore=${ignor.dir}"/>
+            <arg path="${check.dir}"/>
+        </exec>
+    </target>
+
+
+    <!-- analyze  -->
+    <target name="analyze" depends="phpcpd,pdepend,phpcb,phploc"/>
+
+    <!-- phpcpd - Detects copy/pastes in the code. -->
+    <target name="phpcpd" depends="build">
+        <exec executable="phpcpd">
+            <arg value="--log-pmd"/>
+            <arg value="${report.dir}/cpd.xml"/>
+            <arg path="${check.dir}"/>
+        </exec>
+    </target>
+
+    <!-- pdepend - Calculates some code metrics using PHP Depend. -->
+    <target name="pdepend" depends="build">
+        <exec executable="pdepend">
+            <arg value="--jdepend-xml=${report.dir}/jdepend.xml"/>
+            <arg value="--jdepend-chart=${report.dir}/dependencies.svg"/>
+            <arg value="--overview-pyramid=${report.dir}/dependencies-pyramid.svg"/>
+            <arg value="--ignore=/${ignor.dir}"/>
+            <arg value="${check.dir}"/>
+        </exec>
+    </target>
+
+    <!-- phpcb - Generates a browsable report of code violations using PHP CodeBrowser. -->
+    <target name="phpcb" depends="build">
+        <exec executable="phpcb">
+            <arg value="--log"/>
+            <arg path="${report.dir}"/>
+            <arg value="--source"/>
+            <arg path="${check.dir}"/>
+            <arg value="--output"/>
+            <arg path="${report.dir}/code-browser"/>
+        </exec>
+    </target>
+
+    <!-- phploc - Calculates the size of the code using  phploc. -->
+    <target name="phploc" depends="build">
+        <exec executable="phploc">
+            <arg value="--log-csv"/>
+            <arg value="${report.dir}/phploc.csv"/>
+            <arg value="--exclude"/>
+            <arg value="${ignor.dir}"/>
+            <arg path="${check.dir}"/>
+        </exec>
+    </target>
+</project>

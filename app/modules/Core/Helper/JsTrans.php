@@ -16,10 +16,9 @@
 
 namespace Core\Helper;
 
-use Phalcon\Tag,
-    Phalcon\DI;
+use Engine\HelperInterface;use Phalcon\DI;
 
-use Engine\HelperInterface;
+use Phalcon\Tag;
 
 /**
  * Javascript translator helper.

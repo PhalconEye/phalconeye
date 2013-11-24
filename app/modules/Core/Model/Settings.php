@@ -52,7 +52,8 @@ class Settings extends \Engine\Db\Model
      *
      * @param $name
      * @param null $default
-     * @return null|string
+     *
+*@return null|string
      */
     public static function getSetting($name, $default = null)
     {
@@ -68,7 +69,8 @@ class Settings extends \Engine\Db\Model
      * Get setting object by name
      *
      * @param $name
-     * @return null|Settings
+     *
+*@return null|Settings
      */
     public static function getSettingObject($name)
     {

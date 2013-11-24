@@ -105,7 +105,8 @@ class Controller extends \Phalcon\Mvc\Controller
      *
      * @param $key
      * @param null $default
-     * @return null
+     *
+*@return null
      */
     public function getParam($key, $default = null)
     {

@@ -14,5 +14,5 @@
 {% extends "../../View/layouts/widget.volt" %}
 
 {% block content %}
-    {{ html }}
+{{ html }}
 {% endblock %}

@@ -22,7 +22,8 @@ class NotFound extends \Phalcon\Mvc\User\Plugin
      * @param \Phalcon\Events\Event $event
      * @param \Phalcon\Dispatcher $dispatcher
      * @param \Phalcon\Exception $exception
-     * @return bool
+     *
+*@return bool
      */
     public function beforeException($event, $dispatcher, $exception)
     {

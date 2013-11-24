@@ -11,7 +11,7 @@
 (function ($, undefined) {
     $(function () {
         $(".navbar .navbar-inner a").tooltip({
-            html:"true"
+            html: "true"
         });
     });
 }(jQuery));

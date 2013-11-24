@@ -93,7 +93,8 @@ class Database extends \Phalcon\Session\Adapter implements \Phalcon\Session\Adap
      * Reads the data from the table
      *
      * @param string $sessionId
-     * @return string
+     *
+*@return string
      */
     public function read($sessionId)
     {

@@ -1,5 +1,5 @@
 <?php
-
+// @codingStandardsIgnoreFile
 /**
  * lessphp v0.3.9
  * http://leafo.net/lessphp
@@ -36,8 +36,9 @@
  *
  * The `lessc_formatter` takes a CSS tree, and dumps it to a formatted string,
  * handling things like indentation.
+ *
+ * @SuppressWarnings(PHPMD)
  */
-
 class lessc {
 	static public $VERSION = "v0.3.9";
 	static protected $TRUE = array("keyword", "true");
@@ -1723,7 +1724,8 @@ class lessc {
 	 *
 	 * @param mixed $in Input
 	 * @param bool $force Force rebuild?
-	 * @return array lessphp cache structure
+	 *
+*@return array lessphp cache structure
 	 */
 	public function cachedCompile($in, $force = false) {
 		// assume no root
@@ -2035,6 +2037,11 @@ class lessc {
 
 // responsible for taking a string of LESS code and converting it into a
 // syntax tree
+/**
+ * Class lessc_parser
+ *
+ * @SuppressWarnings(PHPMD)
+ */
 class lessc_parser {
 	static protected $nextBlockId = 0; // used to uniquely identify blocks
 
@@ -3356,6 +3363,11 @@ class lessc_parser {
 
 }
 
+/**
+ * Class lessc_formatter_classic
+ *
+ * @SuppressWarnings(PHPMD)
+ */
 class lessc_formatter_classic {
 	public $indentChar = "  ";
 
@@ -3451,6 +3463,11 @@ class lessc_formatter_classic {
 	}
 }
 
+/**
+ * Class lessc_formatter_compressed
+ *
+ * @SuppressWarnings(PHPMD)
+ */
 class lessc_formatter_compressed extends lessc_formatter_classic {
 	public $disableSingle = true;
 	public $open = "{";
@@ -3464,6 +3481,11 @@ class lessc_formatter_compressed extends lessc_formatter_classic {
 	}
 }
 
+/**
+ * Class lessc_formatter_lessjs
+ *
+ * @SuppressWarnings(PHPMD)
+ */
 class lessc_formatter_lessjs extends lessc_formatter_classic {
 	public $disableSingle = true;
 	public $breakSelectors = true;

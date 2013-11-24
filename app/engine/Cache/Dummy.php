@@ -1,156 +1,196 @@
 <?php
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Cache;
 
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+use Phalcon\Cache\Backend;
 
-class Dummy extends \Phalcon\Cache\Backend
+/**
+ * Dummy cache.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Cache
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
+ * @SuppressWarnings(PHPMD)
+ */
+class Dummy extends Backend
 {
     /**
-     * \Phalcon\Cache\Backend constructor
+     * Backend constructor.
      *
-     * @param \Phalcon\Cache\FrontendInterface $frontend
-     * @param array $options
+     * @param \Phalcon\Cache\FrontendInterface $frontend Frontend cache object.
+     * @param array                            $options  Cache options.
      */
-    public function __construct($frontend, $options=null){
+    public function __construct($frontend, $options = null)
+    {
 
     }
 
     /**
-     * Starts a cache. The $keyname allows to identify the created fragment
+     * Starts a cache. The $keyname allows to identify the created fragment.
      *
-     * @param int|string $keyName
-     * @param   long $lifetime
-     * @return  mixed
+     * @param int|string $keyName  Key naming.
+     * @param double     $lifetime Cache lifetime.
+     *
+     * @return null
      */
-    public function start($keyName, $lifetime=null){
+    public function start($keyName, $lifetime = null)
+    {
         return null;
     }
 
     /**
-     * Stops the frontend without store any cached content
+     * Stops the frontend without store any cached content.
      *
-     * @param boolean $stopBuffer
+     * @param boolean $stopBuffer Stop buffering?
+     *
+     * @return void
      */
-    public function stop($stopBuffer=null){
+    public function stop($stopBuffer = null)
+    {
 
     }
 
     /**
-     * Returns front-end instance adapter related to the back-end
+     * Returns front-end instance adapter related to the back-end.
      *
-     * @return mixed
+     * @return null
      */
-    public function getFrontend(){
+    public function getFrontend()
+    {
         return null;
     }
 
     /**
-     * Returns the backend options
+     * Returns the backend options.
      *
      * @return array
      */
-    public function getOptions(){
+    public function getOptions()
+    {
         return array();
     }
 
     /**
-     * Checks whether the last cache is fresh or cached
+     * Checks whether the last cache is fresh or cached.
      *
      * @return boolean
      */
-    public function isFresh(){
-        return true;
-    }
-    /**
-     * Checks whether the cache has starting buffering or not
-     *
-     * @return boolean
-     */
-    public function isStarted(){
+    public function isFresh()
+    {
         return true;
     }
 
     /**
-     * Sets the last key used in the cache
+     * Checks whether the cache has starting buffering or not.
      *
-     * @param string $lastKey
+     * @return boolean
      */
-    public function setLastKey($lastKey){
+    public function isStarted()
+    {
+        return true;
     }
 
     /**
-     * Gets the last key stored by the cache
+     * Sets the last key used in the cache.
+     *
+     * @param string $lastKey Last key name.
+     *
+     * @return void
+     */
+    public function setLastKey($lastKey)
+    {
+    }
+
+    /**
+     * Gets the last key stored by the cache.
      *
      * @return string
      */
-    public function getLastKey(){
+    public function getLastKey()
+    {
         return '';
     }
 
     /**
-     * Returns a cached content
+     * Returns a cached content.
      *
-     * @param int|string $keyName
-     * @param   long $lifetime
+     * @param int|string $keyName  Key naming.
+     * @param double     $lifetime Cache lifetime.
+     *
      * @return  mixed
      */
-    public function get($keyName, $lifetime=null){
+    public function get($keyName, $lifetime = null)
+    {
         return null;
     }
 
     /**
-     * Stores cached content into the file backend and stops the frontend
+     * Stores cached content into the file backend and stops the frontend.
      *
-     * @param int|string $keyName
-     * @param string $content
-     * @param long $lifetime
-     * @param boolean $stopBuffer
+     * @param int|string $keyName    Key naming.
+     * @param string     $content    Content data.
+     * @param double     $lifetime   Cache lifetime.
+     * @param boolean    $stopBuffer Stop buffering?
      */
-    public function save($keyName=null, $content=null, $lifetime=null, $stopBuffer=null){
+    public function save($keyName = null, $content = null, $lifetime = null, $stopBuffer = null)
+    {
 
     }
 
     /**
-     * Deletes a value from the cache by its key
+     * Deletes a value from the cache by its key.
      *
-     * @param int|string $keyName
+     * @param int|string $keyName Key naming.
+     *
      * @return boolean
      */
-    public function delete($keyName){
+    public function delete($keyName)
+    {
         return false;
     }
 
     /**
-     * Query the existing cached keys
+     * Query the existing cached keys.
      *
-     * @param string $prefix
+     * @param string $prefix Keys prefix name.
+     *
      * @return array
      */
-    public function queryKeys($prefix=null){
+    public function queryKeys($prefix = null)
+    {
         return array();
     }
 
     /**
-     * Checks if cache exists and it hasn't expired
+     * Checks if cache exists and it hasn't expired.
      *
-     * @param  string $keyName
-     * @param  long $lifetime
+     * @param string $keyName  Key naming.
+     * @param double $lifetime Cache lifetime.
+     *
      * @return boolean
      */
-    public function exists($keyName=null, $lifetime=null){
+    public function exists($keyName = null, $lifetime = null)
+    {
         return false;
     }
 }

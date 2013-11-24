@@ -15,7 +15,7 @@
 
 namespace Core\Controller;
 
-use \Core\Controller\Base as PeController;
+use Core\Controller\Base as PeController;
 
 class ErrorController extends PeController
 {

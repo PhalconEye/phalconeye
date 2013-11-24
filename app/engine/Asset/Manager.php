@@ -12,6 +12,8 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
 */
 
 namespace Engine\Asset;
@@ -33,7 +35,7 @@ use Phalcon\DI;
  * @category  PhalconEye
  * @package   Engine\Asset
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
@@ -108,7 +110,9 @@ class Manager extends AssetManager
         // Collect css/js/img from modules.
         ///////////////////////////////////
         foreach ($this->_di->get('modules') as $module => $enabled) {
-            if (!$enabled) continue;
+            if (!$enabled) {
+                continue;
+            }
 
             // CSS
             $assetsPath = $this->_config->application->modulesDir . ucfirst($module) . '/Assets/';
@@ -154,9 +158,11 @@ class Manager extends AssetManager
     public function clear($refresh = true)
     {
         $files = FsUtilities::fsRecursiveGlob(PUBLIC_PATH . '/assets/', '*'); // get all file names
-        foreach ($files as $file) { // iterate files
-            if (is_file($file))
+        // iterate files
+        foreach ($files as $file) {
+            if (is_file($file)) {
                 @unlink($file); // delete file
+            }
         }
 
         if ($refresh) {
