@@ -62,7 +62,7 @@ class Controller extends \Engine\Widget\Controller
                 'title' => $item->title
             );
 
-            if ($subItems->count() > 0) {
+            if ($subItems && $subItems->count() > 0) {
                 $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();

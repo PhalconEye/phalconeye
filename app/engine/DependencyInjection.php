@@ -38,7 +38,7 @@ trait DependencyInjection
      *
      * @var DI
      */
-    protected $_di;
+    private $_di;
 
     /**
      * Create object.

@@ -21,8 +21,7 @@ namespace Engine\Console\Commands;
 use Engine\Asset\Manager,
     Engine\Console\ConsoleUtil,
     Engine\Console\Command,
-    Engine\Console\CommandsInterface,
-    Engine\Generator\Migrations;
+    Engine\Console\CommandsInterface;
 
 use Phalcon\DI;
 

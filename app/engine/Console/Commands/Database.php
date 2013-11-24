@@ -18,16 +18,12 @@
 
 namespace Engine\Console\Commands;
 
-use Engine\Asset\Manager,
-    Engine\Console\ConsoleUtil,
+use Engine\Console\ConsoleUtil,
     Engine\Console\Command,
-    Engine\Console\CommandsInterface,
-    Engine\Generator\Migrations;
+    Engine\Console\CommandsInterface;
 
 use Engine\Db\Schema;
 use Phalcon\DI;
-use Phalcon\Mvc\Model\MetaData\Strategy\Annotations;
-use User\Model\User;
 
 /**
  * Database command.

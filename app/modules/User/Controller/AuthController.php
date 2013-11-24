@@ -23,7 +23,7 @@ class AuthController extends \Core\Controller\Base
     public function loginAction()
     {
         if (\User\Model\User::getViewer()->id) {
-            $this->response->redirect()->send();
+            return $this->response->redirect();
         }
 
         $form = new \User\Form\Auth\Login();
@@ -45,7 +45,7 @@ class AuthController extends \Core\Controller\Base
         if ($user) {
             if ($this->security->checkHash($password, $user->password)) {
                 $this->core->auth()->authenticate($user->id);
-                return $this->response->redirect()->send();
+                return $this->response->redirect();
             }
         }
 
@@ -59,10 +59,11 @@ class AuthController extends \Core\Controller\Base
      */
     public function logoutAction()
     {
-        if (\User\Model\User::getViewer()->id)
+        if (\User\Model\User::getViewer()->id){
             $this->core->auth()->clearAuth();
+        }
 
-        $this->response->redirect()->send();
+        return $this->response->redirect();
     }
 
     /**
@@ -71,7 +72,7 @@ class AuthController extends \Core\Controller\Base
     public function registerAction()
     {
         if (\User\Model\User::getViewer()->id) {
-            $this->response->redirect()->send();
+            return $this->response->redirect();
         }
 
         $form = new \User\Form\Auth\Register();
@@ -91,6 +92,7 @@ class AuthController extends \Core\Controller\Base
 
         $user = new \User\Model\User();
         $data = $form->getValues();
+        $user->role_id = \User\Model\Role::getDefaultRole()->id;
         if (!$user->save($data)) {
             foreach ($user->getMessages() as $message) {
                 $form->addError($message);
@@ -99,12 +101,8 @@ class AuthController extends \Core\Controller\Base
             return;
         }
 
-        $user->role_id = \User\Model\Role::getDefaultRole()->id;
-        $user->save();
-
         $this->core->auth()->authenticate($user->id);
-        $this->response->redirect()->send();
-
+        return $this->response->redirect();
     }
 }
 

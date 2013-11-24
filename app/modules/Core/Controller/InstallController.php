@@ -17,11 +17,11 @@
 namespace Core\Controller;
 
 use Core\Controller\Base as PeController;
+use Engine\Asset\Manager as AssetManager;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Db\Schema;
 use Engine\Form\Validator\Email;
 use Engine\Form\Validator\StringLength;
-use Engine\Generator\Migrations;
 use Engine\Package\Manager as PackageManager;
 use Phalcon\Config;
 use Phalcon\Mvc\View as PhView;
@@ -139,7 +139,7 @@ class InstallController extends PeController
                 $schema->updateDatabase();
 
                 // Run modules installation scripts.
-                $packageManager = new PackageManager();
+                $packageManager = new PackageManager(array(), $this->di);
                 foreach ($this->di->get('modules') as $moduleName => $enabled) {
                     if (!$enabled) {
                         continue;
@@ -196,6 +196,7 @@ class InstallController extends PeController
 
             $user = new \User\Model\User();
             $data = $form->getValues();
+            $user->role_id = \User\Model\Role::getRoleByType('admin')->id;
             if (!$user->save($data)) {
                 foreach ($user->getMessages() as $message) {
                     $form->addError($message);
@@ -203,9 +204,6 @@ class InstallController extends PeController
                 $this->view->form = $form;
                 return;
             }
-
-            $user->role_id = \User\Model\Role::getRoleByType('admin')->id;
-            $user->save();
 
             $this->_setPassed(__FUNCTION__, true);
             return $this->response->redirect(array('for' => 'install-save'));
@@ -224,8 +222,14 @@ class InstallController extends PeController
 
         $this->_resetStates();
         $this->config->installed = true;
+        $this->config->installedVersion = PE_VERSION;
         $this->app->saveConfig();
-        return $this->response->redirect(array('for' => 'home'));
+
+        // Setup database to perform theme installation.
+        $this->_setupDatabase();
+        $assetsManager = new AssetManager($this->getDI(), false);
+        $assetsManager->installAssets();
+        return $this->response->redirect();
     }
 
     /**

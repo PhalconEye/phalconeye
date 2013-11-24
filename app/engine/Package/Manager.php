@@ -15,6 +15,7 @@
 
 namespace Engine\Package;
 
+use Engine\DependencyInjection;
 use Phalcon\Config;
 
 /**
@@ -25,6 +26,8 @@ use Phalcon\Config;
  */
 class Manager
 {
+    use DependencyInjection;
+
     const PACKAGE_TYPE_MODULE = 'module';
     const PACKAGE_TYPE_PLUGIN = 'plugin';
     const PACKAGE_TYPE_THEME = 'theme';
@@ -76,17 +79,15 @@ class Manager
      */
     protected $_config;
 
-    /**
-     * @var \Phalcon\DiInterface
-     */
-    protected $_di;
-
     protected $_installedPackages;
 
-    public function __construct($packages = array())
+    public function __construct($packages = array(), $di = null)
     {
-        $this->_di = \Phalcon\DI::getDefault();
-        $this->_config = $this->_di->get('config');
+        if ($di == null) {
+            $di = \Phalcon\DI::getDefault();
+        }
+        $this->setDI($di);
+        $this->_config = $this->getDI()->get('config');
 
         $this->_installedPackages = array();
         if (!empty($packages))
@@ -340,7 +341,7 @@ class Manager
             include_once $this->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php';
         }
         if (class_exists($installerClass)) {
-            $packageInstaller = new $installerClass($this->di, $manifest->name);
+            $packageInstaller = new $installerClass($this->getDI());
             if ($manifest->isUpdate) {
                 if (method_exists($packageInstaller, 'update')) {
                     $newVersion = $packageInstaller->update($manifest->currentVersion);
