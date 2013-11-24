@@ -16,19 +16,18 @@
 {% block title %}{{ "Role Editing"|trans }}{% endblock %}
 
 {% block header %}
-<div class="navbar navbar-header">
-< div class="navbar-inner">
-{{ navigation.render() }}
-</ div >
-</ div >
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block content %}
-<div class="span12">
-< div class="row-fluid">
-{{ form.render() }}
-</ div >
-<!--/row -->
-</ div ><!--/span-->
-
+    <div class="span12">
+        <div class="row-fluid">
+            {{ form.render() }}
+        </div>
+        <!--/row -->
+    </div><!--/span-->
 {% endblock %}

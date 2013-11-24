@@ -130,7 +130,7 @@ interface ElementInterface
      *
      * @return array
      */
-    public function prepareAttributes($attributes);
+    public function prepareAttributes($attributes, $useChecked=null);
 
     /**
      * Sets a default attribute for the element.

@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form\Element;
+namespace Engine\Form\Element\Traits;
 
 use Engine\Form\ElementInterface;
 

@@ -18,8 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
-use \Phalcon\Forms\Element\Select as PhalconSelect;
+use Phalcon\Forms\Element\Select as PhalconSelect;
 
 /**
  * Form element - Select.
