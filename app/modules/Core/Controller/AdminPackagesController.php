@@ -15,7 +15,9 @@
 
 namespace Core\Controller;
 
-use Core\Model\Package;use Engine\Package\Exception;
+use Core\Model\Package;
+use Engine\Package\Exception;
+use Engine\Package\PackageException;
 
 /**
  * @RoutePrefix("/admin/packages", name="admin-packages")
@@ -165,7 +167,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     $this->flash->success('Package installed!');
                 }
 
-            } catch (\Engine\Package\Exception $e) {
+            } catch (PackageException $e) {
                 $this->flash->error($e->getMessage());
             }
         } else {
@@ -367,7 +369,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $this->_removePackageConfig($name, $package->type);
                 $this->app->clearCache();
                 $this->flashSession->success('Package "' . $name . '" removed!');
-            } catch (Exception $e) {
+            } catch (PackageException $e) {
                 $package->delete();
                 $this->flashSession->notice('Failed to remove package directory, check logs...');
             }

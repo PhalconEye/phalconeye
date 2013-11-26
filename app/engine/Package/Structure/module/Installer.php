@@ -18,32 +18,46 @@
 
 namespace %nameUpper%;
 
-class Installer extends \Engine\Installer{
+use Engine\Installer as EngineInstaller;
 
+/**
+ * Installer for %nameUpper%.
+ *
+ * @category PhalconEye Module
+ * @package  Module
+ */
+class Installer extends EngineInstaller
+{
     /**
-     * Used to install specific database entities or other specific action
+     * Used to install specific database entities or other specific action.
+     *
+     * @return void
      */
-    public function install(){
+    public function install()
+    {
 
     }
 
     /**
-     * Used before package will be removed from the system
+     * Used before package will be removed from the system.
+     *
+     * @return void
      */
-    public function remove(){
+    public function remove()
+    {
 
     }
 
     /**
-     * Used to apply some updates
+     * Used to apply some updates.
      *
-     * @param $currentVersion
+     * @param string $currentVersion Current version name.
      *
-*@return mixed 'string' (new version) if migration is not finished, 'null' if all updates were applied
+     * @return mixed 'string' (new version) if migration is not finished, 'null' if all updates were applied
      */
-    public function update($currentVersion){
+    public function update($currentVersion)
+    {
 
         return null;
     }
-
 }

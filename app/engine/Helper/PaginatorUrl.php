@@ -1,24 +1,48 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Helper;
 
-class PaginatorUrl extends \Phalcon\Tag implements \Engine\HelperInterface
+use Engine\HelperInterface;
+use Phalcon\DI;
+use Phalcon\Tag;
+
+/**
+ * Paginator url helper.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Helper
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class PaginatorUrl extends Tag implements HelperInterface
 {
-    static public function _(\Phalcon\DI $di, array $args)
+    /**
+     * Execute helper.
+     *
+     * @param DI    $di   Dependency injection.
+     * @param array $args Helper arguments.
+     *
+     * @return mixed
+     */
+    static public function _(DI $di, array $args)
     {
         $page = (isset($args[0]) ? $args[0] : 1);
         $vars = array();
@@ -41,6 +65,7 @@ class PaginatorUrl extends \Phalcon\Tag implements \Engine\HelperInterface
             if ($page) {
                 $page = '?page=' . $page;
             }
+
             return $url . $page;
         }
 

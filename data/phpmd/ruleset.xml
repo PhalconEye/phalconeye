@@ -10,9 +10,14 @@
         PhalconEye PHPMD ruleset.
     </description>
 
-    <rule ref="rulesets/design.xml" />
     <rule ref="rulesets/unusedcode.xml" />
 
+    <rule ref="rulesets/design.xml/CouplingBetweenObjects">
+        <priority>1</priority>
+        <properties>
+            <property name="reportLevel" value="16" />
+        </properties>
+    </rule>
     <!--
         Import the entire cyclomatic complexity rule and
         customize the rule configuration.

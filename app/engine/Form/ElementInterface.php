@@ -127,10 +127,11 @@ interface ElementInterface
      * according to the element's parameters.
      *
      * @param array $attributes Element attributes.
+     * @param bool  $useChecked Use checked.
      *
      * @return array
      */
-    public function prepareAttributes($attributes, $useChecked=null);
+    public function prepareAttributes($attributes, $useChecked = null);
 
     /**
      * Sets a default attribute for the element.

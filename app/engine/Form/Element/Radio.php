@@ -41,7 +41,11 @@ class Radio extends Select implements ElementInterface
         /**
          * Defines html patter for this element.
          */
-        HTML_PATTERN = '<div class="form_element_radio"><input type="radio" value="%s" %s name="url_type" id="url_type"><label>%s</label></div>';
+        HTML_PATTERN = '
+        <div class="form_element_radio">
+        <input type="radio" value="%s" %s/>
+        <label>%s</label>
+        </div>';
 
     /**
      * Create element.
@@ -120,7 +124,12 @@ class Radio extends Select implements ElementInterface
             /** @var \Phalcon\Mvc\Model $option */
             $optionKey = $option->readAttribute($keyAttribute);
             $optionValue = $option->readAttribute($valueAttribute);
-            $content .= sprintf(self::HTML_PATTERN, $optionKey, ($optionKey == $value ? 'checked="checked"' : ''), $optionValue);
+            $content .= sprintf(
+                self::HTML_PATTERN,
+                $optionKey,
+                ($optionKey == $value ? 'checked="checked"' : ''),
+                $optionValue
+            );
         }
 
         return $content;

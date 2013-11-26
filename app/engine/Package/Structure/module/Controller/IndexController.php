@@ -18,10 +18,17 @@
 
 namespace %nameUpper%\Controller;
 
+use Core\Controller\Base as CoreController;
+
 /**
+ * Index controller.
+ *
+ * @category PhalconEye Module
+ * @package  Controller
+ *
  * @RoutePrefix("/%name%s", name="%name%s")
  */
-class IndexController extends \Core\Controller\Base
+class IndexController extends CoreController
 {
     /**
      * @Route("/", methods={"GET"}, name="%name%s")
@@ -30,5 +37,4 @@ class IndexController extends \Core\Controller\Base
     {
 
     }
-
 }

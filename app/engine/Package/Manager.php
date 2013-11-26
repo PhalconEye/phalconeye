@@ -1,41 +1,71 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Package;
 
 use Engine\DependencyInjection;
+use Engine\Package\Exception\InvalidManifest;
 use Phalcon\Config;
+use Phalcon\DI;
+use Phalcon\Filter as PhalconFilter;
 
 /**
- * Provides package management
+ * Package manager.
  *
- * Class Manager
- * @package Engine\Package
+ * @category  PhalconEye
+ * @package   Engine\Package
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
  */
 class Manager
 {
     use DependencyInjection;
 
-    const PACKAGE_TYPE_MODULE = 'module';
-    const PACKAGE_TYPE_PLUGIN = 'plugin';
-    const PACKAGE_TYPE_THEME = 'theme';
-    const PACKAGE_TYPE_WIDGET = 'widget';
-    const PACKAGE_TYPE_LIBRARY = 'library';
+    const
+        /**
+         * Module package.
+         */
+        PACKAGE_TYPE_MODULE = 'module',
+
+        /**
+         * Plugin package.
+         */
+        PACKAGE_TYPE_PLUGIN = 'plugin',
+
+        /**
+         * Theme package.
+         */
+        PACKAGE_TYPE_THEME = 'theme',
+
+        /**
+         * Widget package.
+         */
+        PACKAGE_TYPE_WIDGET = 'widget',
+
+        /**
+         * Library package.
+         */
+        PACKAGE_TYPE_LIBRARY = 'library';
 
     /**
-     * Allowed types of packages
+     * Allowed types of packages.
      *
      * @var array
      */
@@ -47,6 +77,11 @@ class Manager
         self::PACKAGE_TYPE_LIBRARY => 'Library'
     );
 
+    /**
+     * Default data for manifest.
+     *
+     * @var array
+     */
     private $_manifestDefaultData = array(
         'type' => '',
         'name' => '',
@@ -66,6 +101,11 @@ class Manager
         'widgets' => array()
     );
 
+    /**
+     * Minimum required data for correct manifest.
+     *
+     * @var array
+     */
     private $_manifestMinimumData = array(
         'type',
         'name',
@@ -75,54 +115,65 @@ class Manager
     );
 
     /**
-     * @var \Phalcon\Config
+     * Installed packages.
+     *
+     * @var array
      */
-    protected $_config;
-
     protected $_installedPackages;
 
+    /**
+     * Create package manager.
+     *
+     * @param array $packages Packages.
+     * @param DI    $di       Dependency injection.
+     */
     public function __construct($packages = array(), $di = null)
     {
         if ($di == null) {
-            $di = \Phalcon\DI::getDefault();
+            $di = DI::getDefault();
         }
         $this->setDI($di);
-        $this->_config = $this->getDI()->get('config');
 
         $this->_installedPackages = array();
-        if (!empty($packages))
+        if (!empty($packages)) {
             foreach ($packages as $package) {
                 $this->_installedPackages[$package->type][$package->name] = $package->version;
             }
+        }
     }
 
     /**
-     * Get package location in system
+     * Get package location in system.
      *
-     * @param $type
+     * @param string $type Package type.
      *
      * @return string
      */
     public function getPackageLocation($type)
     {
+        $config = $this->getDI()->get('config');
+
         $locations = array(
-            self::PACKAGE_TYPE_MODULE => $this->_config->application->modulesDir,
-            self::PACKAGE_TYPE_PLUGIN => $this->_config->application->pluginsDir,
+            self::PACKAGE_TYPE_MODULE => $config->application->modulesDir,
+            self::PACKAGE_TYPE_PLUGIN => $config->application->pluginsDir,
             self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
-            self::PACKAGE_TYPE_WIDGET => $this->_config->application->widgetsDir,
-            self::PACKAGE_TYPE_LIBRARY => $this->_config->application->librariesDir
+            self::PACKAGE_TYPE_WIDGET => $config->application->widgetsDir,
+            self::PACKAGE_TYPE_LIBRARY => $config->application->librariesDir
         );
         if (isset($locations[$type])) {
-            return str_replace('/', DS, $locations[$type]); // fix crossplatform issue directories paths that saved in config.
+            // fix crossplatform issue directories paths that saved in config.
+            return str_replace('/', DS, $locations[$type]);
         }
 
         return '';
     }
 
     /**
-     * Create new package according to data
+     * Create new package according to data.
      *
-     * @param $data
+     * @param array $data Package data.
+     *
+     * @return void
      */
     public function createPackage($data)
     {
@@ -158,7 +209,13 @@ class Manager
         $placeholdersValues = array_values($data);
         foreach ($placeholders as $key => $placeholder) {
             // check header for comment block
-            if ($placeholder == 'header' && (strpos($placeholdersValues[$key], DS . '*') === false || strpos($placeholdersValues[$key], '*/') === false)) {
+            if (
+                $placeholder == 'header' &&
+                (
+                    strpos($placeholdersValues[$key], DS . '*') === false ||
+                    strpos($placeholdersValues[$key], '*/') === false
+                )
+            ) {
                 $placeholdersValues[$key] = '';
             }
 
@@ -173,21 +230,21 @@ class Manager
     }
 
     /**
-     * Install package using zip archive
+     * Install package using zip archive.
      *
-     * @param $package zip archive filepath
+     * @param string $packageFilePath Zip archive filepath.
      *
-     * @return \Phalcon\Config
-     * @throws Exception
+     * @throws PackageException
+     * @return Config
      */
-    public function installPackage($package)
+    public function installPackage($packageFilePath)
     {
         $zip = new \ZipArchive;
-        if ($zip->open($package) === true) {
+        if ($zip->open($packageFilePath) === true) {
             $zip->extractTo($this->getTempDirectory(false));
             $zip->close();
         } else {
-            throw new Exception('Can\'t open archive...');
+            throw new PackageException('Can\'t open archive...');
         }
 
         $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . 'manifest.php');
@@ -196,14 +253,17 @@ class Manager
         // check itself
         if (isset($this->_installedPackages[$manifest->type][$manifest->name])) {
             if ($this->_installedPackages[$manifest->type][$manifest->name] == $manifest->version) {
-                throw new Exception('This package already installed.');
+                throw new PackageException('This package already installed.');
             } else {
-                $filter = new \Phalcon\Filter();
-                $installedVersion = $filter->sanitize($this->_installedPackages[$manifest->type][$manifest->name], 'int');
+                $filter = new PhalconFilter();
+                $installedVersion = $filter->sanitize(
+                    $this->_installedPackages[$manifest->type][$manifest->name],
+                    'int'
+                );
                 $packageVersion = $filter->sanitize($manifest->version, 'int');
 
                 if ($installedVersion > $packageVersion) {
-                    throw new Exception('Newer version of this package already installed.');
+                    throw new PackageException('Newer version of this package already installed.');
                 }
 
                 $manifest->offsetSet('isUpdate', true);
@@ -213,7 +273,7 @@ class Manager
 
         // check dependencies
         if ($manifest->get('dependencies')) {
-            $filter = new \Phalcon\Filter();
+            $filter = new PhalconFilter();
             $missingDependencies = array();
             $wrongVersionDependencies = array();
             $dependencies = $manifest->get('dependencies');
@@ -223,7 +283,10 @@ class Manager
                     continue;
                 }
 
-                $installedVersion = $filter->sanitize($this->_installedPackages[$dependecy['type']][$dependecy['name']], 'int');
+                $installedVersion = $filter->sanitize(
+                    $this->_installedPackages[$dependecy['type']][$dependecy['name']],
+                    'int'
+                );
                 $packageDependecyVersion = $filter->sanitize($dependecy['version'], 'int');
                 if ($installedVersion < $packageDependecyVersion) {
                     $wrongVersionDependencies[] = $dependecy;
@@ -233,17 +296,28 @@ class Manager
             if (!empty($missingDependencies)) {
                 $msg = 'This package requires the presence of the following modules:<br/>';
                 foreach ($missingDependencies as $dependecy) {
-                    $msg .= sprintf('- %s "%s" (v.%s)<br/>', $dependecy['type'], $dependecy['name'], $dependecy['version']);
+                    $msg .= sprintf(
+                        '- %s "%s" (v.%s)<br/>',
+                        $dependecy['type'],
+                        $dependecy['name'],
+                        $dependecy['version']
+                    );
                 }
-                throw new Exception($msg);
+                throw new PackageException($msg);
             }
 
             if (!empty($wrongVersionDependencies)) {
                 $msg = 'To install this package you need update:<br/>';
                 foreach ($wrongVersionDependencies as $dependecy) {
-                    $msg .= sprintf('- %s "%s" up to: v.%s. Current version: v.%s <br/>', $dependecy['type'], $dependecy['name'], $dependecy['version'], $this->_installedPackages[$dependecy['type']][$dependecy['name']]);
+                    $msg .= sprintf(
+                        '- %s "%s" up to: v.%s. Current version: v.%s <br/>',
+                        $dependecy['type'],
+                        $dependecy['name'],
+                        $dependecy['version'],
+                        $this->_installedPackages[$dependecy['type']][$dependecy['name']]
+                    );
                 }
-                throw new Exception($msg);
+                throw new PackageException($msg);
             }
         }
 
@@ -259,12 +333,13 @@ class Manager
     }
 
     /**
-     * Remove package from system
+     * Remove package from system.
      *
-     * @param $name Package name
-     * @param $type Package type
+     * @param string $name Package name.
+     * @param string $type Package type.
      *
-     * @throws Exception
+     * @throws PackageException
+     * @return void
      */
     public function removePackage($name, $type)
     {
@@ -276,17 +351,19 @@ class Manager
         }
 
         if (!is_dir($path)) {
-            throw new Exception("Package '{$name}' not found in path '{$path}'.");
+            throw new PackageException("Package '{$name}' not found in path '{$path}'.");
         }
         Utilities::fsRmdirRecursive($path, true);
 
     }
 
     /**
-     * Export package with data
+     * Export package with data.
      *
-     * @param $name Package name
-     * @param $data
+     * @param string $name Package name.
+     * @param array  $data Package data.
+     *
+     * @return void
      */
     public function exportPackage($name, $data)
     {
@@ -366,22 +443,26 @@ class Manager
     }
 
     /**
-     * Get temporary directory. This directory is used for unziping package files
+     * Get temporary directory. This directory is used for unziping package files.
      *
-     * @param bool $checkDir
+     * @param bool $checkDir Check directory location.
      *
      * @return string
      */
     public function getTempDirectory($checkDir = true)
     {
         $directory = ROOT_PATH . str_replace('_', DS, '_app_var_temp_packages_');
-        if ($checkDir)
+        if ($checkDir) {
             Utilities::fsCheckLocation($directory);
+        }
+
         return $directory;
     }
 
     /**
-     * Clear temporary directory
+     * Clear temporary directory.
+     *
+     * @return void
      */
     public function clearTempDirectory()
     {
@@ -389,15 +470,17 @@ class Manager
     }
 
     /**
-     * Create manifest file for package
+     * Create manifest file for package.
      *
-     * @param $filepath
-     * @param $data
+     * @param string $filepath Manifest path.
+     * @param array  $data     Manifest data.
+     *
+     * @return void
      */
     private function _createManifest($filepath, $data)
     {
         $manifestData = $this->_manifestDefaultData;
-        foreach ($this->_manifestDefaultData as $key => $item) {
+        foreach (array_keys($this->_manifestDefaultData) as $key) {
             if (empty($data[$key])) {
                 unset($manifestData[$key]);
                 continue;
@@ -412,52 +495,52 @@ class Manager
     }
 
     /**
-     * Read package information from manifest file
+     * Read package information from manifest file.
      *
-     * @param $manifestLocation
+     * @param string $manifestLocation Manifest path.
      *
-     * @return \Phalcon\Config
-     * @throws Exception\NoManifest
-     * @throws Exception\InvalidManifest
+     * @throws InvalidManifest
+     * @return Config
      */
     private function _readPackageManifest($manifestLocation)
     {
         // check manifest existense
         if (!file_exists($manifestLocation)) {
-            throw new Exception\NoManifest('Missing manifest file in uploaded package.');
+            throw new InvalidManifest('Missing manifest file in uploaded package.');
         }
 
         // check manifest is correct
         $manifest = include_once($manifestLocation);
-        if (!$manifest || !($manifest instanceof \Phalcon\Config) || !$this->_checkPackageManifest($manifest)) {
-            throw new Exception\InvalidManifest('Manifest file is invalid or damaged.');
+        if (!$manifest || !($manifest instanceof Config) || !$this->_checkPackageManifest($manifest)) {
+            throw new InvalidManifest('Manifest file is invalid or damaged.');
         }
 
         return $manifest;
     }
 
     /**
-     * Checks package manifest file
+     * Checks package manifest file.
      *
-     * @param \Phalcon\Config $manifest
+     * @param Config $manifest Manifest data.
      *
      * @return bool
      */
-    private function _checkPackageManifest(\Phalcon\Config $manifest)
+    private function _checkPackageManifest(Config $manifest)
     {
         foreach ($this->_manifestMinimumData as $key) {
-            if (!array_key_exists($key, $manifest))
+            if (!array_key_exists($key, $manifest)) {
                 return false;
+            }
         }
 
         return true;
     }
 
     /**
-     * Zip files
+     * Zip files.
      *
-     * @param $source
-     * @param $destination
+     * @param string $source      Source path.
+     * @param string $destination Destination path.
      *
      * @return bool
      */
@@ -474,14 +557,18 @@ class Manager
 
         $source = str_replace('\\', DS, realpath($source));
         if (is_dir($source) === true) {
-            $files = new \RecursiveIteratorIterator(new \RecursiveDirectoryIterator($source), \RecursiveIteratorIterator::SELF_FIRST);
+            $files = new \RecursiveIteratorIterator(
+                new \RecursiveDirectoryIterator($source),
+                \RecursiveIteratorIterator::SELF_FIRST
+            );
 
             foreach ($files as $file) {
                 $file = str_replace('\\', DS, $file);
 
                 // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, DS) + 1), array('.', '..')))
+                if (in_array(substr($file, strrpos($file, DS) + 1), array('.', '..'))) {
                     continue;
+                }
 
                 $file = realpath($file);
 

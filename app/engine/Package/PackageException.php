@@ -16,29 +16,20 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine;
+namespace Engine\Package;
 
-use Phalcon\DI;
+use \Engine\Exception;
 
 /**
- * Helper interface
+ * Current url helper.
  *
  * @category  PhalconEye
- * @package   Engine
+ * @package   Engine\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-interface HelperInterface
+class PackageException extends Exception
 {
-    /**
-     * Execute helper.
-     *
-     * @param DI    $di   Dependency injection.
-     * @param array $args Helper arguments.
-     *
-     * @return mixed
-     */
-    static public function _(DI $di, array $args);
 }

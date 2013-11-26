@@ -18,6 +18,15 @@
 
 namespace %nameUpper%;
 
-class Bootstrap extends \Core\Bootstrap{
+use Core\Bootstrap as CoreBootstrap;
+
+/**
+ * Bootstrap for %nameUpper%.
+ *
+ * @category PhalconEye Module
+ * @package  Module
+ */
+class Bootstrap extends CoreBootstrap
+{
     protected $_moduleName = "%nameUpper%";
 }
