@@ -18,13 +18,15 @@
 
 namespace Engine\Db\Model\Behavior;
 
+use Engine\Exception as EngineException;
+
 /**
  * Sluggable behaviour.
  *
  * @category  PhalconEye
  * @package   Engine\Db\Model\Behaviour
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
@@ -35,12 +37,22 @@ trait Sluggable
      */
     public $slug;
 
-    protected function beforeCreate()
+    /**
+     * Before entity creation.
+     *
+     * @return void
+     */
+    public function beforeCreate()
     {
         $this->generateSlug();
     }
 
-    protected function beforeUpdate()
+    /**
+     * Before entity update.
+     *
+     * @return void
+     */
+    public function beforeUpdate()
     {
         if ($this->getRegenerateSlugOnUpdate() || empty($this->slug)) {
             $this->generateSlug();
@@ -48,7 +60,7 @@ trait Sluggable
     }
 
     /**
-     * Returns the slug's delimiter
+     * Returns the slug's delimiter.
      *
      * @return string
      */
@@ -67,12 +79,21 @@ trait Sluggable
         return true;
     }
 
-    private function getSluggableFields(){
+    /**
+     * Get fields that can be sluggable.
+     *
+     * @return array
+     */
+    private function getSluggableFields()
+    {
         return array('title');
     }
 
     /**
-     * Generates and sets the entity's slug. Called prePersist and preUpdate
+     * Generates and sets the entity's slug. Called prePersist and preUpdate.
+     *
+     * @throws \Engine\Exception
+     * @return void
      */
     public function generateSlug()
     {
@@ -88,12 +109,22 @@ trait Sluggable
         }
 
         if (count($usableValues) < 1) {
-            throw new \Engine\Exception('Sluggable expects to have at least one usable (non-empty) field from the following: [ ' . implode($fields, ',') . ' ]');
+            throw new EngineException(
+                sprintf(
+                    'Sluggable expects to have at least one usable (non-empty) field from the following: [%s]',
+                    implode($fields, ',')
+                )
+            );
         }
 
         // generate the slug itself
         $sluggableText = implode($usableValues, ' ');
-        $urlized = strtolower(trim(preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText)), $this->getSlugDelimiter()));
+        $urlized = strtolower(
+            trim(
+                preg_replace("/[^a-zA-Z0-9\/_|+ -]/", '', iconv('UTF-8', 'ASCII//TRANSLIT', $sluggableText)),
+                $this->getSlugDelimiter()
+            )
+        );
         $urlized = preg_replace("/[\/_|+ -]+/", $this->getSlugDelimiter(), $urlized);
 
         $this->slug = $urlized;

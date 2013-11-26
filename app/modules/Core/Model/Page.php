@@ -25,7 +25,7 @@ namespace Core\Model;
  * })
  * @Acl(actions={"show_views"}, options={"page_footer"})
  */
-class Page extends \Engine\Db\Model
+class Page extends \Engine\Db\AbstractModel
 {
     /**
      * @Primary

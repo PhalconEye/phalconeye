@@ -18,9 +18,10 @@
 
 namespace Engine\Db\Model\Annotations;
 
-use Phalcon\Events\Event,
-    Phalcon\Mvc\Model\Manager as ModelsManager,
-    Phalcon\Mvc\User\Plugin;
+use Engine\Db\AbstractModel;
+use Phalcon\Events\Event;
+use Phalcon\Mvc\Model\Manager as ModelsManager;
+use Phalcon\Mvc\User\Plugin;
 
 /**
  * Annotations initializer.
@@ -28,16 +29,20 @@ use Phalcon\Events\Event,
  * @category  PhalconEye
  * @package   Engine\Db\Model\Annotations
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
 class Initializer extends Plugin
 {
     /**
-     * This is called after initialize the model
+     * This is called after initialize the model.
      *
-     * @param \Phalcon\Events\Event $event
+     * @param Event         $event   Event object.
+     * @param ModelsManager $manager Model manager
+     * @param AbstractModel $model   Model object.
+     *
+     * @return string
      */
     public function afterInitialize(Event $event, ModelsManager $manager, $model)
     {
@@ -49,13 +54,11 @@ class Initializer extends Plugin
          */
         $annotations = $reflector->getClassAnnotations();
         if ($annotations) {
-
             /**
              * Traverse the annotations
              */
             foreach ($annotations as $annotation) {
                 switch ($annotation->getName()) {
-
                     /**
                      * Initializes the model's source
                      */
@@ -87,11 +90,10 @@ class Initializer extends Plugin
                             $manager->addBelongsTo($model, $arguments[0], $arguments[1], $arguments[2]);
                         }
                         break;
-
                 }
             }
         }
 
+        return $event->getType();
     }
-
 }

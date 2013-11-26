@@ -20,7 +20,7 @@ namespace Core\Model;
  * @Source("access")
  * @BelongsTo("role_id", "User\Model\Role", "id")
  */
-class Access extends \Engine\Db\Model
+class Access extends \Engine\Db\AbstractModel
 {
     /**
      * @Primary

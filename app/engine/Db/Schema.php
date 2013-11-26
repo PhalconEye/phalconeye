@@ -19,14 +19,14 @@
 namespace Engine\Db;
 
 use Engine\DependencyInjection;
-
-use Engine\Exception;
+use Engine\Exception as EngineException;
+use Phalcon\Annotations\Collection;
 use Phalcon\Db\AdapterInterface;
-use Phalcon\Db\Column,
-    Phalcon\DI,
-    Phalcon\Mvc\Model\MetaData as PhalconMetadata;
+use Phalcon\Db\Column;
 use Phalcon\Db\Index;
 use Phalcon\Db\Reference;
+use Phalcon\DI;
+use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
 
 /**
  * Schema generator.
@@ -34,7 +34,7 @@ use Phalcon\Db\Reference;
  * @category  PhalconEye
  * @package   Engine\Db
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
@@ -181,6 +181,14 @@ class Schema
         return $modelsInfo;
     }
 
+    /**
+     * Get model metadata by model class.
+     *
+     * @param string $modelClass Model class name (with namespace).
+     *
+     * @return array
+     * @throws EngineException
+     */
     public function getModelMetadata($modelClass)
     {
         /** @var \Phalcon\Annotations\Reflection $reflector */
@@ -219,73 +227,16 @@ class Schema
             if ($collection->has('Column')) {
                 $arguments = $collection->get('Column')->getArguments();
                 /**
-                 * Get the column's name
+                 * Get the column's name.
                  */
-                if (isset($arguments['column'])) {
-                    $columnName = $arguments['column'];
-                } else {
-                    $columnName = $name;
-                }
-
-                $columnData = array();
-
-                /**
-                 * Get type.
-                 */
-                if (isset($arguments['type'])) {
-                    switch ($arguments['type']) {
-                        case 'integer':
-                            $columnData['type'] = Column::TYPE_INTEGER;
-                            $columnData['isNumeric'] = true;
-                            break;
-                        case 'string':
-                            $columnData['type'] = Column::TYPE_VARCHAR;
-                            break;
-                        case 'text':
-                            $columnData['type'] = Column::TYPE_TEXT;
-                            break;
-                        case 'boolean':
-                            $columnData['type'] = Column::TYPE_BOOLEAN;
-                            break;
-                        case 'date':
-                            $columnData['type'] = Column::TYPE_DATE;
-                            break;
-                        case 'datetime':
-                            $columnData['type'] = Column::TYPE_DATETIME;
-                            break;
-                    }
-                }
-
-                /**
-                 * Get size.
-                 */
-                if (isset($arguments['size'])) {
-                    $columnData['size'] = $arguments['size'];
-                }
-
-                /**
-                 * Check for the 'nullable' parameter in the 'Column' annotation.
-                 */
-                if (isset($arguments['nullable'])) {
-                    $columnData['notNull'] = !$arguments['nullable'];
-                }
+                $columnName = $this->_getColumnName($name, $arguments);
+                $columnData = $this->_getModelColumnData($arguments, $collection);
 
                 /**
                  * Check if the attribute is marked as primary.
                  */
                 if ($collection->has('Primary')) {
                     $primary[] = $columnName;
-                }
-
-                /**
-                 * Check if the attribute is marked as identity.
-                 */
-                if ($collection->has('Identity')) {
-                    $columnData['identity'] = true;
-                    $columnData['first'] = true;
-                    if (isset($columnData['isNumeric']) && $columnData['isNumeric'] == true) {
-                        $columnData['autoIncrement'] = true;
-                    }
                 }
 
                 /**
@@ -313,11 +264,14 @@ class Schema
          */
         foreach ($references as $reference) {
             if (empty($reference[0]) || empty($reference[1]) || empty($reference[2]) || !class_exists($reference[1])) {
-                throw new Exception("Bad reference for model {$modelClass}: (" . implode(', ', $reference) . ')');
+                throw new EngineException("Bad reference for model {$modelClass}: (" . implode(', ', $reference) . ')');
                 continue;
             }
 
-            $uniqName = $modelClass::getTableName() . '-' . $reference[1]::getTableName() . '-' . $reference[0] . '-' . $reference[2];
+            $uniqName = $modelClass::getTableName() . '-' .
+                $reference[1]::getTableName() . '-' .
+                $reference[0] . '-' .
+                $reference[2];
             $metadata['references'][] = new Reference(
                 'fk-' . $uniqName,
                 array(
@@ -334,7 +288,91 @@ class Schema
     }
 
     /**
-     * Modify table columns
+     * Choose column name.
+     *
+     * @param string $name      Column name from code.
+     * @param array  $arguments Column arguments.
+     *
+     * @return mixed
+     */
+    protected function _getColumnName($name, $arguments)
+    {
+        if (isset($arguments['column'])) {
+            return $arguments['column'];
+        } else {
+            return $name;
+        }
+    }
+
+    /**
+     * Get column info.
+     *
+     * @param array      $arguments  Annotations arguments.
+     * @param Collection $collection Annotations collection.
+     *
+     * @return array
+     */
+    protected function _getModelColumnData($arguments, $collection)
+    {
+        $columnData = array();
+
+        /**
+         * Get type.
+         */
+        if (isset($arguments['type'])) {
+            switch ($arguments['type']) {
+                case 'integer':
+                    $columnData['type'] = Column::TYPE_INTEGER;
+                    $columnData['isNumeric'] = true;
+                    break;
+                case 'string':
+                    $columnData['type'] = Column::TYPE_VARCHAR;
+                    break;
+                case 'text':
+                    $columnData['type'] = Column::TYPE_TEXT;
+                    break;
+                case 'boolean':
+                    $columnData['type'] = Column::TYPE_BOOLEAN;
+                    break;
+                case 'date':
+                    $columnData['type'] = Column::TYPE_DATE;
+                    break;
+                case 'datetime':
+                    $columnData['type'] = Column::TYPE_DATETIME;
+                    break;
+            }
+        }
+
+        /**
+         * Get size.
+         */
+        if (isset($arguments['size'])) {
+            $columnData['size'] = $arguments['size'];
+        }
+
+        /**
+         * Check for the 'nullable' parameter in the 'Column' annotation.
+         */
+        if (isset($arguments['nullable'])) {
+            $columnData['notNull'] = !$arguments['nullable'];
+        }
+
+        /**
+         * Check if the attribute is marked as identity.
+         */
+        if ($collection->has('Identity')) {
+            $columnData['identity'] = true;
+            $columnData['first'] = true;
+            if (isset($columnData['isNumeric']) && $columnData['isNumeric'] == true) {
+                $columnData['autoIncrement'] = true;
+            }
+        }
+
+        return $columnData;
+    }
+
+    /**
+     * Modify table columns.
      *
      * @param string $tableName  Table name.
      * @param string $schemaName Schema name.
@@ -393,7 +431,7 @@ class Schema
             }
         }
 
-        foreach ($localFields as $fieldName => $localField) {
+        foreach (array_keys($localFields) as $fieldName) {
             if (!isset($fields[$fieldName])) {
                 $db->dropColumn($tableName, null, $fieldName);
                 $counter++;
@@ -404,7 +442,7 @@ class Schema
     }
 
     /**
-     * Modifi indexes.
+     * Modify indexes.
      *
      * @param string $tableName  Table name.
      * @param string $schemaName Schema name.
@@ -463,7 +501,7 @@ class Schema
                 }
             }
         }
-        foreach ($localIndexes as $indexName => $indexColumns) {
+        foreach (array_keys($localIndexes) as $indexName) {
             if (!isset($indexes[$indexName])) {
                 $db->dropIndex($tableName, null, $indexName);
                 $counter++;
@@ -514,38 +552,7 @@ class Schema
                     $counter++;
                 } else {
                     // Change reference.
-                    $changed = false;
-                    if ($tableReference->getReferencedTable() != $localReferences[$tableReference->getName()]['referencedTable']) {
-                        $changed = true;
-                    }
-
-                    if ($changed == false) {
-                        if (count($tableReference->getColumns()) != count($localReferences[$tableReference->getName()]['columns'])) {
-                            $changed = true;
-                        }
-                    }
-
-                    if ($changed == false) {
-                        if (count($tableReference->getReferencedColumns()) != count($localReferences[$tableReference->getName()]['referencedColumns'])) {
-                            $changed = true;
-                        }
-                    }
-                    if ($changed == false) {
-                        foreach ($tableReference->getColumns() as $columnName) {
-                            if (!in_array($columnName, $localReferences[$tableReference->getName()]['columns'])) {
-                                $changed = true;
-                                break;
-                            }
-                        }
-                    }
-                    if ($changed == false) {
-                        foreach ($tableReference->getReferencedColumns() as $columnName) {
-                            if (!in_array($columnName, $localReferences[$tableReference->getName()]['referencedColumns'])) {
-                                $changed = true;
-                                break;
-                            }
-                        }
-                    }
+                    $changed = $this->_checkReferenceChanges($tableReference, $localReferences);
 
                     if ($changed == true) {
                         $db->dropForeignKey($tableName, $tableReference->getSchemaName(), $tableReference->getName());
@@ -555,7 +562,7 @@ class Schema
                 }
             }
 
-            foreach ($localReferences as $referenceName => $reference) {
+            foreach (array_keys($localReferences) as $referenceName) {
                 // Drop reference.
                 if (!isset($references[$referenceName])) {
                     $db->dropForeignKey($tableName, null, $referenceName);
@@ -565,5 +572,59 @@ class Schema
         }
 
         return $counter;
+    }
+
+    /**
+     * Check if current reference has changes.
+     *
+     * @param Reference $tableReference  Table reference.
+     * @param array     $localReferences Local references.
+     *
+     * @return bool
+     */
+    protected function _checkReferenceChanges($tableReference, $localReferences)
+    {
+        if (
+            $tableReference->getReferencedTable() !=
+            $localReferences[$tableReference->getName()]['referencedTable']
+        ) {
+            return true;
+        }
+
+
+        if (
+            count($tableReference->getColumns()) !=
+            count($localReferences[$tableReference->getName()]['columns'])
+        ) {
+            return true;
+        }
+
+
+        if (
+            count($tableReference->getReferencedColumns()) !=
+            count($localReferences[$tableReference->getName()]['referencedColumns'])
+        ) {
+            return true;
+        }
+
+
+        foreach ($tableReference->getColumns() as $columnName) {
+            if (!in_array($columnName, $localReferences[$tableReference->getName()]['columns'])) {
+                return true;
+                break;
+            }
+        }
+
+
+        foreach ($tableReference->getReferencedColumns() as $columnName) {
+            if (
+            !in_array($columnName, $localReferences[$tableReference->getName()]['referencedColumns'])
+            ) {
+                return true;
+                break;
+            }
+        }
+
+        return false;
     }
 }

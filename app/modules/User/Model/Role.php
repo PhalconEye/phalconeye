@@ -25,7 +25,7 @@ namespace User\Model;
  *  "alias": "Access"
  * })
  */
-class Role extends \Engine\Db\Model
+class Role extends \Engine\Db\AbstractModel
 {
     /**
      * @Primary

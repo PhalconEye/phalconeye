@@ -18,10 +18,10 @@
 
 namespace Engine\Db\Model\Annotations;
 
-use Phalcon\Mvc\ModelInterface,
-    Phalcon\DiInterface,
-    Phalcon\Mvc\Model\MetaData as PhalconMetadata,
-    Phalcon\Db\Column;
+use Phalcon\Db\Column;
+use Phalcon\DiInterface;
+use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
+use Phalcon\Mvc\ModelInterface;
 
 /**
  * Annotations metadata reader.
@@ -29,17 +29,17 @@ use Phalcon\Mvc\ModelInterface,
  * @category  PhalconEye
  * @package   Engine\Db\Model\Annotations
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
 class Metadata
 {
     /**
-     * Initializes the model's meta-data
+     * Initializes the model's meta-data.
      *
-     * @param \Phalcon\Mvc\ModelInterface $model
-     * @param \Phalcon\DiInterface        $di
+     * @param ModelInterface $model Model object.
+     * @param DiInterface    $di    Dependency injection.
      *
      * @return array
      */
@@ -58,19 +58,10 @@ class Metadata
         $identity = null;
 
         foreach ($properties as $name => $collection) {
-
             if ($collection->has('Column')) {
-
                 $arguments = $collection->get('Column')->getArguments();
-
-                /**
-                 * Get the column's name
-                 */
-                if (isset($arguments['column'])) {
-                    $columnName = $arguments['column'];
-                } else {
-                    $columnName = $name;
-                }
+                $columnName = $this->_getColumnName($name, $arguments);
+                $attributes[] = $columnName;
 
                 /**
                  * Check for the 'type' parameter in the 'Column' annotation
@@ -111,15 +102,9 @@ class Metadata
                 /**
                  * Check for the 'nullable' parameter in the 'Column' annotation
                  */
-                if (!$collection->has('Identity')) {
-                    if (isset($arguments['nullable'])) {
-                        if (!$arguments['nullable']) {
-                            $nullables[] = $columnName;
-                        }
-                    }
+                if (!$collection->has('Identity') && !empty($arguments['nullable'])) {
+                    $nullables[] = $columnName;
                 }
-
-                $attributes[] = $columnName;
 
                 /**
                  * Check if the attribute is marked as primary
@@ -136,10 +121,7 @@ class Metadata
                 if ($collection->has('Identity')) {
                     $identity = $columnName;
                 }
-
             }
-
-
         }
 
         return array(
@@ -179,17 +161,16 @@ class Metadata
     }
 
     /**
-     * Initializes the model's column map
+     * Initializes the model's column map.
      *
-     * @param \Phalcon\Mvc\ModelInterface $model
-     * @param \Phalcon\DiInterface        $di
+     * @param ModelInterface $model Model object.
+     * @param DiInterface    $di    Dependency injection.
      *
      * @return array
      */
     public function getColumnMaps(ModelInterface $model, DiInterface $di)
     {
         $reflection = $di->get('annotations')->get($model);
-
         $columnMap = array();
         $reverseColumnMap = array();
 
@@ -199,16 +180,7 @@ class Metadata
             if ($collection->has('Column')) {
 
                 $arguments = $collection->get('Column')->getArguments();
-
-                /**
-                 * Get the column's name
-                 */
-                if (isset($arguments['column'])) {
-                    $columnName = $arguments['column'];
-                } else {
-                    $columnName = $name;
-                }
-
+                $columnName = $this->_getColumnName($name, $arguments);
                 $columnMap[$columnName] = $name;
                 $reverseColumnMap[$name] = $columnName;
 
@@ -263,86 +235,105 @@ class Metadata
 
                 // Get table fields properties.
                 $modelInfo['columns'] = array();
-
-                $properties = $reflector->getPropertiesAnnotations();
-                foreach ($properties as $name => $collection) {
-                    if ($collection->has('Column')) {
-                        $arguments = $collection->get('Column')->getArguments();
-                        /**
-                         * Get the column's name
-                         */
-                        if (isset($arguments['column'])) {
-                            $columnName = $arguments['column'];
-                        } else {
-                            $columnName = $name;
-                        }
-                        $modelInfo['columns'][$columnName] = array();
-
-                        /**
-                         * Get type.
-                         */
-                        if (isset($arguments['type'])) {
-                            switch ($arguments['type']) {
-                                case 'integer':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_INTEGER;
-                                    $modelInfo['columns'][$columnName]['is_numeric'] = true;
-                                    break;
-                                case 'string':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_VARCHAR;
-                                    break;
-                                case 'text':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_TEXT;
-                                    break;
-                                case 'boolean':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_BOOLEAN;
-                                    break;
-                                case 'date':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_DATE;
-                                    break;
-                                case 'datetime':
-                                    $modelInfo['columns'][$columnName]['type'] = Column::TYPE_DATETIME;
-                                    break;
-                            }
-                        }
-
-                        /**
-                         * Get size.
-                         */
-                        if (isset($arguments['size'])) {
-                            $modelInfo['columns'][$columnName]['size'] = $arguments['size'];
-                        }
-
-                        /**
-                         * Check for the 'nullable' parameter in the 'Column' annotation.
-                         */
-                        if (!$collection->has('Identity')) {
-                            if (isset($arguments['nullable'])) {
-                                $modelInfo['columns'][$columnName]['nullable'] = $arguments['nullable'];
-                            }
-                        }
-
-                        /**
-                         * Check if the attribute is marked as primary
-                         */
-                        if ($collection->has('Primary')) {
-                            $modelInfo['columns'][$columnName]['is_primary'] = true;
-                        }
-
-                        /**
-                         * Check if the attribute is marked as identity
-                         */
-                        if ($collection->has('Identity')) {
-                            $modelInfo['columns'][$columnName]['identity'] = true;
-                        }
-
-                    }
-                }
-                $models[] = $modelInfo;
+                $models[] = $this->_parseProperties($reflector->getPropertiesAnnotations(), $modelInfo);
             }
         }
 
         return $models;
-
     }
 
+    /**
+     * Parse model properties.
+     *
+     * @param array $properties Properties collection.
+     * @param array $modelInfo  Model info.
+     *
+     * @return array
+     */
+    protected function _parseProperties($properties, $modelInfo)
+    {
+        foreach ($properties as $name => $collection) {
+            if (!$collection->has('Column')) {
+                continue;
+            }
+
+            $arguments = $collection->get('Column')->getArguments();
+            $columnName = $this->_getColumnName($name, $arguments);
+            $modelInfo['columns'][$columnName] = array();
+
+            /**
+             * Get type.
+             */
+            if (isset($arguments['type'])) {
+                switch ($arguments['type']) {
+                    case 'integer':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_INTEGER;
+                        $modelInfo['columns'][$columnName]['is_numeric'] = true;
+                        break;
+                    case 'string':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_VARCHAR;
+                        break;
+                    case 'text':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_TEXT;
+                        break;
+                    case 'boolean':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_BOOLEAN;
+                        break;
+                    case 'date':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_DATE;
+                        break;
+                    case 'datetime':
+                        $modelInfo['columns'][$columnName]['type'] = Column::TYPE_DATETIME;
+                        break;
+                }
+            }
+
+            /**
+             * Get size.
+             */
+            if (isset($arguments['size'])) {
+                $modelInfo['columns'][$columnName]['size'] = $arguments['size'];
+            }
+
+            /**
+             * Check for the 'nullable' parameter in the 'Column' annotation.
+             */
+            if (!$collection->has('Identity') && !empty($arguments['nullable'])) {
+                $modelInfo['columns'][$columnName]['nullable'] = $arguments['nullable'];
+            }
+
+            /**
+             * Check if the attribute is marked as primary
+             */
+            if ($collection->has('Primary')) {
+                $modelInfo['columns'][$columnName]['is_primary'] = true;
+            }
+
+            /**
+             * Check if the attribute is marked as identity
+             */
+            if ($collection->has('Identity')) {
+                $modelInfo['columns'][$columnName]['identity'] = true;
+            }
+        }
+
+        return $modelInfo;
+    }
+
+    /**
+     * Choose column name.
+     *
+     * @param string $name      Column name from code.
+     * @param array  $arguments Column arguments.
+     *
+     * @return mixed
+     */
+    protected function _getColumnName($name, $arguments)
+    {
+        if (isset($arguments['column'])) {
+            return $arguments['column'];
+        } else {
+            return $name;
+        }
+    }
 }

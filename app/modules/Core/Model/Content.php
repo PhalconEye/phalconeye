@@ -25,7 +25,7 @@ namespace Core\Model;
  *  "alias": "Page"
  * })
  */
-class Content extends \Engine\Db\Model
+class Content extends \Engine\Db\AbstractModel
 {
 
     /**

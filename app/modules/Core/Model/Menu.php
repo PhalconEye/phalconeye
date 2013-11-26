@@ -22,7 +22,7 @@ namespace Core\Model;
  *  "alias": "MenuItem"
  * })
  */
-class Menu extends \Engine\Db\Model
+class Menu extends \Engine\Db\AbstractModel
 {
 
     /**

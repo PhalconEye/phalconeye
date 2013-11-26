@@ -19,7 +19,7 @@ namespace Core\Model;
 /**
  * @Source("settings")
  */
-class Settings extends \Engine\Db\Model
+class Settings extends \Engine\Db\AbstractModel
 {
     /**
      * @Primary

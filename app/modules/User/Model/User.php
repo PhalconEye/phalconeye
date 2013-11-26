@@ -24,7 +24,7 @@ use Engine\Db\Model\Behavior\Timestampable;
  *  "alias": "Role"
  * })
  */
-class User extends \Engine\Db\Model
+class User extends \Engine\Db\AbstractModel
 {
     // use trait Timestampable for creation_date and modified_date fields
     use Timestampable;

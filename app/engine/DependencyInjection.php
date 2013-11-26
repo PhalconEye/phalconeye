@@ -26,7 +26,7 @@ use Phalcon\DI;
  * @category  PhalconEye
  * @package   Engine
  * @author    Ivan Vorontsov <vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */

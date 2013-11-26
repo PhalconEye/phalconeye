@@ -16,47 +16,34 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Db\Model\Behavior;
+namespace Engine\Db;
+
+use Phalcon\DI;
+use Phalcon\Mvc\Model as PhalconModel;
 
 /**
- * Timestampable behaviour.
+ * Abstract Model.
  *
  * @category  PhalconEye
- * @package   Engine\Db\Model\Behaviour
+ * @package   Engine\Db
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait Timestampable
+abstract class AbstractModel extends PhalconModel
 {
     /**
-     * @Column(type="datetime", nullable=true, column="creation_date")
-     */
-    public $creation_date;
-
-    /**
-     * @Column(type="datetime", nullable=true, column="modified_date")
-     */
-    public $modified_date;
-
-    /**
-     * Set creation date.
+     * Get table name.
      *
-     * @return void
+     * @return string
      */
-    public function beforeCreate()
+    public static function getTableName()
     {
-        $this->creation_date = date('Y-m-d H:i:s');
-    }
+        $reader = DI::getDefault()->get('annotations');
+        $reflector = $reader->get(get_called_class());
+        $annotations = $reflector->getClassAnnotations();
 
-    /**
-     * Set modified date.
-     *
-     * @return void
-     */
-    public function beforeUpdate()
-    {
-        $this->modified_date = date('Y-m-d H:i:s');
+        return $annotations->get('Source')->getArgument(0);
     }
 }

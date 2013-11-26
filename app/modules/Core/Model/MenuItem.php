@@ -27,7 +27,7 @@ use Engine\Db\Model\Behavior\Sortable;
  *  "alias": "MenuItem"
  * })
  */
-class MenuItem extends \Engine\Db\Model
+class MenuItem extends \Engine\Db\AbstractModel
 {
     use Sortable;
 

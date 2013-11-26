@@ -24,7 +24,7 @@ namespace Engine\Db\Model\Behavior;
  * @category  PhalconEye
  * @package   Engine\Db\Model\Behaviour
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
@@ -34,5 +34,4 @@ trait Sortable
      * @Column(type="integer", nullable=false, column="item_order", size="11")
      */
     public $item_order = 0;
-
 }
