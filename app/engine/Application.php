@@ -276,6 +276,7 @@ class Application extends \Phalcon\Mvc\Application
             $router->addModuleResource('core', 'Core\Controller\Install');
             $di->set('installationRequired', true);
             $di->set('router', $router);
+
             return;
         }
 
@@ -349,6 +350,7 @@ class Application extends \Phalcon\Mvc\Application
                 $logger = new \Phalcon\Logger\Adapter\File($config->application->logger->path . "main.log");
                 $formatter = new \Phalcon\Logger\Formatter\Line($config->application->logger->format);
                 $logger->setFormatter($formatter);
+
                 return $logger;
             });
         }
@@ -422,6 +424,7 @@ class Application extends \Phalcon\Mvc\Application
             }
 
             $metaData->setStrategy(new StrategyAnnotations());
+
             return $metaData;
         }, true);
 
@@ -435,16 +438,8 @@ class Application extends \Phalcon\Mvc\Application
         if (!isset($config->application->session)) {
             $session = new \Phalcon\Session\Adapter\Files();
         } else {
-            $sessionOptions = array(
-                'db' => $di->get('db'),
-                'table' => $config->application->session->tableName
-            );
-
-            if (isset($config->application->session->lifetime)) {
-                $sessionOptions['lifetime'] = $config->application->session->lifetime;
-            }
-
-            $session = new \Engine\Session\Database($sessionOptions);
+            $adapterClass = $config->application->session->adapter;
+            $session = new $adapterClass($config->application->session->toArray());
         }
         $session->start();
         $di->set('session', $session, true);
@@ -507,6 +502,7 @@ class Application extends \Phalcon\Mvc\Application
                 'success' => 'alert alert-success',
                 'notice' => 'alert alert-info',
             ));
+
             return $flash;
         });
 
@@ -516,6 +512,7 @@ class Application extends \Phalcon\Mvc\Application
                 'success' => 'alert alert-success',
                 'notice' => 'alert alert-info',
             ));
+
             return $flash;
         });
     }
