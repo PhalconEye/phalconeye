@@ -19,11 +19,11 @@
 namespace Engine\Translation;
 
 use Engine\Db\AbstractModel;
+use Phalcon\Db\Adapter\Pdo;
+use Phalcon\Db\Column as PhalconColumn;
 use Phalcon\Translate\Adapter;
 use Phalcon\Translate\AdapterInterface;
 use Phalcon\Translate\Exception;
-use Phalcon\Db\Adapter\Pdo;
-use Phalcon\Db\Column as PhalconColumn;
 
 /**
  * Database translation.

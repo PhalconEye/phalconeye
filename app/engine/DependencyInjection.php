@@ -19,6 +19,7 @@
 namespace Engine;
 
 use Phalcon\DI;
+use Phalcon\DiInterface;
 
 /**
  * Dependency container trait.
@@ -43,7 +44,7 @@ trait DependencyInjection
     /**
      * Create object.
      *
-     * @param DI $di Dependency injection container.
+     * @param DiInterface $di Dependency injection container.
      */
     public function __construct($di)
     {
@@ -54,7 +55,7 @@ trait DependencyInjection
     /**
      * Set DI.
      *
-     * @param DI $di Dependency injection container.
+     * @param DiInterface $di Dependency injection container.
      *
      * @return void
      */

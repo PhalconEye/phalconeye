@@ -1,56 +1,75 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine\Widget;
 
+use Engine\DependencyInjection;
+use Phalcon\DI;
+
 /**
- * Provides rendering for widget
+ * Widget element.
+ *
+ * @category  PhalconEye
+ * @package   Engine\Widget
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
  */
 class Element
 {
+    use DependencyInjection;
 
     /**
-     * @var \Phalcon\DiInterface null
+     * Widget object.
+     *
+     * @var \stdClass
      */
-    protected $_di = null;
+    protected $_widget;
 
     /**
-     * @var \stdClass null
-     */
-    protected $_widget = null;
-
-    /**
-     * @var array Widget parameters
+     * Widget parameters.
+     *
+     * @var array
      */
     protected $_widgetParams = array();
 
     /**
-     * @param $id - widget id in widgets table
-     * @param $params - widgets params in page
+     * Create widget element.
+     *
+     * @param mixed $id     Widget id in widgets table.
+     * @param array $params Widgets params in page.
      */
     public function __construct($id, $params = array())
     {
-
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
-        $this->_di = $di = \Phalcon\DI::getDefault();
+        $this->setDI(DI::getDefault());
         $this->_widget = Storage::get($id);
-
     }
 
+    /**
+     * Render widget element.
+     *
+     * @param string $action Action name.
+     *
+     * @return mixed
+     */
     public function render($action = 'index')
     {
         if (!$this->_widget || !$this->_widget->enabled) {
@@ -75,7 +94,7 @@ class Element
         $cacheKey = $controller->cacheKey();
         $cacheLifetime = $controller->cacheLifeTime();
         /** @var \Phalcon\Cache\BackendInterface $cache */
-        $cache = $this->_di->get('cacheOutput');
+        $cache = $this->getDI()->get('cacheOutput');
 
         if ($controller->isCached()) {
             $output = $cache->get($cacheKey, $cacheLifetime);
@@ -83,17 +102,17 @@ class Element
 
         if ($output === null) {
             // collect profiler info
-            $config = $this->_di->get('config');
-            if ($config->application->debug && $this->_di->has('profiler')){
-                $this->_di->get('profiler')->start();
+            $config = $this->getDI()->get('config');
+            if ($config->application->debug && $this->getDI()->has('profiler')) {
+                $this->getDI()->get('profiler')->start();
             }
 
-            $controller->start();
+            $controller->prepare();
             $controller->{"{$action}Action"}();
 
             // collect profiler info
-            if ($config->application->debug && $this->_di->has('profiler')){
-                $this->_di->get('profiler')->stop($controllerClass, 'widget');
+            if ($config->application->debug && $this->getDI()->has('profiler')) {
+                $this->getDI()->get('profiler')->stop($controllerClass, 'widget');
             }
 
             if ($controller->getNoRender()) {
@@ -107,5 +126,4 @@ class Element
 
         return $output;
     }
-
 }
