@@ -19,6 +19,7 @@
 namespace Engine\Form\Element;
 
 use Engine\Exception;
+use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
 use Phalcon\Forms\Element\Select;
 

@@ -46,6 +46,7 @@ class Cli extends Application
     {
         $this->_commands[] = new \Engine\Console\Commands\Assets();
         $this->_commands[] = new \Engine\Console\Commands\Database();
+        $this->_commands[] = new \Engine\Console\Commands\Cache();
     }
 
     /**

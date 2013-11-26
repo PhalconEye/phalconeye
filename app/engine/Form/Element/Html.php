@@ -19,6 +19,7 @@
 namespace Engine\Form\Element;
 
 use Engine\Form\Element;
+use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
 
 /**

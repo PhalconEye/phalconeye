@@ -18,6 +18,7 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
 use Phalcon\Forms\Element\Check as PhalconCheck;
 
@@ -91,10 +92,11 @@ class Check extends PhalconCheck implements ElementInterface
      * Prepare attributes.
      *
      * @param null $attributes Element attributes.
+     * @param null $useChecked Use checked value.
      *
      * @return array
      */
-    public function prepareAttributes($attributes = null)
+    public function prepareAttributes($attributes = null, $useChecked = null)
     {
         if (!is_array($attributes)) {
             $attributes = array();

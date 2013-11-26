@@ -18,10 +18,4 @@ namespace User;
 class Bootstrap extends \Core\Bootstrap
 {
     protected $_moduleName = "User";
-
-    public function registerServices($di)
-    {
-        parent::registerServices($di);
-    }
-
 }

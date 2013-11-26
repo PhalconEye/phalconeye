@@ -16,60 +16,76 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Core;
+namespace Engine\Console\Commands;
 
-use Engine\Installer as EngineInstaller;
-use Phalcon\Acl as PhalconAcl;
+use Engine\Asset\Manager,
+    Engine\Console\ConsoleUtil,
+    Engine\Console\AbstractCommand,
+    Engine\Console\CommandInterface,
+    Engine\Generator\Migrations;
+
+use Phalcon\DI;
 
 /**
- * Core installer.
+ * Cache command.
  *
  * @category  PhalconEye
- * @package   Core
+ * @package   Engine\Console\Commands
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Installer extends EngineInstaller
+class Cache extends AbstractCommand implements CommandInterface
 {
-    CONST
-        /**
-         * Current package version.
-         */
-        CURRENT_VERSION = '0.4.0';
+    /**
+     * Executes the command.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void|bool
+     */
+    public function run($di)
+    {
+        $action = $this->getOption(array('action', 1));
+        if ($action == 'cleanup') {
+            $di->get('app')->clearCache();
+
+            print ConsoleUtil::success('Cache successfully removed.') . PHP_EOL;
+        }
+    }
 
     /**
-     * Used to install specific database entities or other specific action.
+     * Returns the command identifier.
+     *
+     * @return string
+     */
+    public function getCommands()
+    {
+        return array('cache');
+    }
+
+    /**
+     * Prints the help for current command.
      *
      * @return void
      */
-    public function install()
+    public function getHelp()
     {
-        $this->runSqlFile(__DIR__ . '/Assets/sql/installation.sql');
+        print ConsoleUtil::headLine('Help:');
+        print ConsoleUtil::textLine('Cache management');
+
+        print ConsoleUtil::commandLine('cache cleanup', 'Remove all cache');
+        print PHP_EOL;
     }
 
     /**
-     * Used before package will be removed from the system.
+     * Returns number of required parameters for this command.
      *
-     * @return void
+     * @return int
      */
-    public function remove()
+    public function getRequiredParams()
     {
-
+        return 1;
     }
-
-    /**
-     * Used to apply some updates.
-     * Return 'string' (new version) if migration is not finished, 'null' if all updates were applied.
-     *
-     * @param string $currentVersion Current module version.
-     *
-     * @return string|null
-     */
-    public function update($currentVersion)
-    {
-        return null;
-    }
-
 }

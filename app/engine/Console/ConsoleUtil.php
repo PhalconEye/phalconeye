@@ -190,17 +190,17 @@ final class ConsoleUtil
         $out = self::colorize(
             str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         $out .= self::colorize(
             '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         $out .= self::colorize(
             str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         return $out;
     }
@@ -283,17 +283,17 @@ final class ConsoleUtil
         $out = self::colorize(
             str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         $out .= self::colorize(
             '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         $out .= self::colorize(
             str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
         );
-        print  PHP_EOL;
+        $out .= PHP_EOL;
 
         return $out;
     }

@@ -18,6 +18,7 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
 use Phalcon\Forms\Element\TextArea as PhalconTextArea;
 

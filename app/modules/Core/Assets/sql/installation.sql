@@ -7,12 +7,40 @@ SET time_zone = "+00:00";
 /*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
 /*!40101 SET NAMES utf8 */;
 
+--
+-- Dumping data for table `roles`
+--
+
+INSERT IGNORE INTO `roles` (`id`, `name`, `description`, `is_default`, `type`, `undeletable`) VALUES
+(1, 'Admin', 'Administrator', 0, 'admin', 1),
+(2, 'User', 'Default user role.', 1, 'user', 1),
+(3, 'Guest', 'Guest role', 0, 'guest', 1);
+
 -- Dumping data for table `access`
 --
 
 INSERT IGNORE INTO `access` (`object`, `action`, `role_id`, `value`) VALUES
-('AdminArea', 'access', 2, 'allow'),
+('AdminArea', 'access', 1, 'allow'),
+('AdminArea', 'access', 2, 'deny'),
 ('AdminArea', 'access', 3, 'deny');
+
+--
+-- Dumping data for table `pages`
+--
+
+INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywords`, `layout`, `controller`, `roles`, `view_count`) VALUES
+(1, 'Header', 'header', NULL, 'Header content', '', 'middle', NULL, NULL, NULL),
+(2, 'Footer', 'footer', NULL, 'Footer content', '', 'middle', NULL, NULL, NULL),
+(3, 'Home', 'home', '/', 'PhalconEye Home Page', 'PhalconEye', 'top,right,middle,left', NULL, NULL, 0);
+
+--
+-- Dumping data for table `widgets`
+--
+
+INSERT IGNORE INTO `widgets` (`id`, `module`, `name`, `description`, `is_paginated`, `is_acl_controlled`, `admin_form`, `enabled`) VALUES
+(1, 'core', 'HtmlBlock', 'Insert any HTML of you choice', 0, 1, 'action', 1),
+(2, 'core', 'Menu', 'Render menu', 0, 1, '\\Core\\Form\\Admin\\Widget\\Menu', 1),
+(3, 'core', 'Header', 'Settings for header of you site.', 0, 1, '\\Core\\Form\\Admin\\Widget\\Header', 1);
 
 --
 -- Dumping data for table `content`
@@ -61,24 +89,6 @@ INSERT IGNORE INTO `packages` (`id`, `name`, `type`, `title`, `description`, `ve
 (2, 'user', 'module', 'Users', 'PhalconEye Users', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 1);
 
 --
--- Dumping data for table `pages`
---
-
-INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywords`, `layout`, `controller`, `roles`, `view_count`) VALUES
-(1, 'Header', 'header', NULL, 'Header content', '', 'middle', NULL, NULL, NULL),
-(2, 'Footer', 'footer', NULL, 'Footer content', '', 'middle', NULL, NULL, NULL),
-(3, 'Home', 'home', '/', 'PhalconEye Home Page', 'PhalconEye', 'top,right,middle,left', NULL, NULL, 0);
-
---
--- Dumping data for table `roles`
---
-
-INSERT IGNORE INTO `roles` (`id`, `name`, `description`, `is_default`, `type`, `undeletable`) VALUES
-(1, 'Admin', 'Administrator', 0, 'admin', 1),
-(2, 'User', 'Default user role.', 1, 'user', 1),
-(3, 'Guest', 'Guest role', 0, 'guest', 1);
-
---
 -- Dumping data for table `settings`
 --
 
@@ -86,15 +96,6 @@ INSERT IGNORE INTO `settings` (`name`, `value`) VALUES
 ('system_default_language', 'en'),
 ('system_theme', 'default'),
 ('system_title', 'Phalcon Eye');
-
---
--- Dumping data for table `widgets`
---
-
-INSERT IGNORE INTO `widgets` (`id`, `module`, `name`, `description`, `is_paginated`, `is_acl_controlled`, `admin_form`, `enabled`) VALUES
-(1, 'core', 'HtmlBlock', 'Insert any HTML of you choice', 0, 1, 'action', 1),
-(2, 'core', 'Menu', 'Render menu', 0, 1, '\\Core\\Form\\Admin\\Widget\\Menu', 1),
-(3, 'core', 'Header', 'Settings for header of you site.', 0, 1, '\\Core\\Form\\Admin\\Widget\\Header', 1);
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;

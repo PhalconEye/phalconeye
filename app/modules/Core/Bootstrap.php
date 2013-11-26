@@ -107,7 +107,7 @@ class Bootstrap extends \Engine\Bootstrap
         }
 
         // check admin area
-        if (substr($di->get('dispatcher')->getControllerName(), 0, 5) == 'admin') {
+        if (substr($di->get('dispatcher')->getControllerName(), 0, 5) == 'Admin') {
             return;
         }
 

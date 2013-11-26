@@ -15,31 +15,11 @@
 
 namespace Engine;
 
-use Engine\Generator\Migrations;
-
 use Phalcon\DI;
 
 abstract class Installer
 {
-    /**
-     * Dependency injection.
-     *
-     * @var DI null
-     */
-    protected $di = null;
-
-    /**
-     * Current module name.
-     *
-     * @var null
-     */
-    private $_moduleName = null;
-
-    public function __construct($di, $moduleName)
-    {
-        $this->di = $di;
-        $this->_moduleName = $moduleName;
-    }
+    use DependencyInjection;
 
     /**
      * Used to install specific database entities or other specific action
@@ -61,18 +41,22 @@ abstract class Installer
     public abstract function update($currentVersion);
 
     /**
-     * Run migration scripts from ../modules/ModuleName/Migrations folder.
+     * Execute sql file.
      *
-     * @param string $version Version that must be migrated.
+     * @param string $filePath SQL file path.
+     *
+     * @throws Exception
+     * @return void
      */
-    protected function runMigration($version)
+    public function runSqlFile($filePath)
     {
-        Migrations::run(array(
-            'config' => $this->_di->get('config'),
-            'migrationsDir' => ROOT_PATH . '/app/modules/' . ucfirst($this->_moduleName) . '/migrations',
-            'toVersion' => $version,
-            'force' => false
-        ));
+        if (file_exists($filePath)) {
+            $connection = $this->getDI()->get('db');
+            $connection->begin();
+            $connection->query(file_get_contents($filePath));
+            $connection->commit();
+        } else {
+            throw new Exception(sprintf('Sql file "%s" does not exists', $filePath));
+        }
     }
-
 }
