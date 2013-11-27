@@ -1,28 +1,84 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine;
 
+use Phalcon\Db\Profiler as DatabaseProfiler;
+
+/**
+ * Profiler.
+ *
+ * @category  PhalconEye
+ * @package   Engine
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 class Profiler
 {
-    protected $_dbProfiler = null;
-    protected $_time = null;
-    protected $_memory = null;
+    /**
+     * Database profiler.
+     *
+     * @var DatabaseProfiler
+     */
+    protected $_dbProfile;
+
+    /**
+     * Current time.
+     *
+     * @var float
+     */
+    protected $_time;
+
+    /**
+     * Current memory.
+     *
+     * @var float
+     */
+    protected $_memory;
+
+    /**
+     * Time data.
+     *
+     * @var array
+     */
     protected $_timeData = array();
+
+    /**
+     * Memory data.
+     *
+     * @var array
+     */
     protected $_memoryData = array();
+
+    /**
+     * Errors data.
+     *
+     * @var array
+     */
     protected $_errorData = array();
+
+    /**
+     * Allowed object types for time and memory collection.
+     *
+     * @var array
+     */
     public static $objectTypes = array(
         'controller',
         'widget',
@@ -33,6 +89,8 @@ class Profiler
 
     /**
      * Start profiling.
+     *
+     * @return void
      */
     public function start()
     {
@@ -43,8 +101,8 @@ class Profiler
     /**
      * Stop profiling and collect data.
      *
-     * @param      $class
-     * @param      $objectType
+     * @param string $class      Object class name.
+     * @param string $objectType Object type.
      */
     public function stop($class, $objectType)
     {
@@ -66,8 +124,8 @@ class Profiler
     /**
      * Get collected data.
      *
-     * @param $type       - profiling type (time, memory, etc).
-     * @param $objectType - object type (controller, widget, etc).
+     * @param string $type       Profiling type (time, memory, etc).
+     * @param string $objectType Object type (controller, widget, etc).
      *
      * @return array
      */
@@ -89,10 +147,12 @@ class Profiler
 
 
     /**
-     * Collect errors
+     * Collect errors.
      *
-     * @param $error
-     * @param $trace
+     * @param string $error Error text.
+     * @param string $trace Error trace.
+     *
+     * @return void
      */
     public function addError($error, $trace)
     {
@@ -103,9 +163,11 @@ class Profiler
     }
 
     /**
-     * Set Phalcon database profiler
+     * Set Phalcon database profiler.
      *
-     * @param \Phalcon\Db\Profiler $profiler
+     * @param DatabaseProfiler $profiler Profiler object.
+     *
+     * @return void
      */
     public function setDbProfiler($profiler)
     {
@@ -113,9 +175,9 @@ class Profiler
     }
 
     /**
-     * Get Phalcon database profiler
+     * Get Phalcon database profiler.
      *
-     * @return \Phalcon\Db\Profiler null
+     * @return DatabaseProfiler
      */
     public function getDbProfiler()
     {

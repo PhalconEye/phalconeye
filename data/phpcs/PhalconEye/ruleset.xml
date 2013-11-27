@@ -5,7 +5,6 @@
     <rule ref="Generic.ControlStructures.InlineControlStructure"/>
     <rule ref="Generic.Formatting.SpaceAfterCast"/>
     <rule ref="Generic.Functions.CallTimePassByReference"/>
-    <rule ref="Generic.NamingConventions.UpperCaseConstantName"/>
     <rule ref="Generic.PHP.LowerCaseConstant"/>
     <rule ref="Squiz.Arrays.ArrayBracketSpacing"/>
     <rule ref="Squiz.ControlStructures.ControlSignature"/>
@@ -46,15 +45,9 @@
         <severity>0</severity>
     </rule>
 
-    <rule ref="Generic.Metrics.CyclomaticComplexity">
-        <properties>
-            <property name="complexity" value="16"/>
-            <property name="absoluteComplexity" value="150"/>
-        </properties>
-    </rule>
     <rule ref="Generic.Metrics.NestingLevel">
         <properties>
-            <property name="nestingLevel" value="10"/>
+            <property name="nestingLevel" value="15"/>
             <property name="absoluteNestingLevel" value="100"/>
         </properties>
     </rule>

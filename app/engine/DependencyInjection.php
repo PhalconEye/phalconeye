@@ -46,10 +46,12 @@ trait DependencyInjection
      *
      * @param DiInterface $di Dependency injection container.
      */
-    public function __construct($di)
+    public function __construct($di = null)
     {
+        if ($di == null) {
+            $di = DI::getDefault();
+        }
         $this->setDI($di);
-        $this->_di = $di;
     }
 
     /**

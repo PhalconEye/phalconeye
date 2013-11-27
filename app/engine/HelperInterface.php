@@ -18,7 +18,7 @@
 
 namespace Engine;
 
-use Phalcon\DI;
+use Phalcon\DiInterface;
 
 /**
  * Helper interface
@@ -35,10 +35,10 @@ interface HelperInterface
     /**
      * Execute helper.
      *
-     * @param DI    $di   Dependency injection.
-     * @param array $args Helper arguments.
+     * @param DiInterface $di   Dependency injection.
+     * @param array       $args Helper arguments.
      *
      * @return mixed
      */
-    static public function _(DI $di, array $args);
+    static public function _(DiInterface $di, array $args);
 }

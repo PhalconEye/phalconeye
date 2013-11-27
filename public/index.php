@@ -40,7 +40,7 @@ try {
     $application->run();
     echo $application->getOutput();
 } catch (Exception $e) {
-    \Engine\Error::exception($e);
+    \Engine\Exception::exception($e);
     throw $e;
 }
 

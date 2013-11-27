@@ -1,37 +1,52 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine;
 
 use Engine\Console\CommandsListener,
     Engine\Console\ConsoleUtil,
-    Engine\Console\AbstractCommand as PeCommand;
+    Engine\Console\AbstractCommand;
 
-
+/**
+ * Console class.
+ *
+ * @category  PhalconEye
+ * @package   Engine
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 class Cli extends Application
 {
     /**
      * Defined engine commands.
      *
-     * @var PeCommand[]
+     * @var AbstractCommand[]
      */
     private $_commands = array();
 
     /**
      * Run application.
+     *
+     * @param string $mode Run mode.
+     *
+     * @return void
      */
     public function run($mode = 'console')
     {
@@ -42,6 +57,11 @@ class Cli extends Application
         $this->getEventsManager()->attach('command', new CommandsListener());
     }
 
+    /**
+     * Init commands.
+     *
+     * @return void
+     */
     protected function _initCommands()
     {
         $this->_commands[] = new \Engine\Console\Commands\Assets();
@@ -79,6 +99,7 @@ class Cli extends Application
             $providedCommands = $command->getCommands();
             if (in_array($input, $providedCommands)) {
                 $command->setConfig($this->_config);
+
                 return $this->dispatch($command);
             }
         }
@@ -99,7 +120,9 @@ class Cli extends Application
         // Show exception with/without alternatives
         $soundex = soundex($input);
         if (isset($available[$soundex])) {
-            print ConsoleUtil::warningLine('Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?');
+            print ConsoleUtil::warningLine(
+                'Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
+            );
             $this->printAvailableCommands();
         } else {
             print ConsoleUtil::warningLine('Command "' . $input . '" not found.');
@@ -109,6 +132,8 @@ class Cli extends Application
 
     /**
      * Output available commands.
+     *
+     * @return void
      */
     public function printAvailableCommands()
     {
@@ -127,11 +152,11 @@ class Cli extends Application
     /**
      * Dispatch commands.
      *
-     * @param PeCommand $command
+     * @param AbstractCommand $command Command object.
      *
      * @return bool
      */
-    public function dispatch(PeCommand $command)
+    public function dispatch(AbstractCommand $command)
     {
         //If beforeCommand fails abort
         if ($this->_eventsManager->fire('command:beforeCommand', $command) === false) {

@@ -497,7 +497,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                             $widget->save($widgetData);
                         } catch (\PDOException $e) {
                             $this->flash->notice('Failed to install module widget... Check logs.');
-                            \Engine\Error::exception($e);
+                            \Engine\Exception::exception($e);
                         }
                         if ($widget->validationHasFailed()) {
                             $messages = $widget->getMessages();

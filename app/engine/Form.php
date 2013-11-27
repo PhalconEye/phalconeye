@@ -1,57 +1,170 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine;
 
+use Engine\Db\AbstractModel;
+use Engine\Form\Element;
+use Phalcon\Filter;
+use Phalcon\Forms\Form as PhalconForm;
 use Phalcon\Tag as Tag;
+use Phalcon\Translate;
 
-class Form extends \Phalcon\Forms\Form
+/**
+ * Form class.
+ *
+ * @category  PhalconEye
+ * @package   Engine
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Form extends PhalconForm
 {
 
-    /**
-     * Method type constants
-     */
-    const METHOD_DELETE = 'delete';
-    const METHOD_GET = 'get';
-    const METHOD_POST = 'post';
-    const METHOD_PUT = 'put';
+    const
+        /**
+         * Request method type - delete.
+         */
+        METHOD_DELETE = 'delete',
+
+        /**
+         * Request method type - get.
+         */
+        METHOD_GET = 'get',
+
+        /**
+         * Request method type - post.
+         */
+        METHOD_POST = 'post',
+
+        /**
+         * Request method type - put.
+         */
+        METHOD_PUT = 'put';
 
 
-    /**
-     * Encoding type constants
-     */
-    const ENCTYPE_URLENCODED = 'application/x-www-form-urlencoded';
-    const ENCTYPE_MULTIPART = 'multipart/form-data';
+    const
+        /**
+         * Encoding type - normal.
+         */
+        ENCTYPE_URLENCODED = 'application/x-www-form-urlencoded',
+
+        /**
+         * Encoding type - with files and big data.
+         */
+        ENCTYPE_MULTIPART = 'multipart/form-data';
 
     /**
      * Form messages
      */
     const MESSAGE_FIELD_REQUIRED = "Field '%s' is required!";
 
+    /**
+     * Translation object.
+     *
+     * @var Translate
+     */
     private $_trans = null;
+
+    /**
+     * Element related data.
+     *
+     * @var array
+     */
     private $_elementsData = array();
+
+    /**
+     * Already ordered elements.
+     *
+     * @var array
+     */
     private $_orderedElements = array();
+
+    /**
+     * Form buttons.
+     *
+     * @var array
+     */
     private $_buttons = array();
+
+    /**
+     * Current order index.
+     *
+     * @var int
+     */
     private $_currentOrder = 1;
+
+    /**
+     * Current errors.
+     *
+     * @var array
+     */
     private $_errors = array();
+
+    /**
+     * Current notices.
+     *
+     * @var array
+     */
     private $_notices = array();
+
+    /**
+     * Use token?
+     *
+     * @var bool
+     */
     private $_useToken = false;
+
+    /**
+     * Use null values if element is empty.
+     *
+     * @var bool
+     */
     private $_useNullValue = true;
+
+    /**
+     * Is validation finished?
+     *
+     * @var bool
+     */
     private $_validationFinished = false;
+
+    /**
+     * Form has validators?
+     *
+     * @var bool
+     */
     private $_hasValidators = false;
+
+    /**
+     * Elements has been prepared?
+     *
+     * @var bool
+     */
     private $_elementsPrepared = false;
+
+    /**
+     * All elements options.
+     *
+     * @var array
+     */
     private $_elementsOptions = array(
         'label',
         'description',
@@ -60,23 +173,58 @@ class Form extends \Phalcon\Forms\Form
         'validators'
     );
 
-    protected $_action = '';
-    private $_title = '';
-    private $_description = '';
+    /**
+     * Current action.
+     *
+     * @var string
+     */
+    protected $_action;
+
+    /**
+     * Form title.
+     *
+     * @var string
+     */
+    private $_title;
+
+    /**
+     * From description.
+     *
+     * @var string
+     */
+    private $_description;
+
+    /**
+     * Form attributes.
+     *
+     * @var array
+     */
     private $_attribs = array();
+
+    /**
+     * Form current method.
+     *
+     * @var string
+     */
     private $_method = self::METHOD_POST;
+
+    /**
+     * Form current encyption type.
+     *
+     * @var string
+     */
     private $_enctype = self::ENCTYPE_URLENCODED;
 
     /**
-     * Form constructor
+     * Form constructor.
      *
-     * @param \Phalcon\Mvc\Model $entity
+     * @param AbstractModel $entity Some entity.
      */
-    public function __construct(\Phalcon\Mvc\Model $entity = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        // collect profile info
+        // Collect profile info.
         $config = $this->di->get('config');
-        if ($config->application->debug && $this->di->has('profiler')){
+        if ($config->application->debug && $this->di->has('profiler')) {
             $this->di->get('profiler')->start();
         }
 
@@ -84,51 +232,60 @@ class Form extends \Phalcon\Forms\Form
         $this->_action = substr($_SERVER['REQUEST_URI'], 1);
         parent::__construct($entity);
 
-        $this->init();
+        if (method_exists($this, 'init')) {
+            $this->init();
+        }
 
-        // collect profile info
-        if ($config->application->debug && $this->di->has('profiler')){
+        // Collect profile info.
+        if ($config->application->debug && $this->di->has('profiler')) {
             $this->di->get('profiler')->stop(get_called_class(), 'form');
         }
     }
 
     /**
-     * Second initialization of the form
-     */
-    public function init()
-    {
-    }
-
-    /**
-     * Clear all elements from form
+     * Clear all elements from form.
+     *
+     * @return void
      */
     public function clearElements()
     {
         $this->_elementsData = array();
     }
 
+
     /**
-     * Add new element to form
+     * Clear all buttons from form.
      *
-     * @param $type - element type, see /Engine/Form/Element/*
-     * @param $name - element name
-     * @param array $params - element parameters
-     * @param null $order - order of elemen t
+     * @return void
+     */
+    public function clearButtons()
+    {
+        $this->_buttons = array();
+    }
+
+    /**
+     * Add new element to form.
      *
+     * @param string $type   Element type, look at \Engine\Form\Element\*
+     * @param string $name   Element name
+     * @param array  $params Element params.
+     * @param null   $order  Element order.
+     *
+     * @throws Exception
      * @return $this
-     * @throws \Engine\Exception
      */
     public function addElement($type, $name, $params = array(), $order = null)
     {
         $elementClass = '\Engine\Form\Element\\' . ucfirst($type);
-        if (!class_exists($elementClass))
-            throw new \Engine\Exception("Element with type '{$type}' doesn't exist.");
+        if (!class_exists($elementClass)) {
+            throw new Exception("Element with type '{$type}' doesn't exist.");
+        }
 
         if ($order === null) {
             $order = $this->_currentOrder++;
         }
 
-        // check file input
+        // Check file input.
         if ($type == "file") {
             $this->_enctype = self::ENCTYPE_MULTIPART;
         }
@@ -136,11 +293,11 @@ class Form extends \Phalcon\Forms\Form
         $onlyParams = array_intersect_key($params, array_flip($this->_elementsOptions));
         $attributes = array_diff_key($params, $onlyParams);
 
-        /* @var \Phalcon\Forms\Element $element */
+        /* @var Element $element */
         $element = new $elementClass($name, $attributes);
 
-        // Set default value
-        if ($this->_entity && isset($this->_entity->$name)){
+        // Set default value.
+        if ($this->_entity && isset($this->_entity->$name)) {
             $element->setDefault($this->_entity->$name);
         }
 
@@ -156,21 +313,13 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Clear all buttons from form
-     */
-    public function clearButtons()
-    {
-        $this->_buttons = array();
-    }
-
-    /**
-     * Add button element
+     * Add button element.
      *
-     * @param $name
-     * @param bool $isSubmit
-     * @param array $params
+     * @param string $name     Button name.
+     * @param bool   $isSubmit Button type is submit ?
+     * @param array  $params   Button param.
      *
-*@return $this
+     * @return $this
      */
     public function addButton($name, $isSubmit = false, $params = array())
     {
@@ -184,13 +333,13 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Add link element
+     * Add link element.
      *
-     * @param $name
-     * @param string $href
-     * @param array $params
+     * @param string $name   Link name.
+     * @param string $href   Link href.
+     * @param array  $params Link params.
      *
-*@return $this
+     * @return $this
      */
     public function addButtonLink($name, $href = 'javascript:;', $params = array())
     {
@@ -206,11 +355,11 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Remove element by name (short function, same as removeElement)
+     * Remove element by name (short function, same as removeElement).
      *
-     * @param $name
+     * @param string $name Element name.
      *
-*@return $this
+     * @return $this
      */
     public function remove($name)
     {
@@ -218,47 +367,50 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Remove element by name
+     * Remove element by name.
      *
-     * @param $name
+     * @param string $name Element name.
      *
-*@return $this
+     * @return $this
      */
     public function removeElement($name)
     {
-        if ($this->_elementsPrepared && $this->has($name))
+        if ($this->_elementsPrepared && $this->has($name)) {
             parent::remove($name);
+        }
 
         if (!empty($this->_elementsData[$name])) {
             unset($this->_elementsData[$name]);
         }
+
         return $this;
     }
 
     /**
-     * Get element object
+     * Get element object.
      *
-     * @param $name
+     * @param string $name Element name.
      *
-*@return \Engine\Form\Element
-     * @throws \Engine\Exception
+     * @return Element
+     * @throws Exception
      */
     public function getElement($name)
     {
-        if (empty($this->_elementsData[$name]))
-            throw new \Engine\Exception('Form has no element "' . $name . '"');
+        if (empty($this->_elementsData[$name])) {
+            throw new Exception('Form has no element "' . $name . '"');
+        }
 
         return $this->_elementsData[$name]['element'];
     }
 
     /**
-     * Set element attribute
+     * Set element attribute.
      *
-     * @param $name
-     * @param $key
-     * @param $value
+     * @param string $name  Element name.
+     * @param string $key   Attribute name.
+     * @param string $value Attribute value.
      *
-*@return $this
+     * @return $this
      */
     public function setElementAttrib($name, $key, $value)
     {
@@ -269,12 +421,12 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Set form option
+     * Set form option.
      *
-     * @param $key
-     * @param $value
+     * @param string $key   Option name.
+     * @param string $value Option value.
      *
-*@return $this
+     * @return $this
      */
     public function setOption($key, $value)
     {
@@ -286,51 +438,54 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Set form attribute
+     * Set form attribute.
      *
-     * @param $key
-     * @param $value
+     * @param string $key   Attribute name.
+     * @param string $value Attribute value.
      *
-*@return $this
+     * @return $this
      */
     public function setAttrib($key, $value)
     {
         $this->_attribs[$key] = $value;
+
         return $this;
     }
 
     /**
-     * Add error message
+     * Add error message.
      *
-     * @param $message
+     * @param string $message Message text.
      *
-*@return $this
+     * @return $this
      */
     public function addError($message)
     {
         $this->_errors[] = $message;
+
         return $this;
     }
 
     /**
-     * Add notice message
+     * Add notice message.
      *
-     * @param $message
+     * @param string $message Message text.
      *
-*@return $this
+     * @return $this
      */
     public function addNotice($message)
     {
         $this->_notices[] = $message;
+
         return $this;
     }
 
     /**
-     * Set form values
+     * Set form values.
      *
-     * @param $values
+     * @param array $values Form values.F
      *
-*@return $this
+     * @return $this
      */
     public function setValues($values)
     {
@@ -342,25 +497,29 @@ class Form extends \Phalcon\Forms\Form
                 $element['element']->setDefault(null);
             }
         }
+
         return $this;
     }
 
     /**
-     * Set element value by name
+     * Set element value by name.
      *
-     * @param $name
-     * @param $value
+     * @param string $name  Element name.
+     * @param string $value Element value.
      *
-*@return $this
+     * @return $this
      */
     public function setValue($name, $value)
     {
         $this->getElement($name)->setDefault($value);
+
         return $this;
     }
 
     /**
-     * Get form values
+     * Get form values.
+     *
+     * @param bool $getEntity Get entity if possible instead of array data.
      *
      * @return array
      */
@@ -370,24 +529,25 @@ class Form extends \Phalcon\Forms\Form
             return $this->_entity;
         } else {
             $values = array();
-            foreach ($this->_elementsData as $name => $element) {
+            foreach (array_keys($this->_elementsData) as $name) {
                 if (isset($_POST[$name]) && isset($this->_elementsData[$name]['attributes']['value'])) {
                     $values[$name] = $this->_elementsData[$name]['attributes']['value'];
                 } else {
                     $values[$name] = null;
                 }
             }
+
             return $values;
         }
     }
 
     /**
-     * Get element value by name
+     * Get element value by name.
      *
-     * @param string $name
+     * @param string $name Element name.
      *
-*@return mixed|null
-     * @throws \Engine\Exception
+     * @throws Exception
+     * @return mixed|null
      */
     public function getValue($name)
     {
@@ -399,7 +559,7 @@ class Form extends \Phalcon\Forms\Form
         }
 
         if (!isset($this->_elementsData[$name])) {
-            throw new \Engine\Exception('Form has no element "' . $name . '"');
+            throw new Exception('Form has no element "' . $name . '"');
         }
 
         if (!isset($this->_elementsData[$name]['attributes']['value'])) {
@@ -410,26 +570,32 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Prepare elements to render or validation
-     * This method add element and validator to Phalcon form class
+     * Prepare elements to render or validation.
+     * This method add element and validator to Phalcon form class.
+     *
+     * @return void
      */
     protected function prepareElements()
     {
-        if ($this->_elementsPrepared) return;
+        if ($this->_elementsPrepared) {
+            return;
+        }
 
         $this->_orderedElements = $this->_elementsData;
 
-        // sort elements by order
-        //usort($this->_orderedElements, function ($a, $b) {
-        //    return $a['order'] - $b['order'];
-        //});
+        // Sort elements by order.
+        usort($this->_orderedElements, function ($a, $b) {
+            return $a['order'] - $b['order'];
+        });
 
-        // add elements to Phalcon form class
+        // Add elements to Phalcon form class.
         foreach ($this->_orderedElements as $element) {
-            if (!empty($element['params']['label']))
+            if (!empty($element['params']['label'])) {
                 $element['element']->setLabel($element['params']['label']);
-            if (!empty($element['params']['description']))
+            }
+            if (!empty($element['params']['description'])) {
                 $element['element']->setDescription($element['params']['description']);
+            }
             if (!empty($element['params']['filters'])) {
                 $element['element']->setFilters($element['params']['filters']);
             }
@@ -447,28 +613,29 @@ class Form extends \Phalcon\Forms\Form
     }
 
     /**
-     * Validates the form
+     * Validates the form.
      *
-     * @param array $data
-     * @param object $entity
+     * @param array         $data               Data to validate.
+     * @param AbstractModel $entity             Entity to validate.
+     * @param bool          $skipEntityCreation Skip entity creation.
      *
-*@return boolean
+     * @return boolean
      */
     public function isValid($data = null, $entity = null, $skipEntityCreation = false)
     {
         if ($this->_useToken && !$this->di->get('security')->checkToken()) {
             $this->addError('Token is not valid!');
+
             return false;
         }
-
         $elementsData = $this->_elementsData;
 
-        // save values in form
+        // Save values in form.
         $this->setValues($data);
 
-        // Filter and check required
+        // Filter and check required.
         $requiredFailed = false;
-        $filter = new \Phalcon\Filter();
+        $filter = new Filter();
         foreach ($elementsData as $name => $element) {
 
             // filter
@@ -478,7 +645,12 @@ class Form extends \Phalcon\Forms\Form
 
             if (isset($element['params']['required']) && $element['params']['required'] === true) {
                 if (!isset($data[$name]) || empty($data[$name])) {
-                    $this->addError(sprintf(self::MESSAGE_FIELD_REQUIRED, (!empty($element['params']['label'])) ? $this->_trans->_($element['params']['label']) : $name));
+                    $this->addError(
+                        sprintf(
+                            self::MESSAGE_FIELD_REQUIRED,
+                            !empty($element['params']['label']) ? $this->_trans->_($element['params']['label']) : $name
+                        )
+                    );
                     $requiredFailed = true;
                 }
             }
@@ -490,66 +662,84 @@ class Form extends \Phalcon\Forms\Form
             }
         }
 
-        if ($requiredFailed)
+        if ($requiredFailed) {
             return false;
+        }
 
         $this->setValues($data);
         $this->prepareElements();
 
         $parentIsValid = parent::isValid($data, $this->_entity);
+        $this->_validationFinished = true;
+
+        return $this->_isEntityValid($entity, $data, $parentIsValid, $skipEntityCreation);
+    }
+
+    protected function _isEntityValid($entity, $data, $parentIsValid, $skipEntityCreation)
+    {
         $modelIsValid = true;
         if ($this->_entity !== null) {
-            if ($entity !== null)
+            if ($entity !== null) {
                 $this->_entity = $entity;
+            }
 
             $this->bind($data, $this->_entity);
             if ($parentIsValid) {
-                if ($skipEntityCreation){
-                    if (method_exists($this->_entity, 'validation'))
-                    $modelIsValid = ($this->_entity->validation() !== false);
-                }
-                else{
+                if ($skipEntityCreation) {
+                    if (method_exists($this->_entity, 'validation')) {
+                        $modelIsValid = ($this->_entity->validation() !== false);
+                    }
+                } else {
                     $modelIsValid = $this->_entity->save();
                 }
             }
         }
 
-        $this->_validationFinished = true;
         return $modelIsValid && $parentIsValid;
     }
 
     /**
-     * Renders form
+     * Render the form.
      *
-     * @param string $name
-     * @param array $attributes
+     * @return string
      *
-*@return string
+     * @TODO: Refactor this.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function render($name = null, $attributes = null)
+    public function render()
     {
         if (empty($this->_elementsData)) {
             return "";
         }
-
         $trans = $this->_trans;
-
         $this->prepareElements();
 
-        $content = Tag::form(array_merge($this->_attribs, array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype))) . '<div>';
+        $content =
+            Tag::form(
+                array_merge(
+                    $this->_attribs,
+                    array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype)
+                )
+            ) . '<div>';
 
         ///////////////////////////////////////////
         /// Title and Description
         //////////////////////////////////////////
         if (!empty($this->_title) || !empty($this->_description)) {
-            $content .= '<div class="form_header"><h3>' . $trans->_($this->_title) . '</h3><p>' . $trans->_($this->_description) . '</p></div>';
+            $content .= '<div class="form_header"><h3>' .
+                $trans->_($this->_title) . '</h3><p>' .
+                $trans->_($this->_description) . '</p></div>';
         }
 
         ///////////////////////////////////////////
         /// Error Messages
         //////////////////////////////////////////
 
-        if (!empty($this->_errors) || count($this->_messages) != 0 || ($this->_entity != null && count($this->_entity->getMessages()) != 0)) {
+        if (
+            !empty($this->_errors) ||
+            count($this->_messages) != 0 ||
+            ($this->_entity != null && count($this->_entity->getMessages()) != 0)
+        ) {
             $content .= '<ul class="form_errors">';
             foreach ($this->_errors as $error) {
                 $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error));
@@ -584,7 +774,7 @@ class Form extends \Phalcon\Forms\Form
 
         $content .= '<div class="form_elements">';
         $hiddenFields = array();
-        /* @var \Phalcon\Forms\Element|Form_ElementInterface $element */
+        /* @var Element $element */
         foreach ($this as $element) {
 
             $elementData = $this->_elementsData[$element->getName()];
@@ -600,8 +790,14 @@ class Form extends \Phalcon\Forms\Form
             }
 
             $content .= '<div class="form_element_container">';
-            $label = (!empty($elementData['params']['label']) ? sprintf('<label for="%s">%s</label>', $element->getName(), $trans->_($elementData['params']['label'])) : '');
-            $description = (!empty($elementData['params']['description']) ? sprintf('<p>%s</p>', $trans->_($elementData['params']['description'])) : '');
+            $label = (!empty($elementData['params']['label']) ?
+                sprintf('<label for="%s">%s</label>', $element->getName(), $trans->_($elementData['params']['label'])) :
+                ''
+            );
+            $description = (!empty($elementData['params']['description']) ?
+                sprintf('<p>%s</p>', $trans->_($elementData['params']['description'])) :
+                ''
+            );
 
             if ($element->useDefaultLayout()) {
                 $content .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
@@ -652,17 +848,22 @@ class Form extends \Phalcon\Forms\Form
                 }
 
                 if (!empty($button['is_link']) && $button['is_link'] == true) {
-                    $content .= sprintf('<a href="%s" %s>%s</a>', $url->get($button['href']), $attribs, $trans->_($button['name']));
+                    $content .= sprintf(
+                        '<a href="%s" %s>%s</a>', $url->get($button['href']), $attribs, $trans->_($button['name'])
+                    );
                 } else {
-                    $content .= sprintf('<button%s%s>%s</button>', ($button['is_submit'] === true ? ' type="submit"' : ''), $attribs, $this->_trans->_($button['name']));
+                    $content .= sprintf(
+                        '<button%s%s>%s</button>',
+                        ($button['is_submit'] === true ? ' type="submit"' : ''),
+                        $attribs,
+                        $this->_trans->_($button['name'])
+                    );
                 }
 
             }
             $content .= '</div>';
         }
-
         $content .= '</div></form>';
-
 
         return $content;
     }

@@ -1,76 +1,113 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Engine;
 
-use Phalcon\Mvc\View\Engine\Volt;use Phalcon\Mvc\View;
+use Engine\Plugin\CacheAnnotation;
+use Engine\Plugin\NotFound;
+use Phalcon\Config as PhalconConfig;
+use Phalcon\DI;
+use Phalcon\DiInterface;
+use Phalcon\Mvc\Dispatcher;
+use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Mvc\View;
 
+/**
+ * Bootstrap class.
+ *
+ * @category  PhalconEye
+ * @package   Engine
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
 abstract class Bootstrap implements BootstrapInterface
 {
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
 
     /**
+     * Module name.
+     *
      * @var string
      */
     protected $_moduleName = "";
 
     /**
-     * @var \Phalcon\Config
+     * Configuration.
+     *
+     * @var PhalconConfig
      */
     protected $_config;
 
     /**
-     * @var \Phalcon\DiInterface
+     * Create Bootstrap.
+     *
+     * @param DiInterface $di Dependency injection.
      */
-    protected $_di;
-
-    public function __construct()
+    public function __construct($di = null)
     {
-        $this->_di = \Phalcon\DI::getDefault();
-        $this->_config = $this->_di->get('config');
+        $this->__DIConstruct($di);
+        $this->_config = $this->getDI()->get('config');
     }
 
+    /**
+     * Destroy bootstrap.
+     */
     public function __destruct()
     {
         if ($this->_config->application->debug && $this->_config->installed) {
             $defaultModuleBootstrap = ucfirst(Application::$defaultModule) . '\Bootstrap';
-            $defaultModuleBootstrap::handleProfiler($this->_di, $this->_config);
+            $defaultModuleBootstrap::handleProfiler($this->getDI(), $this->_config);
         }
     }
 
+    /**
+     * Register specific autoloaders.
+     *
+     * @return void
+     */
     public function registerAutoloaders()
     {
 
     }
 
     /**
-     * Register the services here to make them general or register in the ModuleDefinition to make them module-specific
+     * Register the services.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @throws Exception
+     * @return void
      */
     public function registerServices($di)
     {
-
         if (empty($this->_moduleName)) {
             $class = new \ReflectionClass($this);
-            throw new \Engine\Exception('Bootstrap has no module name: ' . $class->getFileName());
+            throw new Exception('Bootstrap has no module name: ' . $class->getFileName());
         }
 
         $moduleDirectory = $this->getModuleDirectory();
-
         $config = $this->_config;
 
-        //Create an event manager
+        // Create an event manager.
         $eventsManager = new EventsManager($config);
 
         /*************************************************/
@@ -81,40 +118,40 @@ abstract class Bootstrap implements BootstrapInterface
             $view = new View();
             $view->setViewsDir($moduleDirectory . '/View/');
 
-            $view->registerEngines(array(
-                ".volt" => function ($view, $di) use ($config) {
+            $view->registerEngines(
+                array(
+                    ".volt" =>
+                        function ($view, $di) use ($config) {
+                            $volt = new Volt($view, $di);
+                            $volt->setOptions(array(
+                                "compiledPath" => $config->application->view->compiledPath,
+                                "compiledExtension" => $config->application->view->compiledExtension,
+                                'compiledSeparator' => $config->application->view->compiledSeparator,
+                                'compileAlways' => $config->application->view->compileAlways
+                            ));
 
-                        $volt = new Volt($view, $di);
+                            $compiler = $volt->getCompiler();
 
-                        $volt->setOptions(array(
-                            "compiledPath" => $config->application->view->compiledPath,
-                            "compiledExtension" => $config->application->view->compiledExtension,
-                            'compiledSeparator' => $config->application->view->compiledSeparator,
-                            'compileAlways' => $config->application->view->compileAlways
-                        ));
+                            // Register helper.
+                            $compiler->addFunction('helper', function ($resolvedArgs) use ($di) {
+                                return '(new \Engine\Helper(' . $resolvedArgs . '))';
+                            });
 
-                        $compiler = $volt->getCompiler();
+                            // Register translation filter.
+                            $compiler->addFilter('trans', function ($resolvedArgs) {
+                                return '$this->trans->query(' . $resolvedArgs . ')';
+                            });
 
-                        //register helper
-                        $compiler->addFunction('helper', function ($resolvedArgs) use ($di) {
-                            return '(new \Engine\Helper(' . $resolvedArgs . '))';
-                        });
+                            $compiler->addFilter('dump', function ($resolvedArgs) {
+                                return 'var_dump(' . $resolvedArgs . ')';
+                            });
 
-                        // register translation filter
-                        $compiler->addFilter('trans', function ($resolvedArgs) {
-                            return '$this->trans->query(' . $resolvedArgs . ')';
-                        });
+                            return $volt;
+                        }
+                )
+            );
 
-                        $compiler->addFilter('dump', function ($resolvedArgs) {
-                            return 'var_dump(' . $resolvedArgs . ')';
-                        });
-
-
-                        return $volt;
-                    }
-            ));
-
-            // Attach a listener for type "view"
+            // Attach a listener for type "view".
             if (!$config->application->debug) {
                 $eventsManager->attach("view", function ($event, $view) use ($di) {
                     if ($event->getType() == 'notFoundView') {
@@ -147,8 +184,8 @@ abstract class Bootstrap implements BootstrapInterface
         //  Initialize dispatcher
         /*************************************************/
         if (!$config->application->debug) {
-            $eventsManager->attach("dispatch:beforeException", new \Engine\Plugin\NotFound());
-            $eventsManager->attach('dispatch:beforeExecuteRoute', new \Engine\Plugin\CacheAnnotation());
+            $eventsManager->attach("dispatch:beforeException", new NotFound());
+            $eventsManager->attach('dispatch:beforeExecuteRoute', new CacheAnnotation());
         }
 
         /**
@@ -160,20 +197,29 @@ abstract class Bootstrap implements BootstrapInterface
         }
 
         // Create dispatcher
-        $dispatcher = new \Phalcon\Mvc\Dispatcher();
+        $dispatcher = new Dispatcher();
         $dispatcher->setEventsManager($eventsManager);
         $di->set('dispatcher', $dispatcher);
 
     }
 
+    /**
+     * Get current module name.
+     *
+     * @return string
+     */
     public function getModuleName()
     {
         return $this->_moduleName;
     }
 
+    /**
+     * Get current module directory.
+     *
+     * @return string
+     */
     public function getModuleDirectory()
     {
         return $this->_config->application->modulesDir . $this->_moduleName;
     }
-
 }

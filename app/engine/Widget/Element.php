@@ -33,7 +33,9 @@ use Phalcon\DI;
  */
 class Element
 {
-    use DependencyInjection;
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
 
     /**
      * Widget object.
@@ -57,9 +59,10 @@ class Element
      */
     public function __construct($id, $params = array())
     {
+        $this->__DIConstruct();
+
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
-        $this->setDI(DI::getDefault());
         $this->_widget = Storage::get($id);
     }
 

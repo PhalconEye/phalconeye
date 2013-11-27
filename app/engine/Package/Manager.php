@@ -36,7 +36,9 @@ use Phalcon\Filter as PhalconFilter;
  */
 class Manager
 {
-    use DependencyInjection;
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
 
     const
         /**
@@ -129,11 +131,7 @@ class Manager
      */
     public function __construct($packages = array(), $di = null)
     {
-        if ($di == null) {
-            $di = DI::getDefault();
-        }
-        $this->setDI($di);
-
+        $this->__DIConstruct($di);
         $this->_installedPackages = array();
         if (!empty($packages)) {
             foreach ($packages as $package) {

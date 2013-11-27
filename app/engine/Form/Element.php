@@ -18,7 +18,7 @@
 
 namespace Engine\Form;
 
-use Engine\Form\Element\Description;
+use Engine\Form\Element\Traits\Description;
 use Phalcon\Forms\Element as PhalconElement;
 
 /**
