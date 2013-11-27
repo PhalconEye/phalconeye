@@ -16,7 +16,7 @@ PhalconEye CMS is built under Travis CI service. Every commit pushed to this rep
 into the continuous integration service and will run: PHPUnit tests, phpmd, phpcs
 The current build status is:
 
-Coming soon...
+[![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
 
 Third Party
 -----------
