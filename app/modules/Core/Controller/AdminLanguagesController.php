@@ -1,31 +1,61 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Controller;
 
+use Core\Form\Admin\Language\Create;
+use Core\Form\Admin\Language\CreateItem;
+use Core\Form\Admin\Language\Edit;
+use Core\Form\Admin\Language\EditItem;
+use Core\Model\Language;
+use Core\Model\LanguageTranslation;
+use Engine\Navigation;
+use Phalcon\Http\ResponseInterface;
+use Phalcon\Paginator\Adapter\QueryBuilder;
+
 /**
+ * Admin languages controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Controller
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @RoutePrefix("/admin/languages", name="admin-languages")
  */
-class AdminLanguagesController extends \Core\Controller\BaseAdmin
+class AdminLanguagesController extends BaseAdmin
 {
-    CONST FLAGS_DIR = '/files/languages/';
+    const
+        /**
+         * Language flags directory location.
+         */
+        FLAGS_DIR = '/files/languages/';
 
+    /**
+     * Init controller.
+     *
+     * @return void
+     */
     public function init()
     {
-        $navigation = new \Engine\Navigation();
+        $navigation = new Navigation();
         $navigation
             ->setItems(array(
                 'index' => array(
@@ -44,21 +74,26 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
                 )));
 
         $this->view->navigation = $navigation;
-
     }
 
     /**
+     * Index action.
+     *
+     * @return void
+     *
      * @Get("/", name="admin-languages")
      */
     public function indexAction()
     {
         $currentPage = $this->request->getQuery('page', 'int', 1);
-        if ($currentPage < 1) $currentPage = 1;
+        if ($currentPage < 1) {
+            $currentPage = 1;
+        }
 
         $builder = $this->modelsManager->createBuilder()
             ->from('\Core\Model\Language');
 
-        $paginator = new \Phalcon\Paginator\Adapter\QueryBuilder(
+        $paginator = new QueryBuilder(
             array(
                 "builder" => $builder,
                 "limit" => 25,
@@ -66,16 +101,20 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             )
         );
 
-        // Get the paginated results
+        // Get the paginated results.
         $this->view->paginator = $paginator->getPaginate();
     }
 
     /**
+     * Create language action.
+     *
+     * @return void|ResponseInterface
+     *
      * @Route("/create", methods={"GET", "POST"}, name="admin-languages-create")
      */
     public function createAction()
     {
-        $form = new \Core\Form\Admin\Language\Create();
+        $form = new Create();
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -106,20 +145,27 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
 
         $lang->save();
         $this->flashSession->success('New object created successfully!');
+
         return $this->response->redirect(array('for' => "admin-languages"));
     }
 
     /**
+     * Edit language action.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
      * @Route("/edit/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-edit")
      */
     public function editAction($id)
     {
-        $item = \Core\Model\Language::findFirst($id);
-        if (!$item)
+        $item = Language::findFirst($id);
+        if (!$item) {
             return $this->response->redirect(array('for' => "admin-languages"));
+        }
 
-
-        $form = new \Core\Form\Admin\Language\Edit($item);
+        $form = new Edit($item);
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -137,17 +183,23 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             $lang->save();
         }
 
-
         $this->flashSession->success('Object saved!');
+
         return $this->response->redirect(array('for' => "admin-languages"));
     }
 
     /**
+     * Delete language action.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
      * @Get("/delete/{id:[0-9]+}", name="admin-languages-delete")
      */
     public function deleteAction($id)
     {
-        $item = \Core\Model\Language::findFirst($id);
+        $item = Language::findFirst($id);
         if ($item) {
             if ($item->delete()) {
                 $this->flashSession->notice('Object deleted!');
@@ -160,16 +212,25 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
     }
 
     /**
+     * Manage language action.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
      * @Get("/manage/{id:[0-9]+}", name="admin-languages-manage")
      */
     public function manageAction($id)
     {
-        $item = \Core\Model\Language::findFirst($id);
-        if (!$item)
+        $item = Language::findFirst($id);
+        if (!$item) {
             return $this->response->redirect(array('for' => "admin-languages"));
+        }
 
         $currentPage = $this->request->getQuery('page', 'int', 1);
-        if ($currentPage < 1) $currentPage = 1;
+        if ($currentPage < 1) {
+            $currentPage = 1;
+        }
 
         $search = $this->request->get('search');
         if ($search != null) {
@@ -182,7 +243,7 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
                 ->from('\Core\Model\LanguageTranslation');
         }
 
-        $paginator = new \Phalcon\Paginator\Adapter\QueryBuilder(
+        $paginator = new QueryBuilder(
             array(
                 "builder" => $builder,
                 "limit" => 25,
@@ -190,21 +251,24 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             )
         );
 
-        // Get the paginated results
+        // Get the paginated results.
         $page = $paginator->getPaginate();
 
         $this->view->paginator = $page;
         $this->view->search = $search;
-        $this->view->lang =$item;
-
+        $this->view->lang = $item;
     }
 
     /**
+     * Create translation action.
+     *
+     * @return void
+     *
      * @Route("/create-item", methods={"GET", "POST"}, name="admin-languages-create-item")
      */
     public function createItemAction()
     {
-        $form = new \Core\Form\Admin\Language\CreateItem();
+        $form = new CreateItem();
         $this->view->form = $form;
 
         $data = array(
@@ -212,24 +276,27 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         );
 
         $form->setValues($data);
-
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
         $item = $form->getValues();
-
         $this->view->created = $item;
     }
 
     /**
+     * Edit translation.
+     *
+     * @param int $id Translation identity.
+     *
+     * @return void
+     *
      * @Route("/edit-item/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-edit-item")
      */
     public function editItemAction($id)
     {
-        $item = \Core\Model\LanguageTranslation::findFirst($id);
-
-        $form = new \Core\Form\Admin\Language\EditItem($item);
+        $item = LanguageTranslation::findFirst($id);
+        $form = new EditItem($item);
         $this->view->form = $form;
 
         $data = array(
@@ -237,7 +304,6 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
         );
 
         $form->setValues($data);
-
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
@@ -246,13 +312,20 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
     }
 
     /**
+     * Delete translation.
+     *
+     * @param int $id Translation identity.
+     *
+     * @return void|ResponseInterface
+     *
      * @Get("/delete-item/{id:[0-9]+}", name="admin-languages-delete-item")
      */
     public function deleteItemAction($id)
     {
-        $item = \Core\Model\LanguageTranslation::findFirst($id);
-        if ($item)
+        $item = LanguageTranslation::findFirst($id);
+        if ($item) {
             $item->delete();
+        }
 
         $languageId = $this->request->get('lang');
         $search = $this->request->get('search');
@@ -261,6 +334,7 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
             if (!empty($search)) {
                 return $this->response->redirect("admin/languages/manage/{$languageId}?search=" . $search);
             }
+
             return $this->response->redirect(array('for' => "admin-languages-manage", 'id' => $languageId));
         }
 
@@ -268,16 +342,19 @@ class AdminLanguagesController extends \Core\Controller\BaseAdmin
     }
 
     /**
+     * Compile language into native php array.
+     *
+     * @return ResponseInterface
+     *
      * @Get("/compile", name="admin-languages-compile")
      */
     public function compileAction()
     {
-        // Prepare languages
-        // Dump all data from database to *.po files
-
+        // Prepare languages.
+        // Dump all data from database to files with native php array.
         try {
 
-            $languages = \Core\Model\Language::find();
+            $languages = Language::find();
             foreach ($languages as $language) {
                 $language->generatePHP();
             }

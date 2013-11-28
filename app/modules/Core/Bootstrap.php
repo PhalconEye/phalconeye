@@ -1,26 +1,60 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core;
 
-use Phalcon\Translate\Adapter\NativeArray as TranslateArray;use User\Model\User;
+use Core\Model\Settings;
+use Core\Model\Widget;
+use Engine\Bootstrap as EngineBootstrap;
+use Engine\Translation\Db as TranslationDb;
+use Engine\Widget\Storage;
+use Phalcon\Config;
+use Phalcon\DI;
+use Phalcon\Mvc\View;
+use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
+use User\Model\User;
 
-class Bootstrap extends \Engine\Bootstrap
+/**
+ * Core Bootstrap.
+ *
+ * @category  PhalconEye
+ * @package   Core
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Bootstrap extends EngineBootstrap
 {
+    /**
+     * Current module name.
+     *
+     * @var string
+     */
     protected $_moduleName = "Core";
 
+    /**
+     * Register the services.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void
+     */
     public function registerServices($di)
     {
         parent::registerServices($di);
@@ -31,7 +65,7 @@ class Bootstrap extends \Engine\Bootstrap
             return;
         }
 
-        // remove profiler for non-user
+        // Remove profiler for non-user.
         if (!User::getViewer()->id) {
             $di->remove('profiler');
         }
@@ -39,35 +73,42 @@ class Bootstrap extends \Engine\Bootstrap
     }
 
     /**
-     * Prepare widgets metadata for Engine
+     * Prepare widgets metadata for Engine.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void
      */
-    private function _initWidgets(\Phalcon\DI $di)
+    private function _initWidgets(DI $di)
     {
         $cache = $di->get('cacheData');
         $cacheKey = "widgets_metadata.cache";
         $widgets = $cache->get($cacheKey);
 
         if ($widgets === null) {
-            $widgetObjects = \Core\Model\Widget::find();
+            $widgetObjects = Widget::find();
             $widgets = array();
             foreach ($widgetObjects as $object) {
                 $widgets[$object->id] = $object;
             }
 
-            $cache->save($cacheKey, $widgets, 2592000); // 30 days
+            $cache->save($cacheKey, $widgets, 2592000); // 30 days.
         }
-        \Engine\Widget\Storage::setWidgets($widgets);
+        Storage::setWidgets($widgets);
     }
 
     /**
-     * Init locale
+     * Init locale.
      *
-     * @param $di
+     * @param DI     $di     Dependency injection.
+     * @param Config $config Dependency injection.
+     *
+     * @return void
      */
-    private function _initLocale(\Phalcon\DI $di, \Phalcon\Config $config)
+    private function _initLocale(DI $di, Config $config)
     {
         if ($config->installed) {
-            $locale = $di->get('session')->get('locale', \Core\Model\Settings::getSetting('system_default_language'));
+            $locale = $di->get('session')->get('locale', Settings::getSetting('system_default_language'));
         } else {
             $locale = $di->get('session')->get('locale', 'en');
         }
@@ -89,7 +130,7 @@ class Bootstrap extends \Engine\Bootstrap
                 "content" => $messages
             ));
         } else {
-            $translate = new \Engine\Translation\Db(array(
+            $translate = new TranslationDb(array(
                 'db' => $di->get('db'),
                 'locale' => $locale,
                 'model' => 'Core\Model\Language',
@@ -100,7 +141,17 @@ class Bootstrap extends \Engine\Bootstrap
         $di->set('trans', $translate);
     }
 
-    public static function handleProfiler(\Phalcon\DI $di, \Phalcon\Config $config)
+    /**
+     * Handle Profiler.
+     *
+     * @param DI     $di     Dependency injection.
+     * @param Config $config Dependency injection.
+     *
+     * @return void
+     * @TODO: Refactor this.
+     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     */
+    public static function handleProfiler(DI $di, Config $config)
     {
         if (!$config->application->debug || !$di->has('profiler')) {
             return;
@@ -111,16 +162,16 @@ class Bootstrap extends \Engine\Bootstrap
             return;
         }
 
-        $viewer = \User\Model\User::getViewer();
+        $viewer = User::getViewer();
         if (!$viewer->id || !$viewer->isAdmin()) {
             return;
         }
 
-        /** @var \Phalcon\Mvc\View $view */
+        /** @var View $view */
         $view = $di->get('view');
         $view->setViewsDir(__DIR__ . '/View/partials/');
         $view->setPartialsDir('profiler/');
-        $view->disableLevel(\Phalcon\Mvc\View::LEVEL_LAYOUT);
+        $view->disableLevel(View::LEVEL_LAYOUT);
         $view->setMainView('profiler/layout');
 
         $render = function ($template, $params) use ($view) {
@@ -140,7 +191,7 @@ class Bootstrap extends \Engine\Bootstrap
         $handlerValues = array();
 
         //////////////////////////////////////
-        /// Config
+        /// Config.
         //////////////////////////////////////
         $htmlConfig = '';
         foreach ($config->toArray() as $key => $data) {
@@ -165,9 +216,11 @@ class Bootstrap extends \Engine\Bootstrap
         }
 
         //////////////////////////////////////
-        /// Router
+        /// Router.
         //////////////////////////////////////
-        $handlerValues['router'] = ucfirst($router->getControllerName()) . 'Controller::' . ucfirst($router->getActionName()) . 'Action';
+        $handlerValues['router'] = ucfirst($router->getControllerName()) .
+            'Controller::' .
+            ucfirst($router->getActionName()) . 'Action';
         $htmlRouter = $renderElement('POST data', print_r($_POST, true), 'pre');
         $htmlRouter .= $renderElement('GET data', print_r($_GET, true), 'pre');
         $htmlRouter .= $renderElement('Module', ucfirst($router->getModuleName()));
@@ -178,12 +231,16 @@ class Bootstrap extends \Engine\Bootstrap
         }
 
         //////////////////////////////////////
-        /// Memory
+        /// Memory.
         //////////////////////////////////////
         $memoryData = memory_get_usage();
         $memoryLimit = ((int)ini_get('memory_limit')) * 1024 * 1024;
         $currentMemoryPercent = round($memoryData / ($memoryLimit / 100));
-        $colorClass = ($currentMemoryPercent > 30 ? ($currentMemoryPercent < 75 ? 'item-normal' : 'item-bad') : 'item-good');
+        $colorClass = (
+        $currentMemoryPercent > 30 ? ($currentMemoryPercent < 75 ?
+            'item-normal' : 'item-bad') :
+            'item-good'
+        );
         $handlerValues['memory'] = array(
             'class' => $colorClass,
             'value' => round($memoryData / 1024, 2)
@@ -206,7 +263,7 @@ class Bootstrap extends \Engine\Bootstrap
         }
 
         //////////////////////////////////////
-        /// Time
+        /// Time.
         //////////////////////////////////////
         $timeData = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000, 2);
         $colorClass = ($timeData > 200 ? ($timeData < 500 ? 'item-normal' : 'item-bad') : 'item-good');
@@ -236,7 +293,7 @@ class Bootstrap extends \Engine\Bootstrap
         $htmlTime .= '<br/>';
 
         //////////////////////////////////////
-        /// Files
+        /// Files.
         //////////////////////////////////////
         $filesData = get_included_files();
         $handlerValues['files'] = count($filesData);
@@ -248,7 +305,7 @@ class Bootstrap extends \Engine\Bootstrap
         }
 
         //////////////////////////////////////
-        /// SQL
+        /// SQL.
         //////////////////////////////////////
         $handlerValues['sql'] = $dbProfiler->getNumberTotalStatements();
 
@@ -258,7 +315,12 @@ class Bootstrap extends \Engine\Bootstrap
             $longestQueryTime = 0;
 
             $htmlSql = $renderElement('Total count', $dbProfiler->getNumberTotalStatements(), null, true);
-            $htmlSql .= $renderElement('Total time', round($dbProfiler->getTotalElapsedSeconds() * 1000, 4), null, true);
+            $htmlSql .= $renderElement(
+                'Total time',
+                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4),
+                null,
+                true
+            );
             $htmlSql .= $renderElement('Longest query', '<span class="code">%s</span> (%s ms)<br/>', null, true);
 
             foreach ($dbProfiles as $profile) {
@@ -267,14 +329,19 @@ class Bootstrap extends \Engine\Bootstrap
                     $longestQuery = $profile->getSQLStatement();
                 }
                 $htmlSql .= $renderElement('SQL', $profile->getSQLStatement());
-                $htmlSql .= $renderElement('Time', round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>', null, true);
+                $htmlSql .= $renderElement(
+                    'Time',
+                    round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>',
+                    null,
+                    true
+                );
             }
 
             $htmlSql = sprintf($htmlSql, $longestQuery, round($longestQueryTime * 1000, 4));
         }
 
         //////////////////////////////////////
-        /// Errors
+        /// Errors.
         //////////////////////////////////////
         $errorsData = $profiler->getData('error');
         $errorsCount = count($errorsData);
@@ -303,6 +370,5 @@ class Bootstrap extends \Engine\Bootstrap
             )
         );
         echo trim(preg_replace('/\s\s+/', ' ', $output));
-
     }
 }

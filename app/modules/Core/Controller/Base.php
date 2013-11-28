@@ -16,6 +16,7 @@
 
 namespace Core\Controller;
 
+use Engine\Api\AbstractApi;
 use Phalcon\Db\Column as PhDbColumn;
 use Phalcon\Mvc\Controller as PhController;
 use Phalcon\Mvc\View as PhView;

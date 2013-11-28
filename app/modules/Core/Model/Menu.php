@@ -21,6 +21,8 @@ namespace Core\Model;
  * @HasMany("id", '\Core\Model\MenuItem', "menu_id", {
  *  "alias": "MenuItem"
  * })
+ *
+ * @method static \Core\Model\Menu findFirst($parameters=null)
  */
 class Menu extends \Engine\Db\AbstractModel
 {

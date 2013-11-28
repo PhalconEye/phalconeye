@@ -19,7 +19,7 @@
 namespace Engine;
 
 use Engine\Config as EngineConfig;
-use Engine\Api\Container as ApiContainer;
+use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager;
 use Engine\Cache\Dummy;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
@@ -592,9 +592,9 @@ class Application extends PhalconApplication
                 continue;
             }
 
-            // initialize module api
+            // Initialize module api.
             $di->setShared(strtolower($module), function () use ($module, $di) {
-                return new ApiContainer($module, $di);
+                return new ApiInjector($module, $di);
             });
         }
 

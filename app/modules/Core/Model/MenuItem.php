@@ -26,6 +26,8 @@ use Engine\Db\Model\Behavior\Sortable;
  * @BelongsTo("parent_id", '\Core\Model\MenuItem', "id", {
  *  "alias": "MenuItem"
  * })
+ *
+ * @method static \Core\Model\MenuItem findFirst($parameters=null)
  */
 class MenuItem extends \Engine\Db\AbstractModel
 {

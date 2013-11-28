@@ -18,11 +18,13 @@
 
 namespace Engine\Api;
 
+use Engine\DependencyInjection;
 use Engine\Exception;
 use Phalcon\DI;
+use Phalcon\DiInterface;
 
 /**
- * Api container.
+ * Abstract api.
  *
  * @category  PhalconEye
  * @package   Engine\Api
@@ -31,62 +33,38 @@ use Phalcon\DI;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Container
+abstract class AbstractApi implements ApiInterface
 {
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
+
     /**
-     * Api instances.
+     * Api arguments.
      *
      * @var array
      */
-    protected $_instances = array();
+    private $_arguments;
 
     /**
-     * Current module name.
+     * Create api.
      *
-     * @var string
+     * @param DiInterface $di        Dependency injection.
+     * @param array       $arguments Api arguments.
      */
-    protected $_moduleName;
-
-    /**
-     * Dependency Injection.
-     *
-     * @var DI
-     */
-    protected $_di;
-
-    /**
-     * Create api container.
-     *
-     * @param string $moduleName Module naming.
-     * @param DI     $di         Dependency injection.
-     */
-    public function __construct($moduleName, $di)
+    public function __construct(DiInterface $di, $arguments)
     {
-        $this->_moduleName = $moduleName;
-        $this->_di = $di;
+        $this->__DIConstruct($di);
+        $this->_arguments = $arguments;
     }
 
     /**
-     * Get api from container.
+     * Get Api call arguments.
      *
-     * @param string $name      Api name.
-     * @param array  $arguments Api params.
-     *
-     * @return mixed
-     * @throws Exception
+     * @return array
      */
-    public function __call($name, $arguments)
+    public function getArguments()
     {
-        if (!isset($this->_instances[$name])) {
-            $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
-            if (!class_exists($apiClassName)) {
-                throw new Exception(sprintf('Can not find Api with name "%s".', $name));
-            }
-
-            $this->_instances[$name] = new $apiClassName($this->_di, $arguments);
-        }
-
-        return $this->_instances[$name];
+        return $this->_arguments;
     }
-
 }

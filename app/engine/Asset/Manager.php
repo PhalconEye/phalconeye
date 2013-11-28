@@ -20,10 +20,10 @@ namespace Engine\Asset;
 
 use Core\Model\Settings;
 use Engine\Asset\Css\Less;
+use Engine\DependencyInjection;
 use Engine\Package\Utilities as FsUtilities;
 use Phalcon\Assets\Collection;
 use Phalcon\Assets\Filters\Cssmin;
-
 use Phalcon\Assets\Filters\Jsmin;
 use Phalcon\Assets\Manager as AssetManager;
 use Phalcon\Config;
@@ -41,19 +41,20 @@ use Phalcon\DI;
  */
 class Manager extends AssetManager
 {
-    CONST
-        // Style file name in url.
+    const
+        /**
+         * Style file name in url.
+         */
         FILENAME_STYLE = 'style.css',
 
-        // Javascript file name in url.
+        /**
+         * Javascript file name in url.
+         */
         FILENAME_JAVASCRIPT = 'javascript.js';
 
-    /**
-     * Dependency injection.
-     *
-     * @var DI array|null
-     */
-    protected $_di;
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
 
     /**
      * Application config.
@@ -70,7 +71,7 @@ class Manager extends AssetManager
      */
     public function __construct($di, $prepare = true)
     {
-        $this->_di = $di;
+        $this->__DIConstruct($di);
         $this->_config = $di->get('config');
         if ($prepare) {
             if ($this->_config->application->debug && !$this->_config->installed) {
@@ -109,7 +110,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Collect css/js/img from modules.
         ///////////////////////////////////
-        foreach ($this->_di->get('modules') as $module => $enabled) {
+        foreach ($this->getDI()->get('modules') as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }

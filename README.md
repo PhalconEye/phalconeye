@@ -10,13 +10,11 @@ Installation
 ------------
 Coming soon... PhalconEye CMS will have ant build file. You will be able to build, check and analyze the project.
 
-Build Status
+Build Status [![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
 ------------
 PhalconEye CMS is built under Travis CI service. Every commit pushed to this repository will queue a build
-into the continuous integration service and will run: PHPUnit tests, phpmd, phpcs
+into the continuous integration service and will run: PHPUnit tests, phpmd, phpcs.
 The current build status is:
-
-[![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
 
 Third Party
 -----------

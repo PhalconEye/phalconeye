@@ -1,157 +1,163 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Api;
 
-use Engine\Api\ApiInterface;
-use Phalcon\Acl as PhAcl;
+use Core\Model\Access;
+use Engine\Api\AbstractApi;
+use Engine\Application;
+use Engine\DependencyInjection;
 use Phalcon\Acl\Adapter\Memory as AclMemory;
+use Phalcon\Acl as PhalconAcl;
 use Phalcon\Acl\Resource as AclResource;
-use Phalcon\DiInterface;
+use Phalcon\DI;
+use Phalcon\Events\Event as PhalconEvent;
+use Phalcon\Mvc\Dispatcher;
+use User\Model\Role;
+use User\Model\User;
 
-class Acl implements ApiInterface
+/**
+ * Core API Acl.
+ *
+ * @category  PhalconEye
+ * @package   Core\Api
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Acl extends AbstractApi
 {
-    const ACL_CACHE_KEY = "acl_data.cache";
-    const DEFAULT_ROLE_ADMIN = 'admin';
-    const DEFAULT_ROLE_USER = 'user';
-    const DEFAULT_ROLE_GUEST = 'guest';
+    const
+        /**
+         * Acl cache key.
+         */
+        ACL_CACHE_KEY = "acl_data.cache";
 
-    const ACL_ADMIN_AREA = 'AdminArea';
+    const
+        /**
+         * Role - ADMIN.
+         */
+        DEFAULT_ROLE_ADMIN = 'admin',
+
+        /**
+         * Role - USER.
+         */
+        DEFAULT_ROLE_USER = 'user',
+
+        /**
+         * Role - GUEST.
+         */
+        DEFAULT_ROLE_GUEST = 'guest';
+
+    const
+        /**
+         * Admin area name in ACL.
+         */
+        ACL_ADMIN_AREA = 'AdminArea';
+
+    use DependencyInjection;
 
     /**
-     * @var \Phalcon\Acl\Adapter\Memory
+     * Acl adapter.
+     *
+     * @var AclMemory
      */
     protected $_acl;
 
     /**
-     * @var \Phalcon\DiInterface
-     */
-    protected $_di;
-
-    /**
-     * @param \Phalcon\DiInterface $di
-     */
-    public function __construct(DiInterface $di, $arguments)
-    {
-        $this->_di = $di;
-    }
-
-    /**
-     * Get acl system
+     * Get acl system.
      *
-     * @return \Phalcon\Acl\Adapter\Memory
+     * @return AclMemory
      */
     public function _()
     {
         if (!$this->_acl) {
-
             $cacheData = $this->_di->get('cacheData');
-
             $acl = $cacheData->get(self::ACL_CACHE_KEY);
             if ($acl === null) {
-
                 $acl = new AclMemory();
-                $acl->setDefaultAction(PhAcl::DENY);
+                $acl->setDefaultAction(PhalconAcl::DENY);
 
-                // prepare Roles
-                $roles = \User\Model\Role::find();
+                // Prepare Roles.
+                $roles = Role::find();
                 $roleNames = array();
                 foreach ($roles as $role) {
                     $roleNames[$role->id] = $role->name;
                     $acl->addRole($role->name);
                 }
 
-                // Defining admin area
+                // Defining admin area.
                 $adminArea = new AclResource(self::ACL_ADMIN_AREA);
-                $roleAdmin = \User\Model\Role::getRoleByType(self::DEFAULT_ROLE_ADMIN);
-                // Add "admin area" resource
+                $roleAdmin = Role::getRoleByType(self::DEFAULT_ROLE_ADMIN);
+
+                // Add "admin area" resource.
                 $acl->addResource($adminArea, "access");
                 $acl->allow($roleAdmin->name, self::ACL_ADMIN_AREA, 'access');
 
 
-                // Getting objects that is in acl
-                // Looking for all models in modelsDir and check @Acl annotation
+                // Getting objects that is in acl.
+                // Looking for all models in modelsDir and check @Acl annotation.
                 $objects = array(
                     self::ACL_ADMIN_AREA => array(
                         'actions' => array('access')
                     )
                 );
-                $config = $this->_di->get('config');
-                foreach ($this->_di->get('modules') as $module => $enabled) {
+                $this->_addResources($acl, $objects);
 
-                    if (!$enabled) {
-                        continue;
-                    }
-
-                    $moduleName = ucfirst($module);
-
-                    $modelsPath = $config->application->modulesDir . $moduleName . '/Model';
-                    if (file_exists($modelsPath)) {
-
-                        $files = scandir($modelsPath); // get all file names
-
-                        foreach ($files as $file) { // iterate files
-                            if ($file == "." || $file == "..") {
-                                continue;
-                            }
-                            $class = sprintf('\%s\Model\%s', $moduleName, ucfirst(str_replace('.php', '', $file)));
-                            $object = $this->getObjectAcl($class);
-                            if ($object == null) continue;
-
-                            $objects[$class]['actions'] = $object->actions;
-                            $objects[$class]['options'] = $object->options;
-                        }
-
-                        // add objects to resources
-                        foreach ($objects as $key => $object) {
-                            if (empty($object['actions'])) {
-                                $object['actions'] = array();
-                            }
-                            $acl->addResource($key, $object['actions']);
-                        }
-                    }
-                }
-
-                // load from database
-                $access = \Core\Model\Access::find();
-
+                // Load from database.
+                $access = Access::find();
                 foreach ($access as $item) {
 
                     $value = $item->value;
 
-                    if (array_key_exists($item->object, $objects) && in_array($item->action, $objects[$item->object]['actions']) && ($value == "allow" || $value == "deny")) {
+                    if (
+                        array_key_exists($item->object, $objects) &&
+                        in_array($item->action, $objects[$item->object]['actions']) &&
+                        ($value == "allow" || $value == "deny")
+                    ) {
                         $acl->$value($roleNames[$item->role_id], $item->object, $item->action);
                     }
                 }
-
-                $cacheData->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache
+                $cacheData->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache.
             }
-
             $this->_acl = $acl;
         }
+
         return $this->_acl;
     }
 
-    public function getAllowedValue($objectName, \User\Model\Role $role, $option)
+    /**
+     * Get allowed value.
+     *
+     * @param string $objectName Object name.
+     * @param Role   $role       Role object.
+     * @param string $action     Action name.
+     *
+     * @return null|mixed
+     */
+    public function getAllowedValue($objectName, Role $role, $action)
     {
-        $result = \Core\Model\Access::findFirst(array(
+        $result = Access::findFirst(array(
             "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
             "bind" => array(
                 1 => $objectName,
-                2 => $option,
+                2 => $action,
                 3 => $role->id
             )
         ));
@@ -163,6 +169,13 @@ class Acl implements ApiInterface
         return null;
     }
 
+    /**
+     * Get acl object.
+     *
+     * @param string $objectName Object name.
+     *
+     * @return null|\stdClass
+     */
     public function getObjectAcl($objectName)
     {
         $object = new \stdClass();
@@ -196,7 +209,9 @@ class Acl implements ApiInterface
     }
 
     /**
-     * Clear acl cache. The acl will be rewrited.
+     * Clear acl cache.
+     *
+     * @return void
      */
     public function clearAcl()
     {
@@ -204,27 +219,78 @@ class Acl implements ApiInterface
     }
 
     /**
-     * This action is executed before execute any action in the application
+     * This action is executed before execute any action in the application.
+     *
+     * @param PhalconEvent $event      Event object.
+     * @param Dispatcher   $dispatcher Dispatcher object.
+     *
+     * @return mixed
      */
-    public function beforeDispatch(\Phalcon\Events\Event $event, \Phalcon\Mvc\Dispatcher $dispatcher)
+    public function beforeDispatch(PhalconEvent $event, Dispatcher $dispatcher)
     {
-        $viewer = \User\Model\User::getViewer();
+        $viewer = User::getViewer();
         $acl = $this->_();
 
         $controller = $dispatcher->getControllerName();
 
-        // check admin area
+        // Check admin area.
         if (substr($controller, 0, 5) == 'Admin') {
 
-            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != \Phalcon\Acl::ALLOW) {
-                return $dispatcher->forward(array(
-                    'module' => \Engine\Application::$defaultModule,
-                    'namespace' => ucfirst(\Engine\Application::$defaultModule) . '\Controller',
-                    "controller" => 'error',
-                    "action" => 'show404'
-                ));
+            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW) {
+                return $dispatcher->forward(
+                    array(
+                        'module' => Application::$defaultModule,
+                        'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
+                        "controller" => 'error',
+                        "action" => 'show404'
+                    )
+                );
             }
         }
 
+        return $event->isStopped();
+    }
+
+    /**
+     * Add resources to acl.
+     *
+     * @param AclMemory $acl     Acl object.
+     * @param array     $objects Related objects collection.
+     */
+    protected function _addResources($acl, $objects)
+    {
+        $config = $this->_di->get('config');
+        foreach ($this->_di->get('modules') as $module => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+            $moduleName = ucfirst($module);
+
+            $modelsPath = $config->application->modulesDir . $moduleName . '/Model';
+            if (file_exists($modelsPath)) {
+                $files = scandir($modelsPath);
+                foreach ($files as $file) {
+                    if ($file == "." || $file == "..") {
+                        continue;
+                    }
+                    $class = sprintf('\%s\Model\%s', $moduleName, ucfirst(str_replace('.php', '', $file)));
+                    $object = $this->getObjectAcl($class);
+                    if ($object == null) {
+                        continue;
+                    }
+
+                    $objects[$class]['actions'] = $object->actions;
+                    $objects[$class]['options'] = $object->options;
+                }
+
+                // Add objects to resources.
+                foreach ($objects as $key => $object) {
+                    if (empty($object['actions'])) {
+                        $object['actions'] = array();
+                    }
+                    $acl->addResource($key, $object['actions']);
+                }
+            }
+        }
     }
 }

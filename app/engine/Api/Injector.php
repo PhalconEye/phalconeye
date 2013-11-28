@@ -16,68 +16,74 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Api;
+namespace Engine\Api;
 
-use Engine\Api\AbstractApi;
-use Phalcon\DiInterface;
+use Engine\DependencyInjection;
+use Engine\Exception;
+use Phalcon\DI;
 
 /**
- * Auth api.
+ * Api container.
  *
  * @category  PhalconEye
- * @package   Core\Api
+ * @package   Engine\Api
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Auth extends AbstractApi
+class Injector
 {
-    private $_identity = 0;
-
-    /**
-     * Create api.
-     *
-     * @param DiInterface $di        Dependency injection.
-     * @param array       $arguments Api arguments.
-     */
-    public function __construct(DiInterface $di, $arguments)
-    {
-        parent::__construct($di, $arguments);
-        $this->_identity = $this->getDI()->get('session')->get('identity', 0);
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
     }
 
     /**
-     * Authenticate user.
+     * Api instances.
      *
-     * @param int $identity User identity.
-     *
-     * @return void
+     * @var array
      */
-    public function authenticate($identity)
+    protected $_instances = array();
+
+    /**
+     * Current module name.
+     *
+     * @var string
+     */
+    protected $_moduleName;
+
+    /**
+     * Create api container.
+     *
+     * @param string $moduleName Module naming.
+     * @param DI     $di         Dependency injection.
+     */
+    public function __construct($moduleName, $di)
     {
-        $this->_identity = $identity;
-        $this->_di->get('session')->set('identity', $identity);
+        $this->_moduleName = $moduleName;
+        $this->__DIConstruct($di);
     }
 
     /**
-     * Clear identity, logout.
+     * Get api from container.
      *
-     * @return void
+     * @param string $name      Api name.
+     * @param array  $arguments Api params.
+     *
+     * @return mixed
+     * @throws Exception
      */
-    public function clearAuth()
+    public function __call($name, $arguments)
     {
-        $this->_identity = 0;
-        $this->_di->get('session')->set('identity', 0);
-    }
+        if (!isset($this->_instances[$name])) {
+            $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
+            if (!class_exists($apiClassName)) {
+                throw new Exception(sprintf('Can not find Api with name "%s".', $name));
+            }
 
-    /**
-     * Get current identity.
-     *
-     * @return int
-     */
-    public function getIdentity()
-    {
-        return $this->_identity;
+            $this->_instances[$name] = new $apiClassName($this->getDI(), $arguments);
+        }
+
+        return $this->_instances[$name];
     }
 }
