@@ -1,32 +1,57 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Controller;
 
+use Core\Form\Admin\Package\Create as CreateForm;
+use Core\Form\Admin\Package\Edit as EditForm;
+use Core\Form\Admin\Package\Export as ExportForm;
+use Core\Form\Admin\Package\Upload as UploadForm;
 use Core\Model\Package;
-use Engine\Package\Exception;
+use Core\Model\PackageDependency;
+use Core\Model\Widget;
+use Engine\Navigation;
+use Engine\Package\Manager;
 use Engine\Package\PackageException;
+use Phalcon\Config;
 
 /**
+ * Admin packages controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Controller
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @RoutePrefix("/admin/packages", name="admin-packages")
  */
-class AdminPackagesController extends \Core\Controller\BaseAdmin
+class AdminPackagesController extends BaseAdmin
 {
+    /**
+     * Init controller's navigation.
+     *
+     * @return void
+     */
     public function init()
     {
-        $navigation = new \Engine\Navigation();
+        $navigation = new Navigation();
         $navigation
             ->setItems(array(
                 'index' => array(
@@ -71,61 +96,82 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             ));
 
         $this->view->navigation = $navigation;
-
     }
 
     /**
+     * Index action.
+     *
+     * @return void
+     *
      * @Route("/", methods={"GET"}, name="admin-packages")
      */
     public function indexAction()
     {
-        $this->view->packages = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_MODULE, null, 'enabled DESC');
+        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_MODULE);
     }
 
     /**
+     * Themes actions.
+     *
+     * @return void
+     *
      * @Route("/themes", methods={"GET"}, name="admin-packages-themes")
      */
     public function themesAction()
     {
-        $this->view->packages = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_THEME, null, 'enabled DESC');
+        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_THEME);
     }
 
     /**
+     * Widgets action.
+     *
+     * @return void
+     *
      * @Route("/widgets", methods={"GET"}, name="admin-packages-widgets")
      */
     public function widgetsAction()
     {
-        $this->view->packages = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_WIDGET, null, 'enabled DESC');
+        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_WIDGET);
     }
 
     /**
+     * Plugins action.
+     *
      * @Route("/plugins", methods={"GET"}, name="admin-packages-plugins")
      */
     public function pluginsAction()
     {
-        $this->view->packages = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_PLUGIN, null, 'enabled DESC');
+        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_PLUGIN);
     }
 
     /**
+     * Libraries action.
+     *
+     * @return void
+     *
      * @Route("/libraries", methods={"GET"}, name="admin-packages-libraries")
      */
     public function librariesAction()
     {
-        $this->view->packages = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_LIBRARY, null, 'enabled DESC');
+        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_LIBRARY);
     }
 
     /**
+     * Upload package action.
+     *
+     * @return void
+     *
      * @Route("/upload", methods={"GET", "POST"}, name="admin-packages-upload")
      */
     public function uploadAction()
     {
-        $this->view->form = $form = new \Core\Form\Admin\Package\Upload();
+        $this->view->form = $form = new UploadForm();
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
-        $packageManager = new \Engine\Package\Manager(Package::find());
+        $packageManager = new Manager(Package::find());
         $packageManager->clearTempDirectory();
 
         $packageFile = $this->request->getUploadedFiles();
@@ -148,9 +194,9 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                         foreach ($dependencies as $dependecy) {
                             $needPackage = $this->_getPackage($dependecy['type'], $dependecy['name']);
                             if ($needPackage) {
-                                $packageDependency = new \Core\Model\PackageDependency();
+                                $packageDependency = new PackageDependency();
                                 $packageDependency->package_id = $package->id;
-                                $packageDependency->dependencyId = $needPackage->id;
+                                $packageDependency->dependency_id = $needPackage->id;
                                 $packageDependency->save();
                             }
                         }
@@ -173,64 +219,68 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         } else {
             $this->flash->notice('Please, select zip file...');
         }
-
     }
 
     /**
+     * Create package action.
+     *
+     * @return mixed
+     *
      * @Route("/create", methods={"GET", "POST"}, name="admin-packages-create")
      */
     public function createAction()
     {
-        $this->view->form = $form = new \Core\Form\Admin\Package\Create();
+        $this->view->form = $form = new CreateForm();
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
         $data = $form->getValues(false);
-        $packageManager = new \Engine\Package\Manager();
+        $packageManager = new Manager();
         $packageManager->createPackage($data);
         $this->_enablePackageConfig($data['name'], $data['type']);
 
-        $return = '';
         switch ($data['type']) {
-            case \Engine\Package\Manager::PACKAGE_TYPE_MODULE:
-            {
+            case Manager::PACKAGE_TYPE_MODULE:
                 $return = 'admin-packages';
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
-            {
+            case Manager::PACKAGE_TYPE_THEME:
                 $return = 'admin-packages-themes';
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_WIDGET:
-            {
+            case Manager::PACKAGE_TYPE_WIDGET:
                 $return = 'admin-packages-widgets';
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_PLUGIN:
-            {
+            case Manager::PACKAGE_TYPE_PLUGIN:
                 $return = 'admin-packages-plugins';
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY:
-            {
+            case Manager::PACKAGE_TYPE_LIBRARY:
                 $return = 'admin-packages-libraries';
-            }
                 break;
             default:
-                {
                 $return = 'admin-packages';
-                }
+                break;
         }
 
         $this->flashSession->success('New package created successfully!');
+
         return $this->response->redirect(array('for' => $return));
     }
 
     /**
-     * @Route("/edit/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}", methods={"GET", "POST"}, name="admin-packages-edit")
+     * Edit package.
+     *
+     * @param string $type   Package type.
+     * @param string $name   Package name.
+     * @param string $return Return to.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/edit/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
+     * methods={"GET", "POST"},
+     * name="admin-packages-edit"
+     * )
      */
     public function editAction($type, $name, $return)
     {
@@ -240,33 +290,39 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             return $this->response->redirect(array('for' => $return));
         }
 
-        $this->view->form = $form = new \Core\Form\Admin\Package\Edit($package, $return);
+        $this->view->form = $form = new EditForm($package, $return);
 
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
             return;
         }
 
         $this->flashSession->success('Package saved!');
+
         return $this->response->redirect(array('for' => $return));
     }
 
     /**
-     * @Route("/export/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}", methods={"GET", "POST"}, name="admin-packages-export")
+     * Export package.
+     *
+     * @param string $type Package type.
+     * @param string $name Package name.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/export/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}",
+     * methods={"GET", "POST"},
+     * name="admin-packages-export"
+     * )
      */
     public function exportAction($type, $name)
     {
         $this->view->hideFooter = true;
-        $this->view->form = $form = new \Core\Form\Admin\Package\Export(array('name' => $name, 'type' => $type));
-        if ($type == \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY) {
-            // library can have dependecy only on another library
-            $form->removeElement('modules');
-        }
+        $this->view->form = $form = new ExportForm(array('name' => $name, 'type' => $type));
 
-        $skipForm = ($type == \Engine\Package\Manager::PACKAGE_TYPE_THEME);
-        if (!$skipForm) {
-            if (!$this->request->isPost() || !$form->isValid($_POST)) {
-                return;
-            }
+        $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
+        if (!$skipForm && (!$this->request->isPost() || !$form->isValid($_POST))) {
+            return;
         }
 
         $this->view->disable();
@@ -275,47 +331,47 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
             $dependecies = $form->getValues();
             $data = $package->toArray();
 
-            // collect modules
-            if (!empty($dependecies['modules']))
+            /**
+             * Collect modules.
+             */
+            if (!empty($dependecies['modules'])) {
                 foreach ($dependecies['modules'] as $dependecy) {
-                    $package = $this->_getPackage(\Engine\Package\Manager::PACKAGE_TYPE_MODULE, $dependecy);
+                    $package = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $dependecy);
 
                     $data['dependencies'][] = array(
                         'name' => $dependecy,
-                        'type' => \Engine\Package\Manager::PACKAGE_TYPE_MODULE,
+                        'type' => Manager::PACKAGE_TYPE_MODULE,
                         'version' => $package->version,
                     );
                 }
+            }
 
-            // collect libraries
-            if (!empty($dependecies['libraries']))
+            /**
+             * Collect libraries.
+             */
+            if (!empty($dependecies['libraries'])) {
                 foreach ($dependecies['libraries'] as $dependecy) {
-                    $package = $this->_getPackage(\Engine\Package\Manager::PACKAGE_TYPE_LIBRARY, $dependecy);
+                    $package = $this->_getPackage(Manager::PACKAGE_TYPE_LIBRARY, $dependecy);
 
                     $data['dependencies'][] = array(
                         'name' => $dependecy,
-                        'type' => \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY,
+                        'type' => Manager::PACKAGE_TYPE_LIBRARY,
                         'version' => $package->version,
                     );
                 }
+            }
 
-            // collect hooks
-            if ($type == \Engine\Package\Manager::PACKAGE_TYPE_MODULE) {
+            /**
+             * Collect hooks and widgets.
+             */
+            if ($type == Manager::PACKAGE_TYPE_MODULE) {
                 $moduleEvents = $this->config->events->get($name);
                 if (!empty($moduleEvents)) {
                     foreach ($moduleEvents as $event) {
                         $data['events'][] = $event;
                     }
                 }
-            } elseif ($type == \Engine\Package\Manager::PACKAGE_TYPE_PLUGIN) {
-                $pluginEvent = $this->config->plugins->get($name);
-                if (isset($pluginEvent['events'])) {
-                    $data['events'] = $pluginEvent['events'];
-                }
-            }
 
-            // collect widgets
-            if ($type == \Engine\Package\Manager::PACKAGE_TYPE_MODULE) {
                 $query = $this->modelsManager->createBuilder()
                     ->from(array('t' => '\Core\Model\Widget'))
                     ->where("t.module = :module:", array('module' => $name));
@@ -332,27 +388,43 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                         'enabled' => (bool)$widget->enabled,
                     );
                 }
+            } elseif ($type == Manager::PACKAGE_TYPE_PLUGIN) {
+                $pluginEvent = $this->config->plugins->get($name);
+                if (isset($pluginEvent['events'])) {
+                    $data['events'] = $pluginEvent['events'];
+                }
             }
 
-
-            $packageManager = new \Engine\Package\Manager();
+            $packageManager = new Manager();
             $packageManager->exportPackage($name, $data);
         }
     }
 
     /**
-     * @Route("/uninstall/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}", methods={"GET"}, name="admin-packages-uninstall")
+     * Uninstall package.
+     *
+     * @param string $type   Package type.
+     * @param string $name   Package name.
+     * @param string $return Return to.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/uninstall/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
+     * methods={"GET"},
+     * name="admin-packages-uninstall"
+     * )
      */
     public function uninstallAction($type, $name, $return)
     {
         $this->view->disable();
         $package = $this->_getPackage($type, $name);
         if ($package) {
-            if ($this->_hasDependencies($package))
+            if ($this->_hasDependencies($package)) {
                 return $this->response->redirect(array('for' => $return));
+            }
 
             try {
-
                 $installerClass = ucfirst($name) . '\Installer';
                 if (class_exists($installerClass)) {
                     $packageInstaller = new $installerClass($this->di, $name);
@@ -361,7 +433,7 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     }
                 }
 
-                $packageManager = new \Engine\Package\Manager();
+                $packageManager = new Manager();
                 $packageManager->removePackage($package->name, $package->type);
 
                 $package->delete();
@@ -381,7 +453,19 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
     }
 
     /**
-     * @Route("/enable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}", methods={"GET"}, name="admin-packages-enable")
+     * Enable package.
+     *
+     * @param string $type   Package type.
+     * @param string $name   Package name.
+     * @param string $return Return to.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/enable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
+     * methods={"GET"},
+     * name="admin-packages-enable"
+     * )
      */
     public function enableAction($type, $name, $return)
     {
@@ -400,7 +484,19 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
     }
 
     /**
-     * @Route("/disable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}", methods={"GET"}, name="admin-packages-disable")
+     * Disable package.
+     *
+     * @param string $type   Package type.
+     * @param string $name   Package name.
+     * @param string $return Return to.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/disable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
+     * methods={"GET"},
+     * name="admin-packages-disable"
+     * )
      */
     public function disableAction($type, $name, $return)
     {
@@ -408,8 +504,9 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
 
         $package = $this->_getPackage($type, $name);
         if ($package && !$package->is_system) {
-            if ($this->_hasDependencies($package))
+            if ($this->_hasDependencies($package)) {
                 return $this->response->redirect(array('for' => $return));
+            }
 
             $package->enabled = 0;
             $package->save();
@@ -421,7 +518,15 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         return $this->response->redirect(array('for' => $return));
     }
 
-    private function _getPackage($type, $name)
+    /**
+     * Get package.
+     *
+     * @param string $type Package type.
+     * @param string $name Package name.
+     *
+     * @return Package
+     */
+    protected function _getPackage($type, $name)
     {
         $query = $this->modelsManager->createBuilder()
             ->from(array('t' => '\Core\Model\Package'))
@@ -430,74 +535,93 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
         return $query->getQuery()->execute()->getFirst();
     }
 
-    private function _removePackageConfig($name, $type)
+
+    /**
+     * Get packages by type.
+     *
+     * @param string $type Packages type.
+     *
+     * @return Package[]
+     */
+    protected function _getPackages($type)
+    {
+        return Package::findByType($type, null, 'enabled DESC');
+    }
+
+    /**
+     * Remove package from config.
+     *
+     * @param string $name Package name.
+     * @param string $type Package type.
+     *
+     * @return void
+     */
+    protected function _removePackageConfig($name, $type)
     {
         switch ($type) {
-            case \Engine\Package\Manager::PACKAGE_TYPE_MODULE:
-            {
+            case Manager::PACKAGE_TYPE_MODULE:
                 $modules = $this->config->modules->toArray();
                 unset($modules[$name]);
-                $this->config->modules = new \Phalcon\Config($modules);
+                $this->config->modules = new Config($modules);
 
                 $events = $this->config->events->toArray();
                 unset($events[$name]);
-                $this->config->events = new \Phalcon\Config($events);
+                $this->config->events = new Config($events);
 
                 // remove widgets
-                $this->db->delete(\Core\Model\Widget::getTableName(), 'module = ?', array($name));
-            }
+                $this->db->delete(Widget::getTableName(), 'module = ?', array($name));
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
-            {
-
-            }
+            case Manager::PACKAGE_TYPE_THEME:
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_WIDGET:
-            {
-                $widget = \Core\Model\Widget::findFirstByName($name);
+            case Manager::PACKAGE_TYPE_WIDGET:
+                $widget = Widget::findFirstByName($name);
                 if ($widget) {
                     $widget->delete();
                 }
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_PLUGIN:
-            {
+            case Manager::PACKAGE_TYPE_PLUGIN:
                 $plugins = $this->config->plugins->toArray();
                 unset($plugins[$name]);
-                $this->config->plugins = new \Phalcon\Config($plugins);
-            }
+                $this->config->plugins = new Config($plugins);
                 break;
-
         }
 
         $this->app->saveConfig();
     }
 
+    /**
+     * Enable package in config.
+     *
+     * @param string     $name Package name.
+     * @param string     $type Package type.
+     * @param null|array $data Package data.
+     *
+     * @return void
+     */
     private function _enablePackageConfig($name, $type, $data = null)
     {
         switch ($type) {
-            case \Engine\Package\Manager::PACKAGE_TYPE_MODULE:
-            {
+            case Manager::PACKAGE_TYPE_MODULE:
                 $modules = $this->config->modules->toArray();
                 $modules[$name] = true;
-                $this->config->modules = new \Phalcon\Config($modules);
+                $this->config->modules = new Config($modules);
 
                 if (!empty($data['events'])) {
                     $events = $this->config->events->toArray();
                     $events[$name] = $data['events'];
-                    $this->config->events = new \Phalcon\Config($events);
+                    $this->config->events = new Config($events);
                 }
 
-                // install widgets
+                // Install widgets.
                 if (!empty($data['widgets'])) {
                     $errors = array();
                     foreach ($data['widgets'] as $widgetData) {
                         try {
-                            $widget = new \Core\Model\Widget();
+                            $widget = new Widget();
                             $widget->save($widgetData);
                         } catch (\PDOException $e) {
                             $this->flash->notice('Failed to install module widget... Check logs.');
-                            \Engine\Exception::exception($e);
+                            PackageException::exception($e);
                         }
                         if ($widget->validationHasFailed()) {
                             $messages = $widget->getMessages();
@@ -508,36 +632,31 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                     }
 
                     if (!empty($errors)) {
-                        $this->flash->notice('There was some errors during installation:' . implode('<br/> - ', $errors));
+                        $this->flash->notice(
+                            'There was some errors during installation:' . implode('<br/> - ', $errors)
+                        );
                     }
                 }
 
                 // enable module widgets
-                $this->db->update(\Core\Model\Widget::getTableName(), array('enabled'), array(1), "module = '{$name}'");
-            }
+                $this->db->update(Widget::getTableName(), array('enabled'), array(1), "module = '{$name}'");
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
-            {
-
-            }
+            case Manager::PACKAGE_TYPE_THEME:
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_WIDGET:
-            {
-                $widget = \Core\Model\Widget::findFirstByName($name);
+            case Manager::PACKAGE_TYPE_WIDGET:
+                $widget = Widget::findFirstByName($name);
                 if ($widget) {
                     $widget->enabled = 1;
                     $widget->save();
                 } else {
-                    $widget = new \Core\Model\Widget();
+                    $widget = new Widget();
                     $package = $this->_getPackage($type, $name);
                     $data = $package->toArray();
                     $data['name'] = ucfirst($name);
                     $widget->save($data);
                 }
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_PLUGIN:
-            {
+            case Manager::PACKAGE_TYPE_PLUGIN:
                 $plugins = $this->config->plugins->toArray();
                 if (empty($plugins[$name])) {
                     if (!empty($data['events'])) {
@@ -554,44 +673,42 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 } else {
                     $plugins[$name]['enabled'] = true;
                 }
-                $this->config->plugins = new \Phalcon\Config($plugins);
-            }
+                $this->config->plugins = new Config($plugins);
                 break;
-
         }
 
         $this->app->saveConfig();
     }
 
+    /**
+     * Disable package in config.
+     *
+     * @param string $name Package name.
+     * @param string $type Package type.
+     *
+     * @return void
+     */
     private function _disablePackageConfig($name, $type)
     {
         switch ($type) {
-            case \Engine\Package\Manager::PACKAGE_TYPE_MODULE:
-            {
+            case Manager::PACKAGE_TYPE_MODULE:
                 $modules = $this->config->modules->toArray();
                 $modules[$name] = false;
-                $this->config->modules = new \Phalcon\Config($modules);
+                $this->config->modules = new Config($modules);
 
-                // disable module widgets
-                $this->db->update(\Core\Model\Widget::getTableName(), array('enabled'), array(0), "module = '{$name}'");
-            }
+                // Disable module widgets.
+                $this->db->update(Widget::getTableName(), array('enabled'), array(0), "module = '{$name}'");
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_THEME:
-            {
-
-            }
+            case Manager::PACKAGE_TYPE_THEME:
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_WIDGET:
-            {
-                $widget = \Core\Model\Widget::findFirstByName($name);
+            case Manager::PACKAGE_TYPE_WIDGET:
+                $widget = Widget::findFirstByName($name);
                 if ($widget) {
                     $widget->enabled = 0;
                     $widget->save();
                 }
-            }
                 break;
-            case \Engine\Package\Manager::PACKAGE_TYPE_PLUGIN:
-            {
+            case Manager::PACKAGE_TYPE_PLUGIN:
                 $plugins = $this->config->plugins->toArray();
                 if (empty($plugins[$name])) {
                     $plugins[$name] = array(
@@ -601,16 +718,21 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 } else {
                     $plugins[$name]['enabled'] = false;
                 }
-                $this->config->plugins = new \Phalcon\Config($plugins);
-            }
+                $this->config->plugins = new Config($plugins);
                 break;
-
         }
 
         $this->app->saveConfig();
     }
 
-    private function _hasDependencies(\Core\Model\Package $package)
+    /**
+     * Check if current package has dependencies.
+     *
+     * @param Package $package Package object.
+     *
+     * @return bool
+     */
+    private function _hasDependencies(Package $package)
     {
         $dependencies = $package->getRelatedPackages();
         /** @var \Phalcon\Mvc\Model\Resultset\Simple $dependencies */
@@ -621,11 +743,11 @@ class AdminPackagesController extends \Core\Controller\BaseAdmin
                 $message .= " - {$dependencyPackage->type} '{$dependencyPackage->name}'";
             }
             $this->flashSession->error($message);
+
             return true;
         }
 
         return false;
     }
-
 }
 

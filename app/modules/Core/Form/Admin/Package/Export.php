@@ -30,29 +30,30 @@ class Export extends \Engine\Form
     public function init()
     {
         $this->setOption('description', 'Select package dependency (not necessarily).');
+        if ($this->_exclude['type'] != \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY) {
+            $query = \Phalcon\DI::getDefault()->get('modelsManager')->createBuilder()
+                ->from(array('t' => '\Core\Model\Package'))
+                ->where("t.type = :type:", array('type' => \Engine\Package\Manager::PACKAGE_TYPE_MODULE))
+                ->andWhere("t.enabled = :enabled:", array('enabled' => true));
 
-        $query = \Phalcon\DI::getDefault()->get('modelsManager')->createBuilder()
-            ->from(array('t' => '\Core\Model\Package'))
-            ->where("t.type = :type:", array('type' => \Engine\Package\Manager::PACKAGE_TYPE_MODULE))
-            ->andWhere("t.enabled = :enabled:", array('enabled' => true));
+            if ($this->_exclude && $this->_exclude['type'] == \Engine\Package\Manager::PACKAGE_TYPE_MODULE) {
+                $query->andWhere("t.name != :name:", array('name' => $this->_exclude['name']));
+            }
 
-        if ($this->_exclude && $this->_exclude['type'] == \Engine\Package\Manager::PACKAGE_TYPE_MODULE){
-            $query->andWhere("t.name != :name:", array('name' => $this->_exclude['name']));
+            $this->addElement('select', 'modules', array(
+                'label' => 'Modules',
+                'options' => $query->getQuery()->execute(),
+                'using' => array('name', 'title'),
+                'multiple' => 'multiple'
+            ));
         }
-
-        $this->addElement('select', 'modules', array(
-            'label' => 'Modules',
-            'options' => $query->getQuery()->execute(),
-            'using' => array('name', 'title'),
-            'multiple' => 'multiple'
-        ));
 
         $query = \Phalcon\DI::getDefault()->get('modelsManager')->createBuilder()
             ->from(array('t' => '\Core\Model\Package'))
             ->where("t.type = :type:", array('type' => \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY))
             ->andWhere("t.enabled = :enabled:", array('enabled' => true));
 
-        if ($this->_exclude && $this->_exclude['type'] == \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY){
+        if ($this->_exclude && $this->_exclude['type'] == \Engine\Package\Manager::PACKAGE_TYPE_LIBRARY) {
             $query->andWhere("t.name != :name:", array('name' => $this->_exclude['name']));
         }
 

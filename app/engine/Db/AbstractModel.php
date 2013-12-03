@@ -30,6 +30,8 @@ use Phalcon\Mvc\Model as PhalconModel;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @method static findFirstById($id)
  */
 abstract class AbstractModel extends PhalconModel
 {
