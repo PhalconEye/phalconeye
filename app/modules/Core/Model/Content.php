@@ -1,22 +1,35 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+
 /**
+ * Content.
+ *
+ * @category  PhalconEye
+ * @package   Core\Model
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @Source("content")
  * @BelongsTo("widget_id", "\Core\Model\Widget", "id", {
  *  "alias": "Widget"
@@ -25,9 +38,8 @@ namespace Core\Model;
  *  "alias": "Page"
  * })
  */
-class Content extends \Engine\Db\AbstractModel
+class Content extends AbstractModel
 {
-
     /**
      * @Primary
      * @Identity
@@ -58,12 +70,14 @@ class Content extends \Engine\Db\AbstractModel
     /**
      * @Column(type="text", nullable=false, column="params")
      */
-    protected $params;
+    public $params;
 
     /**
-     * Return the related "Widget"
+     * Return the related "Widget" model.
      *
-     * @return \Core\Model\Widget
+     * @param array $arguments Model arguments.
+     *
+     * @return Widget
      */
     public function getWidget($arguments = array())
     {
@@ -71,30 +85,32 @@ class Content extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Method to set the value of field params
+     * Method to set the value of field params.
      *
-     * @param string $params
-     * @param string $encode
+     * @param array $params Params data.
+     * @param bool  $encode Encode into json.
+     *
+     * @return void
      */
     public function setParams($params, $encode = true)
     {
-        if ($encode)
+        if ($encode) {
             $this->params = json_encode($params);
-        else {
+        } else {
             $this->params = $params;
         }
     }
 
     /**
-     * Returns the value of field params
+     * Returns the value of params field.
      *
-     * @return string
+     * @return array
      */
     public function getParams()
     {
         $params = (array)json_decode($this->params);
         $params['content_id'] = $this->id;
+
         return $params;
     }
-
 }

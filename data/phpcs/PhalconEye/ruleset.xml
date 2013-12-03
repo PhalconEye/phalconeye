@@ -18,22 +18,10 @@
 
     <!-- Import Zend coding standard (which in turn imports PEAR) -->
     <rule ref="Zend">
-        <!-- but exclude their code analyzer -->
         <exclude name="Zend.Debug.CodeAnalyzer"/>
-
-        <!-- covered by Squiz ControlSignature, which enforces try/catch as well -->
         <exclude name="PEAR.ControlStructures.ControlSignature"/>
-
         <exclude name="PEAR.Commenting.FunctionComment.SpacingBeforeTags"/>
-    </rule>
-
-    <!-- Ignore variables that contains numbers -->
-    <rule ref="Zend.NamingConventions.ValidVariableName.ContainsNumbers">
-        <severity>0</severity>
-    </rule>
-
-    <rule ref="Zend.NamingConventions.ValidVariableName.NotCamelCaps">
-        <severity>0</severity>
+        <exclude name="Zend.NamingConventions.ValidVariableName"/>
     </rule>
 
     <!-- In practice, spaces multiline function calls differently than Zend -->
