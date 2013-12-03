@@ -20,6 +20,7 @@ namespace Engine\Widget;
 
 use Engine\DependencyInjection;
 use Phalcon\DI;
+use Phalcon\DiInterface;
 
 /**
  * Widget element.
@@ -54,12 +55,13 @@ class Element
     /**
      * Create widget element.
      *
-     * @param mixed $id     Widget id in widgets table.
-     * @param array $params Widgets params in page.
+     * @param mixed       $id     Widget id in widgets table.
+     * @param array       $params Widgets params in page.
+     * @param DiInterface $di     Dependency injection.
      */
-    public function __construct($id, $params = array())
+    public function __construct($id, $params = array(), $di = null)
     {
-        $this->__DIConstruct();
+        $this->__DIConstruct($di);
 
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
