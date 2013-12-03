@@ -16,31 +16,61 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Controller;
+namespace Core\Form\Install;
+
+use Engine\Form;
 
 /**
- * Admin files controller.
+ * Installation database form.
  *
  * @category  PhalconEye
- * @package   Core\Controller
+ * @package   Core\Form\Install
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
- *
- * @RoutePrefix("/admin/files", name="admin-files")
  */
-class AdminFilesController extends AdminControllerBase
+class Database extends Form
 {
     /**
-     * Index action.
+     * Setup form.
      *
      * @return void
-     *
-     * @Route("/", methods={"GET", "POST"}, name="admin-files")
      */
-    public function indexAction()
+    public function init()
     {
+        $this->setOption('title', 'Database settings');
+
+        $this->addElement('select', 'adapter', array(
+            'label' => 'Database adapter',
+            'options' => array(
+                'Mysql' => 'MySQL',
+                'Oracle' => 'Oracle',
+                'Postgresql' => 'PostgreSQL',
+                'Sqlite' => 'SQLite'
+            ),
+            'value' => 'Mysql'
+        ));
+
+        $this->addElement('text', 'host', array(
+            'label' => 'Database host',
+            'value' => 'localhost'
+        ));
+
+        $this->addElement('text', 'username', array(
+            'label' => 'Username',
+            'value' => 'root'
+        ));
+
+        $this->addElement('password', 'password', array(
+            'label' => 'Password',
+        ));
+
+        $this->addElement('text', 'dbname', array(
+            'label' => 'Database name',
+            'value' => 'phalconeye'
+        ));
+
+        $this->addButton('Continue', true);
     }
 }
-

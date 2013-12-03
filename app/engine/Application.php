@@ -367,14 +367,12 @@ class Application extends PhalconApplication
 
                 // Iterate files.
                 foreach ($files as $file) {
-                    if ($file == "." || $file == "..") {
+                    if ($file == "." || $file == ".." || strpos($file, 'Controller.php') === false) {
                         continue;
                     }
 
                     $controller = ucfirst($module) . '\Controller\\' . str_replace('Controller.php', '', $file);
-                    if (strpos($file, 'Controller.php') !== false) {
-                        $router->addModuleResource(strtolower($module), $controller);
-                    }
+                    $router->addModuleResource(strtolower($module), $controller);
                 }
             }
             if ($saveToCache) {

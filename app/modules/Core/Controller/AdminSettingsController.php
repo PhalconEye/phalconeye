@@ -33,7 +33,7 @@ use Core\Model\Settings;
  *
  * @RoutePrefix("/admin/settings", name="admin-settings")
  */
-class AdminSettingsController extends BaseAdmin
+class AdminSettingsController extends AdminControllerBase
 {
     /**
      * Index action.

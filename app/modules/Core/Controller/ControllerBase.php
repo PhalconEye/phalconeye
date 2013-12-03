@@ -1,37 +1,50 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Controller;
 
-use Engine\Api\AbstractApi;
-use Phalcon\Db\Column as PhDbColumn;
-use Phalcon\Mvc\Controller as PhController;
-use Phalcon\Mvc\View as PhView;
+use Core\Model\Page;
+use Phalcon\Db\Column;
+use Phalcon\Mvc\Controller as PhalconController;
+use Phalcon\Mvc\View;
 
 /**
+ * Base controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Controller
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @property \Phalcon\Db\Adapter\Pdo $db
  * @property \Phalcon\Cache\Backend  $cacheData
  * @property \Engine\Application     $app
  * @property \Engine\Asset\Manager   $assets
  * @property \Phalcon\Config         $config
  */
-class Base extends PhController
+class ControllerBase extends PhalconController
 {
     /**
-     * Initializes the controller
+     * Initializes the controller.
+     *
+     * @return void
      */
     public function initialize()
     {
@@ -39,7 +52,7 @@ class Base extends PhController
             $this->profiler->start();
         }
 
-        $this->view->setRenderLevel(PhView::LEVEL_ACTION_VIEW);
+        $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
         $this->view->setPartialsDir('../../Core/View/partials/');
 
         $this->assets->get('css')
@@ -70,6 +83,11 @@ class Base extends PhController
         }
     }
 
+    /**
+     * After route execution.
+     *
+     * @return void
+     */
     public function afterExecuteRoute()
     {
         if ($this->config->application->debug && $this->di->has('profiler')) {
@@ -77,11 +95,20 @@ class Base extends PhController
         }
     }
 
+    /**
+     * Render some content from database layout.
+     *
+     * @param null|string $url        Url definition of page.
+     * @param null|string $controller Related controller name.
+     * @param null|string $type       Page type.
+     *
+     * @return mixed
+     */
     public function renderContent($url = null, $controller = null, $type = null)
     {
         $page = null;
         if ($url !== null) {
-            $page = \Core\Model\Page::find(array(
+            $page = Page::find(array(
                 'conditions' => 'url=:url1: OR url=:url2: OR id = :url3:',
                 'bind' => (array(
                         "url1" => $url,
@@ -89,30 +116,30 @@ class Base extends PhController
                         "url3" => $url
                     )),
                 'bindTypes' => (array(
-                        "url1" => PhDbColumn::BIND_PARAM_STR,
-                        "url2" => PhDbColumn::BIND_PARAM_STR,
-                        "url3" => PhDbColumn::BIND_PARAM_INT
+                        "url1" => Column::BIND_PARAM_STR,
+                        "url2" => Column::BIND_PARAM_STR,
+                        "url3" => Column::BIND_PARAM_INT
                     ))
             ))->getFirst();
 
         } elseif ($controller !== null) {
-            $page = \Core\Model\Page::find(array(
+            $page = Page::find(array(
                 'conditions' => 'controller=:controller:',
                 'bind' => (array(
                         "controller" => $controller
                     )),
                 'bindTypes' => (array(
-                        "controller" => PhDbColumn::BIND_PARAM_STR
+                        "controller" => Column::BIND_PARAM_STR
                     ))
             ))->getFirst();
         } elseif ($type !== null) {
-            $page = \Core\Model\Page::find(array(
+            $page = Page::find(array(
                 'conditions' => 'type=:type:',
                 'bind' => (array(
                         "type" => $type
                     )),
                 'bindTypes' => (array(
-                        "type" => PhDbColumn::BIND_PARAM_STR
+                        "type" => Column::BIND_PARAM_STR
                     ))
             ))->getFirst();
         }
@@ -125,10 +152,7 @@ class Base extends PhController
             ));
         }
 
-        // increment views
-//        $page->incrementViews();
-
-        // resort content by sides
+        // Resort content by sides.
         $content = array();
         foreach ($page->getWidgets() as $widget) {
             $content[$widget->layout][] = $widget;
@@ -137,19 +161,31 @@ class Base extends PhController
         $this->view->content = $content;
         $this->view->page = $page;
 
-
         $this->view->pick('layouts/page');
-
     }
 
+    /**
+     * Disable header rendering.
+     *
+     * @return $this
+     */
     public function disableHeader()
     {
         $this->view->disableHeader = true;
+
+        return $this;
     }
 
+    /**
+     * Disable footer rendering.
+     *
+     * @return $this
+     */
     public function disableFooter()
     {
         $this->view->disableFooter = true;
+
+        return $this;
     }
 
 }

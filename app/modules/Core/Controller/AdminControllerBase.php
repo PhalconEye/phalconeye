@@ -1,22 +1,44 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Controller;
 
-class BaseAdmin extends Base
+use Core\Model\Package;
+use Engine\Navigation;
+use Engine\Package\Manager;
+
+/**
+ * Base admin controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Controller
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class AdminControllerBase extends ControllerBase
 {
+    /**
+     * Initialize admin specific logic.
+     *
+     * @return void
+     */
     public function initialize()
     {
         parent::initialize();
@@ -91,11 +113,13 @@ class BaseAdmin extends Base
                 )
             ));
 
-        $modules = \Core\Model\Package::findByType(\Engine\Package\Manager::PACKAGE_TYPE_MODULE, 1);
+        $modules = Package::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
         if ($modules->count()) {
             $modulesMenuItems = array();
             foreach ($modules as $module) {
-                if ($module->is_system) continue;
+                if ($module->is_system) {
+                    continue;
+                }
                 $href = 'admin/module/' . $module->name;
                 $modulesMenuItems[$href] = array(
                     'title' => $module->title,
@@ -112,8 +136,7 @@ class BaseAdmin extends Base
             }
         }
 
-
-        $navigation = new \Engine\Navigation();
+        $navigation = new Navigation();
         $navigation
             ->setItems($menuItems)
             ->setActiveItem($activeItem)
@@ -137,8 +160,6 @@ class BaseAdmin extends Base
         $this->assets->get('js')
             ->addJs('external/bootstrap/bootstrap.min.js')
             ->addJs('external/ckeditor/ckeditor.js');
-
     }
-
 }
 

@@ -18,7 +18,7 @@ namespace User\Controller;
 /**
  * @RoutePrefix("/admin/users", name="admin-users")
  */
-class AdminUsersController extends \Core\Controller\BaseAdmin
+class AdminUsersController extends \Core\Controller\AdminControllerBase
 {
     public function init()
     {

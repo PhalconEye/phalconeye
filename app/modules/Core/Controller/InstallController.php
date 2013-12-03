@@ -1,36 +1,59 @@
 <?php
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to lantian.ivan@gmail.com so we can send you a copy immediately.
- *
- */
-
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Controller;
 
-use Core\Controller\Base as PeController;
+use Core\Form\Install\Database as DatabaseForm;
+use Core\Form\Install\Finish as FinishForm;
 use Engine\Asset\Manager as AssetManager;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Db\Schema;
-use Engine\Form\Validator\Email;
-use Engine\Form\Validator\StringLength;
 use Engine\Package\Manager as PackageManager;
+use Phalcon\Assets\Collection as AssetsCollection;
 use Phalcon\Config;
-use Phalcon\Mvc\View as PhView;
+use Phalcon\Events\Manager as EventsManager;
+use Phalcon\Http\ResponseInterface;
+use Phalcon\Mvc\Model\Manager as ModelManager;
+use Phalcon\Mvc\View;
+use User\Model\Role;
+use User\Model\User;
 
-class InstallController extends PeController
+/**
+ * Installation.
+ *
+ * @category  PhalconEye
+ * @package   Core\Controller
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
+ * @RoutePrefix("/install", name="installation")
+ */
+class InstallController extends ControllerBase
 {
-
+    /**
+     * System requirements.
+     * name => version
+     *
+     * @var array
+     */
     protected $_requirements = array(
-//        name => version
         'php' => '5.4.0',
         'phalcon' => PHALCON_VERSION_REQUIRED,
         'zlib' => false,
@@ -39,36 +62,50 @@ class InstallController extends PeController
         'iconv' => false,
     );
 
+    /**
+     * Installation actions.
+     *
+     * @var array
+     */
     protected $_actions = array(
         'indexAction',
         'databaseAction',
         'finishAction'
     );
 
+    /**
+     * Initialize installation controller.
+     *
+     * @return ResponseInterface|void
+     */
     public function initialize()
     {
         if (!$this->di->has('installationRequired')) {
             return $this->response->redirect();
         }
 
-        $this->view->setRenderLevel(PhView::LEVEL_ACTION_VIEW);
+        $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
         $this->disableHeader();
         $this->disableFooter();
 
-        $collection = new \Phalcon\Assets\Collection();
+        $collection = new AssetsCollection();
         $collection->addCss('assets/css/core/install.css');
         $this->assets->set('css', $collection);
     }
 
     /**
-     * @Route("/install", methods={"GET", "POST"}, name="install-index")
+     * Main installation page.
+     *
+     * @return void
+     *
+     * @Route("/", methods={"GET", "POST"}, name="install-index")
      */
     public function indexAction()
     {
-        // run requirements check
+        // Run requirements check.
         $allPassed = true;
 
-        // Modules requirements
+        // Modules requirements.
         $requirements = array();
         foreach ($this->_requirements as $req => $version) {
             $installedVersion = false;
@@ -110,7 +147,11 @@ class InstallController extends PeController
     }
 
     /**
-     * @Route("/install/database", methods={"GET", "POST"}, name="install-database")
+     * Database installation step.
+     *
+     * @return mixed
+     *
+     * @Route("/database", methods={"GET", "POST"}, name="install-database")
      */
     public function databaseAction()
     {
@@ -118,8 +159,7 @@ class InstallController extends PeController
             return $this->_selectAction();
         }
 
-        $form = $this->_getDatabaseForm();
-
+        $form = new DatabaseForm();
         if ($this->request->isPost() && $form->isValid($this->request->getPost())) {
             $data = $form->getValues();
 
@@ -172,7 +212,11 @@ class InstallController extends PeController
     }
 
     /**
-     * @Route("/install/finish", methods={"GET", "POST"}, name="install-finish")
+     * Installation finish.
+     *
+     * @return mixed
+     *
+     * @Route("/finish", methods={"GET", "POST"}, name="install-finish")
      */
     public function finishAction()
     {
@@ -180,7 +224,7 @@ class InstallController extends PeController
             return $this->_selectAction();
         }
 
-        $form = $this->_getFinishForm();
+        $form = new FinishForm();
         if ($this->request->isPost() && $form->isValid($this->request->getPost())) {
 
             $password = $this->request->getPost('password', 'string');
@@ -188,31 +232,38 @@ class InstallController extends PeController
             if ($password != $repeatPassword) {
                 $form->addError("Passwords doesn't match!");
                 $this->view->form = $form;
+
                 return;
             }
 
             // Setup database.
             $this->_setupDatabase();
 
-            $user = new \User\Model\User();
+            $user = new User();
             $data = $form->getValues();
-            $user->role_id = \User\Model\Role::getRoleByType('admin')->id;
+            $user->role_id = Role::getRoleByType('admin')->id;
             if (!$user->save($data)) {
                 foreach ($user->getMessages() as $message) {
                     $form->addError($message);
                 }
                 $this->view->form = $form;
+
                 return;
             }
 
             $this->_setPassed(__FUNCTION__, true);
+
             return $this->response->redirect(array('for' => 'install-save'));
         }
         $this->view->form = $form;
     }
 
     /**
-     * @Route("/install/save", methods={"GET"}, name="install-save")
+     * Save finish form action.
+     *
+     * @return ResponseInterface
+     *
+     * @Route("/save", methods={"GET"}, name="install-save")
      */
     public function saveAction()
     {
@@ -229,110 +280,8 @@ class InstallController extends PeController
         $this->_setupDatabase();
         $assetsManager = new AssetManager($this->getDI(), false);
         $assetsManager->installAssets();
+
         return $this->response->redirect();
-    }
-
-    /**
-     * Get database form.
-     *
-     * @return \Engine\Form
-     */
-    private function _getDatabaseForm()
-    {
-        $form = new \Engine\Form();
-        $form->setOption('title', 'Database settings');
-
-        $form->addElement('select', 'adapter', array(
-            'label' => 'Database adapter',
-            'options' => array(
-                'Mysql' => 'MySQL',
-                'Oracle' => 'Oracle',
-                'Postgresql' => 'PostgreSQL',
-                'Sqlite' => 'SQLite'
-            ),
-            'value' => 'Mysql'
-        ));
-
-        $form->addElement('text', 'host', array(
-            'label' => 'Database host',
-            'value' => 'localhost'
-        ));
-
-        $form->addElement('text', 'username', array(
-            'label' => 'Username',
-            'value' => 'root'
-        ));
-
-        $form->addElement('password', 'password', array(
-            'label' => 'Password',
-        ));
-
-        $form->addElement('text', 'dbname', array(
-            'label' => 'Database name',
-            'value' => 'phalconeye'
-        ));
-
-        $form->addButton('Continue', true);
-
-        return $form;
-    }
-
-    /**
-     * Get finish form.
-     *
-     * @return \Engine\Form
-     */
-    private function _getFinishForm()
-    {
-        $form = new \Engine\Form();
-
-        $form->addElement('text', 'username', array(
-            'label' => 'Username',
-            'autocomplete' => 'off',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 2,
-                ))
-            )
-        ));
-
-        $form->addElement('text', 'email', array(
-            'label' => 'Email',
-            'autocomplete' => 'off',
-            'description' => 'You will use your email address to login.',
-            'required' => true,
-            'validators' => array(
-                new Email()
-            )
-        ));
-
-        $form->addElement('password', 'password', array(
-            'label' => 'Password',
-            'autocomplete' => 'off',
-            'description' => 'Passwords must be at least 6 characters in length.',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 6,
-                ))
-            )
-        ));
-
-        $form->addElement('password', 'repeatPassword', array(
-            'label' => 'Password Repeat',
-            'autocomplete' => 'off',
-            'description' => 'Enter your password again for confirmation.',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 6,
-                ))
-            )
-        ));
-
-        $form->addButton('Complete', true);
-        return $form;
     }
 
     /**
@@ -361,7 +310,7 @@ class InstallController extends PeController
     /**
      * Choose current action.
      *
-     * @return mixed
+     * @return ResponseInterface
      */
     private function _selectAction()
     {
@@ -376,6 +325,8 @@ class InstallController extends PeController
 
     /**
      * Reset action states.
+     *
+     * @return void
      */
     private function _resetStates()
     {
@@ -386,15 +337,19 @@ class InstallController extends PeController
 
     /**
      * Setup database connection.
+     *
+     * @param array|null $connectionSettings Connection data.
+     *
+     * @return void
      */
     private function _setupDatabase($connectionSettings = null)
     {
         if ($connectionSettings != null) {
-            $this->config->database = new \Phalcon\Config($connectionSettings);
+            $this->config->database = new Config($connectionSettings);
         }
 
         $config = $this->config;
-        $eventsManager = new \Phalcon\Events\Manager();
+        $eventsManager = new EventsManager();
 
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
         $connection = new $adapter(array(
@@ -407,7 +362,7 @@ class InstallController extends PeController
         $this->di->set('db', $connection);
 
         $this->di->set('modelsManager', function () use ($config, $eventsManager) {
-            $modelsManager = new \Phalcon\Mvc\Model\Manager();
+            $modelsManager = new ModelManager();
             $modelsManager->setEventsManager($eventsManager);
 
             //Attach a listener to models-manager

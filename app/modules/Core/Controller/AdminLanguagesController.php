@@ -40,7 +40,7 @@ use Phalcon\Paginator\Adapter\QueryBuilder;
  *
  * @RoutePrefix("/admin/languages", name="admin-languages")
  */
-class AdminLanguagesController extends BaseAdmin
+class AdminLanguagesController extends AdminControllerBase
 {
     const
         /**

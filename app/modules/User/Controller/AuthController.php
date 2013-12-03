@@ -15,7 +15,7 @@
 
 namespace User\Controller;
 
-class AuthController extends \Core\Controller\Base
+class AuthController extends \Core\Controller\ControllerBase
 {
     /**
      * @Route("/login", methods={"GET", "POST"}, name="login")

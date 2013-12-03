@@ -28,6 +28,7 @@ use Phalcon\Assets\Filters\Jsmin;
 use Phalcon\Assets\Manager as AssetManager;
 use Phalcon\Config;
 use Phalcon\DI;
+use Phalcon\DiInterface;
 
 /**
  * Assets initializer.
@@ -66,8 +67,8 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DI   $di      Dependency injection.
-     * @param bool $prepare Prepare manager (install assets if in debug and create default collections).
+     * @param DiInterface $di      Dependency injection.
+     * @param bool        $prepare Prepare manager (install assets if in debug and create default collections).
      */
     public function __construct($di, $prepare = true)
     {

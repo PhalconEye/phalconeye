@@ -15,7 +15,7 @@
     <rule ref="rulesets/design.xml/CouplingBetweenObjects">
         <priority>1</priority>
         <properties>
-            <property name="reportLevel" value="16" />
+            <property name="minimum" value="16" />
         </properties>
     </rule>
     <!--

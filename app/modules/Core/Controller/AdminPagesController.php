@@ -39,7 +39,7 @@ use Core\Form\Admin\Page\Edit as EditForm;
  *
  * @RoutePrefix("/admin/pages", name="admin-pages")
  */
-class AdminPagesController extends BaseAdmin
+class AdminPagesController extends AdminControllerBase
 {
     /**
      * Init navigation.
