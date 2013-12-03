@@ -1,36 +1,60 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Form\Admin\Page;
 
-class Create extends \Engine\Form
-{
+use Core\Model\Page;
+use Engine\Db\AbstractModel;
+use Engine\Form;
+use User\Model\Role;
 
+/**
+ * Create page.
+ *
+ * @category  PhalconEye
+ * @package   Core\Form\Admin\Page
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Create extends Form
+{
+    /**
+     * Form constructor.
+     *
+     * @param null|AbstractModel $model Model object.
+     */
     public function __construct($model = null)
     {
-
-        if ($model === null){
-            $model = new \Core\Model\Page();
+        if ($model === null) {
+            $model = new Page();
         }
-
         $model->prepareRoles();
 
         parent::__construct($model);
     }
 
+    /**
+     * Initialize form.
+     *
+     * @return void
+     */
     public function init()
     {
         $this
@@ -43,7 +67,7 @@ class Create extends \Engine\Form
 
         $this->addElement('text', 'url', array(
             'label' => 'Url',
-            'description' => 'Page will be available under http://'.$_SERVER['HTTP_HOST'].'/page/[URL NAME]'
+            'description' => 'Page will be available under http://' . $_SERVER['HTTP_HOST'] . '/page/[URL NAME]'
         ));
 
         $this->addElement('textArea', 'description', array(
@@ -56,21 +80,19 @@ class Create extends \Engine\Form
 
         $this->addElement('text', 'controller', array(
             'label' => 'Controller',
-            'description' => 'Controller and action name that will handle this page. Example: NameController->someAction'
+            'description' =>
+                'Controller and action name that will handle this page. Example: NameController->someAction'
         ));
 
         $this->addElement('select', 'roles', array(
             'label' => 'Roles',
             'description' => 'If no value is selected, will be allowed to all (also as all selected).',
-            'options' => \User\Model\Role::find(),
+            'options' => Role::find(),
             'using' => array('id', 'name'),
             'multiple' => 'multiple'
         ));
 
-
-
         $this->addButton('Create', true);
         $this->addButtonLink('Cancel', array('for' => 'admin-pages'));
-
     }
 }

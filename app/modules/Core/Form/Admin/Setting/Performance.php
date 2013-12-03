@@ -1,24 +1,42 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Form\Admin\Setting;
 
-class Performance extends \Engine\Form
-{
+use Engine\Form;
 
+/**
+ * Performance settings.
+ *
+ * @category  PhalconEye
+ * @package   Core\Form\Admin\Setting
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Performance extends Form
+{
+    /**
+     * Initialize form.
+     *
+     * @return void
+     */
     public function init()
     {
         $this
@@ -32,7 +50,11 @@ class Performance extends \Engine\Form
 
         $this->addElement('text', 'lifetime', array(
             'label' => 'Cache lifetime',
-            'description' => 'This determines how long the system will keep cached data before reloading it from the database server. A shorter cache lifetime causes greater database server CPU usage, however the data will be more current.',
+            'description' =>
+                'This determines how long the system will keep cached data before
+                reloading it from the database server.
+                A shorter cache lifetime causes greater database server CPU usage,
+                however the data will be more current.',
             'filter' => 'int',
             'value' => 86400
         ));
@@ -52,7 +74,6 @@ class Performance extends \Engine\Form
         /**
          * File options
          */
-
         $this->addElement('text', 'cacheDir', array(
             'label' => 'Files location',
             'value' => 'path_to_dir'
@@ -62,7 +83,6 @@ class Performance extends \Engine\Form
         /**
          * Memcached options
          */
-
         $this->addElement('text', 'host', array(
             'label' => 'Memcached host',
             'value' => '127.0.0.1'
@@ -82,7 +102,6 @@ class Performance extends \Engine\Form
         /**
          * Mongo options
          */
-
         $this->addElement('text', 'server', array(
             'label' => 'A MongoDB connection string',
             'value' => 'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
@@ -104,14 +123,22 @@ class Performance extends \Engine\Form
             'options' => 1
         ));
 
-
         $this->addButton('Save', true);
     }
 
-    public function isValid($data = null, $entity = null, $skipEntityCreation = false){
-        if (isset($data['adapter']) && $data['adapter'] == '0'){
-            if (empty($data['cacheDir']) || !is_dir($data['cacheDir'])){
+    /**
+     * Validation.
+     *
+     * @param null|array $data Validation data.
+     *
+     * @return bool
+     */
+    public function isValid($data = null)
+    {
+        if (isset($data['adapter']) && $data['adapter'] == '0') {
+            if (empty($data['cacheDir']) || !is_dir($data['cacheDir'])) {
                 $this->addError('Files location isn\'t correct!');
+
                 return false;
             }
         }

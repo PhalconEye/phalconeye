@@ -1,34 +1,60 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Form\Admin\Package;
 
-class Create extends \Engine\Form
-{
+use Core\Model\Package;
+use Engine\Db\AbstractModel;
+use Engine\Form;
+use Engine\Form\Validator\Regex;
+use Engine\Package\Manager;
 
+/**
+ * Create package.
+ *
+ * @category  PhalconEye
+ * @package   Core\Form\Admin\Package
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Create extends Form
+{
+    /**
+     * Form constructor.
+     *
+     * @param null|AbstractModel $model Model object.
+     */
     public function __construct($model = null)
     {
-
         if ($model === null) {
-            $model = new \Core\Model\Package();
+            $model = new Package();
         }
 
         parent::__construct($model);
     }
 
+    /**
+     * Initialize form.
+     *
+     * @return void
+     */
     public function init()
     {
         $this
@@ -39,7 +65,7 @@ class Create extends \Engine\Form
             'label' => 'Name',
             'description' => 'Name must be in lowecase and contains only letters.',
             'validators' => array(
-                new \Engine\Form\Validator\Regex(array(
+                new Regex(array(
                     'pattern' => '/[a-z]+/',
                     'message' => 'Name must be in lowecase and contains only letters.'
                 ))
@@ -48,7 +74,7 @@ class Create extends \Engine\Form
 
         $this->addElement('select', 'type', array(
             'label' => 'Package type',
-            'options' => \Engine\Package\Manager::$allowedTypes
+            'options' => Manager::$allowedTypes
         ));
 
         $this->addElement('text', 'title', array(
@@ -63,7 +89,7 @@ class Create extends \Engine\Form
             'label' => 'Version',
             'description' => 'Type package version. Ex.: 0.5.7',
             'validators' => array(
-                new \Engine\Form\Validator\Regex(array(
+                new Regex(array(
                     'pattern' => '/\d+(\.\d+)+/',
                     'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
                 ))
@@ -90,25 +116,35 @@ class Create extends \Engine\Form
 
     }
 
-    public function isValid($data = null, $entity = null, $skipEntityCreation = false)
+    /**
+     * Validation method.
+     *
+     * @param null|array $data Model data.
+     *
+     * @return bool
+     */
+    public function isValid($data = null)
     {
-        if (!parent::isValid($data, null, true))
+        if (!parent::isValid($data, null, true)) {
             return false;
+        }
 
-        // check package existence
-        /** @var \Phalcon\Mvc\Model\Query\Builder $query  */
-        $query = \Phalcon\DI::getDefault()->get('modelsManager')->createBuilder()
+        // Check package existence.
+        /** @var \Phalcon\Mvc\Model\Query\Builder $query */
+        $query = $this->getDI()->get('modelsManager')->createBuilder()
             ->from(array('t' => '\Core\Model\Package'))
             ->where('t.type = :type: AND t.name = :name:', array('type' => $data['type'], 'name' => $data['name']));
 
-        /** @var \Phalcon\Mvc\Model\Resultset\Simple $package  */
+        /** @var \Phalcon\Mvc\Model\Resultset\Simple $package */
         $package = $query->getQuery()->execute();
-        if ($package->count() == 1){
+        if ($package->count() == 1) {
             $this->addError('Package with that name already exist!');
+
             return false;
         }
 
         $this->getEntity()->save();
+
         return true;
     }
 }
