@@ -1,22 +1,36 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace User\Model;
 
+use Core\Model\Access;
+use Engine\Db\AbstractModel;
+
 /**
+ * Role.
+ *
+ * @category  PhalconEye
+ * @package   User\Model
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @Source("roles")
  * @HasMany("id", '\User\Model\User', "role_id", {
  *  "alias": "User"
@@ -25,7 +39,7 @@ namespace User\Model;
  *  "alias": "Access"
  * })
  */
-class Role extends \Engine\Db\AbstractModel
+class Role extends AbstractModel
 {
     /**
      * @Primary
@@ -59,54 +73,75 @@ class Role extends \Engine\Db\AbstractModel
      */
     public $undeletable = false;
 
-
     /**
-     * Return the related "User"
+     * Return the related "User" entity.
      *
-     * @return \User\Model\User[]
+     * @param array $arguments Arguments data.
+     *
+     * @return User[]
      */
-    public function getUser($arguments = array()){
+    public function getUser($arguments = array())
+    {
         return $this->getRelated('User', $arguments);
     }
 
     /**
-     * Return the related "Access"
+     * Return the related "Access" entity.
      *
-     * @return \Core\Model\Access[]
+     * @param array $arguments Arguments data.
+     *
+     * @return Access[]
      */
-    public function getAccess($arguments = array()){
+    public function getAccess($arguments = array())
+    {
         return $this->getRelated('Access', $arguments);
     }
 
-    protected function beforeValidation(){
-        if (empty($this->is_default)){
+    /**
+     * Some checks before validation.
+     *
+     * @return void
+     */
+    protected function beforeValidation()
+    {
+        if (empty($this->is_default)) {
             $this->is_default = 0;
         }
     }
 
-    protected function beforeDelete(){
+    /**
+     * Some logic before delete.
+     *
+     * @return void
+     * @todo Refactor this.
+     */
+    protected function beforeDelete()
+    {
         // cleanup acl
         $this->_modelsManager->executeQuery(
-            "DELETE FROM Core\\Model\\Access WHERE role_id = ".$this->id.""
+            "DELETE FROM Core\\Model\\Access WHERE role_id = " . $this->id . ""
         );
     }
 
     /**
-     * Get guest role by type
+     * Get guest role by type.
+     *
+     * @param string $type Role type.
      *
      * @return Role
      */
-    public static function getRoleByType($type){
+    public static function getRoleByType($type)
+    {
         $role = Role::findFirst(array(
             "type = '{$type}'",
             'cache' => array(
-                'key' => 'role_type_'.$type.'.cache'
+                'key' => 'role_type_' . $type . '.cache'
             )
         ));
-        if (!$role){
+        if (!$role) {
             $role = new Role();
             $role->name = ucfirst($type);
-            $role->description = ucfirst($type). ' role.';
+            $role->description = ucfirst($type) . ' role.';
             $role->type = $type;
             $role->undeletable = 1;
             $role->save();
@@ -116,18 +151,19 @@ class Role extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Get default guest role
+     * Get default guest role.
      *
      * @return Role
      */
-    public static function getDefaultRole(){
+    public static function getDefaultRole()
+    {
         $role = Role::findFirst(array(
             "is_default = 1",
             'cache' => array(
                 'key' => 'role_default.cache'
             )
         ));
-        if (!$role){
+        if (!$role) {
             $role = new Role();
             $role->name = "User";
             $role->description = 'Default user role.';

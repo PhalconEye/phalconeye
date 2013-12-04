@@ -1,32 +1,50 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace User\Model;
 
+use Core\Api\Acl;
+use Engine\Db\AbstractModel;
 use Engine\Db\Model\Behavior\Timestampable;
+use Engine\Form\Validator\Email;
+use Engine\Form\Validator\StringLength;
+use Phalcon\DI;
+use Phalcon\Mvc\Model\ResultsetInterface;
+use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 /**
+ * User.
+ *
+ * @category  PhalconEye
+ * @package   User\Model
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ *
  * @Source("users")
  * @BelongsTo("role_id", '\User\Model\Role', "id", {
  *  "alias": "Role"
  * })
  */
-class User extends \Engine\Db\AbstractModel
+class User extends AbstractModel
 {
-    // use trait Timestampable for creation_date and modified_date fields
+    // use trait Timestampable for creation_date and modified_date fields.
     use Timestampable;
 
     /**
@@ -59,28 +77,38 @@ class User extends \Engine\Db\AbstractModel
     public $email;
 
     /**
-     * Current viewer
+     * Current viewer.
      *
      * @var User null
      */
     private static $_viewer = null;
 
+    /**
+     * Set user password.
+     *
+     * @param string $password User password.
+     *
+     * @return void
+     */
     public function setPassword($password)
     {
-        if (!empty($password) && $this->password != $password)
+        if (!empty($password) && $this->password != $password) {
             $this->password = $this->getDI()->get('security')->hash($password);
+        }
     }
 
     /**
-     * Return the related "Role"
+     * Return the related "Role" entity.
      *
-     * @return \User\Model\Role
+     * @param array $arguments Arguments data.
+     *
+     * @return Role
      */
     public function getRole($arguments = array())
     {
         $arguments = array_merge($arguments, array(
             'cache' => array(
-                'key' => 'role_id_'.$this->role_id.'.cache'
+                'key' => 'role_id_' . $this->role_id . '.cache'
             )
         ));
         $role = $this->getRelated('Role', $arguments);
@@ -94,13 +122,13 @@ class User extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Will check if user have Admin role
+     * Will check if user have Admin role.
      *
      * @return bool
      */
     public function isAdmin()
     {
-        return $this->getRole()->type == \Core\Api\Acl::DEFAULT_ROLE_ADMIN;
+        return $this->getRole()->type == Acl::DEFAULT_ROLE_ADMIN;
     }
 
     /**
@@ -108,19 +136,19 @@ class User extends \Engine\Db\AbstractModel
      * If user logged in this function will return user object with data
      * If user isn't logged in this function will return empty user object with ID = 0
      *
-     * @return null|\Phalcon\Mvc\Model\ResultsetInterface|User
+     * @return null|ResultsetInterface|User
      */
     public static function getViewer()
     {
         if (null === self::$_viewer) {
-            $identity = \Phalcon\DI::getDefault()->get('core')->auth()->getIdentity();
+            $identity = DI::getDefault()->get('core')->auth()->getIdentity();
             if ($identity) {
                 self::$_viewer = self::findFirst($identity);
             }
             if (!self::$_viewer) {
                 self::$_viewer = new User();
                 self::$_viewer->id = 0;
-                self::$_viewer->role_id = Role::getRoleByType(\Core\Api\Acl::DEFAULT_ROLE_GUEST)->id;
+                self::$_viewer->role_id = Role::getRoleByType(Acl::DEFAULT_ROLE_GUEST)->id;
             }
         }
 
@@ -128,24 +156,26 @@ class User extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Validations and business logic
+     * Validations and business logic.
+     *
+     * @return bool
      */
     public function validation()
     {
-        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+        $this->validate(new Uniqueness(array(
             "field" => "username"
         )));
 
-        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+        $this->validate(new Uniqueness(array(
             "field" => "email"
         )));
 
-        $this->validate(new \Phalcon\Mvc\Model\Validator\Email(array(
+        $this->validate(new Email(array(
             "field" => "email",
             "required" => true
         )));
 
-        $this->validate(new \Phalcon\Mvc\Model\Validator\StringLength(array(
+        $this->validate(new StringLength(array(
             "field" => "password",
             "min" => 6
         )));
@@ -154,5 +184,4 @@ class User extends \Engine\Db\AbstractModel
             return false;
         }
     }
-
 }

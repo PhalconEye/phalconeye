@@ -1,47 +1,73 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Widget\Menu;
 
-class Controller extends \Engine\Widget\Controller
-{
+use Core\Model\Menu;
+use Core\Model\MenuItem;
+use Engine\Navigation;
+use Engine\Widget\Controller as WidgetController;
 
+/**
+ * Menu widget controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Widget\Header
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Controller extends WidgetController
+{
+    /**
+     * Main action.
+     *
+     * @return void
+     */
     public function indexAction()
     {
         $this->view->title = $this->getParam('title');
 
         $menuId = $this->getParam('menu_id');
         $menu = null;
-        if ($menuId)
-            $menu = \Core\Model\Menu::findFirst($menuId);
-        if (!$menu)
+        if ($menuId) {
+            $menu = Menu::findFirst($menuId);
+        }
+        if (!$menu) {
             return $this->setNoRender();
+        }
 
 
         $menuClass = $this->getParam('class', 'nav');
-        if (empty($menuClass))
+        if (empty($menuClass)) {
             $menuClass = 'nav';
+        }
 
-        $items = $this->_composeNavigation($menu->getMenuItems(array('parent_id IS NULL', 'order' => 'item_order ASC')));
+        $items = $this->_composeNavigationItems(
+            $menu->getMenuItems(array('parent_id IS NULL', 'order' => 'item_order ASC'))
+        );
 
         if (empty($items)) {
             return $this->setNoRender();
         }
 
-        $navigation = new \Engine\Navigation();
+        $navigation = new Navigation();
         $navigation
             ->setListClass($menuClass)
             ->setItems($items)
@@ -50,13 +76,22 @@ class Controller extends \Engine\Widget\Controller
         $this->view->navigation = $navigation;
     }
 
-    private function _composeNavigation($items)
+    /**
+     * Compose navigation items.
+     *
+     * @param MenuItem[] $items Menu items objects.
+     *
+     * @return array
+     */
+    private function _composeNavigationItems($items)
     {
         $navigationItems = array();
         $index = 1;
         foreach ($items as $item) {
             /** @var MenuItem $item */
-            if (!$item->isAllowed()) continue;
+            if (!$item->isAllowed()) {
+                continue;
+            }
             $subItems = $item->getMenuItems(array('order' => 'item_order ASC'));
             $navigationItems[$index] = array(
                 'title' => $item->title
@@ -80,9 +115,11 @@ class Controller extends \Engine\Widget\Controller
 
             if (!empty($item->icon)) {
                 if ($item->icon_position == 'left') {
-                    $navigationItems[$index]['prepend'] = "<img class='nav-icon nav-icon-left' alt='{$item->title}' src='{$item->icon}'/>";
+                    $navigationItems[$index]['prepend'] =
+                        "<img class='nav-icon nav-icon-left' alt='{$item->title}' src='{$item->icon}'/>";
                 } else {
-                    $navigationItems[$index]['append'] = "<img class='nav-icon nav-icon-right' alt='{$item->title}' src='{$item->icon}'/>";
+                    $navigationItems[$index]['append'] =
+                        "<img class='nav-icon nav-icon-right' alt='{$item->title}' src='{$item->icon}'/>";
                 }
             }
 
@@ -92,6 +129,11 @@ class Controller extends \Engine\Widget\Controller
         return $navigationItems;
     }
 
+    /**
+     * Cache this widget?
+     *
+     * @return bool
+     */
     public function isCached()
     {
         return true;

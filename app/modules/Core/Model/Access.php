@@ -58,5 +58,4 @@ class Access extends AbstractModel
      * @Column(type="string", nullable=true, column="value", size="25")
      */
     public $value;
-
 }

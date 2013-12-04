@@ -1,50 +1,77 @@
 <?php
-
-/**
- * PhalconEye
- *
- * LICENSE
- *
- * This source file is subject to the new BSD license that is bundled
- * with this package in the file LICENSE.txt.
- *
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to phalconeye@gmail.com so we can send you a copy immediately.
- *
- */
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
 
 namespace Core\Widget\HtmlBlock;
 
-class Controller extends \Engine\Widget\Controller
-{
+use Core\Model\Language;
+use Core\Model\Settings;
+use Engine\Form;
+use Engine\Widget\Controller as WidgetController;
 
+/**
+ * HtmlBlock widget controller.
+ *
+ * @category  PhalconEye
+ * @package   Core\Widget\Header
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Controller extends WidgetController
+{
+    /**
+     * Main action.
+     *
+     * @return void
+     */
     public function indexAction()
     {
         $this->view->title = $this->getParam('title');
         $currentLocale = $this->session->get('locale', 'en');
-        $defaultLocale = \Core\Model\Settings::getSetting('system_default_language', 'en');
+        $defaultLocale = Settings::getSetting('system_default_language', 'en');
 
-        $html = $this->getParam('html_'.$currentLocale);
-        if (empty($html)){
+        $html = $this->getParam('html_' . $currentLocale);
+        if (empty($html)) {
             // let's look at default language html
-            $html = $this->getParam('html_'.$defaultLocale);
-            if (empty($html))
+            $html = $this->getParam('html_' . $defaultLocale);
+            if (empty($html)) {
                 return $this->setNoRender();
+            }
         }
 
         $this->view->html = $html;
     }
 
+    /**
+     * Admin action for editing widget options through admin panel.
+     *
+     * @return Form
+     */
     public function adminAction()
     {
-        $form = new \Engine\Form();
+        $form = new Form();
 
         $form->addElement('text', 'title', array(
             'label' => 'Title'
         ));
 
-        // adding additional html for language selector support
+        // Adding additional html for language selector support.
         $languageSelectorHtml = '
                 <style type="text/css">
                     form .form_elements > div{
@@ -83,39 +110,50 @@ class Controller extends \Engine\Widget\Controller
                 </div>
                 ';
 
-        // creating languages boxes
-        $languages = \Core\Model\Language::find();
+        // Creating languages boxes.
+        $languages = Language::find();
         $languageHtmlItems = '';
         $languageTextCode = '';
-        $defaultLocale = \Core\Model\Settings::getSetting('system_default_language', 'en');
+        $defaultLocale = Settings::getSetting('system_default_language', 'en');
 
-        $order = 3; // all textarea's must be ordered together
-        foreach($languages as $language){
+        $order = 3; // All textarea's must be ordered together.
+        foreach ($languages as $language) {
             $selectedLanguage = '';
-            if ($language->locale == $defaultLocale){
+            if ($language->locale == $defaultLocale) {
                 $selectedLanguage = 'selected="selected"';
             }
 
-            $form->addElement('textArea', 'html_'.$language->locale, array(), $order++);
-            $languageTextCode .= 'CKEDITOR.replace("html_'.$language->locale.'");';
-            $languageHtmlItems .= '<option '.$selectedLanguage.' value='.$language->locale.'>'.$language->name.'</option>';
+            $form->addElement('textArea', 'html_' . $language->locale, array(), $order++);
+            $languageTextCode .= 'CKEDITOR.replace("html_' . $language->locale . '");';
+            $languageHtmlItems .=
+                '<option ' . $selectedLanguage . ' value=' . $language->locale . '>' . $language->name . '</option>';
         }
 
-        $languageSelectorHtml = sprintf($languageSelectorHtml, $defaultLocale, $languageTextCode, $this->di->get('trans')->_('HTML block, for:'), $languageHtmlItems);
+        $languageSelectorHtml =
+            sprintf(
+                $languageSelectorHtml,
+                $defaultLocale,
+                $languageTextCode,
+                $this->di->get('trans')->_('HTML block, for:'),
+                $languageHtmlItems
+            );
 
-        // adding created html to form
+        // Adding created html to form.
         $form->addElement('html', 'html', array(
             'ignore' => true,
             'html' => $languageSelectorHtml
         ));
 
-
         return $form;
     }
 
+    /**
+     * Cache this widget?
+     *
+     * @return bool
+     */
     public function isCached()
     {
         return true;
     }
-
 }
