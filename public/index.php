@@ -13,7 +13,9 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
+ini_set('display_errors', 1);
 error_reporting(E_ALL);
+
 define('PE_VERSION', '0.4.0');
 define('PHALCON_VERSION_REQUIRED', '1.2.4');
 define('PHP_VERSION_REQUIRED', '5.4.0');

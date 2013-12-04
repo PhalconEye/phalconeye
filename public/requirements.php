@@ -54,6 +54,6 @@ foreach ($checkPath as $path) {
     $allPassed = $allPassed && $is_writable;
 }
 
-if (!$allPassed){
+if (!$allPassed) {
     exit(1);
 }
