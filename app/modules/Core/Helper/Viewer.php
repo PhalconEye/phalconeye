@@ -19,7 +19,10 @@
 namespace Core\Helper;
 
 use Engine\HelperInterface;
+use Phalcon\DI;
+use Phalcon\DiInterface;
 use Phalcon\Tag;
+use User\Model\User;
 
 /**
  * Viewer helper.
@@ -33,8 +36,19 @@ use Phalcon\Tag;
  */
 class Viewer extends Tag implements HelperInterface
 {
-    static public function _(\Phalcon\DI $di, array $args)
+    /**
+     * Get current user (viewer).
+     *
+     * @param DiInterface $di   Dependency injection.
+     * @param array       $args Helper arguments.
+     *
+     * @return mixed
+     *
+     * @todo: Refactor helpers.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     */
+    static public function _(DiInterface $di, array $args)
     {
-        return \User\Model\User::getViewer();
+        return User::getViewer();
     }
 }

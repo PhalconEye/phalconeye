@@ -18,6 +18,8 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+
 /**
  * Menu.
  *
@@ -33,9 +35,9 @@ namespace Core\Model;
  *  "alias": "MenuItem"
  * })
  *
- * @method static \Core\Model\Menu findFirst($parameters=null)
+ * @method static \Core\Model\Menu findFirst($parameters = null)
  */
-class Menu extends \Engine\Db\AbstractModel
+class Menu extends AbstractModel
 {
 
     /**
@@ -51,15 +53,22 @@ class Menu extends \Engine\Db\AbstractModel
     public $name;
 
     /**
-     * Return the related "MenuItem"
+     * Return the related "MenuItem" entity.
      *
-     * @return \Core\Model\MenuItem[]
+     * @param array $arguments Entity params.
+     *
+     * @return MenuItem[]
      */
     public function getMenuItems($arguments = array())
     {
         return $this->getRelated('MenuItem', $arguments);
     }
 
+    /**
+     * Logic before removal
+     *
+     * @return void
+     */
     public function beforeDelete()
     {
         $this->getMenuItems()->delete();

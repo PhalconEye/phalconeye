@@ -18,6 +18,8 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+
 /**
  * Widget.
  *
@@ -33,9 +35,8 @@ namespace Core\Model;
  *  "alias": "Content"
  * })
  */
-class Widget extends \Engine\Db\AbstractModel
+class Widget extends AbstractModel
 {
-
     /**
      * @Primary
      * @Identity
@@ -79,20 +80,32 @@ class Widget extends \Engine\Db\AbstractModel
     public $enabled = true;
 
     /**
-     * Return the related "Content"
+     * Return the related "Content" entity.
      *
-     * @return \Core\Model\Content[]
+     * @param array $arguments Entity arguments.
+     *
+     * @return Content[]
      */
-    public function getContent($arguments = array()){
+    public function getContent($arguments = array())
+    {
         return $this->getRelated('Content', $arguments);
     }
 
-    protected function beforeDelete(){
+    /**
+     * Logic before removal.
+     *
+     * @return bool
+     */
+    protected function beforeDelete()
+    {
         $flag = true;
         foreach ($this->getContent() as $item) {
             $flag = $item->delete();
-            if (!$flag) break;
+            if (!$flag) {
+                break;
+            }
         }
+
         return $flag;
     }
 }

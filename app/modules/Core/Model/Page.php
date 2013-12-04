@@ -18,6 +18,13 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+use Phalcon\Mvc\Model\ResultsetInterface;
+use Phalcon\Mvc\Model\Validator\PresenceOf;
+use Phalcon\Mvc\Model\Validator\StringLength;
+use Phalcon\Mvc\Model\Validator\Uniqueness;
+use User\Model\User;
+
 /**
  * Page.
  *
@@ -34,7 +41,7 @@ namespace Core\Model;
  * })
  * @Acl(actions={"show_views"}, options={"page_footer"})
  */
-class Page extends \Engine\Db\AbstractModel
+class Page extends AbstractModel
 {
     /**
      * @Primary
@@ -81,7 +88,7 @@ class Page extends \Engine\Db\AbstractModel
     /**
      * @Column(type="string", nullable=true, column="roles", size="150")
      */
-    protected $roles = null;
+    public $roles = null;
 
     /**
      * @Column(type="integer", nullable=false, column="view_count", size="11")
@@ -95,30 +102,37 @@ class Page extends \Engine\Db\AbstractModel
      */
     public function getRoles()
     {
-        if (is_array($this->roles))
+        if (is_array($this->roles)) {
             return $this->roles;
+        }
 
         return json_decode($this->roles);
     }
 
     /**
-     * Prepare json string to object to interract
+     * Prepare json string to object to interact.
+     *
+     * @return void
      */
     public function prepareRoles()
     {
-        if (!is_array($this->roles))
+        if (!is_array($this->roles)) {
             $this->roles = json_decode($this->roles);
+        }
     }
 
     /**
-     * Set widgets data related to page
+     * Set widgets data related to page.
      *
-     * @param array $widgets
+     * @param array $widgets Widgets data.
+     *
+     * @return void
      */
     public function setWidgets($widgets = array())
     {
-        if (!$widgets)
+        if (!$widgets) {
             $widgets = array();
+        }
 
         $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', array());
 
@@ -133,14 +147,16 @@ class Page extends \Engine\Db\AbstractModel
             $orders = array();
 
             foreach ($widgets as $item) {
-                if (empty($currentPageWidgets[$item['widget_index']]))
+                if (empty($currentPageWidgets[$item['widget_index']])) {
                     continue;
+                }
                 $itemData = $currentPageWidgets[$item['widget_index']];
 
-                if (empty($orders[$item["layout"]]))
+                if (empty($orders[$item["layout"]])) {
                     $orders[$item["layout"]] = 1;
-                else
+                } else {
                     $orders[$item["layout"]]++;
+                }
 
                 if ($ex_widget->id == $itemData["id"]) {
                     $ex_widget->layout = $item["layout"];
@@ -160,7 +176,8 @@ class Page extends \Engine\Db\AbstractModel
         $orders = array();
         foreach ($widgets as $item) {
             if (empty($currentPageWidgets[$item['widget_index']])) {
-                if ($item['widget_index'] == 'NaN') { // insert with empty parameters
+                if ($item['widget_index'] == 'NaN') {
+                    // Insert with empty parameters.
                     $content = new Content();
                     $content->page_id = $this->id;
                     $content->widget_id = $item["widget_id"];
@@ -173,12 +190,14 @@ class Page extends \Engine\Db\AbstractModel
             }
             $itemData = $currentPageWidgets[$item['widget_index']];
 
-            if (empty($orders[$item["layout"]]))
+            if (empty($orders[$item["layout"]])) {
                 $orders[$item["layout"]] = 1;
-            else
+            } else {
                 $orders[$item["layout"]]++;
+            }
 
-            if ($itemData["id"] == 0) { // need to be inserted
+            if ($itemData["id"] == 0) {
+                // Need to be inserted.
                 $content = new Content();
                 $content->page_id = $this->id;
                 $content->widget_id = $item["widget_id"];
@@ -193,14 +212,12 @@ class Page extends \Engine\Db\AbstractModel
             $rowsToRemove = Content::find("id IN (" . implode(',', $widgets_ids_to_remove) . ")");
             $rowsToRemove->delete();
         }
-
-
     }
 
     /**
-     * Get related widgets data
+     * Get related widgets data.
      *
-     * @return \Engine\Model\ResultsetInterface
+     * @return ResultsetInterface
      */
     public function getWidgets()
     {
@@ -210,6 +227,11 @@ class Page extends \Engine\Db\AbstractModel
         ));
     }
 
+    /**
+     * Increment views.
+     *
+     * @return void
+     */
     public function incrementViews()
     {
         $this->view_count++;
@@ -217,46 +239,63 @@ class Page extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Check if this page is allowed to view
+     * Check if this page is allowed to view.
      *
      * @return bool
      */
     public function isAllowed()
     {
-        $viewer = \User\Model\User::getViewer();
+        $viewer = User::getViewer();
         $roles = $this->getRoles();
-        if (empty($roles)) return true;
+        if (empty($roles)) {
+            return true;
+        }
+
         return in_array($viewer->getRoleId(), $roles);
     }
 
+    /**
+     * Validation logic.
+     *
+     * @return bool
+     */
     public function validation()
     {
         if ($this->url !== null) {
-            $this->validate(new \Phalcon\Mvc\Model\Validator\StringLength(array(
+            $this->validate(new StringLength(array(
                 "field" => "url",
                 'min' => 1
             )));
         }
 
-        $this->validate(new \Phalcon\Mvc\Model\Validator\PresenceOf(array(
+        $this->validate(new PresenceOf(array(
             'field' => 'title'
         )));
 
-        $this->validate(new \Phalcon\Mvc\Model\Validator\Uniqueness(array(
+        $this->validate(new Uniqueness(array(
             'field' => 'url'
         )));
-
 
         if ($this->validationHasFailed() == true) {
             return false;
         }
     }
 
+    /**
+     * Logic before removal.
+     *
+     * @return void
+     */
     protected function beforeDelete()
     {
         $this->getWidgets()->delete();
     }
 
+    /**
+     * Logic before save.
+     *
+     * @return void
+     */
     protected function beforeSave()
     {
         if (is_array($this->roles) && !empty($this->roles)) {
@@ -265,5 +304,4 @@ class Page extends \Engine\Db\AbstractModel
             $this->roles = null;
         }
     }
-
 }

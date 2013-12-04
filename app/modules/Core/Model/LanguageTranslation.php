@@ -15,7 +15,10 @@
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   +------------------------------------------------------------------------+
 */
+
 namespace Core\Model;
+
+use Engine\Db\AbstractModel;
 
 /**
  * Language translation.
@@ -32,7 +35,7 @@ namespace Core\Model;
  *  "alias": "Language"
  * })
  */
-class LanguageTranslation extends \Engine\Db\AbstractModel
+class LanguageTranslation extends AbstractModel
 {
     /**
      * @Primary
@@ -54,16 +57,17 @@ class LanguageTranslation extends \Engine\Db\AbstractModel
     /**
      * @Column(type="text", nullable=false, column="translated")
      */
-    public $translated = NULL;
+    public $translated = null;
 
     /**
-     * Return the related "Language"
+     * Return the related "Language" entity.
      *
-     * @return \Core\Model\Language
+     * @param array $arguments Entity params.
+     *
+     * @return Language
      */
     public function getLanguage($arguments = array())
     {
         return $this->getRelated('Language', $arguments);
     }
-
 }

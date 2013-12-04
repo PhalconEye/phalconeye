@@ -18,7 +18,9 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
 use Engine\Db\Model\Behavior\Sortable;
+use User\Model\User;
 
 /**
  * Menu item.
@@ -38,9 +40,9 @@ use Engine\Db\Model\Behavior\Sortable;
  *  "alias": "MenuItem"
  * })
  *
- * @method static \Core\Model\MenuItem findFirst($parameters=null)
+ * @method static \Core\Model\MenuItem findFirst($parameters = null)
  */
-class MenuItem extends \Engine\Db\AbstractModel
+class MenuItem extends AbstractModel
 {
     use Sortable;
 
@@ -79,7 +81,7 @@ class MenuItem extends \Engine\Db\AbstractModel
     /**
      * @Column(type="string", nullable=true, column="onclick", size="255")
      */
-    protected $onclick = null;
+    public $onclick = null;
 
     /**
      * @Column(type="string", nullable=true, column="target", size="10")
@@ -109,17 +111,19 @@ class MenuItem extends \Engine\Db\AbstractModel
     /**
      * @Column(type="string", nullable=true, column="languages", size="150")
      */
-    protected $languages = null;
+    public $languages = null;
 
     /**
      * @Column(type="string", nullable=true, column="roles", size="150")
      */
-    protected $roles = null;
+    public $roles = null;
 
     /**
-     * Return the related "Menu"
+     * Return the related "Menu" entity.
      *
-     * @return \Core\Model\Menu
+     * @param array $arguments Entity params.
+     *
+     * @return Menu
      */
     public function getMenu($arguments = array())
     {
@@ -127,9 +131,11 @@ class MenuItem extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Return the related "Menu"
+     * Return the related "Menu" entity.
      *
-     * @return \Core\Model\Menu
+     * @param array $arguments Entity params.
+     *
+     * @return Menu
      */
     public function getMenuItems($arguments = array())
     {
@@ -137,7 +143,7 @@ class MenuItem extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Returns parent object, it can be MenuItem or Menu (if there is no parent_id)
+     * Returns parent object, it can be MenuItem or Menu (if there is no parent_id).
      *
      * @return MenuItem|Menu
      */
@@ -151,71 +157,79 @@ class MenuItem extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Returns the value of field onclick
+     * Returns the value of field onclick.
      *
      * @return string
      */
     public function getOnclick()
     {
-        return str_replace('"', "'", $this->onclick); // double quetes escaping for tag onlick
+        return str_replace('"', "'", $this->onclick);
     }
 
     /**
-     * Returns the value of field tooltip
+     * Returns the value of field tooltip.
      *
      * @return string
      */
     public function getTooltip()
     {
-        return str_replace('"', "'", $this->tooltip); // we need html to work well in attribute "title"
+        return str_replace('"', "'", $this->tooltip);
     }
 
     /**
-     * Returns the value of field languages
+     * Returns the value of field languages.
      *
      * @return string
      */
     public function getLanguages()
     {
-        if (is_array($this->languages))
+        if (is_array($this->languages)) {
             return $this->languages;
+        }
 
         return json_decode($this->languages);
     }
 
     /**
-     * Prepare json string to object to interract
+     * Prepare json string to object to interact.
+     *
+     * @return void
      */
     public function prepareLanguages()
     {
-        if (!is_array($this->languages))
+        if (!is_array($this->languages)) {
             $this->languages = json_decode($this->languages);
+        }
     }
 
     /**
-     * Returns the value of field roles
+     * Returns the value of field roles.
      *
      * @return string
      */
     public function getRoles()
     {
-        if (is_array($this->roles))
+        if (is_array($this->roles)) {
             return $this->roles;
+        }
 
         return json_decode($this->roles);
     }
 
     /**
-     * Prepare json string to object to interract
+     * Prepare json string to object to interact.
+     *
+     * @return void
      */
     public function prepareRoles()
     {
-        if (!is_array($this->roles))
+        if (!is_array($this->roles)) {
             $this->roles = json_decode($this->roles);
+        }
     }
 
     /**
-     * Get menu item href
+     * Get menu item href.
      *
      * @return null|string
      */
@@ -233,42 +247,58 @@ class MenuItem extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Check if menu item output is allowed
+     * Check if menu item output is allowed.
      *
      * @return bool
      */
     public function isAllowed()
     {
         $valid = true;
-        $viewer = \User\Model\User::getViewer();
+        $viewer = User::getViewer();
         $roles = $this->getRoles();
 
-        if (!empty($roles))
+        if (!empty($roles)) {
             $valid = in_array($viewer->getRoleId(), $roles);
+        }
 
-        if (!$valid)
+        if (!$valid) {
             return false;
+        }
 
         $valid = true;
         $locale = $this->getDI()->get('session')->get('locale', 'en');
         $languages = $this->getLanguages();
 
-        if (!empty($languages))
+        if (!empty($languages)) {
             $valid = in_array($locale, $languages);
+        }
 
         return $valid;
     }
 
+    /**
+     * Logic before removal.
+     *
+     * @return bool
+     */
     protected function beforeDelete()
     {
         $flag = true;
         foreach ($this->getMenuItems() as $item) {
             $flag = $item->delete();
-            if (!$flag) break;
+            if (!$flag) {
+                break;
+            }
         }
+
         return $flag;
     }
 
+    /**
+     * Logic before save.
+     *
+     * @return void
+     */
     protected function beforeSave()
     {
         if (is_array($this->roles) && !empty($this->roles)) {

@@ -18,6 +18,11 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+use Engine\Package\Manager;
+use Phalcon\DI;
+use Phalcon\Mvc\Model\Resultset\Simple;
+
 /**
  * Package.
  *
@@ -36,7 +41,7 @@ namespace Core\Model;
  *  "alias": "RelatedPackages"
  * })
  */
-class Package extends \Engine\Db\AbstractModel
+class Package extends AbstractModel
 {
 
     /**
@@ -92,48 +97,61 @@ class Package extends \Engine\Db\AbstractModel
     public $is_system = false;
 
     /**
-     * Return the related "PackageDependency"
+     * Return the related "PackageDependency" entity.
      *
-     * @return \Core\Model\PackageDependency[]
+     * @param array $arguments Entity params.
+     *
+     * @return PackageDependency[]
      */
-    public function getPackageDependency($arguments = array()){
+    public function getPackageDependency($arguments = array())
+    {
         return $this->getRelated('PackageDependency', $arguments);
     }
 
     /**
-     * Return the related "PackageDependency"
+     * Return the related "PackageDependency" entity.
      *
-     * @return \Core\Model\PackageDependency[]
+     * @param array $arguments Entity params.
+     *
+     * @return PackageDependency[]
      */
-    public function getRelatedPackages($arguments = array()){
+    public function getRelatedPackages($arguments = array())
+    {
         return $this->getRelated('RelatedPackages', $arguments);
     }
 
     /**
-     * @param string $type
-     * @param null $enabled
-     * @param null $order
+     * Find package by type.
      *
-*@return \Phalcon\Mvc\Model\Resultset\Simple
+     * @param string      $type    Package type.
+     * @param null|bool   $enabled Is enabled.
+     * @param null|string $order   Order by field.
+     *
+     * @return Simple
      */
-    public static function findByType($type = \Engine\Package\Manager::PACKAGE_TYPE_MODULE, $enabled = null, $order = null)
+    public static function findByType($type = Manager::PACKAGE_TYPE_MODULE, $enabled = null, $order = null)
     {
-        /** @var \Phalcon\Mvc\Model\Query\Builder $query  */
-        $query = \Phalcon\DI::getDefault()->get('modelsManager')->createBuilder()
+        /** @var \Phalcon\Mvc\Model\Query\Builder $query */
+        $query = DI::getDefault()->get('modelsManager')->createBuilder()
             ->from(array('t' => '\Core\Model\Package'))
             ->where("t.type = '{$type}'");
 
-        if ($enabled !== null){
+        if ($enabled !== null) {
             $query->andWhere("t.enabled = {$enabled}");
         }
 
-        if ($order !== null){
-            $query->orderBy('t.'.$order);
+        if ($order !== null) {
+            $query->orderBy('t.' . $order);
         }
 
         return $query->getQuery()->execute();
     }
 
+    /**
+     * Logic before removal.
+     *
+     * @return void
+     */
     protected function beforeDelete()
     {
         $this->getPackageDependency()->delete();

@@ -18,6 +18,8 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+
 /**
  * Package dependency.
  *
@@ -34,7 +36,7 @@ namespace Core\Model;
  *  "alias": "Dependency"
  * })
  */
-class PackageDependency extends \Engine\Db\AbstractModel
+class PackageDependency extends AbstractModel
 {
     /**
      * @Primary

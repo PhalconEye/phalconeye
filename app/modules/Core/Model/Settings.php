@@ -18,6 +18,8 @@
 
 namespace Core\Model;
 
+use Engine\Db\AbstractModel;
+
 /**
  * Settings.
  *
@@ -30,7 +32,7 @@ namespace Core\Model;
  *
  * @Source("settings")
  */
-class Settings extends \Engine\Db\AbstractModel
+class Settings extends AbstractModel
 {
     /**
      * @Primary
@@ -45,26 +47,28 @@ class Settings extends \Engine\Db\AbstractModel
     public $value;
 
     /**
-     * Set value of current setting and save to db
+     * Set value of current setting and save to db.
      *
-     * @param $value
+     * @param mixed $value Setting value.
+     *
+     * @return void
      */
     public function setValue($value)
     {
         $this->value = $value;
         $this->save();
 
-        // clear cache
+        // Clear cache.
         $this->getDI()->get('cacheData')->delete('setting_' . $this->name . '.cache');
     }
 
     /**
-     * Get setting by name
+     * Get setting by name.
      *
-     * @param $name
-     * @param null $default
+     * @param string     $name    Setting name.
+     * @param null|mixed $default Default value.
      *
-*@return null|string
+     * @return null|string
      */
     public static function getSetting($name, $default = null)
     {
@@ -77,15 +81,15 @@ class Settings extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Get setting object by name
+     * Get setting object by name.
      *
-     * @param $name
+     * @param string $name Setting name.
      *
-*@return null|Settings
+     * @return null|Settings
      */
     public static function getSettingObject($name)
     {
-        $setting = Settings::findFirst(
+        return Settings::findFirst(
             array(
                 'name = :name:',
                 'bind' => array(
@@ -95,16 +99,13 @@ class Settings extends \Engine\Db\AbstractModel
                     'key' => 'setting_' . $name . '.cache'
                 )
             ));
-
-
-        return $setting;
     }
 
     /**
-     * Set setting by name
+     * Set setting by name.
      *
-     * @param $name
-     * @param $value
+     * @param string $name  Setting name.
+     * @param mixed  $value Setting value.
      */
     public static function setSetting($name, $value)
     {
@@ -119,9 +120,11 @@ class Settings extends \Engine\Db\AbstractModel
     }
 
     /**
-     * Set array settings with key related values
+     * Set array settings with key related values.
      *
-     * @param array $settings
+     * @param array $settings Settings data (key=>value).
+     *
+     * @return void
      */
     public static function setSettings($settings)
     {
@@ -129,5 +132,4 @@ class Settings extends \Engine\Db\AbstractModel
             self::setSetting($key, $value);
         }
     }
-
 }
