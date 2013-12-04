@@ -5,7 +5,7 @@ php:
   - 5.5
 
 before_script:
-  - pyrus install --alldeps pear/PHP_CodeSniffer
+  - pyrus install pear/PHP_CodeSniffer
   - pear channel-discover pear.phpmd.org
   - pear install phpmd/PHP_PMD
   - phpenv rehash
