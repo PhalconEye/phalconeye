@@ -35,13 +35,11 @@ class AdminModuleController extends AdminControllerBase
     /**
      * Index action.
      *
-     * @param string $name Module name.
-     *
      * @return mixed
      *
      * @Route("/{name:[a-zA-Z0-9_-]+}", methods={"GET"}, name="admin-module-index")
      */
-    public function indexAction($name)
+    public function indexAction()
     {
     }
 }
