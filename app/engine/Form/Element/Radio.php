@@ -21,7 +21,7 @@ namespace Engine\Form\Element;
 use Engine\Exception;
 use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
-use Phalcon\Forms\Element\Select;
+use Phalcon\Forms\Element\Select as PhalconSelect;
 
 /**
  * Form element - Radiobox.
@@ -33,7 +33,7 @@ use Phalcon\Forms\Element\Select;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Radio extends Select implements ElementInterface
+class Radio extends PhalconSelect implements ElementInterface
 {
     use Description;
 

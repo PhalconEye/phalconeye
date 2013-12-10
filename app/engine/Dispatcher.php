@@ -16,51 +16,37 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Plugin;
+namespace Engine;
 
-use Engine\Application as EngineApplication;
-use Phalcon\Dispatcher;
-use Phalcon\Events\Event;
-use Phalcon\Exception as PhalconException;
-use Phalcon\Mvc\User\Plugin as PhalconPlugin;
+use Phalcon\Mvc\Dispatcher as PhalconDispatcher;
 
 /**
- * Not found plugin.
+ * Application dispatcher.
  *
  * @category  PhalconEye
- * @package   Engine\Plugin
+ * @package   Engine
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class NotFound extends PhalconPlugin
+class Dispatcher extends PhalconDispatcher
 {
     /**
-     * Before exception is happening.
+     * Dispatch.
+     * Override it to use own logic.
      *
-     * @param Event            $event      Event object.
-     * @param Dispatcher       $dispatcher Dispatcher object.
-     * @param PhalconException $exception  Exception object.
-     *
-     * @return bool
+     * @return object
      */
-    public function beforeException($event, $dispatcher, $exception)
+    public function dispatch()
     {
-        switch ($exception->getCode()) {
-            case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-            case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                $dispatcher->forward(array(
-                    'module' => EngineApplication::$defaultModule,
-                    'namespace' => ucfirst(EngineApplication::$defaultModule) . '\Controller',
-                    'controller' => 'error',
-                    'action' => 'show404'
-                ));
-
-                return false;
+        $parts = explode('_', $this->_handlerName);
+        $finalHandlerName = '';
+        foreach ($parts as $part) {
+            $finalHandlerName .= ucfirst($part);
         }
+        $this->_handlerName = $finalHandlerName;
 
-        return !$event->isStopped();
+        return parent::dispatch();
     }
-
 }

@@ -67,7 +67,7 @@
                         <div class="item_title">
                             <i class="icon-move"></i>
                             {{ item.title }}
-                            | {{ 'Items: '|trans }}{{ item.getMenuItems().count() }}
+                            | {{ 'Items: '|trans }}{{ item.getMenuItems() ? item.getMenuItems().count() : 0 }}
                         </div>
                         <div class="item_options">
                             <a class="btn btn-success item-manage" href="javascript:;">{{ 'Manage'|trans }}</a>

@@ -27,8 +27,7 @@ if (!defined('PUBLIC_PATH')) {
     define('PUBLIC_PATH', dirname(__FILE__));
 }
 
-require_once ROOT_PATH . "/app/engine/Error.php";
-
+require_once ROOT_PATH . "/app/engine/Exception.php";
 try {
     if (php_sapi_name() !== 'cli') {
         require_once ROOT_PATH . "/app/engine/Application.php";
@@ -41,7 +40,7 @@ try {
 
     $application->run();
     echo $application->getOutput();
-} catch (Exception $e) {
+} catch (\Exception $e) {
     \Engine\Exception::exception($e);
     throw $e;
 }

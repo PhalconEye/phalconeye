@@ -18,6 +18,7 @@
 
 namespace Engine;
 
+use Phalcon\DI;
 use Phalcon\Exception as PhalconException;
 
 /**
@@ -116,7 +117,7 @@ class Exception extends PhalconException
      */
     protected static function logError($type, $message, $file, $line, $trace = '')
     {
-        $di = Di::getDefault();
+        $di = DI::getDefault();
         $template = "[%s] %s (File: %s Line: [%s])";
         $logMessage = sprintf($template, $type, $message, $file, $line);
 

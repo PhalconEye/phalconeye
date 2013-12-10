@@ -19,6 +19,7 @@
 namespace Engine\Cache;
 
 use Phalcon\Cache\Backend;
+use Phalcon\Cache\BackendInterface;
 
 /**
  * Dummy cache.
@@ -32,7 +33,7 @@ use Phalcon\Cache\Backend;
  *
  * @SuppressWarnings(PHPMD)
  */
-class Dummy extends Backend
+class Dummy extends Backend implements BackendInterface
 {
     /**
      * Backend constructor.
@@ -192,5 +193,41 @@ class Dummy extends Backend
     public function exists($keyName = null, $lifetime = null)
     {
         return false;
+    }
+
+    /**
+     * Increment cache.
+     *
+     * @param string $key_name Cache key.
+     * @param mixed  $value    Cache value.
+     *
+     * @return void
+     */
+    public function increment($key_name = null, $value = null)
+    {
+
+    }
+
+    /**
+     * Decrement cache.
+     *
+     * @param string $key_name Cache key.
+     * @param mixed  $value    Cache value.
+     *
+     * @return void
+     */
+    public function decrement($key_name = null, $value = null)
+    {
+
+    }
+
+    /**
+     * Flash the cache.
+     *
+     * @return void
+     */
+    public function flush()
+    {
+
     }
 }

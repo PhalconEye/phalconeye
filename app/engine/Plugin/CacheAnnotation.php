@@ -71,7 +71,7 @@ class CacheAnnotation extends PhalconPlugin
             $this->view->cache($options);
         }
 
-        return $event->isStopped();
+        return !$event->isStopped();
     }
 
 }

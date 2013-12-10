@@ -18,12 +18,11 @@
 
 namespace Engine;
 
-use Engine\Config as EngineConfig;
 use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager;
 use Engine\Cache\Dummy;
+use Engine\Config as EngineConfig;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
-use Engine\Package\Exception;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
@@ -84,7 +83,6 @@ class Application extends PhalconApplication
             'logger',
             'loader',
             'environment',
-            'url',
             'cache',
             'annotations',
             'router',

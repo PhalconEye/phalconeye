@@ -57,7 +57,7 @@ class Auth extends AbstractApi
     public function authenticate($identity)
     {
         $this->_identity = $identity;
-        $this->_di->get('session')->set('identity', $identity);
+        $this->getDI()->get('session')->set('identity', $identity);
     }
 
     /**
@@ -68,7 +68,7 @@ class Auth extends AbstractApi
     public function clearAuth()
     {
         $this->_identity = 0;
-        $this->_di->get('session')->set('identity', 0);
+        $this->getDI()->get('session')->set('identity', 0);
     }
 
     /**

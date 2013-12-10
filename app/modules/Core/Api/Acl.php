@@ -71,8 +71,6 @@ class Acl extends AbstractApi
          */
         ACL_ADMIN_AREA = 'AdminArea';
 
-    use DependencyInjection;
-
     /**
      * Acl adapter.
      *
@@ -88,7 +86,7 @@ class Acl extends AbstractApi
     public function _()
     {
         if (!$this->_acl) {
-            $cacheData = $this->_di->get('cacheData');
+            $cacheData = $this->getDI()->get('cacheData');
             $acl = $cacheData->get(self::ACL_CACHE_KEY);
             if ($acl === null) {
                 $acl = new AclMemory();
@@ -215,7 +213,7 @@ class Acl extends AbstractApi
      */
     public function clearAcl()
     {
-        $this->_di->get('cacheData')->delete(self::ACL_CACHE_KEY);
+        $this->getDI()->get('cacheData')->delete(self::ACL_CACHE_KEY);
     }
 
     /**
@@ -248,7 +246,7 @@ class Acl extends AbstractApi
             }
         }
 
-        return $event->isStopped();
+        return !$event->isStopped();
     }
 
     /**
@@ -259,8 +257,8 @@ class Acl extends AbstractApi
      */
     protected function _addResources($acl, $objects)
     {
-        $config = $this->_di->get('config');
-        foreach ($this->_di->get('modules') as $module => $enabled) {
+        $config = $this->getDI()->get('config');
+        foreach ($this->getDI()->get('modules') as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }

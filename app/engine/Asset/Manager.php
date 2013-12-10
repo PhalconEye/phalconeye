@@ -75,7 +75,7 @@ class Manager extends AssetManager
         $this->__DIConstruct($di);
         $this->_config = $di->get('config');
         if ($prepare) {
-            if ($this->_config->application->debug && !$this->_config->installed) {
+            if ($this->_config->application->debug) {
                 $this->installAssets();
             }
 
