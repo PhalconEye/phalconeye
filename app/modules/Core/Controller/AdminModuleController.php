@@ -43,15 +43,5 @@ class AdminModuleController extends AdminControllerBase
      */
     public function indexAction($name)
     {
-        $className = ucfirst($name) . '\Controller\AdminIndexController';
-        if (class_exists($className)) {
-            return $this->dispatcher->forward(array(
-                'module' => $name,
-                "controller" => "AdminIndex",
-                "action" => "Index"
-            ));
-        }
     }
-
 }
-

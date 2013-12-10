@@ -15,6 +15,7 @@ Version 0.4.0
  - Fixed #11
  - Fixed Exception trace logging
  - New default theme
+ - Code styling
 
 Version 0.3.0
  - Some menu improvements: onclick action, icon, tooltip, language selector
