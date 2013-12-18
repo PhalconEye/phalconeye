@@ -39,7 +39,7 @@ use Phalcon\Mvc\View;
  * @property \Engine\Asset\Manager   $assets
  * @property \Phalcon\Config         $config
  */
-class ControllerBase extends PhalconController
+abstract class AbstractController extends PhalconController
 {
     /**
      * Initializes the controller.

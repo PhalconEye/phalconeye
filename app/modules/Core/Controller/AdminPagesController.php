@@ -41,7 +41,7 @@ use User\Model\Role;
  *
  * @RoutePrefix("/admin/pages", name="admin-pages")
  */
-class AdminPagesController extends AdminControllerBase
+class AdminPagesController extends AbstractAdminController
 {
     /**
      * Init navigation.

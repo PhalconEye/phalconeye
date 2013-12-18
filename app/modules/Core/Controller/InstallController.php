@@ -45,7 +45,7 @@ use User\Model\User;
  *
  * @RoutePrefix("/install", name="installation")
  */
-class InstallController extends ControllerBase
+class InstallController extends AbstractController
 {
     /**
      * System requirements.

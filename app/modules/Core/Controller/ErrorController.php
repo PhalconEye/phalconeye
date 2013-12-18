@@ -28,7 +28,7 @@ namespace Core\Controller;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class ErrorController extends ControllerBase
+class ErrorController extends AbstractController
 {
     /**
      * 404 page.

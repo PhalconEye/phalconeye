@@ -18,7 +18,7 @@
 
 namespace User\Controller;
 
-use Core\Controller\AdminControllerBase;
+use Core\Controller\AbstractAdminController;
 use Engine\Navigation;
 use Phalcon\Paginator\Adapter\QueryBuilder;
 use User\Form\Admin\Create as CreateForm;
@@ -40,7 +40,7 @@ use User\Model\User;
  *
  * @RoutePrefix("/admin/users", name="admin-users")
  */
-class AdminUsersController extends AdminControllerBase
+class AdminUsersController extends AbstractAdminController
 {
     /**
      * Init navigation.

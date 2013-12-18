@@ -30,7 +30,7 @@ namespace Core\Controller;
  *
  * @RoutePrefix("/admin/files", name="admin-files")
  */
-class AdminFilesController extends AdminControllerBase
+class AdminFilesController extends AbstractAdminController
 {
     /**
      * Index action.

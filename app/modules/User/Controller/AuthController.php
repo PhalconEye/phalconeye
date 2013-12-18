@@ -18,7 +18,7 @@
 
 namespace User\Controller;
 
-use Core\Controller\ControllerBase;
+use Core\Controller\AbstractController;
 use Phalcon\Db\Column;
 use Phalcon\Http\ResponseInterface;
 use User\Model\Role;
@@ -36,7 +36,7 @@ use User\Form\Auth\Register as RegisterForm;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AuthController extends ControllerBase
+class AuthController extends AbstractController
 {
     /**
      * Login action.

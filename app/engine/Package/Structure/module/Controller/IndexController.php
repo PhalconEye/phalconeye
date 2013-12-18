@@ -18,7 +18,7 @@
 
 namespace %nameUpper%\Controller;
 
-use Core\Controller\ControllerBase;
+use Core\Controller\AbstractController;
 
 /**
  * Index controller.
@@ -28,7 +28,7 @@ use Core\Controller\ControllerBase;
  *
  * @RoutePrefix("/%name%s", name="%name%s")
  */
-class IndexController extends ControllerBase
+class IndexController extends AbstractController
 {
     /**
      * @Route("/", methods={"GET"}, name="%name%s")

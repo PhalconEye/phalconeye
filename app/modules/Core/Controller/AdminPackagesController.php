@@ -42,7 +42,7 @@ use Phalcon\Config;
  *
  * @RoutePrefix("/admin/packages", name="admin-packages")
  */
-class AdminPackagesController extends AdminControllerBase
+class AdminPackagesController extends AbstractAdminController
 {
     /**
      * Init controller's navigation.

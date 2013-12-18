@@ -30,7 +30,7 @@ namespace Core\Controller;
  *
  * @RoutePrefix("/admin")
  */
-class AdminIndexController extends AdminControllerBase
+class AdminIndexController extends AbstractAdminController
 {
     /**
      * Index action.

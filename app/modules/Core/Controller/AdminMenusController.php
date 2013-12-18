@@ -41,7 +41,7 @@ use Phalcon\Paginator\Adapter\QueryBuilder;
  *
  * @RoutePrefix("/admin/menus")
  */
-class AdminMenusController extends AdminControllerBase
+class AdminMenusController extends AbstractAdminController
 {
     /**
      * Init controller before actions.

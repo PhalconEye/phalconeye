@@ -30,7 +30,7 @@ namespace Core\Controller;
  *
  * @RoutePrefix("/", name="home")
  */
-class IndexController extends ControllerBase
+class IndexController extends AbstractController
 {
     /**
      * Home action.

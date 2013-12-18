@@ -30,7 +30,7 @@ namespace Core\Controller;
  *
  * @RoutePrefix("/page", name="page")
  */
-class PageController extends ControllerBase
+class PageController extends AbstractController
 {
     /**
      * Index action.

@@ -32,7 +32,7 @@ use Engine\Package\Manager;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AdminControllerBase extends ControllerBase
+abstract class AbstractAdminController extends AbstractController
 {
     /**
      * Initialize admin specific logic.
