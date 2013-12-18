@@ -20,6 +20,7 @@ namespace Engine\Helper;
 
 use Engine\HelperInterface;
 use Phalcon\DI;
+use Phalcon\DiInterface;
 use Phalcon\Tag;
 
 /**
@@ -37,12 +38,14 @@ class PaginatorUrl extends Tag implements HelperInterface
     /**
      * Execute helper.
      *
-     * @param DI    $di   Dependency injection.
-     * @param array $args Helper arguments.
+     * @param DiInterface $di   Dependency injection.
+     * @param array       $args Helper arguments.
      *
      * @return mixed
+     * @todo: Refactor helpers.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    static public function _(DI $di, array $args)
+    static public function _(DiInterface $di, array $args)
     {
         $page = (isset($args[0]) ? $args[0] : 1);
         $vars = [];

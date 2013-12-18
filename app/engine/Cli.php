@@ -18,9 +18,12 @@
 
 namespace Engine;
 
-use Engine\Console\CommandsListener,
-    Engine\Console\ConsoleUtil,
-    Engine\Console\AbstractCommand;
+use Engine\Console\AbstractCommand;
+use Engine\Console\Commands\Assets;
+use Engine\Console\Commands\Cache;
+use Engine\Console\Commands\Database;
+use Engine\Console\CommandsListener;
+use Engine\Console\ConsoleUtil;
 
 /**
  * Console class.
@@ -64,9 +67,9 @@ class Cli extends Application
      */
     protected function _initCommands()
     {
-        $this->_commands[] = new \Engine\Console\Commands\Assets();
-        $this->_commands[] = new \Engine\Console\Commands\Database();
-        $this->_commands[] = new \Engine\Console\Commands\Cache();
+        $this->_commands[] = new Assets();
+        $this->_commands[] = new Database();
+        $this->_commands[] = new Cache();
     }
 
     /**

@@ -38,7 +38,7 @@ class Controller extends WidgetController
     /**
      * Main action.
      *
-     * @return void
+     * @return mixed
      */
     public function indexAction()
     {

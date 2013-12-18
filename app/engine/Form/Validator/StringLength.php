@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Validator;
 
+use Phalcon\Validation\Validator\StringLength as PhalconStringLength;
+use Phalcon\Validation\ValidatorInterface;
+
 /**
  * Form validator - String length.
  *
@@ -28,7 +31,7 @@ namespace Engine\Form\Validator;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class StringLength extends \Phalcon\Validation\Validator\StringLength implements \Phalcon\Validation\ValidatorInterface
+class StringLength extends PhalconStringLength implements ValidatorInterface
 {
 
 

@@ -376,6 +376,7 @@ class Navigation
                     } else {
                         $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
                         $content .= "<{$lit}{$active}>";
+                        $link = '#';
                         if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/') {
                             $link = $this->getDI()->get('url')->get($key);
                         }

@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Validator;
 
+use Phalcon\Validation\Validator\Email as PhalconEmail;
+use Phalcon\Validation\ValidatorInterface;
+
 /**
  * Form validator - Email.
  *
@@ -28,7 +31,7 @@ namespace Engine\Form\Validator;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Email extends \Phalcon\Validation\Validator\Email implements \Phalcon\Validation\ValidatorInterface
+class Email extends PhalconEmail implements ValidatorInterface
 {
 
 

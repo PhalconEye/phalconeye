@@ -21,6 +21,7 @@ namespace Core\Controller;
 use Core\Form\Admin\Page\Create as CreateForm;
 use Core\Form\Admin\Page\Edit as EditForm;
 use Core\Model\Page;
+use Core\Model\Widget;
 use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Http\Response;

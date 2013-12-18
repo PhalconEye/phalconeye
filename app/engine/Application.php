@@ -32,6 +32,7 @@ use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
+use Phalcon\Loader;
 use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Logger;
@@ -235,7 +236,7 @@ class Application extends PhalconApplication
         $modulesNamespaces['Widget'] = $config->application->widgetsDir;
         $modulesNamespaces['Library'] = $config->application->librariesDir;
 
-        $loader = new \Phalcon\Loader();
+        $loader = new Loader();
         $loader->registerNamespaces($modulesNamespaces);
 
         if ($config->application->debug && $config->installed) {

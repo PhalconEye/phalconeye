@@ -21,7 +21,7 @@
             if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
                 window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.id }}{% if search is defined %}&search={{ search }}{% endif %}';
             }
-        }
+        };
 
         var requestAddItem = function () {
             var url = '{{ url(['for':'admin-languages-create-item'])}}';
@@ -30,7 +30,7 @@
             };
 
             PE.modal.open(url, data);
-        }
+        };
 
         var editItem = function (id) {
             var url = '{{ url(['for':'admin-languages-edit-item'])}}' + id;

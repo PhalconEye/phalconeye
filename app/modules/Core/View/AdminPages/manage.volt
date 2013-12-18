@@ -61,7 +61,7 @@
 
     var defaultWidgetControl = function (widget) {
         return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index+ '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
-    }
+    };
 
     var buildWidgetsList = function () {
         $.each(bundlesWidgetsMetadata, function (i, l) {
@@ -71,7 +71,7 @@
             });
             $("#widget_list ul").find('.delete_widget').css('display', 'none');
         });
-    }
+    };
 
     var setEditedWidgetIndex = function (index) {
         $("#widget_editing").attr('widget_index', index);
@@ -79,7 +79,7 @@
 
         $("#widget_editing").attr("id", "");
         changePageState(true);
-    }
+    };
 
     var savePage = function () {
         if (!notSaved) return;
@@ -97,7 +97,7 @@
                     alert("{{ 'Error while saving...' |trans }}");
                 });
 
-    }
+    };
 
     var editAction = function (element) {
         if ($('#widget_editing'))
@@ -113,12 +113,12 @@
         };
 
         PE.modal.open(url, data);
-    }
+    };
 
     var removeAction = function (element) {
         element.parent().parent().remove();
         changePageState(true);
-    }
+    };
 
     var changePageState = function (state) {
 
@@ -130,9 +130,9 @@
             $('#save_button').attr("disabled", "disabled");
             $('#save_button').html("{{"Save" | trans}}");
         }
-        $('#save_button').button('reset')
+        $('#save_button').button('reset');
         notSaved = state;
-    }
+    };
 
     var bindDraggable = function () {
         $(".widgets_placer").sortable({
@@ -150,7 +150,7 @@
         });
 
         $("ul, li").disableSelection();
-    }
+    };
 
     var getWidgetsList = function ($no_content) {
         var items = [];
@@ -167,7 +167,7 @@
         });
 
         return items;
-    }
+    };
 
     var setWidgetsList = function (list, is_initial) {
         if (!is_initial) {
@@ -197,7 +197,7 @@
                 }
             });
         }
-    }
+    };
 
 
     var updateLayoutPanelsHeight = function () {
@@ -213,7 +213,7 @@
         if ($("#widgets_container_left")) $("#widgets_container_left").css("min-height", maxHeight + "px");
         if ($("#widgets_container_right")) $("#widgets_container_right").css("min-height", maxHeight + "px");
 
-    }
+    };
 
     var changeCurrentLayoutType = function (type, widgetsList) {
         // Header or Footer

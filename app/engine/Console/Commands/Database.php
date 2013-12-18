@@ -22,7 +22,6 @@ use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
 use Engine\Console\ConsoleUtil;
 use Engine\Db\Schema;
-use Engine\Generator\Migrations;
 use Phalcon\DI;
 
 /**

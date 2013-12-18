@@ -253,7 +253,7 @@ class AdminAccessController extends AdminControllerBase
                         'description' => sprintf(
                             'ACCESS_OBJECT_%s_OPTION_%s',
                             strtoupper($objectAcl->name),
-                            strtoupper($action)
+                            strtoupper($option)
                         ),
                         'value' => $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
                     ]

@@ -70,5 +70,4 @@ class CommandsListener
             return false;
         }
     }
-
 }

@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Validator;
 
+use Phalcon\Validation\Validator\ExclusionIn as PhalconExclusionIn;
+use Phalcon\Validation\ValidatorInterface;
+
 /**
  * Form validator - Exclusion.
  *
@@ -28,7 +31,7 @@ namespace Engine\Form\Validator;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class ExclusionIn extends \Phalcon\Validation\Validator\ExclusionIn implements \Phalcon\Validation\ValidatorInterface
+class ExclusionIn extends PhalconExclusionIn implements ValidatorInterface
 {
 
 

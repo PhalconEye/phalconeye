@@ -11,7 +11,6 @@
     </description>
 
     <rule ref="rulesets/unusedcode.xml" />
-
     <rule ref="rulesets/design.xml/CouplingBetweenObjects">
         <priority>1</priority>
         <properties>

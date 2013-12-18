@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Validator;
 
+use Phalcon\Mvc\Model\ValidatorInterface;
+use Phalcon\Validation\Validator\InclusionIn as PhalconInclusionIn;
+
 /**
  * Form validator - Inclusion.
  *
@@ -28,7 +31,7 @@ namespace Engine\Form\Validator;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class InclusionIn extends \Phalcon\Validation\Validator\InclusionIn implements \Phalcon\Validation\ValidatorInterface
+class InclusionIn extends PhalconInclusionIn implements ValidatorInterface
 {
 
 

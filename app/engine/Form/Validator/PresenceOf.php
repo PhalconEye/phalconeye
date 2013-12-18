@@ -18,6 +18,9 @@
 
 namespace Engine\Form\Validator;
 
+use Phalcon\Validation\Validator\PresenceOf as PhalconPresenceOf;
+use Phalcon\Validation\ValidatorInterface;
+
 /**
  * Form validator - Presence.
  *
@@ -28,7 +31,7 @@ namespace Engine\Form\Validator;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class PresenceOf extends \Phalcon\Validation\Validator\PresenceOf implements \Phalcon\Validation\ValidatorInterface
+class PresenceOf extends PhalconPresenceOf implements ValidatorInterface
 {
 
 

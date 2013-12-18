@@ -30,7 +30,8 @@
                 $('#url').parent().parent().hide();
                 $('#page').parent().parent().show();
             }
-        }
+        };
+
         $(document).ready(function() {
             $('input[name="url_type"]').click(function(){
                 checkUrlType();

@@ -618,8 +618,8 @@ class AdminPackagesController extends AdminControllerBase
                 if (!empty($data['widgets'])) {
                     $errors = [];
                     foreach ($data['widgets'] as $widgetData) {
+                        $widget = new Widget();
                         try {
-                            $widget = new Widget();
                             $widget->save($widgetData);
                         } catch (\PDOException $e) {
                             $this->flash->notice('Failed to install module widget... Check logs.');
