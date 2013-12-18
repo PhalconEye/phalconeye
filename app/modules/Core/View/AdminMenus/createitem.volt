@@ -49,7 +49,7 @@
         </script>
     {% else %}
 
-        {{ form.render() }}
+        {{ form.renderForm() }}
 
     {% endif %}
 {% endblock %}

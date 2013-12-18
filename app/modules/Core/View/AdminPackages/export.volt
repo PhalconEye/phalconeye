@@ -18,7 +18,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ form.render() }}
+    {{ form.renderForm() }}
 
 {% endblock %}
 

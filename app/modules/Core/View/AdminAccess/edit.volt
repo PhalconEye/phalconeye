@@ -38,7 +38,7 @@
             </div>
             <div class="clear"></div>
         </div>
-        {{ form.render() }}
+        {{ form.renderForm() }}
     </div>
 </div>
 {% endblock %}

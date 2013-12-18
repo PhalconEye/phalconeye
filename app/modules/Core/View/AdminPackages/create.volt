@@ -27,7 +27,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ form.render() }}
+            {{ form.renderForm() }}
         </div>
         <!--/row-->
     </div><!--/span-->

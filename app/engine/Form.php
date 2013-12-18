@@ -37,7 +37,6 @@ use Phalcon\Translate;
  */
 class Form extends PhalconForm
 {
-
     const
         /**
          * Request method type - delete.
@@ -708,7 +707,7 @@ class Form extends PhalconForm
      * @TODO: Refactor this.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    public function render()
+    public function renderForm()
     {
         if (empty($this->_elementsData)) {
             return "";

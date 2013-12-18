@@ -15,5 +15,5 @@
 
 {% block title %}{{ 'Login'|trans }}{% endblock %}
 {% block content %}
-{{ form.render() }}
+{{ form.renderForm() }}
 {% endblock %}

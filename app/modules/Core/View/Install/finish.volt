@@ -28,6 +28,6 @@
         {{ 'Specify admin account'|trans }}
     </div>
     <div>
-        {{ form.render() }}
+        {{ form.renderForm() }}
     </div>
 {% endblock %}
