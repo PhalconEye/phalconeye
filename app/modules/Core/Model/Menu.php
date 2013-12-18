@@ -59,7 +59,7 @@ class Menu extends AbstractModel
      *
      * @return MenuItem[]
      */
-    public function getMenuItems($arguments = array())
+    public function getMenuItems($arguments = [])
     {
         return $this->getRelated('MenuItem', $arguments);
     }

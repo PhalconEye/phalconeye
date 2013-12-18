@@ -43,7 +43,7 @@ class Injector
      *
      * @var array
      */
-    protected $_instances = array();
+    protected $_instances = [];
 
     /**
      * Current module name.

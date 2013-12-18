@@ -60,7 +60,7 @@ class Controller extends WidgetController
         }
 
         $items = $this->_composeNavigationItems(
-            $menu->getMenuItems(array('parent_id IS NULL', 'order' => 'item_order ASC'))
+            $menu->getMenuItems(['parent_id IS NULL', 'order' => 'item_order ASC'])
         );
 
         if (empty($items)) {
@@ -85,17 +85,15 @@ class Controller extends WidgetController
      */
     private function _composeNavigationItems($items)
     {
-        $navigationItems = array();
+        $navigationItems = [];
         $index = 1;
         foreach ($items as $item) {
             /** @var MenuItem $item */
             if (!$item->isAllowed()) {
                 continue;
             }
-            $subItems = $item->getMenuItems(array('order' => 'item_order ASC'));
-            $navigationItems[$index] = array(
-                'title' => $item->title
-            );
+            $subItems = $item->getMenuItems(['order' => 'item_order ASC']);
+            $navigationItems[$index] = ['title' => $item->title];
 
             if ($subItems && $subItems->count() > 0) {
                 $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);

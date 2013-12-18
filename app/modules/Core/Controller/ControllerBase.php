@@ -108,52 +108,48 @@ class ControllerBase extends PhalconController
     {
         $page = null;
         if ($url !== null) {
-            $page = Page::find(array(
-                'conditions' => 'url=:url1: OR url=:url2: OR id = :url3:',
-                'bind' => (array(
-                        "url1" => $url,
-                        "url2" => '/' . $url,
-                        "url3" => $url
-                    )),
-                'bindTypes' => (array(
+            $page = Page::find(
+                [
+                    'conditions' => 'url=:url1: OR url=:url2: OR id = :url3:',
+                    'bind' => ["url1" => $url, "url2" => '/' . $url, "url3" => $url],
+                    'bindTypes' => [
                         "url1" => Column::BIND_PARAM_STR,
                         "url2" => Column::BIND_PARAM_STR,
                         "url3" => Column::BIND_PARAM_INT
-                    ))
-            ))->getFirst();
+                    ]
+                ]
+            )->getFirst();
 
         } elseif ($controller !== null) {
-            $page = Page::find(array(
-                'conditions' => 'controller=:controller:',
-                'bind' => (array(
-                        "controller" => $controller
-                    )),
-                'bindTypes' => (array(
-                        "controller" => Column::BIND_PARAM_STR
-                    ))
-            ))->getFirst();
+            $page = Page::find(
+                [
+                    'conditions' => 'controller=:controller:',
+                    'bind' => ["controller" => $controller],
+                    'bindTypes' => ["controller" => Column::BIND_PARAM_STR]
+                ]
+            )->getFirst();
         } elseif ($type !== null) {
-            $page = Page::find(array(
-                'conditions' => 'type=:type:',
-                'bind' => (array(
-                        "type" => $type
-                    )),
-                'bindTypes' => (array(
-                        "type" => Column::BIND_PARAM_STR
-                    ))
-            ))->getFirst();
+            $page = Page::find(
+                [
+                    'conditions' => 'type=:type:',
+                    'bind' => ["type" => $type],
+                    'bindTypes' => ["type" => Column::BIND_PARAM_STR]
+                ]
+            )->getFirst();
         }
 
 
         if (!$page || !$page->isAllowed()) {
-            return $this->dispatcher->forward(array(
-                'controller' => 'error',
-                'action' => 'show404'
-            ));
+            return $this->dispatcher->forward(
+                [
+                    'controller' => 'error',
+                    'action' => 'show404'
+                ]
+            );
         }
 
         // Resort content by sides.
-        $content = array();
+        $content = [];
         foreach ($page->getWidgets() as $widget) {
             $content[$widget->layout][] = $widget;
         }
@@ -187,5 +183,4 @@ class ControllerBase extends PhalconController
 
         return $this;
     }
-
 }

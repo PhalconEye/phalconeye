@@ -75,6 +75,6 @@ class Edit extends Create
 
         $this->clearButtons();
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', array('for' => $this->_link));
+        $this->addButtonLink('Cancel', ['for' => $this->_link]);
     }
 }

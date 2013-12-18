@@ -47,7 +47,7 @@ class Assets extends AbstractCommand implements CommandInterface
      */
     public function run($di)
     {
-        $action = $this->getOption(array('action', 1));
+        $action = $this->getOption(['action', 1]);
         if ($action == 'install') {
             $assetsManager = new Manager($di, false);
             $assetsManager->installAssets();
@@ -63,7 +63,7 @@ class Assets extends AbstractCommand implements CommandInterface
      */
     public function getCommands()
     {
-        return array('assets');
+        return ['assets'];
     }
 
     /**

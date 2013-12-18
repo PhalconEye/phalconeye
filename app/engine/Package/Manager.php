@@ -71,20 +71,20 @@ class Manager
      *
      * @var array
      */
-    public static $allowedTypes = array(
+    public static $allowedTypes = [
         self::PACKAGE_TYPE_MODULE => 'Module',
         self::PACKAGE_TYPE_PLUGIN => 'Plugin',
         self::PACKAGE_TYPE_THEME => 'Theme',
         self::PACKAGE_TYPE_WIDGET => 'Widget',
         self::PACKAGE_TYPE_LIBRARY => 'Library'
-    );
+    ];
 
     /**
      * Default data for manifest.
      *
      * @var array
      */
-    private $_manifestDefaultData = array(
+    private $_manifestDefaultData = [
         'type' => '',
         'name' => '',
         'title' => '',
@@ -92,29 +92,29 @@ class Manager
         'version' => PE_VERSION,
         'author' => 'PhalconEye Team',
         'website' => 'http://phalconeye.com/',
-        'dependencies' => array(
-            array(
+        'dependencies' => [
+            [
                 'name' => 'core',
                 'type' => self::PACKAGE_TYPE_MODULE,
                 'version' => PE_VERSION,
-            ),
-        ),
-        'events' => array(),
-        'widgets' => array()
-    );
+            ],
+        ],
+        'events' => [],
+        'widgets' => []
+    ];
 
     /**
      * Minimum required data for correct manifest.
      *
      * @var array
      */
-    private $_manifestMinimumData = array(
+    private $_manifestMinimumData = [
         'type',
         'name',
         'title',
         'description',
         'version',
-    );
+    ];
 
     /**
      * Installed packages.
@@ -129,10 +129,10 @@ class Manager
      * @param array $packages Packages.
      * @param DI    $di       Dependency injection.
      */
-    public function __construct($packages = array(), $di = null)
+    public function __construct($packages = [], $di = null)
     {
         $this->__DIConstruct($di);
-        $this->_installedPackages = array();
+        $this->_installedPackages = [];
         if (!empty($packages)) {
             foreach ($packages as $package) {
                 $this->_installedPackages[$package->type][$package->name] = $package->version;
@@ -151,13 +151,13 @@ class Manager
     {
         $config = $this->getDI()->get('config');
 
-        $locations = array(
+        $locations = [
             self::PACKAGE_TYPE_MODULE => $config->application->modulesDir,
             self::PACKAGE_TYPE_PLUGIN => $config->application->pluginsDir,
             self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
             self::PACKAGE_TYPE_WIDGET => $config->application->widgetsDir,
             self::PACKAGE_TYPE_LIBRARY => $config->application->librariesDir
-        );
+        ];
         if (isset($locations[$type])) {
             // fix crossplatform issue directories paths that saved in config.
             return str_replace('/', DS, $locations[$type]);
@@ -194,7 +194,7 @@ class Manager
             $data['type'],
             $packageLocation,
             false,
-            array('.gitignore')
+            ['.gitignore']
         );
 
         if ($data['type'] == self::PACKAGE_TYPE_PLUGIN) {
@@ -272,8 +272,8 @@ class Manager
         // check dependencies
         if ($manifest->get('dependencies')) {
             $filter = new PhalconFilter();
-            $missingDependencies = array();
-            $wrongVersionDependencies = array();
+            $missingDependencies = [];
+            $wrongVersionDependencies = [];
             $dependencies = $manifest->get('dependencies');
             foreach ($dependencies as $dependecy) {
                 if (!isset($this->_installedPackages[$dependecy['type']][$dependecy['name']])) {
@@ -564,7 +564,7 @@ class Manager
                 $file = str_replace('\\', DS, $file);
 
                 // Ignore "." and ".." folders
-                if (in_array(substr($file, strrpos($file, DS) + 1), array('.', '..'))) {
+                if (in_array(substr($file, strrpos($file, DS) + 1), ['.', '..'])) {
                     continue;
                 }
 

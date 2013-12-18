@@ -80,7 +80,7 @@ class Role extends AbstractModel
      *
      * @return User[]
      */
-    public function getUser($arguments = array())
+    public function getUser($arguments = [])
     {
         return $this->getRelated('User', $arguments);
     }
@@ -92,7 +92,7 @@ class Role extends AbstractModel
      *
      * @return Access[]
      */
-    public function getAccess($arguments = array())
+    public function getAccess($arguments = [])
     {
         return $this->getRelated('Access', $arguments);
     }
@@ -132,12 +132,14 @@ class Role extends AbstractModel
      */
     public static function getRoleByType($type)
     {
-        $role = Role::findFirst(array(
-            "type = '{$type}'",
-            'cache' => array(
-                'key' => 'role_type_' . $type . '.cache'
-            )
-        ));
+        $role = Role::findFirst(
+            [
+                "type = '{$type}'",
+                'cache' => [
+                    'key' => 'role_type_' . $type . '.cache'
+                ]
+            ]
+        );
         if (!$role) {
             $role = new Role();
             $role->name = ucfirst($type);
@@ -157,12 +159,14 @@ class Role extends AbstractModel
      */
     public static function getDefaultRole()
     {
-        $role = Role::findFirst(array(
-            "is_default = 1",
-            'cache' => array(
-                'key' => 'role_default.cache'
-            )
-        ));
+        $role = Role::findFirst(
+            [
+                "is_default = 1",
+                'cache' => [
+                    'key' => 'role_default.cache'
+                ]
+            ]
+        );
         if (!$role) {
             $role = new Role();
             $role->name = "User";

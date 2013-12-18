@@ -51,88 +51,89 @@ class AdminControllerBase extends ControllerBase
         }
         $activeItem = substr($activeItem, 0, -1);
 
-        $menuItems = array(
-            'admin' => array(
+        $menuItems = [
+            'admin' => [
                 'href' => 'admin',
                 'title' => 'Dashboard',
                 'prepend' => '<i class="icon-home icon-white"></i>'
-            ),
-            'users' => array(
+            ],
+            'users' => [
                 'title' => 'Manage',
-                'items' => array( // type - dropdown
-                    'admin/users' => array(
+                'items' => [ // type - dropdown
+                    'admin/users' => [
                         'title' => 'Users and Roles',
                         'href' => 'admin/users',
                         'prepend' => '<i class="icon-user icon-white"></i>'
-                    ),
-                    'admin/pages' => array(
+                    ],
+                    'admin/pages' => [
                         'title' => 'Pages',
                         'href' => 'admin/pages',
                         'prepend' => '<i class="icon-list-alt icon-white"></i>'
-                    ),
-                    'admin/menus' => array(
+                    ],
+                    'admin/menus' => [
                         'title' => 'Menus',
                         'href' => 'admin/menus',
                         'prepend' => '<i class="icon-th-list icon-white"></i>'
-                    ),
-                    'admin/languages' => array(
+                    ],
+                    'admin/languages' => [
                         'title' => 'Languages',
                         'href' => 'admin/languages',
                         'prepend' => '<i class="icon-globe icon-white"></i>'
-                    ),
-                    'admin/files' => array(
+                    ],
+                    'admin/files' => [
                         'title' => 'Files',
                         'href' => 'admin/files',
                         'prepend' => '<i class="icon-file icon-white"></i>'
-                    ),
-                    'admin/packages' => array(
+                    ],
+                    'admin/packages' => [
                         'title' => 'Packages',
                         'href' => 'admin/packages',
                         'prepend' => '<i class="icon-th icon-white"></i>'
-                    )
-                )
-            ),
-            'settings' => array( // type - dropdown
+                    ]
+                ]
+            ],
+            'settings' => [ // type - dropdown
                 'title' => 'Settings',
-                'items' => array(
-                    'admin/settings' => array(
+                'items' => [
+                    'admin/settings' => [
                         'title' => 'System',
                         'href' => 'admin/settings',
                         'prepend' => '<i class="icon-cog icon-white"></i>'
-                    ),
-                    'admin/settings/performance' => array(
+                    ],
+                    'admin/settings/performance' => [
                         'title' => 'Performance',
                         'href' => 'admin/performance',
                         'prepend' => '<i class="icon-signal icon-white"></i>'
-                    ),
-                    'admin/access' => array(
+                    ],
+                    'admin/access' => [
                         'title' => 'Access Rights',
                         'href' => 'admin/access',
                         'prepend' => '<i class="icon-lock icon-white"></i>'
-                    )
-                )
-            ));
+                    ]
+                ]
+            ]
+        ];
 
         $modules = Package::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
         if ($modules->count()) {
-            $modulesMenuItems = array();
+            $modulesMenuItems = [];
             foreach ($modules as $module) {
                 if ($module->is_system) {
                     continue;
                 }
                 $href = 'admin/module/' . $module->name;
-                $modulesMenuItems[$href] = array(
+                $modulesMenuItems[$href] = [
                     'title' => $module->title,
                     'href' => $href,
                     'prepend' => '<i class="icon-th-large icon-white"></i>'
-                );
+                ];
             }
 
             if (!empty($modulesMenuItems)) {
-                $menuItems['modules'] = array(
+                $menuItems['modules'] = [
                     'title' => 'Modules',
                     'items' => $modulesMenuItems
-                );
+                ];
             }
         }
 

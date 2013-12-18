@@ -79,7 +79,7 @@ class Content extends AbstractModel
      *
      * @return Widget
      */
-    public function getWidget($arguments = array())
+    public function getWidget($arguments = [])
     {
         return $this->getRelated('Widget', $arguments);
     }

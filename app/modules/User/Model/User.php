@@ -104,13 +104,16 @@ class User extends AbstractModel
      *
      * @return Role
      */
-    public function getRole($arguments = array())
+    public function getRole($arguments = [])
     {
-        $arguments = array_merge($arguments, array(
-            'cache' => array(
-                'key' => 'role_id_' . $this->role_id . '.cache'
-            )
-        ));
+        $arguments = array_merge(
+            $arguments,
+            [
+                'cache' => [
+                    'key' => 'role_id_' . $this->role_id . '.cache'
+                ]
+            ]
+        );
         $role = $this->getRelated('Role', $arguments);
         if (!$role) {
             $role = new Role();
@@ -162,23 +165,10 @@ class User extends AbstractModel
      */
     public function validation()
     {
-        $this->validate(new Uniqueness(array(
-            "field" => "username"
-        )));
-
-        $this->validate(new Uniqueness(array(
-            "field" => "email"
-        )));
-
-        $this->validate(new Email(array(
-            "field" => "email",
-            "required" => true
-        )));
-
-        $this->validate(new StringLength(array(
-            "field" => "password",
-            "min" => 6
-        )));
+        $this->validate(new Uniqueness(["field" => "username"]));
+        $this->validate(new Uniqueness(["field" => "email"]));
+        $this->validate(new Email(["field" => "email", "required" => true]));
+        $this->validate(new StringLength(["field" => "password", "min" => 6]));
 
         if ($this->validationHasFailed() == true) {
             return false;

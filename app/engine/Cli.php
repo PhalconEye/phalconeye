@@ -39,7 +39,7 @@ class Cli extends Application
      *
      * @var AbstractCommand[]
      */
-    private $_commands = array();
+    private $_commands = [];
 
     /**
      * Run application.
@@ -78,13 +78,15 @@ class Cli extends Application
     public function getOutput()
     {
         print ConsoleUtil::infoLine('================================================================', true, 0);
-        print ConsoleUtil::infoLine("
+        print ConsoleUtil::infoLine(
+            "
            ___  __       __              ____
           / _ \/ / ___ _/ _______  ___  / ____ _____
          / ___/ _ / _ `/ / __/ _ \/ _ \/ _// // / -_)
         /_/  /_//_\_,_/_/\__/\___/_//_/___/\_, /\__/
                                           /___/
-                                          Commands Manager", false, 1);
+                                          Commands Manager", false, 1
+        );
         print ConsoleUtil::infoLine('================================================================', false, 2);
 
         if (!isset($_SERVER['argv'][1])) {
@@ -105,13 +107,13 @@ class Cli extends Application
         }
 
         // Check for alternatives.
-        $available = array();
+        $available = [];
         foreach ($this->_commands as $command) {
             $providedCommands = $command->getCommands();
             foreach ($providedCommands as $command) {
                 $soundex = soundex($command);
                 if (!isset($available[$soundex])) {
-                    $available[$soundex] = array();
+                    $available[$soundex] = [];
                 }
                 $available[$soundex][] = $command;
             }

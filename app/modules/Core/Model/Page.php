@@ -128,23 +128,23 @@ class Page extends AbstractModel
      *
      * @return void
      */
-    public function setWidgets($widgets = array())
+    public function setWidgets($widgets = [])
     {
         if (!$widgets) {
-            $widgets = array();
+            $widgets = [];
         }
 
-        $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', array());
+        $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', []);
 
         // updating
         $existing_widgets = $this->getWidgets();
-        $widgets_ids_to_remove = array(); // widgets that we need to remove
+        $widgets_ids_to_remove = []; // widgets that we need to remove
         // looping all exisitng widgets and looping new widgets
         // looking for new, changed, and deleted actions
         /** @var Content $ex_widget */
         foreach ($existing_widgets as $ex_widget) {
             $founded = false; // indicates if widgets founded in new array
-            $orders = array();
+            $orders = [];
 
             foreach ($widgets as $item) {
                 if (empty($currentPageWidgets[$item['widget_index']])) {
@@ -173,7 +173,7 @@ class Page extends AbstractModel
         }
 
         // inserting
-        $orders = array();
+        $orders = [];
         foreach ($widgets as $item) {
             if (empty($currentPageWidgets[$item['widget_index']])) {
                 if ($item['widget_index'] == 'NaN') {
@@ -182,7 +182,7 @@ class Page extends AbstractModel
                     $content->page_id = $this->id;
                     $content->widget_id = $item["widget_id"];
                     $content->layout = $item["layout"];
-                    $content->setParams(array());
+                    $content->setParams([]);
                     $content->widget_order = $orders[$item["layout"]];
                     $content->save();
                 }
@@ -221,10 +221,12 @@ class Page extends AbstractModel
      */
     public function getWidgets()
     {
-        return Content::find(array(
-            "page_id = '{$this->id}'",
-            "order" => "widget_order",
-        ));
+        return Content::find(
+            [
+                "page_id = '{$this->id}'",
+                "order" => "widget_order",
+            ]
+        );
     }
 
     /**
@@ -262,19 +264,12 @@ class Page extends AbstractModel
     public function validation()
     {
         if ($this->url !== null) {
-            $this->validate(new StringLength(array(
-                "field" => "url",
-                'min' => 1
-            )));
+            $this->validate(new StringLength(["field" => "url", 'min' => 1]));
         }
 
-        $this->validate(new PresenceOf(array(
-            'field' => 'title'
-        )));
+        $this->validate(new PresenceOf(['field' => 'title']));
 
-        $this->validate(new Uniqueness(array(
-            'field' => 'url'
-        )));
+        $this->validate(new Uniqueness(['field' => 'url']));
 
         if ($this->validationHasFailed() == true) {
             return false;

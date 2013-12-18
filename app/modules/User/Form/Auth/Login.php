@@ -45,17 +45,25 @@ class Login extends Form
             ->setAttrib('class', 'form_login')
             ->setAttrib('autocomplete', 'off');
 
-        $this->addElement('text', 'login', array(
-            'label' => 'Email',
-            'required' => true
-        ));
+        $this->addElement(
+            'text',
+            'login',
+            [
+                'label' => 'Email',
+                'required' => true
+            ]
+        );
 
-        $this->addElement('password', 'password', array(
-            'label' => 'Password',
-            'required' => true
-        ));
+        $this->addElement(
+            'password',
+            'password',
+            [
+                'label' => 'Password',
+                'required' => true
+            ]
+        );
 
         $this->addButton('Login', true);
-        $this->addButtonLink('Register', array('for' => 'register'));
+        $this->addButtonLink('Register', ['for' => 'register']);
     }
 }

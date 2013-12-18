@@ -42,14 +42,14 @@ class Less
      *
      * @var array
      */
-    protected $_files = array();
+    protected $_files = [];
 
     /**
      * Import directories.
      *
      * @var array
      */
-    protected $_importDirs = array();
+    protected $_importDirs = [];
 
     /**
      * Create less layer.

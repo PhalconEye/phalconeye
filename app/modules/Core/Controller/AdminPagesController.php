@@ -18,14 +18,15 @@
 
 namespace Core\Controller;
 
+use Core\Form\Admin\Page\Create as CreateForm;
+use Core\Form\Admin\Page\Edit as EditForm;
 use Core\Model\Page;
 use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use Phalcon\Paginator\Adapter\QueryBuilder;
-use \Core\Form\Admin\Page\Create as CreateForm;
-use Core\Form\Admin\Page\Edit as EditForm;
+use User\Model\Role;
 
 /**
  * Admin pages.
@@ -50,21 +51,24 @@ class AdminPagesController extends AdminControllerBase
     {
         $navigation = new Navigation();
         $navigation
-            ->setItems(array(
-                'index' => array(
-                    'href' => 'admin/pages',
-                    'title' => 'Browse',
-                    'prepend' => '<i class="icon-list icon-white"></i>'
-                ),
-                1 => array(
-                    'href' => 'javascript:;',
-                    'title' => '|'
-                ),
-                'create' => array(
-                    'href' => 'admin/pages/create',
-                    'title' => 'Create new page',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                )));
+            ->setItems(
+                [
+                    'index' => [
+                        'href' => 'admin/pages',
+                        'title' => 'Browse',
+                        'prepend' => '<i class="icon-list icon-white"></i>'
+                    ],
+                    1 => [
+                        'href' => 'javascript:;',
+                        'title' => '|'
+                    ],
+                    'create' => [
+                        'href' => 'admin/pages/create',
+                        'title' => 'Create new page',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ]
+                ]
+            );
 
         $this->view->navigation = $navigation;
     }
@@ -118,7 +122,7 @@ class AdminPagesController extends AdminControllerBase
         $page->save();
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(array('for' => "admin-pages-manage", 'id' => $form->getValues()->id));
+        return $this->response->redirect(['for' => "admin-pages-manage", 'id' => $form->getValues()->id]);
     }
 
     /**
@@ -135,7 +139,7 @@ class AdminPagesController extends AdminControllerBase
         $page = Page::findFirstById($id);
 
         if (!$page) {
-            return $this->response->redirect(array('for' => "admin-pages"));
+            return $this->response->redirect(['for' => "admin-pages"]);
         }
 
         $form = new EditForm($page);
@@ -153,13 +157,13 @@ class AdminPagesController extends AdminControllerBase
 
         $roles = $this->request->get('roles');
         if ($roles == null) {
-            $page->roles = array();
+            $page->roles = [];
         }
 
         $page->save();
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(array('for' => "admin-pages"));
+        return $this->response->redirect(['for' => "admin-pages"]);
     }
 
     /**
@@ -179,7 +183,7 @@ class AdminPagesController extends AdminControllerBase
             $this->flashSession->notice('Object deleted!');
         }
 
-        return $this->response->redirect(array('for' => "admin-pages"));
+        return $this->response->redirect(['for' => "admin-pages"]);
     }
 
     /**
@@ -198,24 +202,24 @@ class AdminPagesController extends AdminControllerBase
         if (!$page) {
             $this->flashSession->notice('Page not found!');
 
-            return $this->response->redirect(array('for' => "admin-pages"));
+            return $this->response->redirect(['for' => "admin-pages"]);
         }
 
         // Collecting widgets info.
         $query = $this->modelsManager->createBuilder()
-            ->from(array('t' => '\Core\Model\Widget'))
-            ->where("t.enabled = :enabled:", array('enabled' => 1));
+            ->from(['t' => '\Core\Model\Widget'])
+            ->where("t.enabled = :enabled:", ['enabled' => 1]);
         $widgets = $query->getQuery()->execute();
 
         $modulesDefinition = $this->getDI()->get('modules');
-        $modules = array();
+        $modules = [];
         foreach ($modulesDefinition as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }
             $modules[$module] = ucfirst($module);
         }
-        $bundlesWidgetsMetadata = array();
+        $bundlesWidgetsMetadata = [];
         foreach ($widgets as $widget) {
             $moduleName = $widget->module;
             if (!$moduleName) {
@@ -223,15 +227,15 @@ class AdminPagesController extends AdminControllerBase
             } else {
                 $moduleName = $modules[$moduleName];
             }
-            $bundlesWidgetsMetadata[$moduleName][$widget->id] = array(
+            $bundlesWidgetsMetadata[$moduleName][$widget->id] = [
                 'widget_id' => $widget->id,
                 'description' => $widget->description,
                 'name' => $widget->name
-            );
+            ];
         }
 
         // Creating Widgets List data.
-        $widgetsListData = array();
+        $widgetsListData = [];
         foreach ($bundlesWidgetsMetadata as $key => $widgetsMeta) {
             foreach ($widgetsMeta as $wId => $wMeta) {
                 $widgetsListData[$wId] = $wMeta;
@@ -244,16 +248,16 @@ class AdminPagesController extends AdminControllerBase
         }
 
         $content = $page->getWidgets();
-        $currentPageWidgets = array();
+        $currentPageWidgets = [];
         $widgetIndex = 0;
         foreach ($content as $widget) {
-            $currentPageWidgets[$widgetIndex] = array(
+            $currentPageWidgets[$widgetIndex] = [
                 'widget_index' => $widgetIndex, // Identification for this array.
                 'id' => $widget->id,
                 'layout' => $widget->layout,
                 'widget_id' => $widget->widget_id,
                 'params' => $widget->getParams()
-            );
+            ];
             $widgetIndex++;
         }
 
@@ -281,18 +285,17 @@ class AdminPagesController extends AdminControllerBase
         if ($widgetIndex != '0' && intval($widgetIndex) == 0) {
             $widgetIndex = -1;
         }
-        $currentPageWidgets = $this->session->get('admin-pages-manage', array());
+        $currentPageWidgets = $this->session->get('admin-pages-manage', []);
 
         if ($widgetIndex == -1) {
             $widgetIndex = $this->session->get('admin-pages-widget-index');
-            $currentPageWidgets[$widgetIndex] = array(
+            $currentPageWidgets[$widgetIndex] = [
                 'widget_index' => $widgetIndex, // indification for this array
                 'id' => 0,
                 'layout' => $this->request->get('layout', 'string', 'middle'),
                 'widget_id' => $this->request->get('widget_id', 'int'),
-                'params' => array()
-            );
-
+                'params' => []
+            ];
         }
 
         if (empty($currentPageWidgets[$widgetIndex])) {
@@ -310,9 +313,7 @@ class AdminPagesController extends AdminControllerBase
         // building widget form
         $adminForm = $widgetMetadata->admin_form;
         if (empty($adminForm)) {
-            $form->addElement('text', 'title', array(
-                'label' => 'Title'
-            ));
+            $form->addElement('text', 'title', ['label' => 'Title']);
         } elseif ($adminForm == 'action') {
             $widgetName = $widgetMetadata->name;
             if ($widgetMetadata->module !== null) {
@@ -322,25 +323,27 @@ class AdminPagesController extends AdminControllerBase
             }
             $widgetObject = new $widgetClass();
             $widgetObject->start();
-            $form = call_user_func_array(array($widgetObject, "adminAction"), $_REQUEST);
+            $form = call_user_func_array([$widgetObject, "adminAction"], $_REQUEST);
         } else {
             $form = new $adminForm();
         }
 
         if ($widgetMetadata->is_paginated == 1) {
-            $form->addElement('text', 'count', array(
-                'label' => 'Items count',
-                'value' => 10
-            ), 10000);
+            $form->addElement('text', 'count', ['label' => 'Items count', 'value' => 10], 10000);
         }
 
         if ($widgetMetadata->is_acl_controlled == 1) {
-            $form->addElement('select', 'roles', array(
-                'label' => 'Roles',
-                'options' => \User\Model\Role::find(),
-                'using' => array('id', 'name'),
-                'multiple' => 'multiple'
-            ), 10000);
+            $form->addElement(
+                'select',
+                'roles',
+                [
+                    'label' => 'Roles',
+                    'options' => Role::find(),
+                    'using' => ['id', 'name'],
+                    'multiple' => 'multiple'
+                ],
+                10000
+            );
 
         }
 
@@ -381,7 +384,7 @@ class AdminPagesController extends AdminControllerBase
     {
         $response = new Response();
         $response->setStatusCode(200, "OK");
-        $response->setContent(json_encode(array("error" => 0)));
+        $response->setContent(json_encode(["error" => 0]));
 
         $layout = $this->request->get("layout");
         $items = $this->request->get("items");
@@ -414,18 +417,18 @@ class AdminPagesController extends AdminControllerBase
         }
 
         $results = Page::find(
-            array(
+            [
                 "conditions" => "title LIKE ?1",
-                "bind" => array(1 => '%' . $query . '%')
-            )
+                "bind" => [1 => '%' . $query . '%']
+            ]
         );
 
-        $data = array();
+        $data = [];
         foreach ($results as $result) {
-            $data[] = array(
+            $data[] = [
                 'id' => $result->id,
                 'label' => $result->title
-            );
+            ];
         }
 
         $this->response->setContent(json_encode($data))->send();

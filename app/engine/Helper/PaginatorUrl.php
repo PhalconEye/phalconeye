@@ -45,7 +45,7 @@ class PaginatorUrl extends Tag implements HelperInterface
     static public function _(DI $di, array $args)
     {
         $page = (isset($args[0]) ? $args[0] : 1);
-        $vars = array();
+        $vars = [];
         $url = '/';
         foreach ($_GET as $key => $get) {
             if ($key == '_url') {

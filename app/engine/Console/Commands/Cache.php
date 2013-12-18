@@ -47,7 +47,7 @@ class Cache extends AbstractCommand implements CommandInterface
      */
     public function run($di)
     {
-        $action = $this->getOption(array('action', 1));
+        $action = $this->getOption(['action', 1]);
         if ($action == 'cleanup') {
             $di->get('app')->clearCache();
 
@@ -62,7 +62,7 @@ class Cache extends AbstractCommand implements CommandInterface
      */
     public function getCommands()
     {
-        return array('cache');
+        return ['cache'];
     }
 
     /**

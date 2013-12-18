@@ -85,7 +85,7 @@ interface CommandInterface
      * @throws CommandsException
      * @return array
      */
-    public function parseParameters($parameters = array(), $possibleAlias = array());
+    public function parseParameters($parameters = [], $possibleAlias = []);
 
     /**
      * Return required parameters

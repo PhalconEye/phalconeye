@@ -43,11 +43,15 @@ class Upload extends Form
             ->setOption('title', 'Install new package')
             ->setOption('description', 'Select package you want to install (zip extension).');
 
-        $this->addElement('file', 'package', array(
-            'label' => 'Package',
-        ));
+        $this->addElement(
+            'file',
+            'package',
+            [
+                'label' => 'Package',
+            ]
+        );
 
         $this->addButton('Upload', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-packages'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-packages']);
     }
 }

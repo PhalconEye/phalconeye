@@ -108,14 +108,22 @@ class RemoteFile extends Element implements ElementInterface
             unset($attributes['title']);
         }
 
-        return sprintf('
+        return sprintf(
+            '
             <div class="form_element_remote_file">
                 <input type="text" name="%s" id="%s" value="%s" />
                 <input onclick="PE.ajaxplorer.openAjaxplorerPopup($(this).parent(), \'%s\', \'%s\');"
                        type="button"
                        class="btn btn-primary"
                        value="%s"/>
-            </div>',
-            $this->getName(), $this->getName(), $this->_value, $this->_editorUrl, $buttonTitle, $buttonTitle);
+            </div>
+            ',
+            $this->getName(),
+            $this->getName(),
+            $this->_value,
+            $this->_editorUrl,
+            $buttonTitle,
+            $buttonTitle
+        );
     }
 }

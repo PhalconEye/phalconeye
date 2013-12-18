@@ -54,14 +54,14 @@ abstract class AbstractCommand implements CommandInterface
      *
      * @var string
      */
-    protected $_parameters = array();
+    protected $_parameters = [];
 
     /**
      * Possible prepared arguments.
      *
      * @var array
      */
-    protected $_preparedArguments = array();
+    protected $_preparedArguments = [];
 
     /**
      * Engine config.
@@ -88,7 +88,7 @@ abstract class AbstractCommand implements CommandInterface
      * @throws CommandsException
      * @return array
      */
-    public function parseParameters($parameters = array(), $possibleAlias = array())
+    public function parseParameters($parameters = [], $possibleAlias = [])
     {
         if (count($parameters) == 0) {
             $parameters = $this->getPossibleParams();
@@ -98,7 +98,7 @@ abstract class AbstractCommand implements CommandInterface
             throw new CommandsException("Cannot load possible parameters for script: " . get_class($this));
         }
 
-        $arguments = array();
+        $arguments = [];
         foreach (array_keys($parameters) as $parameter) {
             if (strpos($parameter, "=") !== false) {
                 $parameterParts = explode("=", $parameter);
@@ -108,22 +108,22 @@ abstract class AbstractCommand implements CommandInterface
                 if (strlen($parameterParts[0]) == "") {
                     throw new CommandsException("Invalid definition for the parameter '" . $parameter . "'");
                 }
-                if (!in_array($parameterParts[1], array('s', 'i', 'l'))) {
+                if (!in_array($parameterParts[1], ['s', 'i', 'l'])) {
                     throw new CommandsException("Incorrect data type on parameter '" . $parameter . "'");
                 }
                 $this->_preparedArguments[$parameterParts[0]] = true;
-                $arguments[$parameterParts[0]] = array(
+                $arguments[$parameterParts[0]] = [
                     'have-option' => true,
                     'option-required' => true,
                     'data-type' => $parameterParts[1]
-                );
+                ];
             } else {
                 if (preg_match('/([a-zA-Z0-9]+)/', $parameter)) {
                     $this->_preparedArguments[$parameter] = true;
-                    $arguments[$parameter] = array(
+                    $arguments[$parameter] = [
                         'have-option' => false,
                         'option-required' => false
-                    );
+                    ];
                 } else {
                     throw new CommandsException("Invalid parameter '$parameter'");
                 }
@@ -140,7 +140,7 @@ abstract class AbstractCommand implements CommandInterface
      */
     public function getPossibleParams()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -151,11 +151,11 @@ abstract class AbstractCommand implements CommandInterface
      * @throws CommandsException
      * @return array
      */
-    protected function _parseArguments($possibleAlias = array())
+    protected function _parseArguments($possibleAlias = [])
     {
         $param = '';
         $paramName = '';
-        $receivedParams = array();
+        $receivedParams = [];
         $argumentsCount = count($_SERVER['argv']);
 
         for ($i = 1; $i < $argumentsCount; $i++) {

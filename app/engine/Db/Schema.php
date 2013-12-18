@@ -67,9 +67,9 @@ class Schema
      */
     public function updateDatabase($cleanup = false)
     {
-        $executedStatements = array();
-        $processedTables = array();
-        $references = array();
+        $executedStatements = [];
+        $processedTables = [];
+        $references = [];
 
         /** @var AdapterInterface $db */
         $db = $this->getDI()->get('db');
@@ -136,7 +136,7 @@ class Schema
         $defaultSchema = $this->getDI()->get('config')->database->dbname;
 
         // Prepare references
-        $references = array();
+        $references = [];
         if (isset($definition['references'])) {
             $references = $definition['references'];
             unset($definition['references']);
@@ -151,9 +151,9 @@ class Schema
             $counter++;
         }
 
-        $counter += $this->_processReferences($defaultSchema, array($tableName => $references));
+        $counter += $this->_processReferences($defaultSchema, [$tableName => $references]);
 
-        return array($tableName => $counter);
+        return [$tableName => $counter];
     }
 
     /**
@@ -163,18 +163,18 @@ class Schema
      */
     public function getAllModels()
     {
-        $modelsInfo = array();
+        $modelsInfo = [];
         foreach ($this->getDI()->get('modules') as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }
             $modelsDirectory = $this->getDI()->get('config')->application->modulesDir . ucfirst($module) . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
-                $modelsInfo[] = array(
+                $modelsInfo[] = [
                     'class' => '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath)),
                     'path' => $modelPath,
                     'module' => $module
-                );
+                ];
             }
         }
 
@@ -193,20 +193,20 @@ class Schema
     {
         /** @var \Phalcon\Annotations\Reflection $reflector */
         $reflector = $this->getDI()->get('annotations')->get($modelClass);
-        $metadata = array(
+        $metadata = [
             'name' => '',
-            'columns' => array(),
-            'indexes' => array(),
-            'references' => array(),
-            'options' => array(
+            'columns' => [],
+            'indexes' => [],
+            'references' => [],
+            'options' => [
                 'TABLE_TYPE' => self::DEFAULT_TABLE_TYPE,
                 'ENGINE' => self::DEFAULT_ENGINE_TYPE,
                 'TABLE_COLLATION' => self::DEFAULT_TABLE_COLLATION
-            )
-        );
-        $indexes = array();
-        $primary = array();
-        $references = array();
+            ]
+        ];
+        $indexes = [];
+        $primary = [];
+        $references = [];
 
         // Get table name and references data.
         $annotations = $reflector->getClassAnnotations();
@@ -274,14 +274,14 @@ class Schema
                 $reference[2];
             $metadata['references'][] = new Reference(
                 'fk-' . $uniqName,
-                array(
+                [
                     "referencedTable" => $reference[1]::getTableName(),
-                    "columns" => array($reference[0]),
-                    "referencedColumns" => array($reference[2]),
-                )
+                    "columns" => [$reference[0]],
+                    "referencedColumns" => [$reference[2]],
+                ]
             );
             // Add FK index.
-            $metadata['indexes'][$reference[0]] = new Index('fki-' . $uniqName, array($reference[0]));
+            $metadata['indexes'][$reference[0]] = new Index('fki-' . $uniqName, [$reference[0]]);
         }
 
         return $metadata;
@@ -314,7 +314,7 @@ class Schema
      */
     protected function _getModelColumnData($arguments, $collection)
     {
-        $columnData = array();
+        $columnData = [];
 
         /**
          * Get type.
@@ -390,7 +390,7 @@ class Schema
         $counter = 0;
         $db = $this->getDI()->get('db');
 
-        $fields = array();
+        $fields = [];
         foreach ($definition['columns'] as $tableColumn) {
             if (!is_object($tableColumn)) {
                 throw new \Exception('Wrong column definition, it must be a object');
@@ -398,7 +398,7 @@ class Schema
             $fields[$tableColumn->getName()] = $tableColumn;
         }
 
-        $localFields = array();
+        $localFields = [];
         $description = $db->describeColumns($tableName, $schemaName);
         foreach ($description as $field) {
             $localFields[$field->getName()] = $field;
@@ -457,10 +457,10 @@ class Schema
         }
 
         $counter = 0;
-        $indexes = array();
+        $indexes = [];
         $db = $this->getDI()->get('db');
 
-        $localIndexes = array();
+        $localIndexes = [];
         $actualIndexes = $db->describeIndexes($tableName, $schemaName);
         foreach ($actualIndexes as $actualIndex) {
             $localIndexes[$actualIndex->getName()] = $actualIndex->getColumns();
@@ -533,15 +533,15 @@ class Schema
                 continue;
             }
 
-            $references = array();
-            $localReferences = array();
+            $references = [];
+            $localReferences = [];
             $activeReferences = $db->describeReferences($tableName, $schemaName);
             foreach ($activeReferences as $activeReference) {
-                $localReferences[$activeReference->getName()] = array(
+                $localReferences[$activeReference->getName()] = [
                     'referencedTable' => $activeReference->getReferencedTable(),
                     'columns' => $activeReference->getColumns(),
                     'referencedColumns' => $activeReference->getReferencedColumns(),
-                );
+                ];
             }
 
             foreach ($definition as $tableReference) {

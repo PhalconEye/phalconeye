@@ -46,51 +46,54 @@ class Register extends Form
             ->setOption('description', "Register your account!")
             ->setAttrib('autocomplete', 'off');
 
-        $this->addElement('text', 'username', array(
-            'label' => 'Username',
-            'required' => true,
-            'validators' => array(
-                new StringLengthValidator(array(
-                    'min' => 2,
-                ))
-            )
-        ));
+        $this->addElement(
+            'text',
+            'username',
+            [
+                'label' => 'Username',
+                'required' => true,
+                'validators' => [new StringLengthValidator(['min' => 2])
+                ]
+            ]
+        );
 
-        $this->addElement('text', 'email', array(
-            'label' => 'Email',
-            'autocomplete' => 'off',
-            'description' => 'You will use your email address to login.',
-            'required' => true,
-            'validators' => array(
-                new EmailValidator()
-            )
-        ));
+        $this->addElement(
+            'text',
+            'email',
+            [
+                'label' => 'Email',
+                'autocomplete' => 'off',
+                'description' => 'You will use your email address to login.',
+                'required' => true,
+                'validators' => [new EmailValidator()]
+            ]
+        );
 
-        $this->addElement('password', 'password', array(
-            'label' => 'Password',
-            'autocomplete' => 'off',
-            'description' => 'Passwords must be at least 6 characters in length.',
-            'required' => true,
-            'validators' => array(
-                new StringLengthValidator(array(
-                    'min' => 6,
-                ))
-            )
-        ));
+        $this->addElement(
+            'password',
+            'password',
+            [
+                'label' => 'Password',
+                'autocomplete' => 'off',
+                'description' => 'Passwords must be at least 6 characters in length.',
+                'required' => true,
+                'validators' => [new StringLengthValidator(['min' => 6])]
+            ]
+        );
 
-        $this->addElement('password', 'repeatPassword', array(
-            'label' => 'Password Repeat',
-            'autocomplete' => 'off',
-            'description' => 'Enter your password again for confirmation.',
-            'required' => true,
-            'validators' => array(
-                new StringLengthValidator(array(
-                    'min' => 6,
-                ))
-            )
-        ));
+        $this->addElement(
+            'password',
+            'repeatPassword',
+            [
+                'label' => 'Password Repeat',
+                'autocomplete' => 'off',
+                'description' => 'Enter your password again for confirmation.',
+                'required' => true,
+                'validators' => [new StringLengthValidator(['min' => 6])]
+            ]
+        );
 
         $this->addButton('Register', true);
-        $this->addButtonLink('Cancel', array('for' => 'home'));
+        $this->addButtonLink('Cancel', ['for' => 'home']);
     }
 }

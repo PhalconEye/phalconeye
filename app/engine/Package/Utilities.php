@@ -54,7 +54,7 @@ class Utilities
      *
      * @throws \Engine\Exception
      */
-    static public function fsCopyRecursive($source, $dest, $statFiles = false, $excludeNames = array())
+    static public function fsCopyRecursive($source, $dest, $statFiles = false, $excludeNames = [])
     {
         if (!is_dir($source)) {
             return;

@@ -86,7 +86,7 @@ trait Sluggable
      */
     private function getSluggableFields()
     {
-        return array('title');
+        return ['title'];
     }
 
     /**

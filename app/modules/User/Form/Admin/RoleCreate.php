@@ -59,20 +59,32 @@ class RoleCreate extends Form
             ->setOption('title', "Role Creation")
             ->setOption('description', "Create new role.");
 
-        $this->addElement('text', 'name', array(
-            'label' => 'name',
-        ));
+        $this->addElement(
+            'text',
+            'name',
+            [
+                'label' => 'name',
+            ]
+        );
 
-        $this->addElement('textArea', 'description', array(
-            'label' => 'Description'
-        ));
+        $this->addElement(
+            'textArea',
+            'description',
+            [
+                'label' => 'Description'
+            ]
+        );
 
-        $this->addElement('check', 'is_default', array(
-            'label' => 'Is Default',
-            'options' => 1
-        ));
+        $this->addElement(
+            'check',
+            'is_default',
+            [
+                'label' => 'Is Default',
+                'options' => 1
+            ]
+        );
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-users-roles'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-users-roles']);
     }
 }

@@ -61,58 +61,88 @@ class Create extends Form
             ->setOption('title', "Package Creation")
             ->setOption('description', "Create new package.");
 
-        $this->addElement('text', 'name', array(
-            'label' => 'Name',
-            'description' => 'Name must be in lowecase and contains only letters.',
-            'validators' => array(
-                new Regex(array(
-                    'pattern' => '/[a-z]+/',
-                    'message' => 'Name must be in lowecase and contains only letters.'
-                ))
-            )
-        ));
+        $this->addElement(
+            'text',
+            'name',
+            [
+                'label' => 'Name',
+                'description' => 'Name must be in lowecase and contains only letters.',
+                'validators' => [
+                    new Regex(
+                        [
+                            'pattern' => '/[a-z]+/',
+                            'message' => 'Name must be in lowecase and contains only letters.'
+                        ]
+                    )
+                ]
+            ]
+        );
 
-        $this->addElement('select', 'type', array(
-            'label' => 'Package type',
-            'options' => Manager::$allowedTypes
-        ));
+        $this->addElement(
+            'select',
+            'type',
+            [
+                'label' => 'Package type',
+                'options' => Manager::$allowedTypes
+            ]
+        );
 
-        $this->addElement('text', 'title', array(
-            'label' => 'Title'
-        ));
+        $this->addElement(
+            'text',
+            'title',
+            [
+                'label' => 'Title'
+            ]
+        );
 
-        $this->addElement('textArea', 'description', array(
-            'label' => 'Description'
-        ));
+        $this->addElement('textArea', 'description', ['label' => 'Description']);
 
-        $this->addElement('text', 'version', array(
-            'label' => 'Version',
-            'description' => 'Type package version. Ex.: 0.5.7',
-            'validators' => array(
-                new Regex(array(
-                    'pattern' => '/\d+(\.\d+)+/',
-                    'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
-                ))
-            )
-        ));
+        $this->addElement(
+            'text',
+            'version',
+            [
+                'label' => 'Version',
+                'description' => 'Type package version. Ex.: 0.5.7',
+                'validators' => [
+                    new Regex(
+                        [
+                            'pattern' => '/\d+(\.\d+)+/',
+                            'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
+                        ]
+                    )
+                ]
+            ]
+        );
 
-        $this->addElement('text', 'author', array(
-            'label' => 'Author',
-            'description' => 'Who create this package? Identify youself!'
-        ));
+        $this->addElement(
+            'text',
+            'author',
+            [
+                'label' => 'Author',
+                'description' => 'Who create this package? Identify youself!'
+            ]
+        );
 
-        $this->addElement('text', 'website', array(
-            'label' => 'Website',
-            'description' => 'Where user will look for new version?'
-        ));
+        $this->addElement(
+            'text',
+            'website',
+            [
+                'label' => 'Website',
+                'description' => 'Where user will look for new version?'
+            ]
+        );
 
-        $this->addElement('textArea', 'header', array(
-            'label' => 'Header comments',
-            'description' => 'This text will be placed in each file of package. Use comment block /**  **/.'
-        ));
+        $this->addElement(
+            'textArea',
+            'header',
+            [
+                'label' => 'Header comments',
+                'description' => 'This text will be placed in each file of package. Use comment block /**  **/.'
+            ]
+        );
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-packages'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-packages']);
 
     }
 
@@ -132,8 +162,8 @@ class Create extends Form
         // Check package existence.
         /** @var \Phalcon\Mvc\Model\Query\Builder $query */
         $query = $this->getDI()->get('modelsManager')->createBuilder()
-            ->from(array('t' => '\Core\Model\Package'))
-            ->where('t.type = :type: AND t.name = :name:', array('type' => $data['type'], 'name' => $data['name']));
+            ->from(['t' => '\Core\Model\Package'])
+            ->where('t.type = :type: AND t.name = :name:', ['type' => $data['type'], 'name' => $data['name']]);
 
         /** @var \Phalcon\Mvc\Model\Resultset\Simple $package */
         $package = $query->getQuery()->execute();

@@ -50,21 +50,24 @@ class AdminMenusController extends AdminControllerBase
     {
         $navigation = new Navigation();
         $navigation
-            ->setItems(array(
-                'index' => array(
-                    'href' => 'admin/menus',
-                    'title' => 'Browse',
-                    'prepend' => '<i class="icon-list icon-white"></i>'
-                ),
-                1 => array(
-                    'href' => 'javascript:;',
-                    'title' => '|'
-                ),
-                'create' => array(
-                    'href' => 'admin/menus/create',
-                    'title' => 'Create new menu',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                )));
+            ->setItems(
+                [
+                    'index' => [
+                        'href' => 'admin/menus',
+                        'title' => 'Browse',
+                        'prepend' => '<i class="icon-list icon-white"></i>'
+                    ],
+                    1 => [
+                        'href' => 'javascript:;',
+                        'title' => '|'
+                    ],
+                    'create' => [
+                        'href' => 'admin/menus/create',
+                        'title' => 'Create new menu',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ]
+                ]
+            );
 
         $this->view->navigation = $navigation;
     }
@@ -87,11 +90,11 @@ class AdminMenusController extends AdminControllerBase
             ->from('\Core\Model\Menu');
 
         $paginator = new QueryBuilder(
-            array(
+            [
                 "builder" => $builder,
                 "limit" => 25,
                 "page" => $currentPage
-            )
+            ]
         );
 
         // Get the paginated results.
@@ -117,7 +120,7 @@ class AdminMenusController extends AdminControllerBase
 
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(array('for' => "admin-menus-manage", 'id' => $form->getValues()->id));
+        return $this->response->redirect(['for' => "admin-menus-manage", 'id' => $form->getValues()->id]);
     }
 
     /**
@@ -133,7 +136,7 @@ class AdminMenusController extends AdminControllerBase
     {
         $item = Menu::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => "admin-menus"));
+            return $this->response->redirect(['for' => "admin-menus"]);
         }
 
         $form = new Edit($item);
@@ -145,7 +148,7 @@ class AdminMenusController extends AdminControllerBase
 
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(array('for' => "admin-menus"));
+        return $this->response->redirect(['for' => "admin-menus"]);
     }
 
     /**
@@ -168,7 +171,7 @@ class AdminMenusController extends AdminControllerBase
             }
         }
 
-        return $this->response->redirect(array('for' => "admin-menus"));
+        return $this->response->redirect(['for' => "admin-menus"]);
     }
 
     /**
@@ -188,7 +191,7 @@ class AdminMenusController extends AdminControllerBase
 
         $item = Menu::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => "admin-menus"));
+            return $this->response->redirect(['for' => "admin-menus"]);
         }
 
         $parentId = $this->request->get('parent_id', 'int');
@@ -197,7 +200,7 @@ class AdminMenusController extends AdminControllerBase
 
             // Get all parents.
             $flag = true;
-            $parents = array();
+            $parents = [];
             $parents[] = $currentParent = $parent;
             while ($flag) {
                 if ($currentParent->parent_id) {
@@ -210,12 +213,14 @@ class AdminMenusController extends AdminControllerBase
 
             $this->view->parent = $parent;
             $this->view->parents = $parents;
-            $this->view->items = $parent->getMenuItems(array('order' => 'item_order ASC'));
+            $this->view->items = $parent->getMenuItems(['order' => 'item_order ASC']);
         } else {
-            $this->view->items = $item->getMenuItems(array(
-                'parent_id IS NULL',
-                'order' => 'item_order ASC'
-            ));
+            $this->view->items = $item->getMenuItems(
+                [
+                    'parent_id IS NULL',
+                    'order' => 'item_order ASC'
+                ]
+            );
         }
 
         $this->view->menu = $item;
@@ -234,10 +239,10 @@ class AdminMenusController extends AdminControllerBase
         $form = new CreateItem();
         $this->view->form = $form;
 
-        $data = array(
+        $data = [
             'menu_id' => $this->request->get('menu_id'),
             'parent_id' => $this->request->get('parent_id')
-        );
+        ];
 
         $form->setValues($data);
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -255,10 +260,10 @@ class AdminMenusController extends AdminControllerBase
         }
 
         // Set proper order.
-        $orderData = array(
+        $orderData = [
             "menu_id = {$data['menu_id']}",
             'order' => 'item_order DESC'
-        );
+        ];
 
         if (!empty($data['parent_id'])) {
             $orderData[0] .= " AND parent_id = {$data['parent_id']}";
@@ -272,7 +277,7 @@ class AdminMenusController extends AdminControllerBase
 
         $roles = $this->request->get('roles');
         if ($roles == null) {
-            $item->setRoles(array());
+            $item->setRoles([]);
         }
 
         $item->save();
@@ -295,11 +300,11 @@ class AdminMenusController extends AdminControllerBase
         $form = new EditItem($item);
         $this->view->form = $form;
 
-        $data = array(
+        $data = [
             'menu_id' => $this->request->get('menu_id'),
             'parent_id' => $this->request->get('parent_id'),
             'url_type' => ($item->page_id == null ? 0 : 1),
-        );
+        ];
 
         if ($item->page_id) {
             $page = Page::findFirst($item->page_id);
@@ -325,12 +330,12 @@ class AdminMenusController extends AdminControllerBase
 
         $roles = $this->request->get('roles');
         if ($roles == null) {
-            $item->roles = array();
+            $item->roles = [];
         }
 
         $languages = $this->request->get('languages');
         if ($languages == null) {
-            $item->languages = array();
+            $item->languages = [];
         }
 
         $item->save();
@@ -365,7 +370,7 @@ class AdminMenusController extends AdminControllerBase
             return $this->response->redirect("admin/menus/manage/{$menuId}{$parentLink}");
         }
 
-        return $this->response->redirect(array('for' => "admin-menus"));
+        return $this->response->redirect(['for' => "admin-menus"]);
     }
 
     /**
@@ -377,9 +382,9 @@ class AdminMenusController extends AdminControllerBase
      */
     public function orderAction()
     {
-        $order = $this->request->get('order', null, array());
+        $order = $this->request->get('order', null, []);
         foreach ($order as $index => $id) {
-            $this->db->update(MenuItem::getTableName(), array('item_order'), array($index), "id = {$id}");
+            $this->db->update(MenuItem::getTableName(), ['item_order'], [$index], "id = {$id}");
         }
         $this->view->disable();
     }
@@ -402,18 +407,18 @@ class AdminMenusController extends AdminControllerBase
         }
 
         $results = Menu::find(
-            array(
+            [
                 "conditions" => "name LIKE ?1",
-                "bind" => array(1 => '%' . $query . '%')
-            )
+                "bind" => [1 => '%' . $query . '%']
+            ]
         );
 
-        $data = array();
+        $data = [];
         foreach ($results as $result) {
-            $data[] = array(
+            $data[] = [
                 'id' => $result->id,
                 'label' => $result->name
-            );
+            ];
         }
 
         $this->response->setContent(json_encode($data))->send();

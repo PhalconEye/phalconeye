@@ -67,9 +67,13 @@ class Controller extends WidgetController
     {
         $form = new Form();
 
-        $form->addElement('text', 'title', array(
-            'label' => 'Title'
-        ));
+        $form->addElement(
+            'text',
+            'title',
+            [
+                'label' => 'Title'
+            ]
+        );
 
         // Adding additional html for language selector support.
         $languageSelectorHtml = '
@@ -123,7 +127,7 @@ class Controller extends WidgetController
                 $selectedLanguage = 'selected="selected"';
             }
 
-            $form->addElement('textArea', 'html_' . $language->locale, array(), $order++);
+            $form->addElement('textArea', 'html_' . $language->locale, [], $order++);
             $languageTextCode .= 'CKEDITOR.replace("html_' . $language->locale . '");';
             $languageHtmlItems .=
                 '<option ' . $selectedLanguage . ' value=' . $language->locale . '>' . $language->name . '</option>';
@@ -139,10 +143,14 @@ class Controller extends WidgetController
             );
 
         // Adding created html to form.
-        $form->addElement('html', 'html', array(
-            'ignore' => true,
-            'html' => $languageSelectorHtml
-        ));
+        $form->addElement(
+            'html',
+            'html',
+            [
+                'ignore' => true,
+                'html' => $languageSelectorHtml
+            ]
+        );
 
         return $form;
     }

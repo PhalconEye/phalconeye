@@ -95,14 +95,16 @@ class Check extends PhalconCheck implements ElementInterface
      * @param null $useChecked Use checked value.
      *
      * @return array
+     * @TODO      Refactor this.
+     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
     public function prepareAttributes($attributes = null, $useChecked = null)
     {
         if (!is_array($attributes)) {
-            $attributes = array();
+            $attributes = [];
         }
 
-        $attributes = array_merge(array($this->_name), $attributes);
+        $attributes = array_merge([$this->_name], $attributes);
 
         return array_merge($attributes, $this->getAttributes());
     }

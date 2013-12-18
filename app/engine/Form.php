@@ -88,21 +88,21 @@ class Form extends PhalconForm
      *
      * @var array
      */
-    private $_elementsData = array();
+    private $_elementsData = [];
 
     /**
      * Already ordered elements.
      *
      * @var array
      */
-    private $_orderedElements = array();
+    private $_orderedElements = [];
 
     /**
      * Form buttons.
      *
      * @var array
      */
-    private $_buttons = array();
+    private $_buttons = [];
 
     /**
      * Current order index.
@@ -116,14 +116,14 @@ class Form extends PhalconForm
      *
      * @var array
      */
-    private $_errors = array();
+    private $_errors = [];
 
     /**
      * Current notices.
      *
      * @var array
      */
-    private $_notices = array();
+    private $_notices = [];
 
     /**
      * Use token?
@@ -165,13 +165,13 @@ class Form extends PhalconForm
      *
      * @var array
      */
-    private $_elementsOptions = array(
+    private $_elementsOptions = [
         'label',
         'description',
         'filters',
         'required',
         'validators'
-    );
+    ];
 
     /**
      * Current action.
@@ -199,7 +199,7 @@ class Form extends PhalconForm
      *
      * @var array
      */
-    private $_attribs = array();
+    private $_attribs = [];
 
     /**
      * Form current method.
@@ -249,7 +249,7 @@ class Form extends PhalconForm
      */
     public function clearElements()
     {
-        $this->_elementsData = array();
+        $this->_elementsData = [];
     }
 
 
@@ -260,7 +260,7 @@ class Form extends PhalconForm
      */
     public function clearButtons()
     {
-        $this->_buttons = array();
+        $this->_buttons = [];
     }
 
     /**
@@ -274,7 +274,7 @@ class Form extends PhalconForm
      * @throws Exception
      * @return $this
      */
-    public function addElement($type, $name, $params = array(), $order = null)
+    public function addElement($type, $name, $params = [], $order = null)
     {
         $elementClass = '\Engine\Form\Element\\' . ucfirst($type);
         if (!class_exists($elementClass)) {
@@ -301,13 +301,13 @@ class Form extends PhalconForm
             $element->setDefault($this->_entity->$name);
         }
 
-        $this->_elementsData[$name] = array(
+        $this->_elementsData[$name] = [
             'type' => $type,
             'element' => $element,
             'params' => $onlyParams,
             'attributes' => $attributes,
             'order' => $order
-        );
+        ];
 
         return $this;
     }
@@ -321,13 +321,13 @@ class Form extends PhalconForm
      *
      * @return $this
      */
-    public function addButton($name, $isSubmit = false, $params = array())
+    public function addButton($name, $isSubmit = false, $params = [])
     {
-        $this->_buttons[$name] = array(
+        $this->_buttons[$name] = [
             'name' => $name,
             'is_submit' => $isSubmit,
             'params' => $params
-        );
+        ];
 
         return $this;
     }
@@ -341,15 +341,15 @@ class Form extends PhalconForm
      *
      * @return $this
      */
-    public function addButtonLink($name, $href = 'javascript:;', $params = array())
+    public function addButtonLink($name, $href = 'javascript:;', $params = [])
     {
-        $this->_buttons[$name] = array(
+        $this->_buttons[$name] = [
             'name' => $name,
             'href' => $href,
             'is_submit' => false,
             'is_link' => true,
             'params' => $params
-        );
+        ];
 
         return $this;
     }
@@ -528,7 +528,7 @@ class Form extends PhalconForm
         if ($getEntity && $this->_entity !== null) {
             return $this->_entity;
         } else {
-            $values = array();
+            $values = [];
             foreach (array_keys($this->_elementsData) as $name) {
                 if (isset($_POST[$name]) && isset($this->_elementsData[$name]['attributes']['value'])) {
                     $values[$name] = $this->_elementsData[$name]['attributes']['value'];
@@ -584,9 +584,11 @@ class Form extends PhalconForm
         $this->_orderedElements = $this->_elementsData;
 
         // Sort elements by order.
-        usort($this->_orderedElements, function ($a, $b) {
-            return $a['order'] - $b['order'];
-        });
+        usort(
+            $this->_orderedElements, function ($a, $b) {
+                return $a['order'] - $b['order'];
+            }
+        );
 
         // Add elements to Phalcon form class.
         foreach ($this->_orderedElements as $element) {
@@ -718,7 +720,7 @@ class Form extends PhalconForm
             Tag::form(
                 array_merge(
                     $this->_attribs,
-                    array($this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype)
+                    [$this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype]
                 )
             ) . '<div>';
 
@@ -773,7 +775,7 @@ class Form extends PhalconForm
         //////////////////////////////////////////
 
         $content .= '<div class="form_elements">';
-        $hiddenFields = array();
+        $hiddenFields = [];
         /* @var Element $element */
         foreach ($this as $element) {
 

@@ -45,6 +45,6 @@ class Edit extends Create
 
         $this->clearButtons();
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-languages'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-languages']);
     }
 }

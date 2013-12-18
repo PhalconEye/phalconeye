@@ -53,47 +53,49 @@ class AdminPackagesController extends AdminControllerBase
     {
         $navigation = new Navigation();
         $navigation
-            ->setItems(array(
-                'index' => array(
-                    'href' => 'admin/packages',
-                    'title' => 'Modules',
-                    'prepend' => '<i class="icon-th-large icon-white"></i>'
-                ),
-                'themes' => array(
-                    'href' => 'admin/packages/themes',
-                    'title' => 'Themes',
-                    'prepend' => '<i class="icon-leaf icon-white"></i>'
-                ),
-                'widgets' => array(
-                    'href' => 'admin/packages/widgets',
-                    'title' => 'Widgets',
-                    'prepend' => '<i class="icon-tags icon-white"></i>'
-                ),
-                'plugins' => array(
-                    'href' => array('for' => 'admin-packages-plugins'),
-                    'title' => 'Plugins',
-                    'prepend' => '<i class="icon-resize-full icon-white"></i>'
-                ),
-                'libraries' => array(
-                    'href' => array('for' => 'admin-packages-libraries'),
-                    'title' => 'Libraries',
-                    'prepend' => '<i class="icon-book icon-white"></i>'
-                ),
-                2 => array(
-                    'href' => 'javascript:;',
-                    'title' => '|'
-                ),
-                'upload' => array(
-                    'href' => 'admin/packages/upload',
-                    'title' => 'Upload new package',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                ),
-                'create' => array(
-                    'href' => 'admin/packages/create',
-                    'title' => 'Create new package',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                )
-            ));
+            ->setItems(
+                [
+                    'index' => [
+                        'href' => 'admin/packages',
+                        'title' => 'Modules',
+                        'prepend' => '<i class="icon-th-large icon-white"></i>'
+                    ],
+                    'themes' => [
+                        'href' => 'admin/packages/themes',
+                        'title' => 'Themes',
+                        'prepend' => '<i class="icon-leaf icon-white"></i>'
+                    ],
+                    'widgets' => [
+                        'href' => 'admin/packages/widgets',
+                        'title' => 'Widgets',
+                        'prepend' => '<i class="icon-tags icon-white"></i>'
+                    ],
+                    'plugins' => [
+                        'href' => ['for' => 'admin-packages-plugins'],
+                        'title' => 'Plugins',
+                        'prepend' => '<i class="icon-resize-full icon-white"></i>'
+                    ],
+                    'libraries' => [
+                        'href' => ['for' => 'admin-packages-libraries'],
+                        'title' => 'Libraries',
+                        'prepend' => '<i class="icon-book icon-white"></i>'
+                    ],
+                    2 => [
+                        'href' => 'javascript:;',
+                        'title' => '|'
+                    ],
+                    'upload' => [
+                        'href' => 'admin/packages/upload',
+                        'title' => 'Upload new package',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ],
+                    'create' => [
+                        'href' => 'admin/packages/create',
+                        'title' => 'Create new package',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ]
+                ]
+            );
 
         $this->view->navigation = $navigation;
     }
@@ -264,7 +266,7 @@ class AdminPackagesController extends AdminControllerBase
 
         $this->flashSession->success('New package created successfully!');
 
-        return $this->response->redirect(array('for' => $return));
+        return $this->response->redirect(['for' => $return]);
     }
 
     /**
@@ -287,7 +289,7 @@ class AdminPackagesController extends AdminControllerBase
 
         $package = $this->_getPackage($type, $name);
         if (!$package) {
-            return $this->response->redirect(array('for' => $return));
+            return $this->response->redirect(['for' => $return]);
         }
 
         $this->view->form = $form = new EditForm($package, $return);
@@ -298,7 +300,7 @@ class AdminPackagesController extends AdminControllerBase
 
         $this->flashSession->success('Package saved!');
 
-        return $this->response->redirect(array('for' => $return));
+        return $this->response->redirect(['for' => $return]);
     }
 
     /**
@@ -318,7 +320,7 @@ class AdminPackagesController extends AdminControllerBase
     public function exportAction($type, $name)
     {
         $this->view->hideFooter = true;
-        $this->view->form = $form = new ExportForm(array('name' => $name, 'type' => $type));
+        $this->view->form = $form = new ExportForm(['name' => $name, 'type' => $type]);
 
         $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
         if (!$skipForm && (!$this->request->isPost() || !$form->isValid($_POST))) {
@@ -338,11 +340,11 @@ class AdminPackagesController extends AdminControllerBase
                 foreach ($dependecies['modules'] as $dependecy) {
                     $package = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $dependecy);
 
-                    $data['dependencies'][] = array(
+                    $data['dependencies'][] = [
                         'name' => $dependecy,
                         'type' => Manager::PACKAGE_TYPE_MODULE,
                         'version' => $package->version,
-                    );
+                    ];
                 }
             }
 
@@ -353,11 +355,11 @@ class AdminPackagesController extends AdminControllerBase
                 foreach ($dependecies['libraries'] as $dependecy) {
                     $package = $this->_getPackage(Manager::PACKAGE_TYPE_LIBRARY, $dependecy);
 
-                    $data['dependencies'][] = array(
+                    $data['dependencies'][] = [
                         'name' => $dependecy,
                         'type' => Manager::PACKAGE_TYPE_LIBRARY,
                         'version' => $package->version,
-                    );
+                    ];
                 }
             }
 
@@ -373,20 +375,20 @@ class AdminPackagesController extends AdminControllerBase
                 }
 
                 $query = $this->modelsManager->createBuilder()
-                    ->from(array('t' => '\Core\Model\Widget'))
-                    ->where("t.module = :module:", array('module' => $name));
+                    ->from(['t' => '\Core\Model\Widget'])
+                    ->where("t.module = :module:", ['module' => $name]);
 
                 $widgets = $query->getQuery()->execute();
                 foreach ($widgets as $widget) {
-                    $data['widgets'][] = array(
+                    $data['widgets'][] = [
                         'name' => $widget->name,
                         'module' => $name,
                         'description' => $widget->description,
                         'is_paginated' => $widget->is_paginated,
                         'is_acl_controlled' => $widget->is_acl_controlled,
                         'admin_form' => $widget->admin_orm,
-                        'enabled' => (bool)$widget->enabled,
-                    );
+                        'enabled' => (bool)$widget->enabled
+                    ];
                 }
             } elseif ($type == Manager::PACKAGE_TYPE_PLUGIN) {
                 $pluginEvent = $this->config->plugins->get($name);
@@ -421,7 +423,7 @@ class AdminPackagesController extends AdminControllerBase
         $package = $this->_getPackage($type, $name);
         if ($package) {
             if ($this->_hasDependencies($package)) {
-                return $this->response->redirect(array('for' => $return));
+                return $this->response->redirect(['for' => $return]);
             }
 
             try {
@@ -449,7 +451,7 @@ class AdminPackagesController extends AdminControllerBase
             $this->flashSession->notice('Package not found...');
         }
 
-        return $this->response->redirect(array('for' => $return));
+        return $this->response->redirect(['for' => $return]);
     }
 
     /**
@@ -480,7 +482,7 @@ class AdminPackagesController extends AdminControllerBase
             $this->app->clearCache();
         }
 
-        return $this->response->redirect(array('for' => $return));
+        return $this->response->redirect(['for' => $return]);
     }
 
     /**
@@ -505,7 +507,7 @@ class AdminPackagesController extends AdminControllerBase
         $package = $this->_getPackage($type, $name);
         if ($package && !$package->is_system) {
             if ($this->_hasDependencies($package)) {
-                return $this->response->redirect(array('for' => $return));
+                return $this->response->redirect(['for' => $return]);
             }
 
             $package->enabled = 0;
@@ -515,7 +517,7 @@ class AdminPackagesController extends AdminControllerBase
             $this->app->clearCache();
         }
 
-        return $this->response->redirect(array('for' => $return));
+        return $this->response->redirect(['for' => $return]);
     }
 
     /**
@@ -529,8 +531,8 @@ class AdminPackagesController extends AdminControllerBase
     protected function _getPackage($type, $name)
     {
         $query = $this->modelsManager->createBuilder()
-            ->from(array('t' => '\Core\Model\Package'))
-            ->where("t.type = :type: AND t.name = :name:", array('type' => $type, 'name' => $name));
+            ->from(['t' => '\Core\Model\Package'])
+            ->where("t.type = :type: AND t.name = :name:", ['type' => $type, 'name' => $name]);
 
         return $query->getQuery()->execute()->getFirst();
     }
@@ -569,7 +571,7 @@ class AdminPackagesController extends AdminControllerBase
                 $this->config->events = new Config($events);
 
                 // remove widgets
-                $this->db->delete(Widget::getTableName(), 'module = ?', array($name));
+                $this->db->delete(Widget::getTableName(), 'module = ?', [$name]);
                 break;
             case Manager::PACKAGE_TYPE_THEME:
                 break;
@@ -614,7 +616,7 @@ class AdminPackagesController extends AdminControllerBase
 
                 // Install widgets.
                 if (!empty($data['widgets'])) {
-                    $errors = array();
+                    $errors = [];
                     foreach ($data['widgets'] as $widgetData) {
                         try {
                             $widget = new Widget();
@@ -639,7 +641,7 @@ class AdminPackagesController extends AdminControllerBase
                 }
 
                 // enable module widgets
-                $this->db->update(Widget::getTableName(), array('enabled'), array(1), "module = '{$name}'");
+                $this->db->update(Widget::getTableName(), ['enabled'], [1], "module = '{$name}'");
                 break;
             case Manager::PACKAGE_TYPE_THEME:
                 break;
@@ -660,15 +662,15 @@ class AdminPackagesController extends AdminControllerBase
                 $plugins = $this->config->plugins->toArray();
                 if (empty($plugins[$name])) {
                     if (!empty($data['events'])) {
-                        $plugins[$name] = array(
+                        $plugins[$name] = [
                             'enabled' => true,
                             'events' => $data['events']
-                        );
+                        ];
                     } else {
-                        $plugins[$name] = array(
+                        $plugins[$name] = [
                             'enabled' => true,
                             'events' => ''
-                        );
+                        ];
                     }
                 } else {
                     $plugins[$name]['enabled'] = true;
@@ -697,7 +699,7 @@ class AdminPackagesController extends AdminControllerBase
                 $this->config->modules = new Config($modules);
 
                 // Disable module widgets.
-                $this->db->update(Widget::getTableName(), array('enabled'), array(0), "module = '{$name}'");
+                $this->db->update(Widget::getTableName(), ['enabled'], [0], "module = '{$name}'");
                 break;
             case Manager::PACKAGE_TYPE_THEME:
                 break;
@@ -711,10 +713,10 @@ class AdminPackagesController extends AdminControllerBase
             case Manager::PACKAGE_TYPE_PLUGIN:
                 $plugins = $this->config->plugins->toArray();
                 if (empty($plugins[$name])) {
-                    $plugins[$name] = array(
+                    $plugins[$name] = [
                         'enabled' => false,
                         'events' => ''
-                    );
+                    ];
                 } else {
                     $plugins[$name]['enabled'] = false;
                 }

@@ -21,6 +21,7 @@ namespace Core;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
+use Engine\Profiler;
 use Engine\Translation\Db as TranslationDb;
 use Engine\Widget\Storage;
 use Phalcon\Config;
@@ -87,7 +88,7 @@ class Bootstrap extends EngineBootstrap
 
         if ($widgets === null) {
             $widgetObjects = Widget::find();
-            $widgets = array();
+            $widgets = [];
             foreach ($widgetObjects as $object) {
                 $widgets[$object->id] = $object;
             }
@@ -116,7 +117,7 @@ class Bootstrap extends EngineBootstrap
         $translate = null;
 
         if (!$di->get('config')->application->debug || !$config->installed) {
-            $messages = array();
+            $messages = [];
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
             } else {
@@ -126,16 +127,20 @@ class Bootstrap extends EngineBootstrap
                 }
             }
 
-            $translate = new TranslateArray(array(
-                "content" => $messages
-            ));
+            $translate = new TranslateArray(
+                [
+                    "content" => $messages
+                ]
+            );
         } else {
-            $translate = new TranslationDb(array(
-                'db' => $di->get('db'),
-                'locale' => $locale,
-                'model' => 'Core\Model\Language',
-                'translationModel' => 'Core\Model\LanguageTranslation'
-            ));
+            $translate = new TranslationDb(
+                [
+                    'db' => $di->get('db'),
+                    'locale' => $locale,
+                    'model' => 'Core\Model\Language',
+                    'translationModel' => 'Core\Model\LanguageTranslation'
+                ]
+            );
         }
 
         $di->set('trans', $translate);
@@ -178,17 +183,17 @@ class Bootstrap extends EngineBootstrap
             return $view->getRender('profiler', $template, $params);
         };
         $renderTitle = function ($title) use ($render) {
-            return $render('title', array('title' => $title));
+            return $render('title', ['title' => $title]);
         };
         $renderElement = function ($title, $value = null, $tag = null, $noCode = null) use ($render) {
-            return $render('element', array('title' => $title, 'value' => $value, 'tag' => $tag, 'noCode' => $noCode));
+            return $render('element', ['title' => $title, 'value' => $value, 'tag' => $tag, 'noCode' => $noCode]);
         };
 
         $profiler = $di->get('profiler');
         $router = $di->get('router');
         $dbProfiler = $profiler->getDbProfiler();
         $dbProfiles = $dbProfiler->getProfiles();
-        $handlerValues = array();
+        $handlerValues = [];
 
         //////////////////////////////////////
         /// Config.
@@ -241,13 +246,13 @@ class Bootstrap extends EngineBootstrap
             'item-normal' : 'item-bad') :
             'item-good'
         );
-        $handlerValues['memory'] = array(
+        $handlerValues['memory'] = [
             'class' => $colorClass,
             'value' => round($memoryData / 1024, 2)
-        );
+        ];
 
         $htmlMemory = '';
-        foreach (\Engine\Profiler::$objectTypes as $type) {
+        foreach (Profiler::$objectTypes as $type) {
             $data = $profiler->getData('memory', $type);
             if (empty($data)) {
                 continue;
@@ -267,13 +272,13 @@ class Bootstrap extends EngineBootstrap
         //////////////////////////////////////
         $timeData = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000, 2);
         $colorClass = ($timeData > 200 ? ($timeData < 500 ? 'item-normal' : 'item-bad') : 'item-good');
-        $handlerValues['time'] = array(
+        $handlerValues['time'] = [
             'class' => $colorClass,
             'value' => $timeData
-        );
+        ];
 
         $htmlTime = '';
-        foreach (\Engine\Profiler::$objectTypes as $type) {
+        foreach (Profiler::$objectTypes as $type) {
             $data = $profiler->getData('time', $type);
             if (empty($data)) {
                 continue;
@@ -346,10 +351,10 @@ class Bootstrap extends EngineBootstrap
         $errorsData = $profiler->getData('error');
         $errorsCount = count($errorsData);
         $colorClass = ($errorsCount == 0 ? 'item-good' : 'item-bad');
-        $handlerValues['errors'] = array(
+        $handlerValues['errors'] = [
             'class' => $colorClass,
             'value' => $errorsCount
-        );
+        ];
 
         $htmlErrors = ($errorsCount == 0 ? 'No Errors' : '');
         foreach ($errorsData as $data) {
@@ -358,7 +363,7 @@ class Bootstrap extends EngineBootstrap
 
         $output = $render(
             'main',
-            array(
+            [
                 'handlerValues' => $handlerValues,
                 'htmlConfig' => $htmlConfig,
                 'htmlRouter' => $htmlRouter,
@@ -367,7 +372,7 @@ class Bootstrap extends EngineBootstrap
                 'htmlFiles' => $htmlFiles,
                 'htmlSql' => $htmlSql,
                 'htmlErrors' => $htmlErrors,
-            )
+            ]
         );
         echo trim(preg_replace('/\s\s+/', ' ', $output));
     }

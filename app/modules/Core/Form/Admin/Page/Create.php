@@ -61,38 +61,43 @@ class Create extends Form
             ->setOption('title', "Page Creation")
             ->setOption('description', "Create new page.");
 
-        $this->addElement('text', 'title', array(
-            'label' => 'Title',
-        ));
+        $this->addElement('text', 'title', ['label' => 'Title']);
 
-        $this->addElement('text', 'url', array(
-            'label' => 'Url',
-            'description' => 'Page will be available under http://' . $_SERVER['HTTP_HOST'] . '/page/[URL NAME]'
-        ));
+        $this->addElement(
+            'text',
+            'url',
+            [
+                'label' => 'Url',
+                'description' => 'Page will be available under http://' . $_SERVER['HTTP_HOST'] . '/page/[URL NAME]'
+            ]
+        );
 
-        $this->addElement('textArea', 'description', array(
-            'label' => 'Description'
-        ));
+        $this->addElement('textArea', 'description', ['label' => 'Description']);
+        $this->addElement('textArea', 'keywords', ['label' => 'Keywords']);
 
-        $this->addElement('textArea', 'keywords', array(
-            'label' => 'Keywords'
-        ));
+        $this->addElement(
+            'text',
+            'controller',
+            [
+                'label' => 'Controller',
+                'description' =>
+                    'Controller and action name that will handle this page. Example: NameController->someAction'
+            ]
+        );
 
-        $this->addElement('text', 'controller', array(
-            'label' => 'Controller',
-            'description' =>
-                'Controller and action name that will handle this page. Example: NameController->someAction'
-        ));
-
-        $this->addElement('select', 'roles', array(
-            'label' => 'Roles',
-            'description' => 'If no value is selected, will be allowed to all (also as all selected).',
-            'options' => Role::find(),
-            'using' => array('id', 'name'),
-            'multiple' => 'multiple'
-        ));
+        $this->addElement(
+            'select',
+            'roles',
+            [
+                'label' => 'Roles',
+                'description' => 'If no value is selected, will be allowed to all (also as all selected).',
+                'options' => Role::find(),
+                'using' => ['id', 'name'],
+                'multiple' => 'multiple'
+            ]
+        );
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-pages'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-pages']);
     }
 }

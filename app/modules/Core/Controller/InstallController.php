@@ -53,25 +53,25 @@ class InstallController extends ControllerBase
      *
      * @var array
      */
-    protected $_requirements = array(
+    protected $_requirements = [
         'php' => '5.4.0',
         'phalcon' => PHALCON_VERSION_REQUIRED,
         'zlib' => false,
         'mbstring' => false,
         'mcrypt' => false,
         'iconv' => false,
-    );
+    ];
 
     /**
      * Installation actions.
      *
      * @var array
      */
-    protected $_actions = array(
+    protected $_actions = [
         'indexAction',
         'databaseAction',
         'finishAction'
-    );
+    ];
 
     /**
      * Initialize installation controller.
@@ -106,7 +106,7 @@ class InstallController extends ControllerBase
         $allPassed = true;
 
         // Modules requirements.
-        $requirements = array();
+        $requirements = [];
         foreach ($this->_requirements as $req => $version) {
             $installedVersion = false;
             if ($req == 'php') {
@@ -120,23 +120,23 @@ class InstallController extends ControllerBase
                     $passed = version_compare($installedVersion, $version, $comparison);
                 }
             }
-            $requirements[] = array(
+            $requirements[] = [
                 'name' => $req,
                 'version' => $version,
                 'installed_version' => $installedVersion,
                 'passed' => $passed
-            );
+            ];
             $allPassed = $allPassed && $passed;
         }
 
         // Path is writable?
-        $pathInfo = array();
+        $pathInfo = [];
         foreach ($GLOBALS['PATH_REQUIREMENTS'] as $path) {
             $is_writable = is_writable($path);
-            $pathInfo[] = array(
+            $pathInfo[] = [
                 'name' => $path,
                 'is_writable' => $is_writable
-            );
+            ];
             $allPassed = $allPassed && $is_writable;
         }
 
@@ -164,13 +164,13 @@ class InstallController extends ControllerBase
             $data = $form->getValues();
 
             try {
-                $connectionSettings = array(
+                $connectionSettings = [
                     "adapter" => $data['adapter'],
                     "host" => $data['host'],
                     "username" => $data['username'],
                     "password" => $data['password'],
                     "dbname" => $data['dbname'],
-                );
+                ];
 
                 $this->_setupDatabase($connectionSettings);
 
@@ -179,7 +179,7 @@ class InstallController extends ControllerBase
                 $schema->updateDatabase();
 
                 // Run modules installation scripts.
-                $packageManager = new PackageManager(array(), $this->di);
+                $packageManager = new PackageManager([], $this->di);
                 foreach ($this->di->get('modules') as $moduleName => $enabled) {
                     if (!$enabled) {
                         continue;
@@ -187,12 +187,12 @@ class InstallController extends ControllerBase
 
                     $packageManager->runInstallScript(
                         new Config(
-                            array(
+                            [
                                 'name' => $moduleName,
                                 'type' => PackageManager::PACKAGE_TYPE_MODULE,
                                 'currentVersion' => '0',
                                 'isUpdate' => false
-                            )
+                            ]
                         )
                     );
                 }
@@ -253,7 +253,7 @@ class InstallController extends ControllerBase
 
             $this->_setPassed(__FUNCTION__, true);
 
-            return $this->response->redirect(array('for' => 'install-save'));
+            return $this->response->redirect(['for' => 'install-save']);
         }
         $this->view->form = $form;
     }
@@ -316,9 +316,9 @@ class InstallController extends ControllerBase
     {
         foreach ($this->_actions as $action) {
             if (!$this->_isPassed($action)) {
-                return $this->response->redirect(array(
-                    "for" => 'install-' . str_replace('Action', '', $action)
-                ));
+                return $this->response->redirect(
+                    ["for" => 'install-' . str_replace('Action', '', $action)]
+                );
             }
         }
     }
@@ -352,24 +352,30 @@ class InstallController extends ControllerBase
         $eventsManager = new EventsManager();
 
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
-        $connection = new $adapter(array(
-            "host" => $config->database->host,
-            "username" => $config->database->username,
-            "password" => $config->database->password,
-            "dbname" => $config->database->dbname,
-        ));
+        $connection = new $adapter(
+            [
+                "host" => $config->database->host,
+                "username" => $config->database->username,
+                "password" => $config->database->password,
+                "dbname" => $config->database->dbname,
+            ]
+        );
 
         $this->di->set('db', $connection);
 
-        $this->di->set('modelsManager', function () use ($config, $eventsManager) {
-            $modelsManager = new ModelManager();
-            $modelsManager->setEventsManager($eventsManager);
+        $this->di->set(
+            'modelsManager',
+            function () use ($config, $eventsManager) {
+                $modelsManager = new ModelManager();
+                $modelsManager->setEventsManager($eventsManager);
 
-            //Attach a listener to models-manager
-            $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
+                //Attach a listener to models-manager
+                $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
-            return $modelsManager;
-        }, true);
+                return $modelsManager;
+            },
+            true
+        );
     }
 }
 

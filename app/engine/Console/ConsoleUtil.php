@@ -117,7 +117,7 @@ final class ConsoleUtil
     /**
      * @var array Map of supported foreground colors.
      */
-    private static $_fg = array(
+    private static $_fg = [
         self::FG_BLACK => '0;30',
         self::FG_DARK_GRAY => '1;30',
         self::FG_RED => '0;31',
@@ -134,12 +134,12 @@ final class ConsoleUtil
         self::FG_LIGHT_CYAN => '1;36',
         self::FG_LIGHT_GRAY => '0;37',
         self::FG_WHITE => '1;37',
-    );
+    ];
 
     /**
      * @var array Map of supported background colors.
      */
-    private static $_bg = array(
+    private static $_bg = [
         self::BG_BLACK => '40',
         self::BG_RED => '41',
         self::BG_GREEN => '42',
@@ -148,12 +148,12 @@ final class ConsoleUtil
         self::BG_MAGENTA => '45',
         self::BG_CYAN => '46',
         self::BG_LIGHT_GRAY => '47',
-    );
+    ];
 
     /**
      * @var array Map of supported attributes.
      */
-    private static $_at = array(
+    private static $_at = [
         self::AT_NORMAL => '0',
         self::AT_BOLD => '1',
         self::AT_ITALIC => '3',
@@ -162,19 +162,19 @@ final class ConsoleUtil
         self::AT_OUTLINE => '6',
         self::AT_REVERSE => '7',
         self::AT_NONDISP => '8',
-        self::AT_STRIKE => '9',
-    );
+        self::AT_STRIKE => '9'
+    ];
 
     /**
      * Supported terminals.
      *
      * @var string
      */
-    private static $_supportedShells = array(
+    private static $_supportedShells = [
         'xterm' => true,
         'xterm-256color' => true,
-        'xterm-color' => true,
-    );
+        'xterm-color' => true
+    ];
 
     /**
      * Color style for error messages.

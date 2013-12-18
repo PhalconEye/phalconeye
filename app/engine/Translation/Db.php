@@ -80,15 +80,17 @@ class Db implements AdapterInterface
         $this->_model = $model = $options['model'];
         $this->_translationModel = $options['translationModel'];
 
-        $this->_locale = $model::find(array(
-            'conditions' => 'locale = :locale:',
-            'bind' => (array(
-                    "locale" => $options['locale']
-                )),
-            'bindTypes' => (array(
-                    "locale" => PhalconColumn::BIND_PARAM_STR
-                ))
-        ))->getFirst();
+        $this->_locale = $model::find(
+            [
+                'conditions' => 'locale = :locale:',
+                'bind' => (
+                    ["locale" => $options['locale']]
+                    ),
+                'bindTypes' => (
+                    ["locale" => PhalconColumn::BIND_PARAM_STR]
+                    )
+            ]
+        )->getFirst();
 
         if (!$this->_locale) {
             $this->_locale = $model::findFirst("locale = 'en'");
@@ -179,17 +181,23 @@ class Db implements AdapterInterface
     {
         $translationModel = $this->_translationModel;
 
-        return $translationModel::find(array(
-            'conditions' => 'original = :content: AND language_id = :id:',
-            'bind' => (array(
-                    "content" => $index,
-                    "id" => $this->_locale->id
-                )),
-            'bindTypes' => (array(
-                    "content" => PhalconColumn::BIND_PARAM_STR,
-                    "id" => PhalconColumn::BIND_PARAM_INT
-                ))
-        ))->getFirst();
+        return $translationModel::find(
+            [
+                'conditions' => 'original = :content: AND language_id = :id:',
+                'bind' => (
+                    [
+                        "content" => $index,
+                        "id" => $this->_locale->id
+                    ]
+                    ),
+                'bindTypes' => (
+                    [
+                        "content" => PhalconColumn::BIND_PARAM_STR,
+                        "id" => PhalconColumn::BIND_PARAM_INT
+                    ]
+                    )
+            ]
+        )->getFirst();
     }
 
 }

@@ -44,8 +44,8 @@ class lessc {
 	static protected $TRUE = array("keyword", "true");
 	static protected $FALSE = array("keyword", "false");
 
-	protected $libFunctions = array();
-	protected $registeredVars = array();
+	protected $libFunctions = [];
+	protected $registeredVars = [];
 	protected $preserveComments = false;
 
 	public $vPrefix = '@'; // prefix of abstract properties
@@ -237,7 +237,7 @@ class lessc {
 				$orphan = $this->makeOutputBlock(null, $orphanSelelectors);
 				$orphan->lines = $this->scope->lines;
 				array_unshift($this->scope->children, $orphan);
-				$this->scope->lines = array();
+				$this->scope->lines = [];
 			}
 		}
 
@@ -281,9 +281,9 @@ class lessc {
 	}
 
 	protected function sortProps($props, $split = false) {
-		$vars = array();
-		$imports = array();
-		$other = array();
+		$vars = [];
+		$imports = [];
+		$other = [];
 
 		foreach ($props as $prop) {
 			switch ($prop[0]) {
@@ -313,9 +313,9 @@ class lessc {
 	}
 
 	protected function compileMediaQuery($queries) {
-		$compiledQueries = array();
+		$compiledQueries = [];
 		foreach ($queries as $query) {
-			$parts = array();
+			$parts = [];
 			foreach ($query as $q) {
 				switch ($q[0]) {
 				case "mediaType":
@@ -360,7 +360,7 @@ class lessc {
 			return $this->multiplyMedia($env->parent, $childQueries);
 		}
 
-		$out = array();
+		$out = [];
 		$queries = $env->block->queries;
 		if (is_null($childQueries)) {
 			$out = $queries;
@@ -415,7 +415,7 @@ class lessc {
 			return $selectors;
 		}
 
-		$out = array();
+		$out = [];
 		foreach ($parentSelectors as $parent) {
 			foreach ($selectors as $child) {
 				$count = $this->expandParentSelectors($child, $parent);
@@ -434,7 +434,7 @@ class lessc {
 
 	// reduces selector expressions
 	protected function compileSelectors($selectors) {
-		$out = array();
+		$out = [];
 
 		foreach ($selectors as $s) {
 			if (is_array($s)) {
@@ -537,7 +537,7 @@ class lessc {
 	}
 
 	// attempt to find blocks matched by path and args
-	protected function findBlocks($searchIn, $path, $args, $seen=array()) {
+	protected function findBlocks($searchIn, $path, $args, $seen=[]) {
 		if ($searchIn == null) return null;
 		if (isset($seen[$searchIn->id])) return null;
 		$seen[$searchIn->id] = true;
@@ -554,7 +554,7 @@ class lessc {
 					return $matches;
 				}
 			} else {
-				$matches = array();
+				$matches = [];
 				foreach ($blocks as $subBlock) {
 					$subMatches = $this->findBlocks($subBlock,
 						array_slice($path, 1), $args, $seen);
@@ -578,7 +578,7 @@ class lessc {
 	// or the one passed in through $values
 	protected function zipSetArgs($args, $values) {
 		$i = 0;
-		$assignedValues = array();
+		$assignedValues = [];
 		foreach ($args as $a) {
 			if ($a[0] == "arg") {
 				if ($i < count($values) && !is_null($values[$i])) {
@@ -689,7 +689,7 @@ class lessc {
 			$importPath = $this->reduce($importPath);
 
 			if (!isset($this->env->imports)) {
-				$this->env->imports = array();
+				$this->env->imports = [];
 			}
 
 			$result = $this->tryImport($importPath, $block, $out);
@@ -1187,7 +1187,7 @@ class lessc {
 			return $this->toRGB($hsl);
 
 		} elseif ($fname == 'rgb' || $fname == 'rgba') {
-			$components = array();
+			$components = [];
 			$i = 1;
 			foreach	($rawComponents as $c) {
 				$c = $this->reduce($c);
@@ -1565,8 +1565,8 @@ class lessc {
 
 	protected function makeOutputBlock($type, $selectors = null) {
 		$b = new stdclass;
-		$b->lines = array();
-		$b->children = array();
+		$b->lines = [];
+		$b->children = [];
 		$b->selectors = $selectors;
 		$b->type = $type;
 		$b->parent = $this->scope;
@@ -1577,7 +1577,7 @@ class lessc {
 	protected function pushEnv($block = null) {
 		$e = new stdclass;
 		$e->parent = $this->env;
-		$e->store = array();
+		$e->store = [];
 		$e->block = $block;
 
 		$this->env = $e;
@@ -1683,7 +1683,7 @@ class lessc {
 		$this->importDir = (array)$this->importDir;
 		$this->importDir[] = $pi['dirname'].'/';
 
-		$this->allParsedFiles = array();
+		$this->allParsedFiles = [];
 		$this->addParsedFile($fname);
 
 		$out = $this->compile(file_get_contents($fname), $fname);
@@ -1757,7 +1757,7 @@ class lessc {
 
 		if ($root !== null) {
 			// If we have a root value which means we should rebuild.
-			$out = array();
+			$out = [];
 			$out['root'] = $root;
 			$out['compiled'] = $this->compileFile($root);
 			$out['files'] = $this->allParsedFiles();
@@ -2088,7 +2088,7 @@ class lessc_parser {
 	protected $inParens = false;
 
 	// caches preg escaped literals
-	static protected $literalCache = array();
+	static protected $literalCache = [];
 
 	public function __construct($lessc, $sourceName = null) {
 		$this->eatWhiteDefault = true;
@@ -2121,7 +2121,7 @@ class lessc_parser {
 		$this->buffer = $this->writeComments ? $buffer : $this->removeComments($buffer);
 		$this->pushSpecialBlock("root");
 		$this->eatWhiteDefault = true;
-		$this->seenComments = array();
+		$this->seenComments = [];
 
 		// trim whitespace on head
 		// if (preg_match('/^\s+/', $this->buffer, $m)) {
@@ -2205,7 +2205,7 @@ class lessc_parser {
 					&& $this->literal('{'))
 				{
 					$media = $this->pushSpecialBlock("media");
-					$media->queries = is_null($mediaQueries) ? array() : $mediaQueries;
+					$media->queries = is_null($mediaQueries) ? [] : $mediaQueries;
 					return true;
 				} else {
 					$this->seek($s);
@@ -2348,7 +2348,7 @@ class lessc_parser {
 
 	// a list of expressions
 	protected function expressionList(&$exps) {
-		$values = array();
+		$values = [];
 
 		while ($this->expression($exp)) {
 			$values[] = $exp;
@@ -2437,7 +2437,7 @@ class lessc_parser {
 
 	// consume a list of values for a property
 	public function propertyValue(&$value, $keyName = null) {
-		$values = array();
+		$values = [];
 
 		if ($keyName !== null) $this->env->currentProperty = $keyName;
 
@@ -2564,7 +2564,7 @@ class lessc_parser {
 		$s = $this->seek();
 
 		$expressions = null;
-		$parts = array();
+		$parts = [];
 
 		if (($this->literal("only") && ($only = true) || $this->literal("not") && ($not = true) || true) && $this->keyword($mediaType)) {
 			$prop = array("mediaType");
@@ -2630,7 +2630,7 @@ class lessc_parser {
 
 		$nestingLevel = 0;
 
-		$content = array();
+		$content = [];
 		while ($this->match($patt, $m, false)) {
 			if (!empty($m[1])) {
 				$content[] = $m[1];
@@ -2692,7 +2692,7 @@ class lessc_parser {
 			return false;
 		}
 
-		$content = array();
+		$content = [];
 
 		// look for either ending delim , escape, or string interpolation
 		$patt = '([^\n]*?)(@\{|\\\\|' .
@@ -2786,7 +2786,7 @@ class lessc_parser {
 		$s = $this->seek();
 		if (!$this->literal('(')) return false;
 
-		$values = array();
+		$values = [];
 		while (true) {
 			if ($this->expressionList($value)) $values[] = $value;
 			if (!$this->literal($delim)) break;
@@ -2812,7 +2812,7 @@ class lessc_parser {
 		$s = $this->seek();
 		if (!$this->literal('(')) return false;
 
-		$values = array();
+		$values = [];
 
 		$isVararg = false;
 		while (true) {
@@ -2858,7 +2858,7 @@ class lessc_parser {
 	// consume a list of tags
 	// this accepts a hanging delimiter
 	protected function tags(&$tags, $simple = false, $delim = ',') {
-		$tags = array();
+		$tags = [];
 		while ($this->tag($tt, $simple)) {
 			$tags[] = $tt;
 			if (!$this->literal($delim)) break;
@@ -2872,7 +2872,7 @@ class lessc_parser {
 	// optionally separated by > (lazy, accepts extra >)
 	protected function mixinTags(&$tags) {
 		$s = $this->seek();
-		$tags = array();
+		$tags = [];
 		while ($this->tag($tt, true)) {
 			$tags[] = $tt;
 			$this->literal(">");
@@ -2930,7 +2930,7 @@ class lessc_parser {
 		}
 
 		$hasExpression = false;
-		$parts = array();
+		$parts = [];
 		while ($this->tagBracket($first)) $parts[] = $first;
 
 		$oldWhite = $this->eatWhiteDefault;
@@ -2995,7 +2995,7 @@ class lessc_parser {
 
 			$sPreArgs = $this->seek();
 
-			$args = array();
+			$args = [];
 			while (true) {
 				$ss = $this->seek();
 				// this ugly nonsense is for ie filter properties
@@ -3085,7 +3085,7 @@ class lessc_parser {
 			return false;
 		}
 
-		$guards = array();
+		$guards = [];
 
 		while ($this->guardGroup($g)) {
 			$guards[] = $g;
@@ -3105,7 +3105,7 @@ class lessc_parser {
 	// TODO rename to guardGroup
 	protected function guardGroup(&$guardGroup) {
 		$s = $this->seek();
-		$guardGroup = array();
+		$guardGroup = [];
 		while ($this->guard($guard)) {
 			$guardGroup[] = $guard;
 			if (!$this->literal("and")) break;
@@ -3161,7 +3161,7 @@ class lessc_parser {
 
 	protected function genericList(&$out, $parseItem, $delim="", $flatten=true) {
 		$s = $this->seek();
-		$items = array();
+		$items = [];
 		while ($this->$parseItem($value)) {
 			$items[] = $value;
 			if ($delim) {
@@ -3279,8 +3279,8 @@ class lessc_parser {
 		$b->isVararg = false; // TODO: kill me from here
 		$b->tags = $selectors;
 
-		$b->props = array();
-		$b->children = array();
+		$b->props = [];
+		$b->children = [];
 
 		$this->env = $b;
 		return $b;

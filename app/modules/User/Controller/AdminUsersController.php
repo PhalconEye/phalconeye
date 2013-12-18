@@ -51,32 +51,34 @@ class AdminUsersController extends AdminControllerBase
     {
         $navigation = new Navigation();
         $navigation
-            ->setItems(array(
-                'index' => array(
-                    'href' => 'admin/users',
-                    'title' => 'Users',
-                    'prepend' => '<i class="icon-user icon-white"></i>'
-                ),
-                'roles' => array(
-                    'href' => 'admin/users/roles',
-                    'title' => 'Roles',
-                    'prepend' => '<i class="icon-share icon-white"></i>'
-                ),
-                2 => array(
-                    'href' => 'javascript:;',
-                    'title' => '|'
-                ),
-                'create' => array(
-                    'href' => 'admin/users/create',
-                    'title' => 'Create new user',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                ),
-                'rolesCreate' => array(
-                    'href' => 'admin/users/roles-create',
-                    'title' => 'Create new role',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                )
-            ));
+            ->setItems(
+                [
+                    'index' => [
+                        'href' => 'admin/users',
+                        'title' => 'Users',
+                        'prepend' => '<i class="icon-user icon-white"></i>'
+                    ],
+                    'roles' => [
+                        'href' => 'admin/users/roles',
+                        'title' => 'Roles',
+                        'prepend' => '<i class="icon-share icon-white"></i>'
+                    ],
+                    2 => [
+                        'href' => 'javascript:;',
+                        'title' => '|'
+                    ],
+                    'create' => [
+                        'href' => 'admin/users/create',
+                        'title' => 'Create new user',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ],
+                    'rolesCreate' => [
+                        'href' => 'admin/users/roles-create',
+                        'title' => 'Create new role',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ]
+                ]
+            );
 
         $this->view->navigation = $navigation;
 
@@ -95,11 +97,11 @@ class AdminUsersController extends AdminControllerBase
             ->from('\User\Model\User');
 
         $paginator = new QueryBuilder(
-            array(
+            [
                 "builder" => $builder,
                 "limit" => 25,
                 "page" => $this->request->getQuery('page', 'int', 1)
-            )
+            ]
         );
 
         // Get the paginated results.
@@ -130,7 +132,7 @@ class AdminUsersController extends AdminControllerBase
 
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(array('for' => 'admin-users'));
+        return $this->response->redirect(['for' => 'admin-users']);
     }
 
     /**
@@ -146,7 +148,7 @@ class AdminUsersController extends AdminControllerBase
     {
         $item = User::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => 'admin-users'));
+            return $this->response->redirect(['for' => 'admin-users']);
         }
 
         $lastPassword = $item->password;
@@ -165,7 +167,7 @@ class AdminUsersController extends AdminControllerBase
 
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(array('for' => 'admin-users'));
+        return $this->response->redirect(['for' => 'admin-users']);
     }
 
     /**
@@ -188,7 +190,7 @@ class AdminUsersController extends AdminControllerBase
             }
         }
 
-        return $this->response->redirect(array('for' => 'admin-users'));
+        return $this->response->redirect(['for' => 'admin-users']);
     }
 
     /**
@@ -204,11 +206,11 @@ class AdminUsersController extends AdminControllerBase
             ->from('\User\Model\Role');
 
         $paginator = new QueryBuilder(
-            array(
+            [
                 "builder" => $builder,
                 "limit" => 25,
                 "page" => $this->request->getQuery('page', 'int', 1)
-            )
+            ]
         );
 
         // Get the paginated results.
@@ -236,14 +238,14 @@ class AdminUsersController extends AdminControllerBase
         if ($item->is_default) {
             $this->db->update(
                 $item->getSource(),
-                array('is_default'),
-                array(0),
+                ['is_default'],
+                [0],
                 "id != {$item->id}"
             );
         }
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(array('for' => 'admin-users-roles'));
+        return $this->response->redirect(['for' => 'admin-users-roles']);
     }
 
     /**
@@ -259,7 +261,7 @@ class AdminUsersController extends AdminControllerBase
     {
         $item = Role::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => 'admin-users-roles'));
+            return $this->response->redirect(['for' => 'admin-users-roles']);
         }
 
         $form = new RoleEditForm($item);
@@ -273,15 +275,15 @@ class AdminUsersController extends AdminControllerBase
         if ($item->is_default) {
             $this->db->update(
                 Role::getTableName(),
-                array('is_default'),
-                array(0),
+                ['is_default'],
+                [0],
                 "id != {$item->id}"
             );
         }
 
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(array('for' => 'admin-users-roles'));
+        return $this->response->redirect(['for' => 'admin-users-roles']);
     }
 
     /**
@@ -295,7 +297,7 @@ class AdminUsersController extends AdminControllerBase
      */
     public function rolesDeleteAction($id)
     {
-        $item =Role::findFirst($id);
+        $item = Role::findFirst($id);
         if ($item) {
             if ($item->is_default) {
                 $anotherRole = Role::findFirst();
@@ -311,6 +313,6 @@ class AdminUsersController extends AdminControllerBase
             }
         }
 
-        return $this->response->redirect(array('for' => 'admin-users-roles'));
+        return $this->response->redirect(['for' => 'admin-users-roles']);
     }
 }

@@ -40,11 +40,9 @@ class Edit extends Create
             ->setOption('title', "Edit Menu")
             ->setOption('description', "Edit this menu.");
 
-        $this->addElement('text', 'name', array(
-            'label' => 'Name'
-        ));
+        $this->addElement('text', 'name', ['label' => 'Name']);
 
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-menus'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-menus']);
     }
 }

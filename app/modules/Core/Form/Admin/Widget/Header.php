@@ -42,19 +42,15 @@ class Header extends Form
         $this
             ->setOption('description', "Settings for header of you site.");
 
-        $this->addElement('RemoteFile', 'logo', array(
-            'label' => 'Logo image (url)'
-        ));
-
-        $this->addElement('check', 'show_title', array(
-            'label' => 'Show site title',
-            'options' => 1
-        ));
-
-        $this->addElement('check', 'show_auth', array(
-            'label' => 'Show authentication links (logo, register, logout, etc)',
-            'options' => 1
-        ));
-
+        $this->addElement('RemoteFile', 'logo', ['label' => 'Logo image (url)']);
+        $this->addElement('check', 'show_title', ['label' => 'Show site title', 'options' => 1]);
+        $this->addElement(
+            'check',
+            'show_auth',
+            [
+                'label' => 'Show authentication links (logo, register, logout, etc)',
+                'options' => 1
+            ]
+        );
     }
 }

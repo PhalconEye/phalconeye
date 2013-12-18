@@ -90,15 +90,16 @@ class Settings extends AbstractModel
     public static function getSettingObject($name)
     {
         return Settings::findFirst(
-            array(
+            [
                 'name = :name:',
-                'bind' => array(
+                'bind' => [
                     'name' => $name
-                ),
-                'cache' => array(
+                ],
+                'cache' => [
                     'key' => 'setting_' . $name . '.cache'
-                )
-            ));
+                ]
+            ]
+        );
     }
 
     /**

@@ -60,7 +60,7 @@ class CacheAnnotation extends PhalconPlugin
             // Get the lifetime.
             $lifetime = $annotation->getNamedArgument('lifetime');
 
-            $options = array('lifetime' => $lifetime);
+            $options = ['lifetime' => $lifetime];
 
             // Check if there is a user defined cache key.
             if ($annotation->hasNamedArgument('key')) {

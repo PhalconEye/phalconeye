@@ -84,7 +84,7 @@ class Database extends AbstractCommand implements CommandInterface
      */
     public function getCommands()
     {
-        return array('database', 'db');
+        return ['database', 'db'];
     }
 
     /**
@@ -111,10 +111,10 @@ class Database extends AbstractCommand implements CommandInterface
      */
     public function getPossibleParams()
     {
-        return array(
+        return [
             'model=s' => "Model to update. Default: all.",
             'cleanup' => "Drop not related tables."
-        );
+        ];
     }
 
     /**

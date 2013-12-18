@@ -58,34 +58,34 @@ class Profiler
      *
      * @var array
      */
-    protected $_timeData = array();
+    protected $_timeData = [];
 
     /**
      * Memory data.
      *
      * @var array
      */
-    protected $_memoryData = array();
+    protected $_memoryData = [];
 
     /**
      * Errors data.
      *
      * @var array
      */
-    protected $_errorData = array();
+    protected $_errorData = [];
 
     /**
      * Allowed object types for time and memory collection.
      *
      * @var array
      */
-    public static $objectTypes = array(
+    public static $objectTypes = [
         'controller',
         'widget',
         'view',
         'form',
         'helper'
-    );
+    ];
 
     /**
      * Start profiling.
@@ -107,7 +107,7 @@ class Profiler
     public function stop($class, $objectType)
     {
         if (!isset($this->_timeData[$objectType])) {
-            $this->_timeData[$objectType] = array();
+            $this->_timeData[$objectType] = [];
         }
         $this->_timeData[$objectType][$class] = microtime(true) - $this->_time;
 
@@ -116,7 +116,7 @@ class Profiler
             $memory = 0;
         }
         if (!isset($this->_memoryData[$objectType])) {
-            $this->_memoryData[$objectType] = array();
+            $this->_memoryData[$objectType] = [];
         }
         $this->_memoryData[$objectType][$class] = $memory;
     }
@@ -139,7 +139,7 @@ class Profiler
         }
 
         if (empty($data[$objectType])) {
-            return array();
+            return [];
         }
 
         return $data[$objectType];
@@ -156,10 +156,10 @@ class Profiler
      */
     public function addError($error, $trace)
     {
-        $this->_errorData[] = array(
+        $this->_errorData[] = [
             'error' => $error,
             'trace' => $trace
-        );
+        ];
     }
 
     /**

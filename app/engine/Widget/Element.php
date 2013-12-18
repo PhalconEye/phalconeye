@@ -50,7 +50,7 @@ class Element
      *
      * @var array
      */
-    protected $_widgetParams = array();
+    protected $_widgetParams = [];
 
     /**
      * Create widget element.
@@ -59,7 +59,7 @@ class Element
      * @param array       $params Widgets params in page.
      * @param DiInterface $di     Dependency injection.
      */
-    public function __construct($id, $params = array(), $di = null)
+    public function __construct($id, $params = [], $di = null)
     {
         $this->__DIConstruct($di);
 

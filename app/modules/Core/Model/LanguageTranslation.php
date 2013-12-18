@@ -66,7 +66,7 @@ class LanguageTranslation extends AbstractModel
      *
      * @return Language
      */
-    public function getLanguage($arguments = array())
+    public function getLanguage($arguments = [])
     {
         return $this->getRelated('Language', $arguments);
     }

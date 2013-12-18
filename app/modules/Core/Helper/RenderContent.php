@@ -51,7 +51,7 @@ class RenderContent extends Tag implements HelperInterface
         $widgetRender = new RenderWidget();
 
         foreach ($widgets as $widget) {
-            $content .= $widgetRender->_($di, array($widget->widget_id, $widget->getParams()));
+            $content .= $widgetRender->_($di, [$widget->widget_id, $widget->getParams()]);
         }
 
         return $content;

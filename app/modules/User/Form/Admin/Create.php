@@ -62,28 +62,42 @@ class Create extends Form
             ->setAttrib('autocomplete', 'off');
 
 
-        $this->addElement('text', 'username', array(
-            'label' => 'Username',
-            'autocomplete' => 'off'
-        ));
+        $this->addElement(
+            'text',
+            'username', [
+                'label' => 'Username',
+                'autocomplete' => 'off'
+            ]
+        );
 
-        $this->addElement('password', 'password', array(
-            'label' => 'Password',
-            'autocomplete' => 'off'
-        ));
+        $this->addElement(
+            'password',
+            'password',
+            [
+                'label' => 'Password',
+                'autocomplete' => 'off'
+            ]
+        );
 
-        $this->addElement('text', 'email', array(
-            'label' => 'Email'
-        ));
+        $this->addElement(
+            'text',
+            'email', [
+                'label' => 'Email'
+            ]
+        );
 
-        $this->addElement('select', 'role_id', array(
-            'label' => 'Role',
-            'description' => 'Select user role',
-            'options' => Role::find(),
-            'using' => array('id', 'name')
-        ));
+        $this->addElement(
+            'select',
+            'role_id',
+            [
+                'label' => 'Role',
+                'description' => 'Select user role',
+                'options' => Role::find(),
+                'using' => ['id', 'name']
+            ]
+        );
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-users'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-users']);
     }
 }

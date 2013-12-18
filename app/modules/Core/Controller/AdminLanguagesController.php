@@ -57,21 +57,24 @@ class AdminLanguagesController extends AdminControllerBase
     {
         $navigation = new Navigation();
         $navigation
-            ->setItems(array(
-                'index' => array(
-                    'href' => 'admin/languages',
-                    'title' => 'Browse',
-                    'prepend' => '<i class="icon-list icon-white"></i>'
-                ),
-                1 => array(
-                    'href' => 'javascript:;',
-                    'title' => '|'
-                ),
-                'create' => array(
-                    'href' => 'admin/languages/create',
-                    'title' => 'Create new language',
-                    'prepend' => '<i class="icon-plus-sign icon-white"></i>'
-                )));
+            ->setItems(
+                [
+                    'index' => [
+                        'href' => 'admin/languages',
+                        'title' => 'Browse',
+                        'prepend' => '<i class="icon-list icon-white"></i>'
+                    ],
+                    1 => [
+                        'href' => 'javascript:;',
+                        'title' => '|'
+                    ],
+                    'create' => [
+                        'href' => 'admin/languages/create',
+                        'title' => 'Create new language',
+                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                    ]
+                ]
+            );
 
         $this->view->navigation = $navigation;
     }
@@ -94,11 +97,11 @@ class AdminLanguagesController extends AdminControllerBase
             ->from('\Core\Model\Language');
 
         $paginator = new QueryBuilder(
-            array(
+            [
                 "builder" => $builder,
                 "limit" => 25,
                 "page" => $currentPage
-            )
+            ]
         );
 
         // Get the paginated results.
@@ -140,13 +143,13 @@ class AdminLanguagesController extends AdminControllerBase
         // check language file
         $file = ROOT_PATH . '/app/var/languages/' . $lang->locale . '.php';
         if (!file_exists($file)) {
-            file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = array();');
+            file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = [];');
         }
 
         $lang->save();
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(array('for' => "admin-languages"));
+        return $this->response->redirect(['for' => "admin-languages"]);
     }
 
     /**
@@ -162,7 +165,7 @@ class AdminLanguagesController extends AdminControllerBase
     {
         $item = Language::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => "admin-languages"));
+            return $this->response->redirect(['for' => "admin-languages"]);
         }
 
         $form = new Edit($item);
@@ -185,7 +188,7 @@ class AdminLanguagesController extends AdminControllerBase
 
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(array('for' => "admin-languages"));
+        return $this->response->redirect(['for' => "admin-languages"]);
     }
 
     /**
@@ -208,7 +211,7 @@ class AdminLanguagesController extends AdminControllerBase
             }
         }
 
-        return $this->response->redirect(array('for' => "admin-languages"));
+        return $this->response->redirect(['for' => "admin-languages"]);
     }
 
     /**
@@ -224,7 +227,7 @@ class AdminLanguagesController extends AdminControllerBase
     {
         $item = Language::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(array('for' => "admin-languages"));
+            return $this->response->redirect(['for' => "admin-languages"]);
         }
 
         $currentPage = $this->request->getQuery('page', 'int', 1);
@@ -235,7 +238,7 @@ class AdminLanguagesController extends AdminControllerBase
         $search = $this->request->get('search');
         if ($search != null) {
             $builder = $this->modelsManager->createBuilder()
-                ->from(array('t' => '\Core\Model\LanguageTranslation'))
+                ->from(['t' => '\Core\Model\LanguageTranslation'])
                 ->where("t.original LIKE '%{$search}%'")
                 ->orWhere("t.translated LIKE '%{$search}%'");
         } else {
@@ -244,11 +247,11 @@ class AdminLanguagesController extends AdminControllerBase
         }
 
         $paginator = new QueryBuilder(
-            array(
+            [
                 "builder" => $builder,
                 "limit" => 25,
                 "page" => $currentPage
-            )
+            ]
         );
 
         // Get the paginated results.
@@ -271,9 +274,9 @@ class AdminLanguagesController extends AdminControllerBase
         $form = new CreateItem();
         $this->view->form = $form;
 
-        $data = array(
+        $data = [
             'language_id' => $this->request->get('language_id')
-        );
+        ];
 
         $form->setValues($data);
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -299,9 +302,9 @@ class AdminLanguagesController extends AdminControllerBase
         $form = new EditItem($item);
         $this->view->form = $form;
 
-        $data = array(
+        $data = [
             'language_id' => $this->request->get('language_id'),
-        );
+        ];
 
         $form->setValues($data);
         if (!$this->request->isPost() || !$form->isValid($_POST)) {
@@ -335,10 +338,10 @@ class AdminLanguagesController extends AdminControllerBase
                 return $this->response->redirect("admin/languages/manage/{$languageId}?search=" . $search);
             }
 
-            return $this->response->redirect(array('for' => "admin-languages-manage", 'id' => $languageId));
+            return $this->response->redirect(['for' => "admin-languages-manage", 'id' => $languageId]);
         }
 
-        return $this->response->redirect(array('for' => "admin-languages"));
+        return $this->response->redirect(['for' => "admin-languages"]);
     }
 
     /**
@@ -364,7 +367,7 @@ class AdminLanguagesController extends AdminControllerBase
             $this->flashSession->error($this->trans->_('Compilation failed, error: <br/>' . $e->getMessage()));
         }
 
-        return $this->response->redirect(array('for' => 'admin-languages'));
+        return $this->response->redirect(['for' => 'admin-languages']);
     }
 }
 

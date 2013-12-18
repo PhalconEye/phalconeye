@@ -42,86 +42,129 @@ class Performance extends Form
         $this
             ->setOption('title', "Performance settings");
 
-        $this->addElement('text', 'prefix', array(
-            'label' => 'Cache prefix',
-            'description' => 'Example "pe_"',
-            'value' => "pe_"
-        ));
+        $this->addElement(
+            'text',
+            'prefix',
+            [
+                'label' => 'Cache prefix',
+                'description' => 'Example "pe_"',
+                'value' => "pe_"
+            ]
+        );
 
-        $this->addElement('text', 'lifetime', array(
-            'label' => 'Cache lifetime',
-            'description' =>
-                'This determines how long the system will keep cached data before
-                reloading it from the database server.
-                A shorter cache lifetime causes greater database server CPU usage,
-                however the data will be more current.',
-            'filter' => 'int',
-            'value' => 86400
-        ));
+        $this->addElement(
+            'text',
+            'lifetime',
+            [
+                'label' => 'Cache lifetime',
+                'description' =>
+                    'This determines how long the system will keep cached data before
+                    reloading it from the database server.
+                    A shorter cache lifetime causes greater database server CPU usage,
+                    however the data will be more current.',
+                'filter' => 'int',
+                'value' => 86400
+            ]
+        );
 
-        $this->addElement('select', 'adapter', array(
-            'label' => 'Cache adapter',
-            'description' => 'Cache type. Where cache will be stored.',
-            'options' => array(
-                0 => 'File',
-                1 => 'Memcached',
-                2 => 'APC',
-                3 => 'Mongo'
-            ),
-            'value' => 0
-        ));
+        $this->addElement(
+            'select',
+            'adapter',
+            [
+                'label' => 'Cache adapter',
+                'description' => 'Cache type. Where cache will be stored.',
+                'options' => [
+                    0 => 'File',
+                    1 => 'Memcached',
+                    2 => 'APC',
+                    3 => 'Mongo'
+                ],
+                'value' => 0
+            ]
+        );
 
         /**
          * File options
          */
-        $this->addElement('text', 'cacheDir', array(
-            'label' => 'Files location',
-            'value' => 'path_to_dir'
-        ));
+        $this->addElement(
+            'text',
+            'cacheDir',
+            [
+                'label' => 'Files location',
+                'value' => 'path_to_dir'
+            ]
+        );
 
 
         /**
-         * Memcached options
+         * Memcached options.
          */
-        $this->addElement('text', 'host', array(
-            'label' => 'Memcached host',
-            'value' => '127.0.0.1'
-        ));
+        $this->addElement(
+            'text',
+            'host',
+            [
+                'label' => 'Memcached host',
+                'value' => '127.0.0.1'
+            ]
+        );
 
-        $this->addElement('text', 'port', array(
-            'label' => 'Memcached port',
-            'value' => '11211'
-        ));
+        $this->addElement(
+            'text',
+            'port',
+            [
+                'label' => 'Memcached port',
+                'value' => '11211'
+            ]
+        );
 
-        $this->addElement('check', 'persistent', array(
-            'label' => 'Create a persitent connection to memcached?',
-            'options' => 1,
-            'value' => true
-        ));
+        $this->addElement(
+            'check',
+            'persistent',
+            [
+                'label' => 'Create a persitent connection to memcached?',
+                'options' => 1,
+                'value' => true
+            ]
+        );
 
         /**
-         * Mongo options
+         * Mongo options.
          */
-        $this->addElement('text', 'server', array(
-            'label' => 'A MongoDB connection string',
-            'value' => 'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
-        ));
+        $this->addElement(
+            'text',
+            'server',
+            [
+                'label' => 'A MongoDB connection string',
+                'value' => 'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
+            ]
+        );
 
-        $this->addElement('text', 'db', array(
-            'label' => 'Mongo database name',
-            'value' => 'database'
-        ));
+        $this->addElement(
+            'text',
+            'db', [
+                'label' => 'Mongo database name',
+                'value' => 'database'
+            ]
+        );
 
-        $this->addElement('text', 'collection', array(
-            'label' => 'Mongo collection in the database',
-            'value' => 'collection'
-        ));
+        $this->addElement(
+            'text',
+            'collection',
+            [
+                'label' => 'Mongo collection in the database',
+                'value' => 'collection'
+            ]
+        );
 
-        $this->addElement('check', 'clear_cache', array(
-            'label' => 'Clear cache',
-            'description' => 'All system cache will be cleaned.',
-            'options' => 1
-        ));
+        $this->addElement(
+            'check',
+            'clear_cache',
+            [
+                'label' => 'Clear cache',
+                'description' => 'All system cache will be cleaned.',
+                'options' => 1
+            ]
+        );
 
         $this->addButton('Save', true);
     }

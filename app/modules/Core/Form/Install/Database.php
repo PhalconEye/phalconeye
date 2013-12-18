@@ -41,35 +41,55 @@ class Database extends Form
     {
         $this->setOption('title', 'Database settings');
 
-        $this->addElement('select', 'adapter', array(
-            'label' => 'Database adapter',
-            'options' => array(
-                'Mysql' => 'MySQL',
-                'Oracle' => 'Oracle',
-                'Postgresql' => 'PostgreSQL',
-                'Sqlite' => 'SQLite'
-            ),
-            'value' => 'Mysql'
-        ));
+        $this->addElement(
+            'select',
+            'adapter',
+            [
+                'label' => 'Database adapter',
+                'options' => [
+                    'Mysql' => 'MySQL',
+                    'Oracle' => 'Oracle',
+                    'Postgresql' => 'PostgreSQL',
+                    'Sqlite' => 'SQLite'
+                ],
+                'value' => 'Mysql'
+            ]
+        );
 
-        $this->addElement('text', 'host', array(
-            'label' => 'Database host',
-            'value' => 'localhost'
-        ));
+        $this->addElement(
+            'text',
+            'host',
+            [
+                'label' => 'Database host',
+                'value' => 'localhost'
+            ]
+        );
 
-        $this->addElement('text', 'username', array(
-            'label' => 'Username',
-            'value' => 'root'
-        ));
+        $this->addElement(
+            'text',
+            'username',
+            [
+                'label' => 'Username',
+                'value' => 'root'
+            ]
+        );
 
-        $this->addElement('password', 'password', array(
-            'label' => 'Password',
-        ));
+        $this->addElement(
+            'password',
+            'password',
+            [
+                'label' => 'Password',
+            ]
+        );
 
-        $this->addElement('text', 'dbname', array(
-            'label' => 'Database name',
-            'value' => 'phalconeye'
-        ));
+        $this->addElement(
+            'text',
+            'dbname',
+            [
+                'label' => 'Database name',
+                'value' => 'phalconeye'
+            ]
+        );
 
         $this->addButton('Continue', true);
     }

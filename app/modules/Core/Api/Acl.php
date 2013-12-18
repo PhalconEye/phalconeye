@@ -94,7 +94,7 @@ class Acl extends AbstractApi
 
                 // Prepare Roles.
                 $roles = Role::find();
-                $roleNames = array();
+                $roleNames = [];
                 foreach ($roles as $role) {
                     $roleNames[$role->id] = $role->name;
                     $acl->addRole($role->name);
@@ -111,11 +111,7 @@ class Acl extends AbstractApi
 
                 // Getting objects that is in acl.
                 // Looking for all models in modelsDir and check @Acl annotation.
-                $objects = array(
-                    self::ACL_ADMIN_AREA => array(
-                        'actions' => array('access')
-                    )
-                );
+                $objects = [self::ACL_ADMIN_AREA => ['actions' => ['access']]];
                 $this->_addResources($acl, $objects);
 
                 // Load from database.
@@ -151,14 +147,12 @@ class Acl extends AbstractApi
      */
     public function getAllowedValue($objectName, Role $role, $action)
     {
-        $result = Access::findFirst(array(
-            "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
-            "bind" => array(
-                1 => $objectName,
-                2 => $action,
-                3 => $role->id
-            )
-        ));
+        $result = Access::findFirst(
+            [
+                "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
+                "bind" => [1 => $objectName, 2 => $action, 3 => $role->id]
+            ]
+        );
 
         if ($result) {
             return $result->value;
@@ -178,11 +172,11 @@ class Acl extends AbstractApi
     {
         $object = new \stdClass();
         $object->name = $objectName;
-        $object->actions = array();
-        $object->options = array();
+        $object->actions = [];
+        $object->options = [];
 
         if ($objectName == self::ACL_ADMIN_AREA) {
-            $object->actions = array('access');
+            $object->actions = ['access'];
 
             return $object;
         }
@@ -236,12 +230,12 @@ class Acl extends AbstractApi
 
             if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW) {
                 return $dispatcher->forward(
-                    array(
+                    [
                         'module' => Application::$defaultModule,
                         'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
                         "controller" => 'error',
                         "action" => 'show404'
-                    )
+                    ]
                 );
             }
         }
@@ -284,7 +278,7 @@ class Acl extends AbstractApi
                 // Add objects to resources.
                 foreach ($objects as $key => $object) {
                     if (empty($object['actions'])) {
-                        $object['actions'] = array();
+                        $object['actions'] = [];
                     }
                     $acl->addResource($key, $object['actions']);
                 }

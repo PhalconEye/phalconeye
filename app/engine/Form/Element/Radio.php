@@ -59,7 +59,7 @@ class Radio extends PhalconSelect implements ElementInterface
         $optionsData = (!empty($options['options']) ? $options['options'] : null);
         unset($options['options']);
         if (!is_array($attributes)) {
-            $attributes = array();
+            $attributes = [];
         }
         $options = array_merge($options, $attributes);
         parent::__construct($name, $optionsData, $options);

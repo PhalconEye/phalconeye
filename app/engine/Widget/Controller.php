@@ -70,7 +70,7 @@ class Controller extends PhalconController
      *
      * @var array
      */
-    private $_params = array();
+    private $_params = [];
 
     /**
      * Defines if output exists.
@@ -86,7 +86,7 @@ class Controller extends PhalconController
      * @param string|null $widgetModule Widget module name.
      * @param array       $params       Widget params.
      */
-    public function setDefaults($widgetName, $widgetModule = null, $params = array())
+    public function setDefaults($widgetName, $widgetModule = null, $params = [])
     {
         $this->_widgetName = $widgetName;
         $this->_widgetModule = $widgetModule;

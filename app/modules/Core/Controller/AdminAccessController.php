@@ -48,10 +48,10 @@ class AdminAccessController extends AdminControllerBase
     public function indexAction()
     {
         $resources = $this->core->acl()->_()->getResources();
-        $objects = array();
+        $objects = [];
 
-        $allActions = array();
-        $allObjects = array();
+        $allActions = [];
+        $allObjects = [];
 
         foreach ($resources as $resource) {
 
@@ -110,7 +110,7 @@ class AdminAccessController extends AdminControllerBase
         }
 
         if (!$resourceFound) {
-            return $this->response->redirect(array('for' => 'admin-access'));
+            return $this->response->redirect(['for' => 'admin-access']);
         }
 
         // get all roles and current
@@ -136,14 +136,16 @@ class AdminAccessController extends AdminControllerBase
         $data = $form->getValues();
         // save actions
         foreach ($objectAcl->actions as $action) {
-            $result = Access::findFirst(array(
-                "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
-                "bind" => array(
-                    1 => $id,
-                    2 => $action,
-                    3 => $currentRole->id
-                )
-            ));
+            $result = Access::findFirst(
+                [
+                    "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
+                    "bind" => [
+                        1 => $id,
+                        2 => $action,
+                        3 => $currentRole->id
+                    ]
+                ]
+            );
 
 
             if (!$result) {
@@ -163,15 +165,16 @@ class AdminAccessController extends AdminControllerBase
 
         //save options
         foreach ($objectAcl->options as $options) {
-
-            $result = Access::findFirst(array(
-                "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
-                "bind" => array(
-                    1 => $id,
-                    2 => $options,
-                    3 => $currentRole->id
-                )
-            ));
+            $result = Access::findFirst(
+                [
+                    "conditions" => "object = ?1 AND action = ?2 AND role_id = ?3",
+                    "bind" => [
+                        1 => $id,
+                        2 => $options,
+                        3 => $currentRole->id
+                    ]
+                ]
+            );
 
             if (!$result) {
                 $result = new Access();
@@ -204,43 +207,57 @@ class AdminAccessController extends AdminControllerBase
         $form = new Form();
 
         if (!empty($objectAcl->actions)) {
-            $form->addElement('html', 'header_actions',
-                array(
+            $form->addElement(
+                'html',
+                'header_actions',
+                [
                     'ignore' => true,
                     'html' => '<h4>' . $this->di->get('trans')->_('Actions') . '</h4>'
-                ));
+                ]
+            );
 
             foreach ($objectAcl->actions as $action) {
-                $form->addElement('check', $action, array(
-                    'label' => ucfirst($action),
-                    'description' => sprintf(
-                        'ACCESS_OBJECT_%s_ACTION_%s',
-                        strtoupper($objectAcl->name),
-                        strtoupper($action)
-                    ),
-                    'options' => 1,
-                    'value' => $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action)
-                ));
+                $form->addElement(
+                    'check',
+                    $action,
+                    [
+                        'label' => ucfirst($action),
+                        'description' => sprintf(
+                            'ACCESS_OBJECT_%s_ACTION_%s',
+                            strtoupper($objectAcl->name),
+                            strtoupper($action)
+                        ),
+                        'options' => 1,
+                        'value' => $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action)
+                    ]
+                );
             }
         }
 
         if (!empty($objectAcl->options)) {
-            $form->addElement('html', 'header_options',
-                array(
+            $form->addElement(
+                'html',
+                'header_options',
+                [
                     'ignore' => true,
                     'html' => '<br/><br/><h4>' . $this->di->get('trans')->_('Options') . '</h4>'
-                ));
+                ]
+            );
 
             foreach ($objectAcl->options as $option) {
-                $form->addElement('text', $option, array(
-                    'label' => ucfirst($option),
-                    'description' => sprintf(
-                        'ACCESS_OBJECT_%s_OPTION_%s',
-                        strtoupper($objectAcl->name),
-                        strtoupper($action)
-                    ),
-                    'value' => $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
-                ));
+                $form->addElement(
+                    'text',
+                    $option,
+                    [
+                        'label' => ucfirst($option),
+                        'description' => sprintf(
+                            'ACCESS_OBJECT_%s_OPTION_%s',
+                            strtoupper($objectAcl->name),
+                            strtoupper($action)
+                        ),
+                        'value' => $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
+                    ]
+                );
             }
         }
         $form->addButton('Save', true);

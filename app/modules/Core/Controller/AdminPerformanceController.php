@@ -78,10 +78,7 @@ class AdminPerformanceController extends AdminControllerBase
             $form->setValue('clear_cache', null);
         }
 
-        $cacheData = array(
-            'lifetime' => $data['lifetime'],
-            'prefix' => $data['prefix']
-        );
+        $cacheData = ['lifetime' => $data['lifetime'], 'prefix' => $data['prefix']];
 
         switch ($data['adapter']) {
             case 0:

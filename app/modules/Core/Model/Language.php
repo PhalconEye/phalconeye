@@ -68,7 +68,7 @@ class Language extends AbstractModel
      *
      * @return LanguageTranslation[]
      */
-    public function getLanguageTranslation($arguments = array())
+    public function getLanguageTranslation($arguments = [])
     {
         return $this->getRelated('LanguageTranslation', $arguments);
     }
@@ -80,9 +80,7 @@ class Language extends AbstractModel
      */
     public function validation()
     {
-        $this->validate(new Uniqueness(array(
-            'field' => 'locale'
-        )));
+        $this->validate(new Uniqueness(['field' => 'locale']));
 
         if ($this->validationHasFailed() == true) {
             return false;
@@ -112,7 +110,7 @@ class Language extends AbstractModel
     {
         $translations = $this->getLanguageTranslation();
         $config = $this->getDI()->get('config');
-        $messages = array();
+        $messages = [];
         foreach ($translations as $translation) {
             $messages[$translation->original] = $translation->translated;
         }

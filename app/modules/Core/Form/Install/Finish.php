@@ -41,50 +41,52 @@ class Finish extends Form
      */
     public function init()
     {
-        $this->addElement('text', 'username', array(
-            'label' => 'Username',
-            'autocomplete' => 'off',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 2,
-                ))
-            )
-        ));
+        $this->addElement(
+            'text',
+            'username',
+            [
+                'label' => 'Username',
+                'autocomplete' => 'off',
+                'required' => true,
+                'validators' => [new StringLength(['min' => 2])]
+            ]
+        );
 
-        $this->addElement('text', 'email', array(
-            'label' => 'Email',
-            'autocomplete' => 'off',
-            'description' => 'You will use your email address to login.',
-            'required' => true,
-            'validators' => array(
-                new Email()
-            )
-        ));
+        $this->addElement(
+            'text',
+            'email',
+            [
+                'label' => 'Email',
+                'autocomplete' => 'off',
+                'description' => 'You will use your email address to login.',
+                'required' => true,
+                'validators' => [new Email()]
+            ]
+        );
 
-        $this->addElement('password', 'password', array(
-            'label' => 'Password',
-            'autocomplete' => 'off',
-            'description' => 'Passwords must be at least 6 characters in length.',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 6,
-                ))
-            )
-        ));
+        $this->addElement(
+            'password',
+            'password',
+            [
+                'label' => 'Password',
+                'autocomplete' => 'off',
+                'description' => 'Passwords must be at least 6 characters in length.',
+                'required' => true,
+                'validators' => [new StringLength(['min' => 6])]
+            ]
+        );
 
-        $this->addElement('password', 'repeatPassword', array(
-            'label' => 'Password Repeat',
-            'autocomplete' => 'off',
-            'description' => 'Enter your password again for confirmation.',
-            'required' => true,
-            'validators' => array(
-                new StringLength(array(
-                    'min' => 6,
-                ))
-            )
-        ));
+        $this->addElement(
+            'password',
+            'repeatPassword',
+            [
+                'label' => 'Password Repeat',
+                'autocomplete' => 'off',
+                'description' => 'Enter your password again for confirmation.',
+                'required' => true,
+                'validators' => [new StringLength(['min' => 6])]
+            ]
+        );
 
         $this->addButton('Complete', true);
     }

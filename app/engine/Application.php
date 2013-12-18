@@ -78,33 +78,34 @@ class Application extends PhalconApplication
      *
      * @var array
      */
-    private $_loaders = array(
-        'normal' => array(
-            'logger',
-            'loader',
-            'environment',
-            'cache',
-            'annotations',
-            'router',
-            'database',
-            'session',
-            'flash',
-            'engine'
-        ),
-        'mini' => array(
-            'logger',
-            'loader',
-            'database',
-            'session'
-        ),
-        'console' => array(
-            'logger',
-            'loader',
-            'database',
-            'cache',
-            'engine'
-        )
-    );
+    private $_loaders =
+        [
+            'normal' => [
+                'logger',
+                'loader',
+                'environment',
+                'cache',
+                'annotations',
+                'router',
+                'database',
+                'session',
+                'flash',
+                'engine'
+            ],
+            'mini' => [
+                'logger',
+                'loader',
+                'database',
+                'session'
+            ],
+            'console' => [
+                'logger',
+                'loader',
+                'database',
+                'cache',
+                'engine'
+            ]
+        ];
 
     /**
      * Constructor.
@@ -142,14 +143,14 @@ class Application extends PhalconApplication
         }
 
         // add default module and engine modules
-        $modules = array(
+        $modules = [
             self::$defaultModule => true,
             'user' => true,
-        );
+        ];
 
         $enabledModules = $this->_config->get('modules');
         if (!$enabledModules) {
-            $enabledModules = array(self::$defaultModule);
+            $enabledModules = [self::$defaultModule];
         } else {
             $enabledModules = $enabledModules->toArray();
         }
@@ -159,9 +160,12 @@ class Application extends PhalconApplication
 
         $modules = array_merge($modules, $enabledModules);
 
-        $di->set('modules', function () use ($modules) {
-            return $modules;
-        });
+        $di->set(
+            'modules',
+            function () use ($modules) {
+                return $modules;
+            }
+        );
 
         // Set application event manager
         $eventsManager = new \Phalcon\Events\Manager();
@@ -172,17 +176,17 @@ class Application extends PhalconApplication
         }
 
         // register enabled modules
-        $enabledModules = array();
+        $enabledModules = [];
         if (!empty($modules)) {
             foreach ($modules as $module => $enabled) {
                 if (!$enabled) {
                     continue;
                 }
                 $moduleName = ucfirst($module);
-                $enabledModules[$module] = array(
+                $enabledModules[$module] = [
                     'className' => $moduleName . '\Bootstrap',
                     'path' => ROOT_PATH . '/app/modules/' . $moduleName . '/Bootstrap.php',
-                );
+                ];
             }
 
             if (!empty($enabledModules)) {
@@ -235,11 +239,14 @@ class Application extends PhalconApplication
         $loader->registerNamespaces($modulesNamespaces);
 
         if ($config->application->debug && $config->installed) {
-            $eventsManager->attach('loader', function ($event, $loader, $className) use ($di) {
-                if ($event->getType() == 'afterCheckClass') {
-                    $di->get('logger')->error("Can't load class '" . $className . "'");
+            $eventsManager->attach(
+                'loader',
+                function ($event, $loader, $className) use ($di) {
+                    if ($event->getType() == 'afterCheckClass') {
+                        $di->get('logger')->error("Can't load class '" . $className . "'");
+                    }
                 }
-            });
+            );
             $loader->setEventsManager($eventsManager);
         }
 
@@ -258,9 +265,9 @@ class Application extends PhalconApplication
      */
     protected function initEnvironment($di, $config)
     {
-        set_error_handler(array('\Engine\Exception', 'normal'));
-        register_shutdown_function(array('\Engine\Exception', 'shutdown'));
-        set_exception_handler(array('\Engine\Exception', 'exception'));
+        set_error_handler(['\Engine\Exception', 'normal']);
+        register_shutdown_function(['\Engine\Exception', 'shutdown']);
+        set_exception_handler(['\Engine\Exception', 'exception']);
 
         if ($config->application->debug && $config->application->profiler && $config->installed) {
             $profiler = new Profiler();
@@ -286,16 +293,20 @@ class Application extends PhalconApplication
      */
     protected function initAnnotations($di, $config)
     {
-        $di->set('annotations', function () use ($config) {
-            if (!$config->application->debug && isset($config->annotations)) {
-                $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->annotations->adapter;
-                $adapter = new $annotationsAdapter($config->annotations->toArray());
-            } else {
-                $adapter = new AnnotationsMemory();
-            }
+        $di->set(
+            'annotations',
+            function () use ($config) {
+                if (!$config->application->debug && isset($config->annotations)) {
+                    $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->annotations->adapter;
+                    $adapter = new $annotationsAdapter($config->annotations->toArray());
+                } else {
+                    $adapter = new AnnotationsMemory();
+                }
 
-            return $adapter;
-        }, true);
+                return $adapter;
+            },
+            true
+        );
     }
 
     /**
@@ -341,18 +352,23 @@ class Application extends PhalconApplication
             $router->setDefaultController("Index");
             $router->setDefaultAction("index");
 
-            $router->add('/:module/:controller/:action', array(
-                'module' => 1,
-                'controller' => 2,
-                'action' => 3,
-            ));
+            $router->add(
+                '/:module/:controller/:action',
+                [
+                    'module' => 1,
+                    'controller' => 2,
+                    'action' => 3,
+                ]
+            );
 
-            $router->notFound(array(
-                'module' => self::$defaultModule,
-                'namespace' => ucfirst(self::$defaultModule) . '\Controller',
-                'controller' => 'error',
-                'action' => 'show404'
-            ));
+            $router->notFound(
+                [
+                    'module' => self::$defaultModule,
+                    'namespace' => ucfirst(self::$defaultModule) . '\Controller',
+                    'controller' => 'error',
+                    'action' => 'show404'
+                ]
+            );
 
             //Read the annotations from controllers
             foreach ($modules as $module => $enabled) {
@@ -392,13 +408,16 @@ class Application extends PhalconApplication
     protected function initLogger($di, $config)
     {
         if ($config->application->logger->enabled) {
-            $di->set('logger', function () use ($config) {
-                $logger = new File($config->application->logger->path . "main.log");
-                $formatter = new FormatterLine($config->application->logger->format);
-                $logger->setFormatter($formatter);
+            $di->set(
+                'logger',
+                function () use ($config) {
+                    $logger = new File($config->application->logger->path . "main.log");
+                    $formatter = new FormatterLine($config->application->logger->format);
+                    $logger->setFormatter($formatter);
 
-                return $logger;
-            });
+                    return $logger;
+                }
+            );
         }
     }
 
@@ -419,29 +438,34 @@ class Application extends PhalconApplication
 
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
         /** @var Pdo $connection */
-        $connection = new $adapter(array(
-            "host" => $config->database->host,
-            "username" => $config->database->username,
-            "password" => $config->database->password,
-            "dbname" => $config->database->dbname,
-        ));
+        $connection = new $adapter(
+            [
+                "host" => $config->database->host,
+                "username" => $config->database->username,
+                "password" => $config->database->password,
+                "dbname" => $config->database->dbname,
+            ]
+        );
 
         if ($config->application->debug) {
             // Attach logger & profiler.
             $logger = new File($config->application->logger->path . "db.log");
             $profiler = new DatabaseProfiler();
 
-            $eventsManager->attach('db', function ($event, $connection) use ($logger, $profiler) {
-                if ($event->getType() == 'beforeQuery') {
-                    $statement = $connection->getSQLStatement();
-                    $logger->log($statement, Logger::INFO);
-                    $profiler->startProfile($statement);
+            $eventsManager->attach(
+                'db',
+                function ($event, $connection) use ($logger, $profiler) {
+                    if ($event->getType() == 'beforeQuery') {
+                        $statement = $connection->getSQLStatement();
+                        $logger->log($statement, Logger::INFO);
+                        $profiler->startProfile($statement);
+                    }
+                    if ($event->getType() == 'afterQuery') {
+                        //Stop the active profile.
+                        $profiler->stopProfile();
+                    }
                 }
-                if ($event->getType() == 'afterQuery') {
-                    //Stop the active profile.
-                    $profiler->stopProfile();
-                }
-            });
+            );
 
             if ($config->application->profiler && $di->has('profiler')) {
                 $di->get('profiler')->setDbProfiler($profiler);
@@ -450,32 +474,40 @@ class Application extends PhalconApplication
         }
 
         $di->set('db', $connection);
-        $di->set('modelsManager', function () use ($config, $eventsManager) {
-            $modelsManager = new ModelsManager();
-            $modelsManager->setEventsManager($eventsManager);
+        $di->set(
+            'modelsManager',
+            function () use ($config, $eventsManager) {
+                $modelsManager = new ModelsManager();
+                $modelsManager->setEventsManager($eventsManager);
 
-            //Attach a listener to models-manager
-            $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
+                //Attach a listener to models-manager
+                $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
-            return $modelsManager;
-        }, true);
+                return $modelsManager;
+            },
+            true
+        );
 
         /**
          * If the configuration specify the use of metadata adapter use it or use memory otherwise.
          */
-        $di->set('modelsMetadata', function () use ($config) {
-            if (!$config->application->debug && isset($config->metadata)) {
-                $metaDataConfig = $config->metadata;
-                $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                $metaData = new $metadataAdapter($config->metadata->toArray());
-            } else {
-                $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
-            }
+        $di->set(
+            'modelsMetadata',
+            function () use ($config) {
+                if (!$config->application->debug && isset($config->metadata)) {
+                    $metaDataConfig = $config->metadata;
+                    $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
+                    $metaData = new $metadataAdapter($config->metadata->toArray());
+                } else {
+                    $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
+                }
 
-            $metaData->setStrategy(new StrategyAnnotations());
+                $metaData->setStrategy(new StrategyAnnotations());
 
-            return $metaData;
-        }, true);
+                return $metaData;
+            },
+            true
+        );
 
     }
 
@@ -512,7 +544,7 @@ class Application extends PhalconApplication
         if (!$config->application->debug) {
             // Get the parameters.
             $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
-            $frontEndOptions = array('lifetime' => $config->application->cache->lifetime);
+            $frontEndOptions = ['lifetime' => $config->application->cache->lifetime];
             $backEndOptions = $config->application->cache->toArray();
             $frontOutputCache = new CacheOutput($frontEndOptions);
             $frontDataCache = new CacheData($frontEndOptions);
@@ -553,25 +585,35 @@ class Application extends PhalconApplication
      */
     protected function initFlash($di)
     {
-        $di->set('flash', function () {
-            $flash = new FlashDirect(array(
-                'error' => 'alert alert-error',
-                'success' => 'alert alert-success',
-                'notice' => 'alert alert-info',
-            ));
+        $di->set(
+            'flash',
+            function () {
+                $flash = new FlashDirect(
+                    [
+                        'error' => 'alert alert-error',
+                        'success' => 'alert alert-success',
+                        'notice' => 'alert alert-info',
+                    ]
+                );
 
-            return $flash;
-        });
+                return $flash;
+            }
+        );
 
-        $di->set('flashSession', function () {
-            $flash = new FlashSession(array(
-                'error' => 'alert alert-error',
-                'success' => 'alert alert-success',
-                'notice' => 'alert alert-info',
-            ));
+        $di->set(
+            'flashSession',
+            function () {
+                $flash = new FlashSession(
+                    [
+                        'error' => 'alert alert-error',
+                        'success' => 'alert alert-success',
+                        'notice' => 'alert alert-info',
+                    ]
+                );
 
-            return $flash;
-        });
+                return $flash;
+            }
+        );
     }
 
     /**
@@ -589,9 +631,12 @@ class Application extends PhalconApplication
             }
 
             // Initialize module api.
-            $di->setShared(strtolower($module), function () use ($module, $di) {
-                return new ApiInjector($module, $di);
-            });
+            $di->setShared(
+                strtolower($module),
+                function () use ($module, $di) {
+                    return new ApiInjector($module, $di);
+                }
+            );
         }
 
         $di->setShared('assets', new Manager($di));

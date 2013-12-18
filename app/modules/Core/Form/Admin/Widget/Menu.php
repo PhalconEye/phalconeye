@@ -42,23 +42,20 @@ class Menu extends Form
         $this
             ->setOption('description', "Select menu that will be rendered.");
 
-        $this->addElement('text', 'title', array(
-            'label' => 'Title'
-        ));
-
-        $this->addElement('text', 'class', array(
-            'label' => 'Menu css class'
-        ));
-
-        $this->addElement('text', 'menu', array(
-            'label' => 'Menu',
-            'description' => 'Start typing to see menus variants',
-            'data-link' => $this->di->get('url')->get('admin/menus/suggest'),
-            'data-target' => '#menu_id',
-            'autocomplete' => 'off',
-            'data-autocomplete' => 'true',
-        ));
-
+        $this->addElement('text', 'title', ['label' => 'Title']);
+        $this->addElement('text', 'class', ['label' => 'Menu css class']);
+        $this->addElement(
+            'text',
+            'menu',
+            [
+                'label' => 'Menu',
+                'description' => 'Start typing to see menus variants',
+                'data-link' => $this->di->get('url')->get('admin/menus/suggest'),
+                'data-target' => '#menu_id',
+                'autocomplete' => 'off',
+                'data-autocomplete' => 'true',
+            ]
+        );
 
         $this->addElement('hidden', 'menu_id');
     }

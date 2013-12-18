@@ -44,6 +44,6 @@ class RoleEdit extends RoleCreate
 
         $this->clearButtons();
         $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-users-roles'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-users-roles']);
     }
 }

@@ -62,11 +62,13 @@ class AuthController extends ControllerBase
         $login = $this->request->getPost('login', 'string');
         $password = $this->request->getPost('password', 'string');
 
-        $user = User::findFirst(array(
-            "email = ?0 OR username = ?0",
-            "bind" => array($login),
-            "bindTypes" => array(Column::BIND_PARAM_STR)
-        ));
+        $user = User::findFirst(
+            [
+                "email = ?0 OR username = ?0",
+                "bind" => [$login],
+                "bindTypes" => [Column::BIND_PARAM_STR]
+            ]
+        );
 
         if ($user) {
             if ($this->security->checkHash($password, $user->password)) {

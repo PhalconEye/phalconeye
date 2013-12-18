@@ -112,72 +112,92 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         //  Initialize view
         /*************************************************/
-        $di->set('view', function () use ($di, $moduleDirectory, $eventsManager, $config) {
+        $di->set(
+            'view',
+            function () use ($di, $moduleDirectory, $eventsManager, $config) {
 
-            $view = new View();
-            $view->setViewsDir($moduleDirectory . '/View/');
+                $view = new View();
+                $view->setViewsDir($moduleDirectory . '/View/');
 
-            $view->registerEngines(
-                array(
-                    ".volt" =>
-                        function ($view, $di) use ($config) {
-                            $volt = new Volt($view, $di);
-                            $volt->setOptions(array(
-                                "compiledPath" => $config->application->view->compiledPath,
-                                "compiledExtension" => $config->application->view->compiledExtension,
-                                'compiledSeparator' => $config->application->view->compiledSeparator,
-                                'compileAlways' => $config->application->view->compileAlways
-                            ));
+                $view->registerEngines(
+                    [
+                        ".volt" =>
+                            function ($view, $di) use ($config) {
+                                $volt = new Volt($view, $di);
+                                $volt->setOptions(
+                                    [
+                                        "compiledPath" => $config->application->view->compiledPath,
+                                        "compiledExtension" => $config->application->view->compiledExtension,
+                                        'compiledSeparator' => $config->application->view->compiledSeparator,
+                                        'compileAlways' => $config->application->view->compileAlways
+                                    ]
+                                );
 
-                            $compiler = $volt->getCompiler();
+                                $compiler = $volt->getCompiler();
 
-                            // Register helper.
-                            $compiler->addFunction('helper', function ($resolvedArgs) use ($di) {
-                                return '(new \Engine\Helper(' . $resolvedArgs . '))';
-                            });
+                                // Register helper.
+                                $compiler->addFunction(
+                                    'helper',
+                                    function ($resolvedArgs) use ($di) {
+                                        return '(new \Engine\Helper(' . $resolvedArgs . '))';
+                                    }
+                                );
 
-                            // Register translation filter.
-                            $compiler->addFilter('trans', function ($resolvedArgs) {
-                                return '$this->trans->query(' . $resolvedArgs . ')';
-                            });
+                                // Register translation filter.
+                                $compiler->addFilter(
+                                    'trans',
+                                    function ($resolvedArgs) {
+                                        return '$this->trans->query(' . $resolvedArgs . ')';
+                                    }
+                                );
 
-                            $compiler->addFilter('dump', function ($resolvedArgs) {
-                                return 'var_dump(' . $resolvedArgs . ')';
-                            });
+                                $compiler->addFilter(
+                                    'dump',
+                                    function ($resolvedArgs) {
+                                        return 'var_dump(' . $resolvedArgs . ')';
+                                    }
+                                );
 
-                            return $volt;
+                                return $volt;
+                            }
+                    ]
+                );
+
+                // Attach a listener for type "view".
+                if (!$config->application->debug) {
+                    $eventsManager->attach(
+                        "view",
+                        function ($event, $view) use ($di) {
+                            if ($event->getType() == 'notFoundView') {
+                                $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                            }
                         }
-                )
-            );
+                    );
 
-            // Attach a listener for type "view".
-            if (!$config->application->debug) {
-                $eventsManager->attach("view", function ($event, $view) use ($di) {
-                    if ($event->getType() == 'notFoundView') {
-                        $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
-                    }
-                });
+                    $view->setEventsManager($eventsManager);
+                } elseif ($config->application->profiler) {
+                    $eventsManager->attach(
+                        "view",
+                        function ($event, $view) use ($di) {
+                            if ($di->has('profiler')) {
+                                if ($event->getType() == 'beforeRender') {
+                                    $di->get('profiler')->start();
+                                }
+                                if ($event->getType() == 'afterRender') {
+                                    $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
+                                }
+                            }
+                            if ($event->getType() == 'notFoundView') {
+                                $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                            }
+                        }
+                    );
+                    $view->setEventsManager($eventsManager);
+                }
 
-                $view->setEventsManager($eventsManager);
-            } elseif ($config->application->profiler) {
-                $eventsManager->attach("view", function ($event, $view) use ($di) {
-                    if ($di->has('profiler')) {
-                        if ($event->getType() == 'beforeRender') {
-                            $di->get('profiler')->start();
-                        }
-                        if ($event->getType() == 'afterRender') {
-                            $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
-                        }
-                    }
-                    if ($event->getType() == 'notFoundView') {
-                        $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
-                    }
-                });
-                $view->setEventsManager($eventsManager);
+                return $view;
             }
-
-            return $view;
-        });
+        );
 
         /*************************************************/
         //  Initialize dispatcher

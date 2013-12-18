@@ -42,7 +42,7 @@ class Navigation
      *
      * @var array
      */
-    protected $_items = array();
+    protected $_items = [];
 
     /**
      * Html/Text before item title.
@@ -258,7 +258,7 @@ class Navigation
      *
      * @return $this
      */
-    public function setItems($items = array())
+    public function setItems($items = [])
     {
         if (empty($items)) {
             return $this;
@@ -372,7 +372,7 @@ class Navigation
                             $content .= "</{$lit}>";
                         }
                     } elseif (is_array($subitem)) {
-                        $content .= $this->_renderItems(array(1 => $subitem), true);
+                        $content .= $this->_renderItems([1 => $subitem], true);
                     } else {
                         $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
                         $content .= "<{$lit}{$active}>";

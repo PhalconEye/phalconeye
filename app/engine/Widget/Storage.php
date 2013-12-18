@@ -37,7 +37,7 @@ class Storage
      *
      * @var array
      */
-    private static $_widgets = array();
+    private static $_widgets = [];
 
     /**
      * Get widgets in storage.

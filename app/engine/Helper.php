@@ -63,11 +63,11 @@ class Helper
         /** @var HelperInterface $helperClassName */
         $helperClassName = sprintf('\%s\Helper\%s', ucfirst($this->_moduleName), ucfirst($name));
         if (!class_exists($helperClassName)) {
-            throw new \Engine\Exception(sprintf('Can not find Helper with name "%s".', $name));
+            throw new Exception(sprintf('Can not find Helper with name "%s".', $name));
         }
 
         if (!is_array($arguments)) {
-            $arguments = array($arguments);
+            $arguments = [$arguments];
         }
 
         // Collect profile info.

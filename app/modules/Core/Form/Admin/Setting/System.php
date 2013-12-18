@@ -51,12 +51,16 @@ class System extends Form
             ->setOption('title', "System settings")
             ->setOption('description', "All system settings here.");
 
-        $this->addElement('text', 'system_title', array(
-            'label' => 'Site name',
-            'value' => Settings::getSetting('system_title', '')
-        ));
+        $this->addElement(
+            'text',
+            'system_title',
+            [
+                'label' => 'Site name',
+                'value' => Settings::getSetting('system_title', '')
+            ]
+        );
 
-        $themes = array();
+        $themes = [];
 
         foreach (scandir(PUBLIC_PATH . self::THEMES_DIR) as $entry) {
             if ($entry == '.' || $entry == '..') {
@@ -65,18 +69,25 @@ class System extends Form
             $themes[$entry] = ucfirst($entry);
         }
 
-        $this->addElement('select', 'system_theme', array(
-            'label' => 'Theme',
-            'options' => $themes,
-            'value' => Settings::getSetting('system_theme')
-        ));
+        $this->addElement(
+            'select',
+            'system_theme',
+            [
+                'label' => 'Theme',
+                'options' => $themes,
+                'value' => Settings::getSetting('system_theme')
+            ]
+        );
 
-        $this->addElement('select', 'system_default_language', array(
-            'label' => 'Default language',
-            'options' => Language::find(),
-            'using' => array('locale', 'name'),
-            'value' => Settings::getSetting('system_default_language')
-        ));
+        $this->addElement(
+            'select',
+            'system_default_language', [
+                'label' => 'Default language',
+                'options' => Language::find(),
+                'using' => ['locale', 'name'],
+                'value' => Settings::getSetting('system_default_language')
+            ]
+        );
 
         $this->addButton('Save', true);
     }

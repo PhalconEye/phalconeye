@@ -59,20 +59,32 @@ class Create extends Form
             ->setOption('title', "Language Creation")
             ->setOption('description', "Create new language.");
 
-        $this->addElement('text', 'name', array(
-            'label' => 'Name'
-        ));
+        $this->addElement(
+            'text',
+            'name',
+            [
+                'label' => 'Name'
+            ]
+        );
 
-        $this->addElement('text', 'locale', array(
-            'label' => 'Locale'
-        ));
+        $this->addElement(
+            'text',
+            'locale',
+            [
+                'label' => 'Locale'
+            ]
+        );
 
-        $this->addElement('file', 'icon', array(
-            'label' => 'Icon'
-        ));
+        $this->addElement(
+            'file',
+            'icon',
+            [
+                'label' => 'Icon'
+            ]
+        );
 
 
         $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', array('for' => 'admin-languages'));
+        $this->addButtonLink('Cancel', ['for' => 'admin-languages']);
     }
 }

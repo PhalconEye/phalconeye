@@ -48,13 +48,13 @@ class Metadata
         $reflection = $di->get('annotations')->get($model);
         $properties = $reflection->getPropertiesAnnotations();
 
-        $attributes = array();
-        $nullables = array();
-        $dataTypes = array();
-        $dataTypesBind = array();
-        $numericTypes = array();
-        $primaryKeys = array();
-        $nonPrimaryKeys = array();
+        $attributes = [];
+        $nullables = [];
+        $dataTypes = [];
+        $dataTypesBind = [];
+        $numericTypes = [];
+        $primaryKeys = [];
+        $nonPrimaryKeys = [];
         $identity = null;
 
         foreach ($properties as $name => $collection) {
@@ -124,40 +124,38 @@ class Metadata
             }
         }
 
-        return array(
-
-            //Every column in the mapped table
+        return [
+            //Every column in the mapped table.
             PhalconMetadata::MODELS_ATTRIBUTES => $attributes,
 
-            //Every column part of the primary key
+            //Every column part of the primary key.
             PhalconMetadata::MODELS_PRIMARY_KEY => $primaryKeys,
 
-            //Every column that isn't part of the primary key
+            //Every column that isn't part of the primary key.
             PhalconMetadata::MODELS_NON_PRIMARY_KEY => $nonPrimaryKeys,
 
-            //Every column that doesn't allows null values
+            //Every column that doesn't allows null values.
             PhalconMetadata::MODELS_NOT_NULL => $nullables,
 
-            //Every column and their data types
+            //Every column and their data types.
             PhalconMetadata::MODELS_DATA_TYPES => $dataTypes,
 
-            //The columns that have numeric data types
+            //The columns that have numeric data types.
             PhalconMetadata::MODELS_DATA_TYPES_NUMERIC => $numericTypes,
 
             //The identity column, use boolean false if the model doesn't have
-            //an identity column
+            // an identity column.
             PhalconMetadata::MODELS_IDENTITY_COLUMN => $identity,
 
-            //How every column must be bound/casted
+            //How every column must be bound/casted.
             PhalconMetadata::MODELS_DATA_TYPES_BIND => $dataTypesBind,
 
-            //Fields that must be ignored from INSERT SQL statements
-            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_INSERT => array(),
+            //Fields that must be ignored from INSERT SQL statements.
+            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_INSERT => [],
 
-            //Fields that must be ignored from UPDATE SQL statements
-            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_UPDATE => array()
-
-        );
+            //Fields that must be ignored from UPDATE SQL statements.
+            PhalconMetadata::MODELS_AUTOMATIC_DEFAULT_UPDATE => []
+        ];
     }
 
     /**
@@ -171,8 +169,8 @@ class Metadata
     public function getColumnMaps(ModelInterface $model, DiInterface $di)
     {
         $reflection = $di->get('annotations')->get($model);
-        $columnMap = array();
-        $reverseColumnMap = array();
+        $columnMap = [];
+        $reverseColumnMap = [];
 
         $renamed = false;
         foreach ($reflection->getPropertiesAnnotations() as $name => $collection) {
@@ -193,10 +191,10 @@ class Metadata
         }
 
         if ($renamed) {
-            return array(
+            return [
                 PhalconMetadata::MODELS_COLUMN_MAP => $columnMap,
                 PhalconMetadata::MODELS_REVERSE_COLUMN_MAP => $reverseColumnMap
-            );
+            ];
         }
 
         return null;
@@ -211,14 +209,14 @@ class Metadata
      */
     public function getAllModelsMetadata(DiInterface $di)
     {
-        $models = array();
+        $models = [];
         foreach ($di->get('modules') as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }
             $modelsDirectory = $di->get('config')->application->modulesDir . ucfirst($module) . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
-                $modelInfo = array();
+                $modelInfo = [];
                 $modelClass = '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath));
                 $reflector = $di->get('annotations')->get($modelClass);
 
@@ -234,7 +232,7 @@ class Metadata
                 }
 
                 // Get table fields properties.
-                $modelInfo['columns'] = array();
+                $modelInfo['columns'] = [];
                 $models[] = $this->_parseProperties($reflector->getPropertiesAnnotations(), $modelInfo);
             }
         }
@@ -259,7 +257,7 @@ class Metadata
 
             $arguments = $collection->get('Column')->getArguments();
             $columnName = $this->_getColumnName($name, $arguments);
-            $modelInfo['columns'][$columnName] = array();
+            $modelInfo['columns'][$columnName] = [];
 
             /**
              * Get type.

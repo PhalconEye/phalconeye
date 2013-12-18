@@ -88,7 +88,7 @@ class Dummy extends Backend implements BackendInterface
      */
     public function getOptions()
     {
-        return array();
+        return [];
     }
 
     /**
@@ -179,7 +179,7 @@ class Dummy extends Backend implements BackendInterface
      */
     public function queryKeys($prefix = null)
     {
-        return array();
+        return [];
     }
 
     /**

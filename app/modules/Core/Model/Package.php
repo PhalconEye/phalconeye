@@ -103,7 +103,7 @@ class Package extends AbstractModel
      *
      * @return PackageDependency[]
      */
-    public function getPackageDependency($arguments = array())
+    public function getPackageDependency($arguments = [])
     {
         return $this->getRelated('PackageDependency', $arguments);
     }
@@ -115,7 +115,7 @@ class Package extends AbstractModel
      *
      * @return PackageDependency[]
      */
-    public function getRelatedPackages($arguments = array())
+    public function getRelatedPackages($arguments = [])
     {
         return $this->getRelated('RelatedPackages', $arguments);
     }
@@ -133,7 +133,7 @@ class Package extends AbstractModel
     {
         /** @var \Phalcon\Mvc\Model\Query\Builder $query */
         $query = DI::getDefault()->get('modelsManager')->createBuilder()
-            ->from(array('t' => '\Core\Model\Package'))
+            ->from(['t' => '\Core\Model\Package'])
             ->where("t.type = '{$type}'");
 
         if ($enabled !== null) {

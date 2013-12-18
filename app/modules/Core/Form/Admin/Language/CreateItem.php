@@ -55,14 +55,8 @@ class CreateItem extends Form
      */
     public function init()
     {
-        $this->addElement('textArea', 'original', array(
-            'label' => 'Original'
-        ));
-
-        $this->addElement('textArea', 'translated', array(
-            'label' => 'Translated'
-        ));
-
+        $this->addElement('textArea', 'original', ['label' => 'Original']);
+        $this->addElement('textArea', 'translated', ['label' => 'Translated']);
         $this->addElement('hidden', 'language_id');
     }
 }
