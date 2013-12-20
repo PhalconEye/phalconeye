@@ -54,7 +54,7 @@ class NotFound extends PhalconPlugin
                     [
                         'module' => EngineApplication::$defaultModule,
                         'namespace' => ucfirst(EngineApplication::$defaultModule) . '\Controller',
-                        'controller' => 'error',
+                        'controller' => 'Error',
                         'action' => 'show404'
                     ]
                 );

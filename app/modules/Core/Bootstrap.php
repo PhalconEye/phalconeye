@@ -21,12 +21,14 @@ namespace Core;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
-use Engine\Profiler;
+use Engine\EventsManager;
 use Engine\Translation\Db as TranslationDb;
 use Engine\Widget\Storage;
 use Phalcon\Config;
 use Phalcon\DI;
+use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\User;
 
@@ -50,17 +52,29 @@ class Bootstrap extends EngineBootstrap
     protected $_moduleName = "Core";
 
     /**
-     * Register the services.
+     * Bootstrap construction.
      *
-     * @param DI $di Dependency injection.
-     *
-     * @return void
+     * @param DiInterface   $di Dependency injection.
+     * @param EventsManager $em Events manager object.
      */
-    public function registerServices($di)
+    public function __construct($di, $em)
     {
-        parent::registerServices($di);
+        parent::__construct($di, $em);
 
-        $config = $di->get('config');
+        /**
+         * Attach this bootstrap for all application initialization events.
+         */
+        $em->attach('init', $this);
+    }
+
+    /**
+     * Init some subsystems after engine initialization.
+     */
+    public function afterEngine()
+    {
+        $di = $this->getDI();
+        $config = $this->getConfig();
+
         $this->_initLocale($di, $config);
         if (!$config->installed) {
             return;
@@ -144,236 +158,5 @@ class Bootstrap extends EngineBootstrap
         }
 
         $di->set('trans', $translate);
-    }
-
-    /**
-     * Handle Profiler.
-     *
-     * @param DI     $di     Dependency injection.
-     * @param Config $config Dependency injection.
-     *
-     * @return void
-     * @TODO: Refactor this.
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
-     */
-    public static function handleProfiler(DI $di, Config $config)
-    {
-        if (!$config->application->debug || !$di->has('profiler')) {
-            return;
-        }
-
-        // check admin area
-        if (substr($di->get('dispatcher')->getControllerName(), 0, 5) == 'Admin') {
-            return;
-        }
-
-        $viewer = User::getViewer();
-        if (!$viewer->id || !$viewer->isAdmin()) {
-            return;
-        }
-
-        /** @var View $view */
-        $view = $di->get('view');
-        $view->setViewsDir(__DIR__ . '/View/partials/');
-        $view->setPartialsDir('profiler/');
-        $view->disableLevel(View::LEVEL_LAYOUT);
-        $view->setMainView('profiler/layout');
-
-        $render = function ($template, $params) use ($view) {
-            return $view->getRender('profiler', $template, $params);
-        };
-        $renderTitle = function ($title) use ($render) {
-            return $render('title', ['title' => $title]);
-        };
-        $renderElement = function ($title, $value = null, $tag = null, $noCode = null) use ($render) {
-            return $render('element', ['title' => $title, 'value' => $value, 'tag' => $tag, 'noCode' => $noCode]);
-        };
-
-        $profiler = $di->get('profiler');
-        $router = $di->get('router');
-        $dbProfiler = $profiler->getDbProfiler();
-        $dbProfiles = $dbProfiler->getProfiles();
-        $handlerValues = [];
-
-        //////////////////////////////////////
-        /// Config.
-        //////////////////////////////////////
-        $htmlConfig = '';
-        foreach ($config->toArray() as $key => $data) {
-            if (!is_array($data) || empty($data)) {
-                continue;
-            }
-
-            $htmlConfig .= $renderTitle(ucfirst($key));
-            foreach ($data as $key2 => $data2) {
-                if (is_array($data2)) {
-                    foreach ($data2 as $key3 => $data3) {
-                        if (!is_array($data2)) {
-                            $htmlConfig .= $renderElement(ucfirst($key3), $data3);
-                        }
-                    }
-                } else {
-                    $htmlConfig .= $renderElement(ucfirst($key2), $data2);
-                }
-            }
-
-            $htmlConfig .= '<br/>';
-        }
-
-        //////////////////////////////////////
-        /// Router.
-        //////////////////////////////////////
-        $handlerValues['router'] = ucfirst($router->getControllerName()) .
-            'Controller::' .
-            ucfirst($router->getActionName()) . 'Action';
-        $htmlRouter = $renderElement('POST data', print_r($_POST, true), 'pre');
-        $htmlRouter .= $renderElement('GET data', print_r($_GET, true), 'pre');
-        $htmlRouter .= $renderElement('Module', ucfirst($router->getModuleName()));
-        $htmlRouter .= $renderElement('Controller', ucfirst($router->getControllerName()));
-        $htmlRouter .= $renderElement('Action', ucfirst($router->getActionName()));
-        if ($router->getMatchedRoute()) {
-            $htmlRouter .= $renderElement('Matched Route', ucfirst($router->getMatchedRoute()->getName()));
-        }
-
-        //////////////////////////////////////
-        /// Memory.
-        //////////////////////////////////////
-        $memoryData = memory_get_usage();
-        $memoryLimit = ((int)ini_get('memory_limit')) * 1024 * 1024;
-        $currentMemoryPercent = round($memoryData / ($memoryLimit / 100));
-        $colorClass = (
-        $currentMemoryPercent > 30 ? ($currentMemoryPercent < 75 ?
-            'item-normal' : 'item-bad') :
-            'item-good'
-        );
-        $handlerValues['memory'] = [
-            'class' => $colorClass,
-            'value' => round($memoryData / 1024, 2)
-        ];
-
-        $htmlMemory = '';
-        foreach (Profiler::$objectTypes as $type) {
-            $data = $profiler->getData('memory', $type);
-            if (empty($data)) {
-                continue;
-            }
-
-            $htmlMemory .= $renderTitle(ucfirst($type));
-            foreach ($data as $class => $memoryValue) {
-                $memory = round($memoryValue / 1024, 2);
-                $htmlMemory .= $renderElement(str_replace(ROOT_PATH, '', $class), $memory . ' kb');
-            }
-
-            $htmlMemory .= '<br/>';
-        }
-
-        //////////////////////////////////////
-        /// Time.
-        //////////////////////////////////////
-        $timeData = round((microtime(true) - $_SERVER["REQUEST_TIME_FLOAT"]) * 1000, 2);
-        $colorClass = ($timeData > 200 ? ($timeData < 500 ? 'item-normal' : 'item-bad') : 'item-good');
-        $handlerValues['time'] = [
-            'class' => $colorClass,
-            'value' => $timeData
-        ];
-
-        $htmlTime = '';
-        foreach (Profiler::$objectTypes as $type) {
-            $data = $profiler->getData('time', $type);
-            if (empty($data)) {
-                continue;
-            }
-
-            $htmlTime .= $renderTitle(ucfirst($type));
-            foreach ($data as $class => $timeValue) {
-                $msTime = round($timeValue * 1000, 2);
-                $timeData -= $msTime;
-                $htmlTime .= $renderElement(str_replace(ROOT_PATH, '', $class), $msTime . ' ms');
-            }
-
-            $htmlTime .= '<br/>';
-        }
-        $htmlTime .= $renderTitle('Other');
-        $htmlTime .= $renderElement('Time from request received', $timeData . ' ms');
-        $htmlTime .= '<br/>';
-
-        //////////////////////////////////////
-        /// Files.
-        //////////////////////////////////////
-        $filesData = get_included_files();
-        $handlerValues['files'] = count($filesData);
-
-        $htmlFiles = '';
-        foreach ($filesData as $file) {
-            $filesize = round(filesize($file) / 1024, 2);
-            $htmlFiles .= $renderElement(str_replace(ROOT_PATH, '', $file), $filesize . ' kb');
-        }
-
-        //////////////////////////////////////
-        /// SQL.
-        //////////////////////////////////////
-        $handlerValues['sql'] = $dbProfiler->getNumberTotalStatements();
-
-        $htmlSql = 'No Sql';
-        if (!empty($dbProfiles)) {
-            $longestQuery = '';
-            $longestQueryTime = 0;
-
-            $htmlSql = $renderElement('Total count', $dbProfiler->getNumberTotalStatements(), null, true);
-            $htmlSql .= $renderElement(
-                'Total time',
-                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4),
-                null,
-                true
-            );
-            $htmlSql .= $renderElement('Longest query', '<span class="code">%s</span> (%s ms)<br/>', null, true);
-
-            foreach ($dbProfiles as $profile) {
-                if ($profile->getTotalElapsedSeconds() > $longestQueryTime) {
-                    $longestQueryTime = $profile->getTotalElapsedSeconds();
-                    $longestQuery = $profile->getSQLStatement();
-                }
-                $htmlSql .= $renderElement('SQL', $profile->getSQLStatement());
-                $htmlSql .= $renderElement(
-                    'Time',
-                    round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>',
-                    null,
-                    true
-                );
-            }
-
-            $htmlSql = sprintf($htmlSql, $longestQuery, round($longestQueryTime * 1000, 4));
-        }
-
-        //////////////////////////////////////
-        /// Errors.
-        //////////////////////////////////////
-        $errorsData = $profiler->getData('error');
-        $errorsCount = count($errorsData);
-        $colorClass = ($errorsCount == 0 ? 'item-good' : 'item-bad');
-        $handlerValues['errors'] = [
-            'class' => $colorClass,
-            'value' => $errorsCount
-        ];
-
-        $htmlErrors = ($errorsCount == 0 ? 'No Errors' : '');
-        foreach ($errorsData as $data) {
-            $htmlErrors .= $renderElement($data['error'], str_replace('#', '<br/>#', $data['trace']));
-        }
-
-        $output = $render(
-            'main',
-            [
-                'handlerValues' => $handlerValues,
-                'htmlConfig' => $htmlConfig,
-                'htmlRouter' => $htmlRouter,
-                'htmlMemory' => $htmlMemory,
-                'htmlTime' => $htmlTime,
-                'htmlFiles' => $htmlFiles,
-                'htmlSql' => $htmlSql,
-                'htmlErrors' => $htmlErrors,
-            ]
-        );
-        echo trim(preg_replace('/\s\s+/', ' ', $output));
     }
 }

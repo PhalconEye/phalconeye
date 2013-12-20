@@ -142,7 +142,7 @@ abstract class AbstractController extends PhalconController
         if (!$page || !$page->isAllowed()) {
             return $this->dispatcher->forward(
                 [
-                    'controller' => 'error',
+                    'controller' => 'Error',
                     'action' => 'show404'
                 ]
             );

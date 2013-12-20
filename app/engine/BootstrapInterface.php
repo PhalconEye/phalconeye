@@ -33,18 +33,9 @@ use Phalcon\DI;
 interface BootstrapInterface
 {
     /**
-     * Register module libraries autoloading.
-     *
-     * @return void
-     */
-    public function registerAutoloaders();
-
-    /**
      * Register module services.
      *
-     * @param DI $di Dependency injection.
-     *
      * @return void
      */
-    public function registerServices($di);
+    public function registerServices();
 }

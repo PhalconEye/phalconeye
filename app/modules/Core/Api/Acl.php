@@ -233,7 +233,7 @@ class Acl extends AbstractApi
                     [
                         'module' => Application::$defaultModule,
                         'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
-                        "controller" => 'error',
+                        "controller" => 'Error',
                         "action" => 'show404'
                     ]
                 );

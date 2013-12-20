@@ -57,6 +57,6 @@
 </div>
 
 {{ assets.outputJs() }}
-
+{{ helper('core').profiler() }}
 </body>
 </html>

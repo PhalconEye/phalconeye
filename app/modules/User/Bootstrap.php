@@ -18,7 +18,7 @@
 
 namespace User;
 
-use Core\Bootstrap as CoreBootstrap;
+use Engine\Bootstrap as EngineBootstrap;
 
 /**
  * User bootstrap.
@@ -30,7 +30,7 @@ use Core\Bootstrap as CoreBootstrap;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Bootstrap extends CoreBootstrap
+class Bootstrap extends EngineBootstrap
 {
     protected $_moduleName = "User";
 }

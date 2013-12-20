@@ -54,60 +54,45 @@ abstract class Bootstrap implements BootstrapInterface
      *
      * @var PhalconConfig
      */
-    protected $_config;
+    private $_config;
+
+    /**
+     * Events manager.
+     *
+     * @var EventsManager
+     */
+    private $_em;
 
     /**
      * Create Bootstrap.
      *
-     * @param DiInterface $di Dependency injection.
+     * @param DiInterface   $di Dependency injection.
+     * @param EventsManager $em Events manager.
      */
-    public function __construct($di = null)
+    public function __construct($di, $em)
     {
         $this->__DIConstruct($di);
+        $this->_em = $em;
         $this->_config = $this->getDI()->get('config');
-    }
-
-    /**
-     * Destroy bootstrap.
-     */
-    public function __destruct()
-    {
-        if ($this->_config->application->debug && $this->_config->installed) {
-            $defaultModuleBootstrap = ucfirst(Application::$defaultModule) . '\Bootstrap';
-            $defaultModuleBootstrap::handleProfiler($this->getDI(), $this->_config);
-        }
-    }
-
-    /**
-     * Register specific autoloaders.
-     *
-     * @return void
-     */
-    public function registerAutoloaders()
-    {
-
     }
 
     /**
      * Register the services.
      *
-     * @param DI $di Dependency injection.
-     *
      * @throws Exception
      * @return void
      */
-    public function registerServices($di)
+    public function registerServices()
     {
         if (empty($this->_moduleName)) {
             $class = new \ReflectionClass($this);
             throw new Exception('Bootstrap has no module name: ' . $class->getFileName());
         }
 
+        $di = $this->getDI();
         $moduleDirectory = $this->getModuleDirectory();
-        $config = $this->_config;
-
-        // Create an event manager.
-        $eventsManager = new EventsManager($config);
+        $config = $this->getConfig();
+        $eventsManager = $this->getEventsManager();
 
         /*************************************************/
         //  Initialize view
@@ -240,5 +225,25 @@ abstract class Bootstrap implements BootstrapInterface
     public function getModuleDirectory()
     {
         return $this->_config->application->modulesDir . $this->_moduleName;
+    }
+
+    /**
+     * Get events manager.
+     *
+     * @return EventsManager
+     */
+    public function getEventsManager()
+    {
+        return $this->_em;
+    }
+
+    /**
+     * Get config object.
+     *
+     * @return mixed|PhalconConfig
+     */
+    public function getConfig()
+    {
+        return $this->_config;
     }
 }

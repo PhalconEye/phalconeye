@@ -28,6 +28,7 @@ use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
 use Phalcon\Config;
 use Phalcon\Db\Adapter\Pdo;
+use Phalcon\Db\Adapter;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
 use Phalcon\Flash\Direct as FlashDirect;
@@ -39,8 +40,10 @@ use Phalcon\Logger;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
 use Phalcon\Session\Adapter\Files as SessionFiles;
+use Phalcon\Session\Adapter as SessionAdapter;
 
 /**
  * Application class.
@@ -131,7 +134,7 @@ class Application extends PhalconApplication
     }
 
     /**
-     * Runs the application, performing all initializations
+     * Runs the application, performing all initializations.
      *
      * @param string $mode Mode name.
      *
@@ -143,61 +146,22 @@ class Application extends PhalconApplication
             $mode = 'normal';
         }
 
-        // add default module and engine modules
-        $modules = [
-            self::$defaultModule => true,
-            'user' => true,
-        ];
-
-        $enabledModules = $this->_config->get('modules');
-        if (!$enabledModules) {
-            $enabledModules = [self::$defaultModule];
-        } else {
-            $enabledModules = $enabledModules->toArray();
-        }
-
+        // Set application main objects.
         $di = $this->_dependencyInjector;
         $config = $this->_config;
-
-        $modules = array_merge($modules, $enabledModules);
-
-        $di->set(
-            'modules',
-            function () use ($modules) {
-                return $modules;
-            }
-        );
-
-        // Set application event manager
         $eventsManager = new \Phalcon\Events\Manager();
-
-        // Init services and engine system
-        foreach ($this->_loaders[$mode] as $service) {
-            $this->{'init' . $service}($di, $config, $eventsManager);
-        }
-
-        // register enabled modules
-        $enabledModules = [];
-        if (!empty($modules)) {
-            foreach ($modules as $module => $enabled) {
-                if (!$enabled) {
-                    continue;
-                }
-                $moduleName = ucfirst($module);
-                $enabledModules[$module] = [
-                    'className' => $moduleName . '\Bootstrap',
-                    'path' => ROOT_PATH . '/app/modules/' . $moduleName . '/Bootstrap.php',
-                ];
-            }
-
-            if (!empty($enabledModules)) {
-                $this->registerModules($enabledModules);
-            }
-        }
-
-        // Set default services to the DI
-        EventsManager::attachEngineEvents($eventsManager, $config);
         $this->setEventsManager($eventsManager);
+
+        // Init services and engine system.
+        foreach ($this->_loaders[$mode] as $service) {
+            $serviceName = ucfirst($service);
+            $eventsManager->fire('init:before' . $serviceName, null);
+            $result = $this->{'init' . $serviceName}($di, $config, $eventsManager);
+            $eventsManager->fire('init:after' . $serviceName, $result);
+        }
+
+        // Set default services to the DI.
+        EventsManager::attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
         $di->setShared('app', $this);
     }
@@ -219,16 +183,36 @@ class Application extends PhalconApplication
      * @param Config        $config        Config object.
      * @param EventsManager $eventsManager Event manager.
      *
-     * @return void
+     * @return Loader
      */
     protected function initLoader($di, $config, $eventsManager)
     {
-        $modules = $di->get('modules');
+        // Add default module and engine modules.
+        $modules = array_merge(
+            [
+                self::$defaultModule => true,
+                'user' => true,
+            ],
+            $this->_config->modules->toArray()
+        );
+        $di->set(
+            'modules',
+            function () use ($modules) {
+                return $modules;
+            }
+        );
+
+        // Add all required namespaces and modules.
+        $modulesNamespaces = [];
+        $bootstraps = [];
         foreach ($modules as $module => $enabled) {
             if (!$enabled) {
                 continue;
             }
-            $modulesNamespaces[ucfirst($module)] = $this->_config->application->modulesDir . ucfirst($module);
+            $moduleName = ucfirst($module);
+
+            $modulesNamespaces[$moduleName] = $this->_config->application->modulesDir . $moduleName;
+            $bootstraps[$module] = $moduleName . '\Bootstrap';
         }
 
         $modulesNamespaces['Engine'] = $config->application->engineDir;
@@ -252,8 +236,10 @@ class Application extends PhalconApplication
         }
 
         $loader->register();
-
+        $this->registerModules($bootstraps);
         $di->set('loader', $loader);
+
+        return $loader;
     }
 
     /**
@@ -262,7 +248,7 @@ class Application extends PhalconApplication
      * @param DI     $di     Dependency Injection.
      * @param Config $config Config object.
      *
-     * @return void
+     * @return Url
      */
     protected function initEnvironment($di, $config)
     {
@@ -282,6 +268,8 @@ class Application extends PhalconApplication
         $url = new Url();
         $url->setBaseUri($config->application->baseUri);
         $di->set('url', $url);
+
+        return $url;
     }
 
     /**
@@ -316,7 +304,7 @@ class Application extends PhalconApplication
      * @param DI     $di     Dependency Injection.
      * @param Config $config Config object.
      *
-     * @return void
+     * @return Router
      */
     protected function initRouter($di, $config)
     {
@@ -366,7 +354,7 @@ class Application extends PhalconApplication
                 [
                     'module' => self::$defaultModule,
                     'namespace' => ucfirst(self::$defaultModule) . '\Controller',
-                    'controller' => 'error',
+                    'controller' => 'Error',
                     'action' => 'show404'
                 ]
             );
@@ -396,6 +384,8 @@ class Application extends PhalconApplication
         }
 
         $di->set('router', $router);
+
+        return $router;
     }
 
     /**
@@ -429,7 +419,7 @@ class Application extends PhalconApplication
      * @param Config        $config        Config object.
      * @param EventsManager $eventsManager Event manager.
      *
-     * @return void
+     * @return Pdo
      */
     protected function initDatabase($di, $config, $eventsManager)
     {
@@ -510,6 +500,7 @@ class Application extends PhalconApplication
             true
         );
 
+        return $connection;
     }
 
     /**
@@ -518,7 +509,7 @@ class Application extends PhalconApplication
      * @param DI     $di     Dependency Injection.
      * @param Config $config Config object.
      *
-     * @return void
+     * @return SessionAdapter
      */
     protected function initSession($di, $config)
     {
@@ -530,6 +521,8 @@ class Application extends PhalconApplication
         }
         $session->start();
         $di->set('session', $session, true);
+
+        return $session;
     }
 
     /**
@@ -718,5 +711,33 @@ class Application extends PhalconApplication
             $config = $this->_config;
         }
         EngineConfig::save($config);
+    }
+
+    /**
+     * Init modules and register them.
+     *
+     * @param array $modules Modules bootstrap classes.
+     * @param null  $merge   Merge with existing.
+     *
+     * @return $this
+     */
+    public function registerModules($modules, $merge = null)
+    {
+        $bootstraps = [];
+        $di = $this->getDI();
+        foreach ($modules as $moduleName => $moduleClass) {
+            if (isset($this->_modules[$moduleName])) {
+                continue;
+            }
+
+            $bootstrap = new $moduleClass($di, $this->getEventsManager());
+            $bootstraps[$moduleName] = function () use ($bootstrap, $di) {
+                $bootstrap->registerServices();
+
+                return $bootstrap;
+            };
+        }
+
+        return parent::registerModules($bootstraps, $merge);
     }
 }
