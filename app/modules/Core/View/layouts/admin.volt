@@ -36,7 +36,7 @@
                                                             src="{{ url('assets/img/core/pe_logo_white.png') }}"/></a>
 
             <div class="nav-collapse collapse">
-                {{ headernavigation.render() }}
+                {{ headerNavigation.render() }}
             </div>
             <!--/.nav-collapse -->
         </div>
