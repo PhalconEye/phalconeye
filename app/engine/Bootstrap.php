@@ -192,14 +192,6 @@ abstract class Bootstrap implements BootstrapInterface
             $eventsManager->attach('dispatch:beforeExecuteRoute', new CacheAnnotation());
         }
 
-        /**
-         * Listening to events in the dispatcher using the
-         * Acl plugin
-         */
-        if ($di->get('config')->installed) {
-            $eventsManager->attach('dispatch', $di->get(Application::$defaultModule)->acl());
-        }
-
         // Create dispatcher
         $dispatcher = new Dispatcher();
         $dispatcher->setEventsManager($eventsManager);

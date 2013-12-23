@@ -78,7 +78,7 @@ class AuthController extends AbstractController
             }
         }
 
-        $form->addError('Email or password are incorrect!');
+        $form->addError('Incorrect email or password!');
         $this->view->form = $form;
     }
 

@@ -20,6 +20,7 @@ namespace Core;
 
 use Core\Model\Settings;
 use Core\Model\Widget;
+use Engine\Application;
 use Engine\Bootstrap as EngineBootstrap;
 use Engine\EventsManager;
 use Engine\Translation\Db as TranslationDb;
@@ -84,7 +85,16 @@ class Bootstrap extends EngineBootstrap
         if (!User::getViewer()->id) {
             $di->remove('profiler');
         }
+
+        // Init widgets system.
         $this->_initWidgets($di);
+
+        /**
+         * Listening to events in the dispatcher using the Acl.
+         */
+        if ($di->get('config')->installed) {
+            $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
+        }
     }
 
     /**
