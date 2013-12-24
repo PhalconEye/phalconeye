@@ -97,19 +97,20 @@ class Application extends PhalconApplication
                 'flash',
                 'engine'
             ],
-            'mini' => [
-                'logger',
-                'loader',
-                'database',
-                'session'
-            ],
             'console' => [
                 'logger',
                 'loader',
                 'database',
                 'cache',
                 'engine'
-            ]
+            ],
+            'session' => [
+                'logger',
+                'loader',
+                'cache',
+                'database',
+                'session'
+            ],
         ];
 
     /**

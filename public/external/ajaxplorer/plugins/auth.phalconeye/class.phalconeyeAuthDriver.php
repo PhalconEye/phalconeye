@@ -34,13 +34,13 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
 
         require_once ROOT_PATH . "app/engine/Application.php";
         $application = new \Engine\Application();
-        $application->run('mini');
+        $application->run('session');
 
         $identity = Phalcon\DI::getDefault()->get('session')->get('identity');
-        if ($identity === null || empty($identity)) {
+        $viewer = \User\Model\User::findFirstById($identity);
+        if (!$viewer || !$viewer->isAdmin()) {
             die('401 Authorization Required');
         }
-
     }
 
 }
