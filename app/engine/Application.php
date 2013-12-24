@@ -19,7 +19,7 @@
 namespace Engine;
 
 use Engine\Api\Injector as ApiInjector;
-use Engine\Asset\Manager;
+use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
 use Engine\Config as EngineConfig;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
@@ -39,6 +39,7 @@ use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Logger;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
+use Phalcon\Events\Manager as PhalconEventsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
@@ -149,7 +150,7 @@ class Application extends PhalconApplication
         // Set application main objects.
         $di = $this->_dependencyInjector;
         $config = $this->_config;
-        $eventsManager = new \Phalcon\Events\Manager();
+        $eventsManager = new PhalconEventsManager();
         $this->setEventsManager($eventsManager);
 
         // Init services and engine system.
@@ -161,7 +162,7 @@ class Application extends PhalconApplication
         }
 
         // Set default services to the DI.
-        EventsManager::attachEngineEvents($eventsManager, $config);
+        $this->_attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
         $di->setShared('app', $this);
     }
@@ -633,7 +634,7 @@ class Application extends PhalconApplication
             );
         }
 
-        $di->setShared('assets', new Manager($di));
+        $di->setShared('assets', new AssetsManager($di));
     }
 
     /**
@@ -739,5 +740,49 @@ class Application extends PhalconApplication
         }
 
         return parent::registerModules($bootstraps, $merge);
+    }
+
+    /**
+     * Attach required events.
+     *
+     * @param EventsManager $eventsManager Events manager object.
+     * @param Config        $config        Application configuration.
+     *
+     * @return void
+     */
+    protected function _attachEngineEvents($eventsManager, $config)
+    {
+        // Attach modules plugins events.
+        $modules = $config->get('events')->toArray();
+
+        $loadedModules = $config->modules->toArray();
+        if (!empty($modules)) {
+            foreach ($modules as $module => $events) {
+                if (!in_array($module, $loadedModules)) {
+                    continue;
+                }
+                foreach ($events as $event) {
+                    $pluginClass = $event['namespace'] . '\\' . $event['class'];
+                    $eventsManager->attach($event['type'], new $pluginClass());
+                }
+            }
+        }
+
+        // Attach plugins events.
+        $plugins = $config->get('plugins');
+        if (!empty($plugins)) {
+            foreach ($plugins as $pluginName => $plugin) {
+
+                if (!$plugin['enabled'] || empty($plugin['events'])) {
+                    continue;
+                }
+
+                $pluginClass = '\Plugin\\' . ucfirst($pluginName) . '\\' . ucfirst($pluginName);
+                $pluginObject = new $pluginClass();
+                foreach ($plugin['events'] as $event) {
+                    $eventsManager->attach($event, $pluginObject);
+                }
+            }
+        }
     }
 }

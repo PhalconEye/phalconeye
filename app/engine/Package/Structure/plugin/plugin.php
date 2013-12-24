@@ -13,9 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
-
 %header%
-
 namespace Plugin\%nameUpper%;
 
 use Phalcon\Mvc\User\Plugin as PhalconPlugin;
@@ -23,7 +21,7 @@ use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 /**
  * Plugin %nameUpper%.
  *
- * @category PhalconEye Package
+ * @category PhalconEye\Package
  * @package  Plugin
  */
 class %nameUpper% extends PhalconPlugin

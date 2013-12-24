@@ -13,9 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
-
 %header%
-
 namespace %nameUpper%;
 
 use Engine\Installer as EngineInstaller;
@@ -23,7 +21,7 @@ use Engine\Installer as EngineInstaller;
 /**
  * Installer for %nameUpper%.
  *
- * @category PhalconEye Module
+ * @category PhalconEye\Module
  * @package  Module
  */
 class Installer extends EngineInstaller

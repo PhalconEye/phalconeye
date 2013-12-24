@@ -12,9 +12,7 @@
  | to license@phalconeye.com so we can send you a copy immediately.       |
  +------------------------------------------------------------------------+
 #}
-
 %header%
-
 {% extends "../../Core/View/layouts/main.volt" %}
 
 {% block content %}

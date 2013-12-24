@@ -13,9 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
-
 %header%
-
 namespace %nameUpper%;
 
 use Core\Bootstrap as CoreBootstrap;
@@ -23,7 +21,7 @@ use Core\Bootstrap as CoreBootstrap;
 /**
  * Bootstrap for %nameUpper%.
  *
- * @category PhalconEye Module
+ * @category PhalconEye\Module
  * @package  Module
  */
 class Bootstrap extends CoreBootstrap

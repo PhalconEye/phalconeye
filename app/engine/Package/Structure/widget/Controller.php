@@ -13,30 +13,58 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
+%header %
+namespace Widget\%nameUpper %;
 
-%header%
+use Engine\Form as Form;
 
-namespace Widget\%nameUpper%;
-
+/**
+ * Widget %nameUpper%.
+ *
+ * @category PhalconEye\Widget
+ * @package  Widget
+ */
 class Controller extends \Engine\Widget\Controller
 {
-
+    /**
+     * Index action.
+     *
+     * @return void
+     */
     public function indexAction()
     {
 
     }
 
-    public function adminAction(){
-        $form = new \Engine\Form();
+    /**
+     * Action for management from admin panel.
+     *
+     * @return Form
+     */
+    public function adminAction()
+    {
+        $form = new Form();
 
         return $form;
     }
 
-    public function isCached(){
+    /**
+     * Check if this widget must be cached.
+     *
+     * @return bool
+     */
+    public function isCached()
+    {
         return false;
     }
 
-    public function cacheLifeTime(){
+    /**
+     * What cache lifetime will be for this widget.
+     *
+     * @return int
+     */
+    public function cacheLifeTime()
+    {
         return 300;
     }
 }

@@ -13,9 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
-
 %header%
-
 namespace %nameUpper%\Controller;
 
 use Core\Controller\AbstractController;
@@ -23,7 +21,7 @@ use Core\Controller\AbstractController;
 /**
  * Index controller.
  *
- * @category PhalconEye Module
+ * @category PhalconEye\Module
  * @package  Controller
  *
  * @RoutePrefix("/%name%s", name="%name%s")

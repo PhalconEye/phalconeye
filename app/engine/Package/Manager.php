@@ -410,6 +410,10 @@ class Manager
      */
     public function runInstallScript($manifest)
     {
+        if ($manifest->type != self::PACKAGE_TYPE_MODULE) {
+            return;
+        }
+
         $installerClass = ucfirst($manifest->name) . '\Installer';
         $newPackageVersion = '0';
         if (file_exists($this->getPackageLocation($manifest->type) . ucfirst($manifest->name) . '/Installer.php')) {

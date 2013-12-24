@@ -234,7 +234,7 @@ class AdminPackagesController extends AbstractAdminController
     {
         $this->view->form = $form = new CreateForm();
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST, null, true)) {
             return;
         }
 
@@ -294,7 +294,7 @@ class AdminPackagesController extends AbstractAdminController
 
         $this->view->form = $form = new EditForm($package, $return);
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid($_POST, null, true)) {
             return;
         }
 
@@ -427,11 +427,13 @@ class AdminPackagesController extends AbstractAdminController
             }
 
             try {
-                $installerClass = ucfirst($name) . '\Installer';
-                if (class_exists($installerClass)) {
-                    $packageInstaller = new $installerClass($this->di, $name);
-                    if (method_exists($packageInstaller, 'remove')) {
-                        $packageInstaller->remove();
+                if ($package->type == Manager::PACKAGE_TYPE_MODULE) {
+                    $installerClass = ucfirst($name) . '\Installer';
+                    if (class_exists($installerClass)) {
+                        $packageInstaller = new $installerClass($this->di, $name);
+                        if (method_exists($packageInstaller, 'remove')) {
+                            $packageInstaller->remove();
+                        }
                     }
                 }
 

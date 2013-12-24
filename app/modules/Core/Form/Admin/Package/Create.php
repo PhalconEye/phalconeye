@@ -19,6 +19,7 @@
 namespace Core\Form\Admin\Package;
 
 use Core\Model\Package;
+use Engine\Application;
 use Engine\Db\AbstractModel;
 use Engine\Form;
 use Engine\Form\Validator\Regex;
@@ -147,15 +148,33 @@ class Create extends Form
     }
 
     /**
-     * Validation method.
+     * Validates the form.
      *
-     * @param null|array $data Model data.
+     * @param array         $data               Data to validate.
+     * @param AbstractModel $entity             Entity to validate.
+     * @param bool          $skipEntityCreation Skip entity creation.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isValid($data = null)
+    public function isValid($data = null, $entity = null, $skipEntityCreation = false)
     {
-        if (!parent::isValid($data, null, true)) {
+        // Check package location.
+        $packageManager = new Manager();
+        $path = $packageManager->getPackageLocation($data['type']);
+        if (!is_writable($path)) {
+            $this->addError('Can not create package. Package location isn\'t writable: ' . $path);
+
+            return false;
+        }
+
+        // Also check that config file is writable.
+        if (!is_writable(ROOT_PATH . Application::SYSTEM_CONFIG_PATH)) {
+            $this->addError('Configuration file isn\'t writable...');
+
+            return false;
+        }
+
+        if (!parent::isValid($data, $entity, $skipEntityCreation)) {
             return false;
         }
 
