@@ -366,9 +366,10 @@ class Application extends PhalconApplication
                 if (!$enabled) {
                     continue;
                 }
+                $moduleName = ucfirst($module);
 
                 // Get all file names.
-                $files = scandir($config->application->modulesDir . ucfirst($module) . '/Controller');
+                $files = scandir($config->application->modulesDir . $moduleName . '/Controller');
 
                 // Iterate files.
                 foreach ($files as $file) {
@@ -376,7 +377,7 @@ class Application extends PhalconApplication
                         continue;
                     }
 
-                    $controller = ucfirst($module) . '\Controller\\' . str_replace('Controller.php', '', $file);
+                    $controller = $moduleName . '\Controller\\' . str_replace('Controller.php', '', $file);
                     $router->addModuleResource(strtolower($module), $controller);
                 }
             }

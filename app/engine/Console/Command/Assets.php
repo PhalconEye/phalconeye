@@ -16,7 +16,7 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Engine\Console\Commands;
+namespace Engine\Console\Command;
 
 use Engine\Asset\Manager,
     Engine\Console\ConsoleUtil,

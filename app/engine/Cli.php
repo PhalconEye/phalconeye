@@ -19,9 +19,9 @@
 namespace Engine;
 
 use Engine\Console\AbstractCommand;
-use Engine\Console\Commands\Assets;
-use Engine\Console\Commands\Cache;
-use Engine\Console\Commands\Database;
+use Engine\Console\Command\Assets;
+use Engine\Console\Command\Cache;
+use Engine\Console\Command\Database;
 use Engine\Console\CommandsListener;
 use Engine\Console\ConsoleUtil;
 
@@ -67,9 +67,51 @@ class Cli extends Application
      */
     protected function _initCommands()
     {
-        $this->_commands[] = new Assets();
-        $this->_commands[] = new Database();
-        $this->_commands[] = new Cache();
+        // Get engine commands.
+        $this->_getCommandsFrom(
+            $this->_config->application->engineDir . '/Console/Command',
+            'Engine\Console\Command\\'
+        );
+
+        // Get modules commands.
+        foreach ($this->_modules as $name => $enabled) {
+            if (!$enabled) {
+                continue;
+            }
+            $moduleName = ucfirst($name);
+
+            $path = $this->_config->application->modulesDir . $moduleName . '/Command';
+            $namespace = $moduleName . '\Command\\';
+            $this->_getCommandsFrom($path, $namespace);
+        }
+    }
+
+    /**
+     * Get commands located in directory.
+     *
+     * @param string $commandsLocation  Commands location path.
+     * @param string $commandsNamespace Commands namespace.
+     *
+     * @return void
+     */
+    protected function _getCommandsFrom($commandsLocation, $commandsNamespace)
+    {
+        if (!file_exists($commandsLocation)) {
+            return;
+        }
+
+        // Get all file names.
+        $files = scandir($commandsLocation);
+
+        // Iterate files.
+        foreach ($files as $file) {
+            if ($file == "." || $file == "..") {
+                continue;
+            }
+
+            $commandClass = $commandsNamespace . str_replace('.php', '', $file);
+            $this->_commands[] = new $commandClass();
+        }
     }
 
     /**

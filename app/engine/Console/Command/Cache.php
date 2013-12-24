@@ -16,16 +16,15 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Engine\Console\Commands;
+namespace Engine\Console\Command;
 
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
 use Engine\Console\ConsoleUtil;
-use Engine\Db\Schema;
 use Phalcon\DI;
 
 /**
- * Database command.
+ * Cache command.
  *
  * @category  PhalconEye
  * @package   Engine\Console\Commands
@@ -34,7 +33,7 @@ use Phalcon\DI;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Database extends AbstractCommand implements CommandInterface
+class Cache extends AbstractCommand implements CommandInterface
 {
     /**
      * Executes the command.
@@ -45,34 +44,11 @@ class Database extends AbstractCommand implements CommandInterface
      */
     public function run($di)
     {
-        $schema = new Schema($di);
+        $action = $this->getOption(['action', 1]);
+        if ($action == 'cleanup') {
+            $di->get('app')->clearCache();
 
-        if ($this->isReceivedOption('model')) {
-            $modelClass = $this->getOption('model');
-            if (!class_exists($modelClass)) {
-                print ConsoleUtil::error('Model with class "' . $modelClass . '" doesn\'t exists.') . PHP_EOL;
-
-                return;
-            }
-            $count = current($schema->updateTable($modelClass));
-            if ($count) {
-                print ConsoleUtil::headLine('Table update for model: ' . $modelClass);
-                print ConsoleUtil::commandLine('Executed queries:', $count, ConsoleUtil::FG_CYAN);
-            } else {
-                print ConsoleUtil::success('Table is up to date');
-            }
-            print PHP_EOL;
-        } else {
-            $queriesCount = $schema->updateDatabase($this->isReceivedOption('cleanup'));
-            if (!empty($queriesCount)) {
-                print ConsoleUtil::headLine('Database update:');
-                foreach ($queriesCount as $model => $count) {
-                    print ConsoleUtil::commandLine($model . ':', $count, ConsoleUtil::FG_CYAN);
-                }
-            } else {
-                print ConsoleUtil::success('Database is up to date');
-            }
-            print PHP_EOL;
+            print ConsoleUtil::success('Cache successfully removed.') . PHP_EOL;
         }
     }
 
@@ -83,7 +59,7 @@ class Database extends AbstractCommand implements CommandInterface
      */
     public function getCommands()
     {
-        return ['database', 'db'];
+        return ['cache'];
     }
 
     /**
@@ -94,26 +70,10 @@ class Database extends AbstractCommand implements CommandInterface
     public function getHelp()
     {
         print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Database management');
+        print ConsoleUtil::textLine('Cache management');
 
-        print ConsoleUtil::commandLine('database update', 'Update database according to models annotations.');
+        print ConsoleUtil::commandLine('cache cleanup', 'Remove all cache');
         print PHP_EOL;
-
-        $this->printParameters($this->getPossibleParams());
-        print PHP_EOL;
-    }
-
-    /**
-     * Get possible parameters.
-     *
-     * @return array
-     */
-    public function getPossibleParams()
-    {
-        return [
-            'model=s' => "Model to update. Default: all.",
-            'cleanup' => "Drop not related tables."
-        ];
     }
 
     /**
