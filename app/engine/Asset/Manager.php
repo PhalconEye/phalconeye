@@ -75,10 +75,6 @@ class Manager extends AssetManager
         $this->__DIConstruct($di);
         $this->_config = $di->get('config');
         if ($prepare) {
-            if ($this->_config->application->debug) {
-                $this->installAssets();
-            }
-
             $this->set('css', $this->getEmptyCssCollection());
             $this->set('js', $this->getEmptyJsCollection());
         }
@@ -87,9 +83,11 @@ class Manager extends AssetManager
     /**
      * Install assets from all modules.
      *
+     * @param string $themeDirectory Theme directory.
+     *
      * @return void
      */
-    public function installAssets()
+    public function installAssets($themeDirectory = '')
     {
         $location = $this->_config->application->assets->local;
         $less = Less::factory();
@@ -97,9 +95,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Compile themes css.
         ///////////////////////////////////
-        $themeDirectory = '';
-        if ($this->_config->installed) {
-            $themeDirectory = PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme');
+        if ($this->_config->installed && !empty($themeDirectory)) {
             $themeFiles = glob($themeDirectory . '/*.less');
             FsUtilities::fsCheckLocation($location . 'css/');
             foreach ($themeFiles as $file) {

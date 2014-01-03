@@ -20,7 +20,6 @@ namespace Core;
 
 use Core\Model\Settings;
 use Core\Model\Widget;
-use Engine\Application;
 use Engine\Bootstrap as EngineBootstrap;
 use Engine\EventsManager;
 use Engine\Translation\Db as TranslationDb;
@@ -28,8 +27,8 @@ use Engine\Widget\Storage;
 use Phalcon\Config;
 use Phalcon\DI;
 use Phalcon\DiInterface;
-use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Mvc\View;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\User;
 
@@ -92,8 +91,13 @@ class Bootstrap extends EngineBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        if ($di->get('config')->installed) {
+        if ($config->installed) {
             $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
+        }
+
+        // Install assets if required.
+        if ($config->application->debug) {
+            $di->get('assets')->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
         }
     }
 

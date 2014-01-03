@@ -27,24 +27,25 @@ use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
 use Phalcon\Config;
-use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Adapter;
+use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
+use Phalcon\Events\Manager as PhalconEventsManager;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
+use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger\Formatter\Line as FormatterLine;
-use Phalcon\Logger;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
-use Phalcon\Events\Manager as PhalconEventsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
+use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
-use Phalcon\Session\Adapter\Files as SessionFiles;
 use Phalcon\Session\Adapter as SessionAdapter;
+use Phalcon\Session\Adapter\Files as SessionFiles;
 
 /**
  * Application class.
@@ -61,8 +62,17 @@ use Phalcon\Session\Adapter as SessionAdapter;
  */
 class Application extends PhalconApplication
 {
-    // System config location.
-    const SYSTEM_CONFIG_PATH = '/app/config/engine.php';
+    const
+        /**
+         * System config location.
+         */
+        SYSTEM_CONFIG_PATH = '/app/config/engine.php',
+
+        /**
+         * Default module.
+         */
+        SYSTEM_DEFAULT_MODULE = 'core';
+
 
     /**
      * Application configuration.
@@ -70,13 +80,6 @@ class Application extends PhalconApplication
      * @var Config
      */
     protected $_config;
-
-    /**
-     * Default module name.
-     *
-     * @var string
-     */
-    public static $defaultModule = 'core';
 
     /**
      * Loaders for different modes.
@@ -192,7 +195,7 @@ class Application extends PhalconApplication
         // Add default module and engine modules.
         $modules = array_merge(
             [
-                self::$defaultModule => true,
+                self::SYSTEM_DEFAULT_MODULE => true,
                 'user' => true,
             ],
             $this->_config->modules->toArray()
@@ -310,14 +313,17 @@ class Application extends PhalconApplication
      */
     protected function initRouter($di, $config)
     {
+        $defaultModuleName = ucfirst(self::SYSTEM_DEFAULT_MODULE);
+
         // Check installation.
         if (!$di->get('config')->installed) {
-            $router = new \Phalcon\Mvc\Router\Annotations(false);
-            $router->setDefaultModule(self::$defaultModule);
-            $router->setDefaultNamespace('Core\Controller');
+            $router = new RouterAnnotations(false);
+
+            $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
+            $router->setDefaultNamespace($defaultModuleName . '\Controller');
             $router->setDefaultController("Install");
             $router->setDefaultAction("index");
-            $router->addModuleResource('core', 'Core\Controller\Install');
+            $router->addModuleResource(self::SYSTEM_DEFAULT_MODULE, $defaultModuleName . '\Controller\Install');
             $di->set('installationRequired', true);
             $di->set('router', $router);
 
@@ -338,8 +344,8 @@ class Application extends PhalconApplication
 
             //Use the annotations router
             $router = new \Phalcon\Mvc\Router\Annotations(false);
-            $router->setDefaultModule(self::$defaultModule);
-            $router->setDefaultNamespace(ucfirst(self::$defaultModule) . '\Controller');
+            $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
+            $router->setDefaultNamespace(ucfirst(self::SYSTEM_DEFAULT_MODULE) . '\Controller');
             $router->setDefaultController("Index");
             $router->setDefaultAction("index");
 
@@ -354,8 +360,8 @@ class Application extends PhalconApplication
 
             $router->notFound(
                 [
-                    'module' => self::$defaultModule,
-                    'namespace' => ucfirst(self::$defaultModule) . '\Controller',
+                    'module' => self::SYSTEM_DEFAULT_MODULE,
+                    'namespace' => ucfirst(self::SYSTEM_DEFAULT_MODULE) . '\Controller',
                     'controller' => 'Error',
                     'action' => 'show404'
                 ]

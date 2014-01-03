@@ -52,8 +52,8 @@ class NotFound extends PhalconPlugin
             case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
                 $dispatcher->forward(
                     [
-                        'module' => EngineApplication::$defaultModule,
-                        'namespace' => ucfirst(EngineApplication::$defaultModule) . '\Controller',
+                        'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
+                        'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
                         'controller' => 'Error',
                         'action' => 'show404'
                     ]

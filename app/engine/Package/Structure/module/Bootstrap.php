@@ -16,7 +16,7 @@
 %header%
 namespace %nameUpper%;
 
-use Core\Bootstrap as CoreBootstrap;
+use Engine\Bootstrap as EngineBootstrap;
 
 /**
  * Bootstrap for %nameUpper%.
@@ -24,7 +24,7 @@ use Core\Bootstrap as CoreBootstrap;
  * @category PhalconEye\Module
  * @package  Module
  */
-class Bootstrap extends CoreBootstrap
+class Bootstrap extends EngineBootstrap
 {
     protected $_moduleName = "%nameUpper%";
 }

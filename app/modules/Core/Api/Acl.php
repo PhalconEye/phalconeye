@@ -231,8 +231,8 @@ class Acl extends AbstractApi
             if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW) {
                 return $dispatcher->forward(
                     [
-                        'module' => Application::$defaultModule,
-                        'namespace' => ucfirst(Application::$defaultModule) . '\Controller',
+                        'module' => Application::SYSTEM_DEFAULT_MODULE,
+                        'namespace' => ucfirst(Application::SYSTEM_DEFAULT_MODULE) . '\Controller',
                         "controller" => 'Error',
                         "action" => 'show404'
                     ]

@@ -16,20 +16,20 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Engine\Console\Command;
+namespace Core\Command;
 
-use Engine\Asset\Manager,
-    Engine\Console\ConsoleUtil,
-    Engine\Console\AbstractCommand,
-    Engine\Console\CommandInterface;
-
+use Core\Model\Settings;
+use Engine\Asset\Manager;
+use Engine\Console\AbstractCommand;
+use Engine\Console\CommandInterface;
+use Engine\Console\ConsoleUtil;
 use Phalcon\DI;
 
 /**
  * Assets command.
  *
  * @category  PhalconEye
- * @package   Engine\Console\Commands
+ * @package   Core\Commands
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
@@ -49,7 +49,7 @@ class Assets extends AbstractCommand implements CommandInterface
         $action = $this->getOption(['action', 1]);
         if ($action == 'install') {
             $assetsManager = new Manager($di, false);
-            $assetsManager->installAssets();
+            $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
 
             print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
         }

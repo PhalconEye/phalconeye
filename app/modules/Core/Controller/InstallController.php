@@ -102,6 +102,9 @@ class InstallController extends AbstractController
      */
     public function indexAction()
     {
+        // Make sure that all assets installed.
+        $this->assets->installAssets();
+
         // Run requirements check.
         $allPassed = true;
 

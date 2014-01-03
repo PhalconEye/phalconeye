@@ -18,6 +18,7 @@
 
 namespace Engine\Package;
 
+use Engine\Application;
 use Engine\DependencyInjection;
 use Engine\Package\Exception\InvalidManifest;
 use Phalcon\Config;
@@ -94,7 +95,7 @@ class Manager
         'website' => 'http://phalconeye.com/',
         'dependencies' => [
             [
-                'name' => 'core',
+                'name' => Application::SYSTEM_DEFAULT_MODULE,
                 'type' => self::PACKAGE_TYPE_MODULE,
                 'version' => PE_VERSION,
             ],
@@ -175,6 +176,7 @@ class Manager
      */
     public function createPackage($data)
     {
+        $data['defaultModuleUpper'] = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
         $data['nameUpper'] = ucfirst($data['name']);
 
         if ($data['type'] == self::PACKAGE_TYPE_THEME) {
@@ -202,11 +204,11 @@ class Manager
         }
 
 
-        // replace placholders in package
+        // Replace placeholders in package.
         $placeholders = array_keys($data);
         $placeholdersValues = array_values($data);
         foreach ($placeholders as $key => $placeholder) {
-            // check header for comment block
+            // Check header for comment block.
             if (
                 $placeholder == 'header' &&
                 (

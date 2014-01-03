@@ -13,7 +13,7 @@
  +------------------------------------------------------------------------+
 #}
 %header%
-{% extends "../../Core/View/layouts/main.volt" %}
+{% extends "../../%defaultModuleUpper%/View/layouts/main.volt" %}
 
 {% block content %}
 
