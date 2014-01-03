@@ -47,5 +47,4 @@ class Regex extends PhalconRegexValidator implements ValidatorInterface
 
         parent::__construct($params);
     }
-
 }

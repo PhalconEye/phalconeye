@@ -19,8 +19,8 @@
 namespace User\Form\Auth;
 
 use Engine\Form;
-use Engine\Form\Validator\StringLength as StringLengthValidator;
-use Engine\Form\Validator\Email as EmailValidator;
+use Phalcon\Validation\Validator\Email;
+use Phalcon\Validation\Validator\StringLength;
 
 /**
  * Register form.
@@ -52,7 +52,7 @@ class Register extends Form
             [
                 'label' => 'Username',
                 'required' => true,
-                'validators' => [new StringLengthValidator(['min' => 2])
+                'validators' => [new StringLength(['min' => 2])
                 ]
             ]
         );
@@ -65,7 +65,7 @@ class Register extends Form
                 'autocomplete' => 'off',
                 'description' => 'You will use your email address to login.',
                 'required' => true,
-                'validators' => [new EmailValidator()]
+                'validators' => [new Email()]
             ]
         );
 
@@ -77,7 +77,7 @@ class Register extends Form
                 'autocomplete' => 'off',
                 'description' => 'Passwords must be at least 6 characters in length.',
                 'required' => true,
-                'validators' => [new StringLengthValidator(['min' => 6])]
+                'validators' => [new StringLength(['min' => 6])]
             ]
         );
 
@@ -89,7 +89,7 @@ class Register extends Form
                 'autocomplete' => 'off',
                 'description' => 'Enter your password again for confirmation.',
                 'required' => true,
-                'validators' => [new StringLengthValidator(['min' => 6])]
+                'validators' => [new StringLength(['min' => 6])]
             ]
         );
 

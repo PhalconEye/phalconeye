@@ -19,8 +19,8 @@
 namespace Core\Form\Install;
 
 use Engine\Form;
-use Engine\Form\Validator\StringLength;
-use Engine\Form\Validator\Email;
+use Phalcon\Validation\Validator\Email;
+use Phalcon\Validation\Validator\StringLength;
 
 /**
  * Installation finish form.
