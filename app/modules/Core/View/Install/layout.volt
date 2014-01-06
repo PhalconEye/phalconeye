@@ -35,7 +35,7 @@
 
     <div id="header">
         {% if disableHeader is not defined %}
-        {{ helper('core').renderContent('header') }}
+        {{ helper('renderer').renderContent('header') }}
         {% endif %}
 
         {%- block header -%}
@@ -53,7 +53,7 @@
 
     <div id="footer">
         {% if disableFooter is not defined %}
-        {{ helper('core').renderContent('footer') }}
+        {{ helper('renderer').renderContent('footer') }}
         {% endif %}
         {%- block footer -%}
         {%- endblock -%}

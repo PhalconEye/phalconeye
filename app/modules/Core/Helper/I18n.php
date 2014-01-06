@@ -16,35 +16,41 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Helper;
+namespace Core\Helper;
 
-use Engine\HelperInterface;
-use Phalcon\DI;
-use Phalcon\DiInterface;
+use Engine\Helper;
 use Phalcon\Tag;
 
 /**
- * Current url helper.
+ * Javascript translator helper.
  *
  * @category  PhalconEye
- * @package   Engine\Helper
+ * @package   Core\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class CurrentUrl extends Tag implements HelperInterface
+class I18n extends Helper
 {
     /**
-     * Execute helper.
+     * Output javascript translation scope.
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * @param array $translations Translations that must be converted.
      *
-     * @return mixed
+     * @return string
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _js($translations)
     {
-        return $di->get('request')->get('_url', $args);
+        if (!is_array($translations)) {
+            $translations = [$translations];
+        }
+        $content = 'var translatorData = translatorData || [];' . PHP_EOL;
+        foreach ($translations as $text) {
+            $content .=
+                'translatorData["' . $text . '"] = "' . $this->getDI()->get('trans')->query($text) . '";' . PHP_EOL;
+        }
+
+        return $content;
     }
 }

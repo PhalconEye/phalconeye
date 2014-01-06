@@ -124,7 +124,7 @@ abstract class Bootstrap implements BootstrapInterface
                                 $compiler->addFunction(
                                     'helper',
                                     function ($resolvedArgs) use ($di) {
-                                        return '(new \Engine\Helper(' . $resolvedArgs . '))';
+                                        return '\Engine\Helper::getInstance(' . $resolvedArgs . ')';
                                     }
                                 );
 

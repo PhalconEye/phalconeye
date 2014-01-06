@@ -37,7 +37,7 @@
             {% endif %}
         };
 
-        {{ helper('core').JsTrans('Are you really want to delete this menu item?') }}
+        {{ helper('i18n').js('Are you really want to delete this menu item?') }}
 
     </script>
 

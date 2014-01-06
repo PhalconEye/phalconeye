@@ -19,8 +19,7 @@
 namespace Core\Helper;
 
 use Core\Model\Settings;
-use Engine\HelperInterface;
-use Phalcon\DiInterface;
+use Engine\Helper;
 use Phalcon\Tag;
 
 /**
@@ -33,20 +32,18 @@ use Phalcon\Tag;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Setting extends Tag implements HelperInterface
+class Setting extends Helper
 {
     /**
-     * Get setting from database.
+     * Get setting by name.
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * @param string     $name    Setting name.
+     * @param null|mixed $default Default value.
      *
-     * @return mixed
-     * @todo: Refactor helpers.
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return null|string
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _get($name, $default = null)
     {
-        return Settings::getSetting($args[0], (!isset($args[1]) ? null : $args[1]));
+        return Settings::getSetting($name, $default);
     }
 }

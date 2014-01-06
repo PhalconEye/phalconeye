@@ -16,39 +16,72 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Helper;
+namespace Engine\Helper;
 
-use Engine\HelperInterface;
-use Phalcon\DiInterface;
+use Engine\Helper;
+use Phalcon\DI;
 use Phalcon\Tag;
 
 /**
- * Javascript translator helper.
+ * Current url helper.
  *
  * @category  PhalconEye
- * @package   Core\Helper
+ * @package   Engine\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class JsTrans extends Tag implements HelperInterface
+class Url extends Helper
 {
     /**
-     * Output javascript translation scope.
-     *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * Get current url.
      *
      * @return mixed
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _currentUrl()
     {
-        $content = 'var translatorData = translatorData || [];' . PHP_EOL;
-        foreach ($args as $text) {
-            $content .= 'translatorData["' . $text . '"] = "' . $di->get('trans')->query($text) . '";' . PHP_EOL;
+        return $this->getDI()->get('request')->get('_url');
+    }
+
+    /**
+     * Get url for paginator.
+     *
+     * @param null|int $pageNumber Current page number.
+     *
+     * @return string
+     */
+    protected function _paginatorUrl($pageNumber = null)
+    {
+        $page = (!empty($pageNumber) ? $pageNumber : 1);
+        $vars = [];
+        $url = '/';
+        foreach ($_GET as $key => $get) {
+            if ($key == '_url') {
+                $url = $get;
+                continue;
+            }
+
+            if ($key == 'page') {
+                continue;
+            }
+
+            $vars[] = $key . '=' . $get;
+        }
+        unset($vars['_url']);
+
+        if (count($vars) == 0) {
+            if ($page) {
+                $page = '?page=' . $page;
+            }
+
+            return $url . $page;
         }
 
-        return $content;
+        if ($page) {
+            $page = '&page=' . $page;
+        }
+
+        return sprintf('%s?%s%s', $url, implode('&', $vars), $page);
     }
 }

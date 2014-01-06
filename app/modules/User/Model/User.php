@@ -139,7 +139,7 @@ class User extends AbstractModel
      * If user logged in this function will return user object with data
      * If user isn't logged in this function will return empty user object with ID = 0
      *
-     * @return null|ResultsetInterface|User
+     * @return User
      */
     public static function getViewer()
     {

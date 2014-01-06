@@ -18,11 +18,10 @@
 
 namespace Core\Helper;
 
-use Engine\HelperInterface;
+use Engine\Helper;
 use Engine\Profiler as EngineProfiler;
 use Phalcon\Acl;
 use Phalcon\DI;
-use Phalcon\DiInterface;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
 use User\Model\User;
@@ -37,22 +36,19 @@ use User\Model\User;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Profiler extends Tag implements HelperInterface
+class Profiler extends Helper
 {
     /**
-     * Check if action is allowed.
+     * Render profiler.
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * @return string
      *
-     * @return bool|mixed
-     *
-     * @todo: Refactor this.
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @TODO: Refactor this.
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _render()
     {
+        $di = $this->getDI();
         $config = $di->get('config');
         if (!$config->application->debug || !$di->has('profiler')) {
             return '';

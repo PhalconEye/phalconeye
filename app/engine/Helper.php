@@ -19,6 +19,7 @@
 namespace Engine;
 
 use Phalcon\DI;
+use Phalcon\Tag;
 
 /**
  * Helper class.
@@ -30,23 +31,50 @@ use Phalcon\DI;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Helper
+abstract class Helper extends Tag
 {
     /**
-     * Current module name.
+     * Helpers cache.
      *
-     * @var string
+     * @var array
      */
-    protected $_moduleName;
+    protected static $_cache;
 
     /**
-     * Helper constructor.
-     *
-     * @param string $module Module name
+     * Helper constructor is protected.
      */
-    public function __construct($module)
+    protected function __construct()
     {
-        $this->_moduleName = $module;
+        $this->setDI(Di::getDefault());
+    }
+
+    /**
+     * Get helper instance.
+     *
+     * @param string $name   Helper name.
+     * @param string $module Module name.
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public static function getInstance($name, $module = Application::SYSTEM_DEFAULT_MODULE)
+    {
+        $name = ucfirst($name);
+        $module = ucfirst($module);
+
+        if (!isset(self::$_cache[$module . '_' . $name])) {
+            /** @var Helper $helperClassName */
+            $helperClassName = sprintf('\%s\Helper\%s', $module, $name);
+            if (!class_exists($helperClassName)) {
+                throw new Exception(
+                    sprintf('Can not find Helper with name "%s". Searched in module: %s', $name, $module)
+                );
+            }
+
+            self::$_cache[$module . '_' . $name] = new $helperClassName();
+        }
+
+        return self::$_cache[$module . '_' . $name];
     }
 
     /**
@@ -60,32 +88,21 @@ class Helper
      */
     public function __call($name, $arguments)
     {
-        /** @var HelperInterface $helperClassName */
-        $helperClassName = sprintf('\%s\Helper\%s', ucfirst($this->_moduleName), ucfirst($name));
-        if (!class_exists($helperClassName)) {
-            throw new Exception(sprintf('Can not find Helper with name "%s".', $name));
-        }
-
-        if (!is_array($arguments)) {
-            $arguments = [$arguments];
-        }
-
         // Collect profile info.
-        $di = DI::getDefault();
+        $di = $this->getDI();
         $config = $di->get('config');
         $profilerIsActive = $config->application->debug && $di->has('profiler');
         if ($profilerIsActive) {
             $di->get('profiler')->start();
         }
 
-        $content = $helperClassName::_($di, $arguments);
+        $result = call_user_func_array(array(&$this, '_' . $name), $arguments);
 
         // collect profile info
         if ($profilerIsActive) {
-            $di->get('profiler')->stop($helperClassName, 'helper');
+            $di->get('profiler')->stop(get_called_class(), 'helper');
         }
 
-        return $content;
+        return $result;
     }
-
 }

@@ -19,9 +19,11 @@
 namespace Core\Helper;
 
 use Core\Model\Page;
-use Engine\HelperInterface;
-use Phalcon\DiInterface;
+use Engine\Helper;
+use Engine\Widget\Element;
+use Phalcon\Db\Column;
 use Phalcon\Tag;
+use User\Model\User;
 
 /**
  * Content renderer.
@@ -33,27 +35,66 @@ use Phalcon\Tag;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class RenderContent extends Tag implements HelperInterface
+class Renderer extends Helper
 {
     /**
      * Render content from database layout.
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * @param string $pageType Page type.
      *
      * @return mixed
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _renderContent($pageType)
     {
         $content = '';
-        $page = Page::findFirst("type = '{$args[0]}'");
-        $widgets = $page->getWidgets();
-        $widgetRender = new RenderWidget();
+        $page = Page::findFirst(
+            [
+                'conditions' => 'type=:type:',
+                'bind' => ["type" => $pageType],
+                'bindTypes' => ["type" => Column::BIND_PARAM_STR]
+            ]
+        );
 
+        $widgets = $page->getWidgets();
         foreach ($widgets as $widget) {
-            $content .= $widgetRender->_($di, [$widget->widget_id, $widget->getParams()]);
+            $content .= $this->_renderWidget($widget->widget_id, $widget->getParams());
         }
 
         return $content;
+    }
+
+    /**
+     * Render widget.
+     *
+     * @param mixed $id     Widget id in widgets table.
+     * @param array $params Widgets params in page.
+     *
+     * @return mixed
+     */
+    protected function _renderWidget($id, $params = [])
+    {
+        if (!$this->_widgetIsAllowed($params)) {
+            return '';
+        }
+        $widget = new Element($id, $params, $this->getDI());
+
+        return $widget->render();
+    }
+
+    /**
+     * Check that this widget is allowed for current user.
+     *
+     * @param array $params User params.
+     *
+     * @return bool
+     */
+    protected function _widgetIsAllowed($params)
+    {
+        $viewer = User::getViewer();
+        if (empty($params['roles']) || !is_array($params['roles'])) {
+            return true;
+        }
+
+        return in_array($viewer->role_id, $params['roles']);
     }
 }

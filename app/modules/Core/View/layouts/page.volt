@@ -26,7 +26,7 @@
     {% if "top" in (content|keys) %}
         <div id="general-content-full-top">
             {% for widget in content["top"] %}
-                {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -35,7 +35,7 @@
     {% if "left" in (content|keys) %}
         <div id="general-content-left">
             {% for widget in content["left"] %}
-                {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -44,7 +44,7 @@
     {% if "right" in (content|keys) %}
         <div id="general-content-right">
             {% for widget in content["right"] %}
-                {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -56,7 +56,7 @@
         {% if ("right" in (content|keys)) and ("left" in (content|keys)) %}
             <div id="general-content">
                 {% for widget in content["middle"] %}
-                    {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -64,7 +64,7 @@
         {% if ("right" in (content|keys)) and ("left" not in (content|keys)) %}
             <div id="general-content-column-left">
                 {% for widget in content["middle"] %}
-                    {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -72,7 +72,7 @@
         {% if ("left" in (content|keys)) and ("right" not in (content|keys)) %}
             <div id="general-content-column-right">
                 {% for widget in content["middle"] %}
-                    {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
 
@@ -82,7 +82,7 @@
         {% if ("right" not in (content|keys)) and ("left" not in (content|keys)) %}
             <div id="general-content-full">
                 {% for widget in content["middle"] %}
-                    {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -93,17 +93,17 @@
     {% if "bottom" in (content|keys) %}
         <div id="general-content-full-bottom">
             {% for widget in content["bottom"] %}
-                {{ helper('core').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
 
 
-    {#{% if helper('core').allowed('\Core\Model\Page', 'show_views') %}#}
+    {#{% if helper('security').isAllowed('\Core\Model\Page', 'show_views') %}#}
         {#<div class="page_views">{{ 'View count:'|trans }}{{ page.view_count }}</div>#}
     {#{% endif %}#}
 
-    {#{{ helper('core').getAllowed('\Core\Model\Page', 'page_footer') }}#}
+    {#{{ helper('security').getAllowed('\Core\Model\Page', 'page_footer') }}#}
 
 
     <div class="clear"></div>

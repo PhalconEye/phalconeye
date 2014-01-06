@@ -18,14 +18,14 @@
 
 namespace Core\Helper;
 
-use Engine\HelperInterface;
+use Engine\Helper;
+use Phalcon\Acl;
 use Phalcon\DI;
-use Phalcon\DiInterface;
 use Phalcon\Tag;
 use User\Model\User;
 
 /**
- * Viewer helper.
+ * ACL helper.
  *
  * @category  PhalconEye
  * @package   Core\Helper
@@ -34,21 +34,43 @@ use User\Model\User;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Viewer extends Tag implements HelperInterface
+class Security extends Helper
 {
     /**
-     * Get current user (viewer).
+     * Check if action is allowed.
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
+     * @param mixed  $resource Resource.
+     * @param string $action   Action to perform.
+     *
+     * @return bool
+     */
+    protected function _isAllowed($resource, $action)
+    {
+        $viewer = User::getViewer();
+
+        return $this->getDI()
+            ->get('core')
+            ->acl()
+            ->_()
+            ->isAllowed($viewer->getRole()->name, $resource, $action) == Acl::ALLOW;
+    }
+
+    /**
+     * Check allowed value.
+     *
+     * @param mixed  $resource Resource.
+     * @param string $action   Action to perform.
      *
      * @return mixed
-     *
-     * @todo: Refactor helpers.
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _getAllowed($resource, $action)
     {
-        return User::getViewer();
+        $viewer = User::getViewer();
+
+        return $this->getDI()
+            ->get('core')
+            ->acl()
+            ->_()
+            ->getAllowedValue($resource, $viewer->getRole(), $action);
     }
 }

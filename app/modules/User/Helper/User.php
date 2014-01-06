@@ -16,66 +16,54 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Helper;
+namespace User\Helper;
 
-use Engine\HelperInterface;
+use Engine\Helper;
 use Phalcon\DI;
-use Phalcon\DiInterface;
 use Phalcon\Tag;
+use User\Model\User as UserModel;
 
 /**
- * Paginator url helper.
+ * Viewer helper.
  *
  * @category  PhalconEye
- * @package   Engine\Helper
+ * @package   User\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class PaginatorUrl extends Tag implements HelperInterface
+class User extends Helper
 {
     /**
-     * Execute helper.
+     * Get current user (viewer).
      *
-     * @param DiInterface $di   Dependency injection.
-     * @param array       $args Helper arguments.
-     *
-     * @return mixed
-     * @todo: Refactor helpers.
-     * @SuppressWarnings(PHPMD.UnusedFormalParameter)
+     * @return UserModel
      */
-    static public function _(DiInterface $di, array $args)
+    protected function _current()
     {
-        $page = (isset($args[0]) ? $args[0] : 1);
-        $vars = [];
-        $url = '/';
-        foreach ($_GET as $key => $get) {
-            if ($key == '_url') {
-                $url = $get;
-                continue;
-            }
+        return UserModel::getViewer();
+    }
 
-            if ($key == 'page') {
-                continue;
-            }
+    /**
+     * Get some user.
+     *
+     * @param int $id User identity.
+     *
+     * @return UserModel
+     */
+    protected function _get($id)
+    {
+        return UserModel::findFirstById($id);
+    }
 
-            $vars[] = $key . '=' . $get;
-        }
-        unset($vars['_url']);
-
-        if (count($vars) == 0) {
-            if ($page) {
-                $page = '?page=' . $page;
-            }
-
-            return $url . $page;
-        }
-
-        if ($page) {
-            $page = '&page=' . $page;
-        }
-
-        return sprintf('%s?%s%s', $url, implode('&', $vars), $page);
+    /**
+     * Is current viewer is user.
+     *
+     * @return bool
+     */
+    protected function _isUser()
+    {
+        return UserModel::getViewer()->id > 0;
     }
 }

@@ -15,7 +15,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ helper('core').Setting('system_title', '') }} | {% block title %}{% endblock %}</title>
+    <title>{{ helper('setting').get('system_title', '') }} | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="PhalconEye - Open Source Content Management System"/>
@@ -31,7 +31,7 @@
 <div id="wrapper">
     <div id="header">
         {% if disableHeader is not defined %}
-        {{ helper('core').renderContent('header') }}
+        {{ helper('renderer').renderContent('header') }}
         {% endif %}
 
         {%- block header -%}
@@ -49,7 +49,7 @@
 
     <div id="footer">
         {% if disableFooter is not defined %}
-        {{ helper('core').renderContent('footer') }}
+        {{ helper('renderer').renderContent('footer') }}
         {% endif %}
         {%- block footer -%}
         {%- endblock -%}
@@ -57,6 +57,6 @@
 </div>
 
 {{ assets.outputJs() }}
-{{ helper('core').profiler() }}
+{{ helper('profiler').render() }}
 </body>
 </html>

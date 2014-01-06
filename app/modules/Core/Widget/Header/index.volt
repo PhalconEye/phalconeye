@@ -24,14 +24,14 @@
 
     {% if show_auth is 1 %}
         <div class="header_auth">
-        {% if helper('core').viewer().id is 0 %}
+        {% if helper('user', 'user').isUser() %}
             <a href="{{ url('login') }}">{{ 'Login' | trans }}</a>&nbsp;
             |
             <a href="{{ url('register') }}">{{ 'Register' | trans }}</a>
         {% else %}
-            {{ 'Welcome, ' |trans }}{{ helper('core').viewer().username }}&nbsp;
+            {{ 'Welcome, ' |trans }}{{ helper('user', 'user').current().username }}&nbsp;
             |
-            {% if helper('core').allowed('AdminArea', 'access') %}
+            {% if helper('security').isAllowed('AdminArea', 'access') %}
                 <a href="{{ url('admin') }}">{{ 'Admin panel' | trans }}</a>
             {% endif %}
             <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a>
