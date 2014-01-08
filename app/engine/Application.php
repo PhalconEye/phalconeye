@@ -23,6 +23,7 @@ use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
 use Engine\Config as EngineConfig;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
+use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
@@ -643,6 +644,7 @@ class Application extends PhalconApplication
         }
 
         $di->setShared('assets', new AssetsManager($di));
+        $di->setShared('widgets', new Catalog());
     }
 
     /**

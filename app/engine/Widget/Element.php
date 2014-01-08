@@ -65,7 +65,7 @@ class Element
 
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
-        $this->_widget = Storage::get($id);
+        $this->_widget = $di->get('widgets')->get($id);
     }
 
     /**
@@ -97,12 +97,12 @@ class Element
         // check cache
         $output = null;
         $cacheKey = $controller->cacheKey();
-        $cacheLifetime = $controller->cacheLifeTime();
+        $cacheLifeTime = $controller->cacheLifeTime();
         /** @var \Phalcon\Cache\BackendInterface $cache */
         $cache = $this->getDI()->get('cacheOutput');
 
         if ($controller->isCached()) {
-            $output = $cache->get($cacheKey, $cacheLifetime);
+            $output = $cache->get($cacheKey, $cacheLifeTime);
         }
 
         if ($output === null) {
@@ -125,7 +125,7 @@ class Element
             }
             $output = trim($controller->view->getRender('', 'index'));
             if ($controller->isCached()) {
-                $cache->save($cacheKey, $output, $cacheLifetime);
+                $cache->save($cacheKey, $output, $cacheLifeTime);
             }
         }
 

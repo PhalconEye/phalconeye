@@ -21,14 +21,14 @@ namespace Core;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
-use Engine\EventsManager;
 use Engine\Translation\Db as TranslationDb;
-use Engine\Widget\Storage;
+use Engine\Widget\Catalog;
 use Phalcon\Config;
 use Phalcon\DI;
 use Phalcon\DiInterface;
-use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Events\Manager;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\User;
 
@@ -54,8 +54,8 @@ class Bootstrap extends EngineBootstrap
     /**
      * Bootstrap construction.
      *
-     * @param DiInterface   $di Dependency injection.
-     * @param EventsManager $em Events manager object.
+     * @param DiInterface $di Dependency injection.
+     * @param Manager     $em Events manager object.
      */
     public function __construct($di, $em)
     {
@@ -108,22 +108,21 @@ class Bootstrap extends EngineBootstrap
      *
      * @return void
      */
-    private function _initWidgets(DI $di)
+    protected function _initWidgets(DI $di)
     {
         $cache = $di->get('cacheData');
         $cacheKey = "widgets_metadata.cache";
         $widgets = $cache->get($cacheKey);
 
         if ($widgets === null) {
-            $widgetObjects = Widget::find();
             $widgets = [];
-            foreach ($widgetObjects as $object) {
+            foreach (Widget::find() as $object) {
                 $widgets[$object->id] = $object;
             }
 
-            $cache->save($cacheKey, $widgets, 2592000); // 30 days.
+            $cache->save($cacheKey, $widgets, 0); // Unlimited.
         }
-        Storage::setWidgets($widgets);
+        $di->get('widgets')->addWidgets($widgets);
     }
 
     /**
@@ -134,7 +133,7 @@ class Bootstrap extends EngineBootstrap
      *
      * @return void
      */
-    private function _initLocale(DI $di, Config $config)
+    protected function _initLocale(DI $di, Config $config)
     {
         if ($config->installed) {
             $locale = $di->get('session')->get('locale', Settings::getSetting('system_default_language'));

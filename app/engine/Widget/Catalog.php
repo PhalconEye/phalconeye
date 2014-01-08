@@ -18,10 +18,10 @@
 
 namespace Engine\Widget;
 
-use \Engine\Exception as EngineException;
+use Engine\Exception as EngineException;
 
 /**
- * Widget storage.
+ * Widgets catalog.
  *
  * @category  PhalconEye
  * @package   Engine\Widget
@@ -30,49 +30,69 @@ use \Engine\Exception as EngineException;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Storage
+class Catalog
 {
     /**
      * Widgets in storage.
      *
      * @var array
      */
-    private static $_widgets = [];
+    protected $_widgets = [];
 
     /**
      * Get widgets in storage.
      *
      * @return array
      */
-    public static function getWidgets()
+    public function getWidgets()
     {
-        return self::$_widgets;
+        return $this->_widgets;
+    }
+
+    /**
+     * Add one widget to catalog.
+     *
+     * @param mixed $id     Widget identity.
+     * @param mixed $widget Widget model.
+     *
+     * @return void
+     * @throws EngineException
+     */
+    public function addWidget($id, $widget)
+    {
+        if (isset($this->_widgets[$id])) {
+            throw new EngineException(sprintf('Widget storage has already widget with id "%s".', $id));
+        }
+
+        $this->_widgets[$id] = $widget;
     }
 
     /**
      * Insert widgets to storage.
      *
      * @param array $widgets Widgets.
+     *
+     * @return void
      */
-    public static function setWidgets($widgets)
+    public function addWidgets($widgets)
     {
-        self::$_widgets = $widgets;
+        $this->_widgets += $widgets;
     }
 
     /**
      * Get widget by ID.
      *
-     * @param mixed $widgetId Widget identity in storage.
+     * @param mixed $id Widget identity in storage.
      *
      * @return mixed
-     * @throws \Engine\Exception
+     * @throws EngineException
      */
-    public static function get($widgetId)
+    public function get($id)
     {
-        if (empty(self::$_widgets[$widgetId])) {
-            throw new EngineException(sprintf('Widget storage has no widget with id "%s".', $widgetId));
+        if (empty($this->_widgets[$id])) {
+            throw new EngineException(sprintf('Widget storage has no widget with id "%s".', $id));
         }
 
-        return self::$_widgets[$widgetId];
+        return $this->_widgets[$id];
     }
 }
