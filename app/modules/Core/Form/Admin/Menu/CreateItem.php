@@ -72,13 +72,13 @@ class CreateItem extends Form
             'select',
             'target',
             [
-                'label' => 'Title',
+                'label' => 'Target',
                 'description' => 'Link type',
                 'options' => [
                     null => 'Default link',
-                    '_blank' => 'Opens the linked document in a new window or tab',
-                    '_parent' => 'Opens the linked document in the parent frame',
-                    '_top' => 'Opens the linked document in the full body of the window',
+                    MenuItem::ITEM_TARGET_BLANK => 'Opens the linked document in a new window or tab',
+                    MenuItem::ITEM_TARGET_PARENT => 'Opens the linked document in the parent frame',
+                    MenuItem::ITEM_TARGET_TOP => 'Opens the linked document in the full body of the window',
                 ]
             ]
         );
@@ -147,10 +147,10 @@ class CreateItem extends Form
             [
                 'label' => 'Tooltip position',
                 'options' => [
-                    'top' => 'Top',
-                    'bottom' => 'Bottom',
-                    'left' => 'Left',
-                    'right' => 'Right'
+                    MenuItem::ITEM_TOOLTIP_POSITION_TOP => 'Top',
+                    MenuItem::ITEM_TOOLTIP_POSITION_BOTTOM => 'Bottom',
+                    MenuItem::ITEM_TOOLTIP_POSITION_LEFT => 'Left',
+                    MenuItem::ITEM_TOOLTIP_POSITION_RIGHT => 'Right'
                 ]
             ]
         );
@@ -170,8 +170,8 @@ class CreateItem extends Form
             [
                 'label' => 'Icon position',
                 'options' => [
-                    'left' => 'Left',
-                    'right' => 'Right'
+                    MenuItem::ITEM_ICON_POSITION_LEFT => 'Left',
+                    MenuItem::ITEM_ICON_POSITION_RIGHT => 'Right'
                 ]
             ]
         );

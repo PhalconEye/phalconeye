@@ -46,6 +46,52 @@ class MenuItem extends AbstractModel
 {
     use Sortable;
 
+    const
+        /**
+         * Link target type - blank.
+         */
+        ITEM_TARGET_BLANK = '_blank',
+
+        /**
+         * Link target type - parent window.
+         */
+        ITEM_TARGET_PARENT = '_parent',
+
+        /**
+         * Link target type - top window.
+         */
+        ITEM_TARGET_TOP = '_top',
+
+        /**
+         * Tooltip position - top.
+         */
+        ITEM_TOOLTIP_POSITION_TOP = 'top',
+
+        /**
+         * Tooltip position - bottom.
+         */
+        ITEM_TOOLTIP_POSITION_BOTTOM = 'bottom',
+
+        /**
+         * Tooltip position - left.
+         */
+        ITEM_TOOLTIP_POSITION_LEFT = 'left',
+
+        /**
+         * Tooltip position - right.
+         */
+        ITEM_TOOLTIP_POSITION_RIGHT = 'right',
+
+        /**
+         * Icon position - right.
+         */
+        ITEM_ICON_POSITION_LEFT = 'left',
+
+        /**
+         * Icon position - right.
+         */
+        ITEM_ICON_POSITION_RIGHT = 'right';
+
     /**
      * @Primary
      * @Identity
