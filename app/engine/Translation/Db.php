@@ -18,6 +18,7 @@
 
 namespace Engine\Translation;
 
+use Engine\Config;
 use Engine\Db\AbstractModel;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Column as PhalconColumn;
@@ -82,18 +83,18 @@ class Db implements AdapterInterface
 
         $this->_locale = $model::find(
             [
-                'conditions' => 'locale = :locale:',
+                'conditions' => 'language = :language:',
                 'bind' => (
-                    ["locale" => $options['locale']]
+                    ["language" => $options['language']]
                     ),
                 'bindTypes' => (
-                    ["locale" => PhalconColumn::BIND_PARAM_STR]
+                    ["language" => PhalconColumn::BIND_PARAM_STR]
                     )
             ]
         )->getFirst();
 
         if (!$this->_locale) {
-            $this->_locale = $model::findFirst("locale = 'en'");
+            $this->_locale = $model::findFirst("language = '" . Config::CONFIG_DEFAULT_LANGUAGE . "'");
         }
     }
 

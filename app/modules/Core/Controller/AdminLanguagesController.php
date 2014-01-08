@@ -134,7 +134,7 @@ class AdminLanguagesController extends AbstractAdminController
 
         // upload flag
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
+            $iconPath = self::FLAGS_DIR . $lang->language . substr($files[0]->name, -4);
             @unlink(PUBLIC_PATH . $iconPath);
             $files[0]->moveTo(PUBLIC_PATH . $iconPath);
             $lang->icon = $iconPath;
@@ -142,7 +142,7 @@ class AdminLanguagesController extends AbstractAdminController
         }
 
         // check language file
-        $file = ROOT_PATH . '/app/var/languages/' . $lang->locale . '.php';
+        $file = ROOT_PATH . '/app/var/languages/' . $lang->language . '.php';
         if (!file_exists($file)) {
             file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = [];');
         }
@@ -180,7 +180,7 @@ class AdminLanguagesController extends AbstractAdminController
         $lang = $form->getValues();
 
         if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->locale . substr($files[0]->name, -4);
+            $iconPath = self::FLAGS_DIR . $lang->language . substr($files[0]->name, -4);
             @unlink(PUBLIC_PATH . $iconPath);
             $files[0]->moveTo(PUBLIC_PATH . $iconPath);
             $lang->icon = $iconPath;

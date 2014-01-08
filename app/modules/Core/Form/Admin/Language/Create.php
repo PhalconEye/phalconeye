@@ -21,6 +21,7 @@ namespace Core\Form\Admin\Language;
 use Core\Model\Language;
 use Engine\Db\AbstractModel;
 use Engine\Form;
+use Phalcon\Validation\Validator\StringLength;
 
 /**
  * Create language form.
@@ -69,9 +70,21 @@ class Create extends Form
 
         $this->addElement(
             'text',
+            'language',
+            [
+                'label' => 'Language',
+                'required' => true,
+                'validators' => [new StringLength(['min' => 2, 'max' => 2])]
+            ]
+        );
+
+        $this->addElement(
+            'text',
             'locale',
             [
-                'label' => 'Locale'
+                'label' => 'Locale',
+                'required' => true,
+                'validators' => [new StringLength(['min' => 5, 'max' => 5])]
             ]
         );
 

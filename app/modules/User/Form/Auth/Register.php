@@ -52,8 +52,7 @@ class Register extends Form
             [
                 'label' => 'Username',
                 'required' => true,
-                'validators' => [new StringLength(['min' => 2])
-                ]
+                'validators' => [new StringLength(['min' => 2])]
             ]
         );
 

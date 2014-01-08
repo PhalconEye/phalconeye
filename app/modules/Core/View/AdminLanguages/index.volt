@@ -47,6 +47,7 @@
                 <tr>
                     <th>{{ 'Id' | trans }}</th>
                     <th>{{ 'Name' | trans }}</th>
+                    <th>{{ 'Language' | trans }}</th>
                     <th>{{ 'Locale' | trans }}</th>
                     <th>{{ 'Icon' | trans }}</th>
                     <th>{{ 'Options' | trans }}</th>
@@ -62,10 +63,17 @@
                             {{ item.name }}
                         </td>
                         <td>
+                            {{ item.language }}
+                        </td>
+                        <td>
                             {{ item.locale }}
                         </td>
                         <td>
+                            {% if item.icon is empty %}
+                                No flag image.
+                            {% else %}
                             <img alt='' src='{{ url(item.icon) }}'/>
+                            {% endif %}
                         </td>
                         <td>
                             {{ link_to(['for':'admin-languages-manage', 'id':item.id], 'Manage' | trans) }}

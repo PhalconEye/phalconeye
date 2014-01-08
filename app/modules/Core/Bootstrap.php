@@ -18,11 +18,12 @@
 
 namespace Core;
 
+use Core\Model\Language;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
 use Engine\Translation\Db as TranslationDb;
-use Engine\Widget\Catalog;
+use Engine\Config as EngineConfig;
 use Phalcon\Config;
 use Phalcon\DI;
 use Phalcon\DiInterface;
@@ -75,7 +76,7 @@ class Bootstrap extends EngineBootstrap
         $di = $this->getDI();
         $config = $this->getConfig();
 
-        $this->_initLocale($di, $config);
+        $this->_initI18n($di, $config);
         if (!$config->installed) {
             return;
         }
@@ -110,6 +111,10 @@ class Bootstrap extends EngineBootstrap
      */
     protected function _initWidgets(DI $di)
     {
+        if ($di->get('app')->isConsole()) {
+            return;
+        }
+
         $cache = $di->get('cacheData');
         $cacheKey = "widgets_metadata.cache";
         $widgets = $cache->get($cacheKey);
@@ -133,20 +138,47 @@ class Bootstrap extends EngineBootstrap
      *
      * @return void
      */
-    protected function _initLocale(DI $di, Config $config)
+    protected function _initI18n(DI $di, Config $config)
     {
-        if ($config->installed) {
-            $locale = $di->get('session')->get('locale', Settings::getSetting('system_default_language'));
+        if ($di->get('app')->isConsole()) {
+            return;
+        }
+
+        if (!$di->get('session')->has('language')) {
+            /** @var Language $languageObject */
+            $autoLanguage = false;
+            $languageObject = null;
+            if ($config->installed) {
+                $language = Settings::getSetting('system_default_language');
+                if ($language == 'auto') {
+                    $autoLanguage = true;
+                } else {
+                    $languageObject = Language::findFirst("language = '" . $language . "'");
+                }
+            }
+
+            if (!$config->installed || $autoLanguage) {
+                $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+                $languageObject = Language::findFirst("language = '" . $locale . "' OR locale = '" . $locale . "'");
+            }
+
+            if ($languageObject) {
+                $di->get('session')->set('language', $languageObject->language);
+                $di->get('session')->set('locale', $languageObject->locale);
+            } else {
+                $di->get('session')->set('language', EngineConfig::CONFIG_DEFAULT_LANGUAGE);
+                $di->get('session')->set('locale', EngineConfig::CONFIG_DEFAULT_LOCALE);
+            }
         } else {
-            $locale = $di->get('session')->get('locale', 'en');
+            $language = $di->get('session')->get('language');
         }
 
         $translate = null;
 
         if (!$di->get('config')->application->debug || !$config->installed) {
             $messages = [];
-            if (file_exists(ROOT_PATH . "/app/var/languages/" . $locale . ".php")) {
-                require ROOT_PATH . "/app/var/languages/" . $locale . ".php";
+            if (file_exists(ROOT_PATH . "/app/var/languages/" . $language . ".php")) {
+                require ROOT_PATH . "/app/var/languages/" . $language . ".php";
             } else {
                 if (file_exists(ROOT_PATH . "/app/var/languages/en.php")) {
                     // fallback to default
@@ -163,7 +195,7 @@ class Bootstrap extends EngineBootstrap
             $translate = new TranslationDb(
                 [
                     'db' => $di->get('db'),
-                    'locale' => $locale,
+                    'language' => $language,
                     'model' => 'Core\Model\Language',
                     'translationModel' => 'Core\Model\LanguageTranslation'
                 ]

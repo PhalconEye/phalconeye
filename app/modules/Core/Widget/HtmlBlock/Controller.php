@@ -20,6 +20,7 @@ namespace Core\Widget\HtmlBlock;
 
 use Core\Model\Language;
 use Core\Model\Settings;
+use Engine\Config;
 use Engine\Form;
 use Engine\Widget\Controller as WidgetController;
 
@@ -43,13 +44,17 @@ class Controller extends WidgetController
     public function indexAction()
     {
         $this->view->title = $this->getParam('title');
-        $currentLocale = $this->session->get('locale', 'en');
-        $defaultLocale = Settings::getSetting('system_default_language', 'en');
+        $currentLanguage = $this->session->get('language');
+        $defaultLanguage = Settings::getSetting('system_default_language');
 
-        $html = $this->getParam('html_' . $currentLocale);
+        if (!$defaultLanguage || $defaultLanguage == 'auto') {
+            $defaultLanguage = Config::CONFIG_DEFAULT_LANGUAGE;
+        }
+
+        $html = $this->getParam('html_' . $currentLanguage);
         if (empty($html)) {
             // let's look at default language html
-            $html = $this->getParam('html_' . $defaultLocale);
+            $html = $this->getParam('html_' . $defaultLanguage);
             if (empty($html)) {
                 return $this->setNoRender();
             }

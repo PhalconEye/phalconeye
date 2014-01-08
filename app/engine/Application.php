@@ -154,6 +154,7 @@ class Application extends PhalconApplication
 
         // Set application main objects.
         $di = $this->_dependencyInjector;
+        $di->setShared('app', $this);
         $config = $this->_config;
         $eventsManager = new PhalconEventsManager();
         $this->setEventsManager($eventsManager);
@@ -169,7 +170,6 @@ class Application extends PhalconApplication
         // Set default services to the DI.
         $this->_attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
-        $di->setShared('app', $this);
     }
 
     /**
@@ -794,5 +794,15 @@ class Application extends PhalconApplication
                 }
             }
         }
+    }
+
+    /**
+     * Check if application is used from console.
+     *
+     * @return bool
+     */
+    public function isConsole()
+    {
+        return (php_sapi_name() == 'cli');
     }
 }

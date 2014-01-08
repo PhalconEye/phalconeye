@@ -60,8 +60,39 @@ class System extends Form
             ]
         );
 
-        $themes = [];
 
+        $this->addElement(
+            'select',
+            'system_theme',
+            [
+                'label' => 'Theme',
+                'options' => $this->_getThemeOptions(),
+                'value' => Settings::getSetting('system_theme')
+            ]
+        );
+
+
+        $this->addElement(
+            'select',
+            'system_default_language', [
+                'label' => 'Default language',
+                'options' => $this->_getLanguageOptions(),
+                'value' => Settings::getSetting('system_default_language')
+            ]
+        );
+
+        $this->addButton('Save', true);
+    }
+
+
+    /**
+     * Get themes options for select.
+     *
+     * @return array
+     */
+    protected function _getThemeOptions()
+    {
+        $themes = [];
         foreach (scandir(PUBLIC_PATH . self::THEMES_DIR) as $entry) {
             if ($entry == '.' || $entry == '..') {
                 continue;
@@ -69,26 +100,16 @@ class System extends Form
             $themes[$entry] = ucfirst($entry);
         }
 
-        $this->addElement(
-            'select',
-            'system_theme',
-            [
-                'label' => 'Theme',
-                'options' => $themes,
-                'value' => Settings::getSetting('system_theme')
-            ]
-        );
+        return $themes;
+    }
 
-        $this->addElement(
-            'select',
-            'system_default_language', [
-                'label' => 'Default language',
-                'options' => Language::find(),
-                'using' => ['locale', 'name'],
-                'value' => Settings::getSetting('system_default_language')
-            ]
-        );
+    protected function _getLanguageOptions()
+    {
+        $languages = ['auto' => 'Auto detect'];
+        foreach (Language::find() as $language) {
+            $languages[$language->language] = $language->name;
+        }
 
-        $this->addButton('Save', true);
+        return $languages;
     }
 }

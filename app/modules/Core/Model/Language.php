@@ -19,6 +19,7 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
+use Phalcon\Mvc\Model\Message;
 use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 /**
@@ -51,7 +52,12 @@ class Language extends AbstractModel
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="locale", size="50")
+     * @Column(type="string", nullable=false, column="language", size="2")
+     */
+    public $language;
+
+    /**
+     * @Column(type="string", nullable=false, column="locale", size="5")
      */
     public $locale;
 
@@ -80,11 +86,20 @@ class Language extends AbstractModel
      */
     public function validation()
     {
-        $this->validate(new Uniqueness(['field' => 'locale']));
+        $condition = "language = '" . $this->language . "' AND locale = '" . $this->locale . "'";
 
-        if ($this->validationHasFailed() == true) {
-            return false;
+        if (!empty($this->id)) {
+            $condition .=  "AND id != " . $this->id;
         }
+
+        $isValid = !(bool)Language::findFirst($condition);
+        if (!$isValid) {
+            $this->appendMessage(
+                new Message(sprintf('Language "%s" with locale "%s" already exists.', $this->language, $this->locale))
+            );
+        }
+
+        return $isValid;
     }
 
     /**
@@ -95,7 +110,7 @@ class Language extends AbstractModel
     public function beforeDelete()
     {
         $config = $this->getDI()->get('config');
-        $languageFile = $config->application->cache->cacheDir . '../languages/' . $this->locale . '.php';
+        $languageFile = $config->application->cache->cacheDir . '../languages/' . $this->language . '.php';
         @unlink($languageFile);
 
         $this->getLanguageTranslation()->delete();
@@ -115,7 +130,7 @@ class Language extends AbstractModel
             $messages[$translation->original] = $translation->translated;
         }
 
-        $file = $config->application->cache->cacheDir . '../languages/' . $this->locale . '.php';
+        $file = $config->application->cache->cacheDir . '../languages/' . $this->language . '.php';
         file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true) . ';');
     }
 }

@@ -32,6 +32,17 @@ use Phalcon\Config as PhalconConfig;
  */
 class Config
 {
+    const
+        /**
+         * Default language if there is no default selected.
+         */
+        CONFIG_DEFAULT_LANGUAGE = 'en',
+
+        /**
+         * Default locale if there no default language selected.
+         */
+        CONFIG_DEFAULT_LOCALE = 'en_US';
+
     /**
      * Save application config to file.
      *

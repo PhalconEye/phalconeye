@@ -266,11 +266,11 @@ class MenuItem extends AbstractModel
         }
 
         $valid = true;
-        $locale = $this->getDI()->get('session')->get('locale', 'en');
+        $language = $this->getDI()->get('session')->get('language', 'en');
         $languages = $this->getLanguages();
 
         if (!empty($languages)) {
-            $valid = in_array($locale, $languages);
+            $valid = in_array($language, $languages);
         }
 
         return $valid;

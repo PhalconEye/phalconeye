@@ -16,49 +16,49 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Controller;
+namespace Engine\Helper;
 
-use Core\Model\Language;
+use Engine\Helper;
+use Phalcon\DI;
+use Phalcon\Tag;
 
 /**
- * Home controller.
+ * I18n Formatter
  *
  * @category  PhalconEye
- * @package   Core\Controller
+ * @package   Engine\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
- *
- * @RoutePrefix("/", name="home")
  */
-class IndexController extends AbstractController
+class Formatter extends Helper
 {
     /**
-     * Home action.
+     * Get current url.
      *
-     * @return void
+     * @param mixed $number Number to format.
+     * @param mixed $style  Output style.
      *
-     * @Route("/", methods={"GET"}, name="home")
+     * @return mixed
      */
-    public function indexAction()
+    protected function _formatNumber($number, $style = \NumberFormatter::DECIMAL)
     {
-        $this->_checkLanguage();
-        $this->renderContent(null, null, 'home');
+        $locale = $this->getDI()->get('session')->get('locale');
+        $formatter = new \NumberFormatter($locale, $style);
+
+        return $formatter->format($number);
     }
 
     /**
-     * Check language parameter.
+     * Format currency.
      *
-     * @return void
+     * @param mixed $number Number to format.
+     *
+     * @return mixed
      */
-    protected function _checkLanguage()
+    protected function _formatCurrency($number)
     {
-        $language = $this->request->get('lang', 'string');
-        if ($language and $languageObject = Language::findFirst("language = '" . $language . "'")) {
-            $this->di->get('session')->set('language', $languageObject->language);
-            $this->di->get('session')->set('locale', $languageObject->locale);
-        }
+        return $this->_formatNumber($number, \NumberFormatter::CURRENCY);
     }
 }
-
