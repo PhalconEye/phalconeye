@@ -71,7 +71,7 @@ class Package extends AbstractPackage
 
         // Get widgets data if this package is module.
         if ($this->type == Manager::PACKAGE_TYPE_MODULE) {
-            $widgets = Widget::find(array('module' => $this->name));
+            $widgets = Widget::findByModule($this->name);
             foreach ($widgets as $widget) {
                 $data['widgets'][] = [
                     'name' => $widget->name,

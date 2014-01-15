@@ -236,7 +236,7 @@ class Manager
             throw new PackageException('Can\'t open archive...');
         }
 
-        $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . 'manifest.php');
+        $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . self::PACKAGE_MANIFEST_NAME);
         $manifest->offsetSet('isUpdate', false);
 
         // check itself
@@ -569,22 +569,25 @@ class Manager
         }
 
         // check manifest is correct
-        $manifest = include_once($manifestLocation);
-        if (!$manifest || !($manifest instanceof Config) || !$this->_checkPackageManifest($manifest)) {
+        $manifest = file_get_contents($manifestLocation);
+        if (
+            !($manifest = json_decode($manifest, true)) ||
+            !$this->_checkPackageManifest($manifest)
+        ) {
             throw new InvalidManifest('Manifest file is invalid or damaged.');
         }
 
-        return $manifest;
+        return new Config($manifest);
     }
 
     /**
      * Checks package manifest file.
      *
-     * @param Config $manifest Manifest data.
+     * @param array $manifest Manifest data.
      *
      * @return bool
      */
-    private function _checkPackageManifest(Config $manifest)
+    private function _checkPackageManifest($manifest)
     {
         foreach ($this->_manifestMinimumData as $key) {
             if (!array_key_exists($key, $manifest)) {

@@ -174,16 +174,18 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Get package data, convert json to array.
      *
+     * @param bool $assoc Return as associative array.
+     *
      * @return array|null
      */
-    public function getData()
+    public function getData($assoc = true)
     {
         if (is_array($this->data)) {
             return $this->data;
         }
 
         if (!empty($this->data)) {
-            return json_decode($this->data);
+            return json_decode($this->data, $assoc);
         }
 
         return null;

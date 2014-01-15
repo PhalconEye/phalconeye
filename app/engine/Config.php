@@ -133,6 +133,10 @@ class Config extends PhalconConfig
      */
     public function save($sections = self::CONFIG_DEFAULT_SECTION)
     {
+        if (!$this->_currentStage) {
+            return;
+        }
+
         $configDirectory = ROOT_PATH . self::CONFIG_PATH . $this->_currentStage;
         if (!is_array($sections)) {
             $sections = array($sections);

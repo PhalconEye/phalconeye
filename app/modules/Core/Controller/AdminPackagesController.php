@@ -188,8 +188,8 @@ class AdminPackagesController extends AbstractAdminController
                 if (!$manifest->isUpdate) {
                     $package = new Package();
                     $package->data = [
-                        'events' => (!empty($manifest['events']) ? $manifest['events'] : []),
-                        'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets'] : [])
+                        'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
+                        'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
                     ];
                     $package->save($manifest->toArray());
                     $this->_enablePackageConfig($package);

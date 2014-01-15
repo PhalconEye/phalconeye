@@ -1,37 +1,39 @@
 Version 0.4.0
- - Implemented isCached, cacheKey, cacheLifeTime methods for widgets caching
- - Implemented modules system
- - Implemented filters in forms
- - Implemented external Plugins
- - Implemented external Widgets
+ - Implemented isCached, cacheKey, cacheLifeTime methods for widgets caching.
+ - Implemented modules system.
+ - Implemented filters in forms.
+ - Implemented packages system.
+ - Implemented external Plugins.
+ - Implemented external Widgets.
  - Implemented console commands.
  - Implemented migrations system for engine and modules.
- - Added Phalcon 1.2.4 support
- - Added Less compiler
- - Added Phalcon assets manager
- - Added Profiler
- - Fixed form validation and form getValues before isValid method
- - Fixed widgets saving with empty parameters
- - Fixed #11
- - Fixed Exception trace logging
- - New default theme
- - Code styling
+ - Added Phalcon 1.2.4 support.
+ - Added Less compiler.
+ - Added Phalcon assets manager.
+ - Added Profiler.
+ - Fixed form validation and form getValues before isValid method.
+ - Fixed widgets saving with empty parameters.
+ - Fixed #11.
+ - Fixed Exception trace logging.
+ - New default theme.
+ - Code styling via phpcs and phpmd.
+ - Most system code has been refactored.
 
 Version 0.3.0
- - Some menu improvements: onclick action, icon, tooltip, language selector
- - Form class fully rewritten
- - Implemented session db handler
- - AjaXplorer added for file management
- - New style for admin panel
+ - Some menu improvements: onclick action, icon, tooltip, language selector.
+ - Form class fully rewritten.
+ - Implemented session db handler.
+ - AjaXplorer added for file management.
+ - New style for admin panel.
 
 Version 0.2.0
- - Views cache cleaning from admin
- - Routing annotations system
- - Acl management implemented
- - Added 'Class not found' log message
- - Page access management implemented
- - Menu items access management implemented
- - Added is_acl_controlled option for widget and implemented access management for widgets
- - is_paginated and is_acl_controlled now will be added for all kind of widgets admin form if option is enabled
- - Search text in languages management
- - Tested with Phalcon 1.0.0 Beta
+ - Views cache cleaning from admin.
+ - Routing annotations system.
+ - Acl management implemented.
+ - Added 'Class not found' log message.
+ - Page access management implemented.
+ - Menu items access management implemented.
+ - Added is_acl_controlled option for widget and implemented access management for widgets.
+ - is_paginated and is_acl_controlled now will be added for all kind of widgets admin form if option is enabled.
+ - Search text in languages management.
+ - Tested with Phalcon 1.0.0 Beta.
