@@ -83,7 +83,7 @@ class AdminPerformanceController extends AbstractAdminController
         switch ($data['adapter']) {
             case 0:
                 $cacheData['adapter'] = 'File';
-                $cacheData['cacheDir'] = $data['cacheDir'];
+                $cacheData['path'] = $data['cacheDir'];
                 break;
             case 1:
                 $cacheData['adapter'] = 'Memcache';
@@ -103,7 +103,7 @@ class AdminPerformanceController extends AbstractAdminController
         }
 
         $this->config->application->cache = new Config($cacheData);
-        $this->app->saveConfig();
+        $this->config->save();
         $this->flash->success('Settings saved!');
     }
 }

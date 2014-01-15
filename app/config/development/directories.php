@@ -12,30 +12,20 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
-  +------------------------------------------------------------------------+
 */
 
-namespace Core\Model;
-
-use Engine\Package\Model\AbstractPackageDependency;
-
 /**
- * Package dependency.
+ * WARNING
  *
- * @category  PhalconEye
- * @package   Core\Model
- * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
- * @license   New BSD License
- * @link      http://phalconeye.com/
+ * Manual changes to this file may cause a malfunction of the system.
+ * Be careful when changing settings!
  *
- * @Source("package_dependencies")
- * @BelongsTo("package_id", "Core\Model\Package", "id")
- * @BelongsTo("dependency_id", "Core\Model\Package", "id", {
- *  "alias": "Dependency"
- * })
  */
-class PackageDependency extends AbstractPackageDependency
-{
-}
+
+return array(
+    'engine' => ROOT_PATH . '/app/engine/',
+    'modules' => ROOT_PATH . '/app/modules/',
+    'plugins' => ROOT_PATH . '/app/plugins/',
+    'widgets' => ROOT_PATH . '/app/widgets/',
+    'libraries' => ROOT_PATH . '/app/libraries/'
+);

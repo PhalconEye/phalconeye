@@ -64,6 +64,6 @@ class User extends Helper
      */
     protected function _isUser()
     {
-        return UserModel::getViewer()->id > 0;
+        return (bool)UserModel::getViewer()->id;
     }
 }

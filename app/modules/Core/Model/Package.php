@@ -18,10 +18,8 @@
 
 namespace Core\Model;
 
-use Engine\Db\AbstractModel;
 use Engine\Package\Manager;
-use Phalcon\DI;
-use Phalcon\Mvc\Model\Resultset\Simple;
+use Engine\Package\Model\AbstractPackage;
 
 /**
  * Package.
@@ -41,119 +39,71 @@ use Phalcon\Mvc\Model\Resultset\Simple;
  *  "alias": "RelatedPackages"
  * })
  */
-class Package extends AbstractModel
+class Package extends AbstractPackage
 {
-
     /**
-     * @Primary
-     * @Identity
-     * @Column(type="integer", nullable=false, column="id", size="11")
-     */
-    public $id;
-
-    /**
-     * @Column(type="string", nullable=false, column="name", size="64")
-     */
-    public $name;
-
-    /**
-     * @Column(type="string", nullable=false, column="type", size="64")
-     */
-    public $type;
-
-    /**
-     * @Column(type="string", nullable=false, column="title", size="64")
-     */
-    public $title;
-
-    /**
-     * @Column(type="text", nullable=true, column="description")
-     */
-    public $description;
-
-    /**
-     * @Column(type="string", nullable=false, column="version", size="32")
-     */
-    public $version;
-
-    /**
-     * @Column(type="string", nullable=true, column="author", size="255")
-     */
-    public $author;
-
-    /**
-     * @Column(type="string", nullable=true, column="website", size="255")
-     */
-    public $website;
-
-    /**
-     * @Column(type="boolean", nullable=false, column="enabled")
-     */
-    public $enabled = true;
-
-    /**
-     * @Column(type="boolean", nullable=false, column="is_system")
-     */
-    public $is_system = false;
-
-    /**
-     * Return the related "PackageDependency" entity.
+     * Temporary dependencies data.
      *
-     * @param array $arguments Entity params.
-     *
-     * @return PackageDependency[]
+     * @var array
      */
-    public function getPackageDependency($arguments = [])
-    {
-        return $this->getRelated('PackageDependency', $arguments);
-    }
+    protected $_dependenciesData = [];
 
     /**
-     * Return the related "PackageDependency" entity.
+     * Set dependencies data.
      *
-     * @param array $arguments Entity params.
-     *
-     * @return PackageDependency[]
-     */
-    public function getRelatedPackages($arguments = [])
-    {
-        return $this->getRelated('RelatedPackages', $arguments);
-    }
-
-    /**
-     * Find package by type.
-     *
-     * @param string      $type    Package type.
-     * @param null|bool   $enabled Is enabled.
-     * @param null|string $order   Order by field.
-     *
-     * @return Simple
-     */
-    public static function findByType($type = Manager::PACKAGE_TYPE_MODULE, $enabled = null, $order = null)
-    {
-        /** @var \Phalcon\Mvc\Model\Query\Builder $query */
-        $query = DI::getDefault()->get('modelsManager')->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
-            ->where("t.type = '{$type}'");
-
-        if ($enabled !== null) {
-            $query->andWhere("t.enabled = {$enabled}");
-        }
-
-        if ($order !== null) {
-            $query->orderBy('t.' . $order);
-        }
-
-        return $query->getQuery()->execute();
-    }
-
-    /**
-     * Logic before removal.
+     * @param array $data Dependencies list.
      *
      * @return void
      */
-    protected function beforeDelete()
+    public function setDependencies($data)
     {
-        $this->getPackageDependency()->delete();
+        $this->_dependenciesData = $data;
+    }
+
+    /**
+     * Return package as string, package metadata.
+     *
+     * @return string
+     */
+    public function toJson()
+    {
+        $data = $this->getDefaultMetadata();
+
+        // Get widgets data if this package is module.
+        if ($this->type == Manager::PACKAGE_TYPE_MODULE) {
+            $widgets = Widget::find(array('module' => $this->name));
+            foreach ($widgets as $widget) {
+                $data['widgets'][] = [
+                    'name' => $widget->name,
+                    'module' => $this->name,
+                    'description' => $widget->description,
+                    'is_paginated' => $widget->is_paginated,
+                    'is_acl_controlled' => $widget->is_acl_controlled,
+                    'admin_form' => $widget->admin_form,
+                    'enabled' => (bool)$widget->enabled
+                ];
+            }
+        } else {
+            unset($data['widgets']);
+        }
+
+        // Get events
+        if ($this->type == Manager::PACKAGE_TYPE_MODULE || $this->type == Manager::PACKAGE_TYPE_PLUGIN) {
+            $events = $this->getDI()->get('config')->get('events');
+            if (!empty($events[$this->type]) && !empty($events[$this->type][$this->name])) {
+                foreach ($events[$this->type][$this->name] as $event) {
+                    $data['events'][] = $event;
+                }
+            }
+        }
+
+        // Check dependencies.
+        if (!empty($this->_dependenciesData)) {
+            $data['dependencies'] = $this->_dependenciesData;
+        } else {
+            unset($data['dependencies']);
+        }
+
+        return json_encode($data, JSON_PRETTY_PRINT);
     }
 }

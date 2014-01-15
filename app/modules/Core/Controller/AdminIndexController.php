@@ -56,7 +56,7 @@ class AdminIndexController extends AbstractAdminController
     {
         $this->view->disable();
         $this->config->application->debug = (bool)$this->request->get('debug', null, true);
-        $this->app->saveConfig();
+        $this->config->save();
         $this->app->clearCache();
     }
 }

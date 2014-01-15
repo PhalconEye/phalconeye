@@ -214,7 +214,7 @@ class Metadata
             if (!$enabled) {
                 continue;
             }
-            $modelsDirectory = $di->get('config')->application->modulesDir . ucfirst($module) . '/Model';
+            $modelsDirectory = $di->get('config')->directories->modules . ucfirst($module) . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelInfo = [];
                 $modelClass = '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath));

@@ -69,7 +69,7 @@ class Cli extends Application
     {
         // Get engine commands.
         $this->_getCommandsFrom(
-            $this->_config->application->engineDir . '/Console/Command',
+            $this->_config->directories->engine . '/Console/Command',
             'Engine\Console\Command\\'
         );
 
@@ -80,7 +80,7 @@ class Cli extends Application
             }
             $moduleName = ucfirst($name);
 
-            $path = $this->_config->application->modulesDir . $moduleName . '/Command';
+            $path = $this->_config->directories->modules . $moduleName . '/Command';
             $namespace = $moduleName . '\Command\\';
             $this->_getCommandsFrom($path, $namespace);
         }
@@ -133,6 +133,11 @@ class Cli extends Application
                                           Commands Manager", false, 1
         );
         print ConsoleUtil::infoLine('================================================================', false, 2);
+
+        if (!$this->_config->application->installed) {
+            print ConsoleUtil::error('Please, install system first.') . PHP_EOL;
+            die();
+        }
 
         if (!isset($_SERVER['argv'][1])) {
             $this->printAvailableCommands();

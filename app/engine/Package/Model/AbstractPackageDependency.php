@@ -16,26 +16,48 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Model;
+namespace Engine\Package\Model;
 
-use Engine\Package\Model\AbstractPackageDependency;
+use Engine\Db\AbstractModel;
 
 /**
- * Package dependency.
+ * Abstract package dependency.
  *
  * @category  PhalconEye
- * @package   Core\Model
+ * @package   Engine\Package\Model
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
- *
- * @Source("package_dependencies")
- * @BelongsTo("package_id", "Core\Model\Package", "id")
- * @BelongsTo("dependency_id", "Core\Model\Package", "id", {
- *  "alias": "Dependency"
- * })
  */
-class PackageDependency extends AbstractPackageDependency
+abstract class AbstractPackageDependency extends AbstractModel
 {
+    /**
+     * @Primary
+     * @Identity
+     * @Column(type="integer", nullable=false, column="id", size="11")
+     */
+    public $id;
+
+    /**
+     * @Column(type="integer", nullable=false, column="package_id", size="11")
+     */
+    public $package_id;
+
+    /**
+     * @Column(type="integer", nullable=false, column="dependency_id", size="11")
+     */
+    public $dependency_id;
+
+    /**
+     * Get related package.
+     *
+     * @param array $arguments Arguments.
+     *
+     * @return AbstractPackage
+     */
+    public function getDependencyPackage($arguments = [])
+    {
+        return $this->getRelated('Dependency', $arguments);
+    }
 }

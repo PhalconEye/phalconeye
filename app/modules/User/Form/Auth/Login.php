@@ -49,7 +49,7 @@ class Login extends Form
             'text',
             'login',
             [
-                'label' => 'Email',
+                'label' => 'Username/Email',
                 'required' => true
             ]
         );

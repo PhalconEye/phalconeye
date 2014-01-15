@@ -107,7 +107,7 @@ class Controller extends PhalconController
         if ($this->_widgetName !== null) {
             if ($this->_widgetModule !== null) {
                 $config = $this->di->get('config');
-                $controllerDir = $config->application->modulesDir .
+                $controllerDir = $config->directories->modules .
                     $this->_widgetModule .
                     '/Widget/' .
                     $this->_widgetName . '/';
@@ -121,7 +121,7 @@ class Controller extends PhalconController
                 $view->setLayout('widget');
             } else {
                 $config = $this->di->get('config');
-                $controllerDir = $config->application->widgetsDir . $this->_widgetName . '/';
+                $controllerDir = $config->directories->widgets . $this->_widgetName . '/';
                 $defaultModuleName = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
 
                 /** @var \Phalcon\Mvc\View $view */

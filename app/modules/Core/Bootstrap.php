@@ -23,8 +23,7 @@ use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
 use Engine\Translation\Db as TranslationDb;
-use Engine\Config as EngineConfig;
-use Phalcon\Config;
+use Engine\Config;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
@@ -77,7 +76,7 @@ class Bootstrap extends EngineBootstrap
         $config = $this->getConfig();
 
         $this->_initI18n($di, $config);
-        if (!$config->installed) {
+        if (!$config->application->installed) {
             return;
         }
 
@@ -92,7 +91,7 @@ class Bootstrap extends EngineBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        if ($config->installed) {
+        if ($config->application->installed) {
             $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
         }
 
@@ -146,36 +145,30 @@ class Bootstrap extends EngineBootstrap
 
         if (!$di->get('session')->has('language')) {
             /** @var Language $languageObject */
-            $autoLanguage = false;
             $languageObject = null;
-            if ($config->installed) {
+            if ($config->application->installed) {
                 $language = Settings::getSetting('system_default_language');
                 if ($language == 'auto') {
-                    $autoLanguage = true;
+                    $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+                    $languageObject = Language::findFirst("language = '" . $locale . "' OR locale = '" . $locale . "'");
                 } else {
                     $languageObject = Language::findFirst("language = '" . $language . "'");
                 }
-            }
-
-            if (!$config->installed || $autoLanguage) {
-                $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-                $languageObject = Language::findFirst("language = '" . $locale . "' OR locale = '" . $locale . "'");
             }
 
             if ($languageObject) {
                 $di->get('session')->set('language', $languageObject->language);
                 $di->get('session')->set('locale', $languageObject->locale);
             } else {
-                $di->get('session')->set('language', EngineConfig::CONFIG_DEFAULT_LANGUAGE);
-                $di->get('session')->set('locale', EngineConfig::CONFIG_DEFAULT_LOCALE);
+                $di->get('session')->set('language', Config::CONFIG_DEFAULT_LANGUAGE);
+                $di->get('session')->set('locale', Config::CONFIG_DEFAULT_LOCALE);
             }
-        } else {
-            $language = $di->get('session')->get('language');
         }
 
+        $language = $di->get('session')->get('language');
         $translate = null;
 
-        if (!$di->get('config')->application->debug || !$config->installed) {
+        if (!$config->application->debug || !$config->application->installed) {
             $messages = [];
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $language . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $language . ".php";

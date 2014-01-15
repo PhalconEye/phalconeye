@@ -39,10 +39,8 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
         $identity = Phalcon\DI::getDefault()->get('session')->get('identity');
         $viewer = \User\Model\User::findFirstById($identity);
         if (!$viewer || !$viewer->isAdmin()) {
-            die('401 Authorization Required');
+            die('Access not allowed');
         }
     }
-
 }
-
 ?>

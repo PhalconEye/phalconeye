@@ -258,7 +258,7 @@ class Acl extends AbstractApi
             }
             $moduleName = ucfirst($module);
 
-            $modelsPath = $config->application->modulesDir . $moduleName . '/Model';
+            $modelsPath = $config->directories->modules . $moduleName . '/Model';
             if (file_exists($modelsPath)) {
                 $files = scandir($modelsPath);
                 foreach ($files as $file) {

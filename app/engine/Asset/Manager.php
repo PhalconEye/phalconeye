@@ -95,7 +95,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Compile themes css.
         ///////////////////////////////////
-        if ($this->_config->installed && !empty($themeDirectory)) {
+        if ($this->_config->application->installed && !empty($themeDirectory)) {
             $themeFiles = glob($themeDirectory . '/*.less');
             FsUtilities::fsCheckLocation($location . 'css/');
             foreach ($themeFiles as $file) {
@@ -113,7 +113,7 @@ class Manager extends AssetManager
             }
 
             // CSS
-            $assetsPath = $this->_config->application->modulesDir . ucfirst($module) . '/Assets/';
+            $assetsPath = $this->_config->directories->modules . ucfirst($module) . '/Assets/';
             $path = $location . 'css/' . $module . '/';
             FsUtilities::fsCheckLocation($path);
             $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');

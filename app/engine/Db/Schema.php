@@ -168,7 +168,7 @@ class Schema
             if (!$enabled) {
                 continue;
             }
-            $modelsDirectory = $this->getDI()->get('config')->application->modulesDir . ucfirst($module) . '/Model';
+            $modelsDirectory = $this->getDI()->get('config')->directories->modules . ucfirst($module) . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelsInfo[] = [
                     'class' => '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath)),

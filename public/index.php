@@ -16,9 +16,23 @@
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
+/**
+ * Stages.
+ */
+define('APPLICATION_STAGE_DEVELOPMENT', 'development');
+define('APPLICATION_STAGE_PRODUCTION', 'production');
+define('APPLICATION_STAGE', (getenv('PHALCONEYE_STAGE') ? getenv('PHALCONEYE_STAGE') : APPLICATION_STAGE_PRODUCTION));
+
+/**
+ * Versions.
+ */
 define('PE_VERSION', '0.4.0');
 define('PHALCON_VERSION_REQUIRED', '1.2.4');
 define('PHP_VERSION_REQUIRED', '5.4.0');
+
+/**
+ * Pathes.
+ */
 define('DS', DIRECTORY_SEPARATOR);
 if (!defined('ROOT_PATH')) {
     define('ROOT_PATH', dirname(dirname(__FILE__)));
@@ -27,6 +41,7 @@ if (!defined('PUBLIC_PATH')) {
     define('PUBLIC_PATH', dirname(__FILE__));
 }
 
+require_once ROOT_PATH . "/app/engine/Config.php";
 require_once ROOT_PATH . "/app/engine/Exception.php";
 try {
     if (php_sapi_name() !== 'cli') {

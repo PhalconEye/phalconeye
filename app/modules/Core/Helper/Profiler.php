@@ -92,22 +92,37 @@ class Profiler extends Helper
         //////////////////////////////////////
         $htmlConfig = '';
         foreach ($config->toArray() as $key => $data) {
-            if (!is_array($data) || empty($data)) {
+            if (!is_array($data) || empty($data) || $key == 'database') {
                 continue;
             }
 
             $htmlConfig .= $renderTitle(ucfirst($key));
-            foreach ($data as $key2 => $data2) {
-                if (is_array($data2)) {
-                    foreach ($data2 as $key3 => $data3) {
-                        if (!is_array($data2)) {
-                            $htmlConfig .= $renderElement(ucfirst($key3), $data3);
-                        }
+            $renderConfigSection = function ($source) use ($renderElement, $renderTitle, &$renderConfigSection) {
+                $html = '';
+                foreach ($source as $key => $data) {
+                    if (is_array($data)) {
+                        $html .= '<br/>'. $renderTitle(ucfirst($key));
+                        $html .= $renderConfigSection($data);
+                    } else {
+                        $html .= $renderElement(ucfirst($key), $data);
                     }
-                } else {
-                    $htmlConfig .= $renderElement(ucfirst($key2), $data2);
                 }
-            }
+
+                return $html;
+            };
+//            foreach ($data as $key2 => $data2) {
+//                if (is_array($data2)) {
+//                    foreach ($data2 as $key3 => $data3) {
+//                        if (!is_array($data2)) {
+//                            $htmlConfig .= $renderElement(ucfirst($key3), $data3);
+//                        }
+//                    }
+//                } else {
+//                    $htmlConfig .= $renderElement(ucfirst($key2), $data2);
+//                }
+//            }
+
+            $htmlConfig .= $renderConfigSection($data);
 
             $htmlConfig .= '<br/>';
         }

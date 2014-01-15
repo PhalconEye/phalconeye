@@ -37,7 +37,7 @@ use Phalcon\Mvc\View;
  * @property \Phalcon\Cache\Backend  $cacheData
  * @property \Engine\Application     $app
  * @property \Engine\Asset\Manager   $assets
- * @property \Phalcon\Config         $config
+ * @property \Engine\Config          $config
  */
 abstract class AbstractController extends PhalconController
 {

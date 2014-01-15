@@ -24,7 +24,7 @@
 
     {% if show_auth is 1 %}
         <div class="header_auth">
-        {% if helper('user', 'user').isUser() %}
+        {% if not helper('user', 'user').isUser() %}
             <a href="{{ url('login') }}">{{ 'Login' | trans }}</a>&nbsp;
             |
             <a href="{{ url('register') }}">{{ 'Register' | trans }}</a>

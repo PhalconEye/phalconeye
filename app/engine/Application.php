@@ -21,32 +21,30 @@ namespace Engine;
 use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
-use Engine\Config as EngineConfig;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
-use Phalcon\Config;
-use Phalcon\Db\Adapter;
 use Phalcon\Db\Adapter\Pdo;
+use Phalcon\Db\Adapter;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
-use Phalcon\Events\Manager as PhalconEventsManager;
+use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
-use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger\Formatter\Line as FormatterLine;
+use Phalcon\Logger;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
-use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Router;
+use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Url;
-use Phalcon\Session\Adapter as SessionAdapter;
 use Phalcon\Session\Adapter\Files as SessionFiles;
+use Phalcon\Session\Adapter as SessionAdapter;
 
 /**
  * Application class.
@@ -64,11 +62,6 @@ use Phalcon\Session\Adapter\Files as SessionFiles;
 class Application extends PhalconApplication
 {
     const
-        /**
-         * System config location.
-         */
-        SYSTEM_CONFIG_PATH = '/app/config/engine.php',
-
         /**
          * Default module.
          */
@@ -95,8 +88,8 @@ class Application extends PhalconApplication
                 'environment',
                 'cache',
                 'annotations',
-                'router',
                 'database',
+                'router',
                 'session',
                 'flash',
                 'engine'
@@ -126,9 +119,9 @@ class Application extends PhalconApplication
         $di = new DI\FactoryDefault();
 
         // Get config.
-        $this->_config = include_once(ROOT_PATH . self::SYSTEM_CONFIG_PATH);
+        $this->_config = Config::factory();
 
-        if (!$this->_config->installed) {
+        if (!$this->_config->application->installed) {
             define('CHECK_REQUIREMENTS', true);
             require_once(PUBLIC_PATH . '/requirements.php');
         }
@@ -156,7 +149,7 @@ class Application extends PhalconApplication
         $di = $this->_dependencyInjector;
         $di->setShared('app', $this);
         $config = $this->_config;
-        $eventsManager = new PhalconEventsManager();
+        $eventsManager = new EventsManager();
         $this->setEventsManager($eventsManager);
 
         // Init services and engine system.
@@ -168,7 +161,8 @@ class Application extends PhalconApplication
         }
 
         // Set default services to the DI.
-        $this->_attachEngineEvents($eventsManager, $config);
+        // @TODO do not miss this line.
+//        $this->_attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
     }
 
@@ -217,19 +211,19 @@ class Application extends PhalconApplication
             }
             $moduleName = ucfirst($module);
 
-            $modulesNamespaces[$moduleName] = $this->_config->application->modulesDir . $moduleName;
+            $modulesNamespaces[$moduleName] = $this->_config->directories->modules . $moduleName;
             $bootstraps[$module] = $moduleName . '\Bootstrap';
         }
 
-        $modulesNamespaces['Engine'] = $config->application->engineDir;
-        $modulesNamespaces['Plugin'] = $config->application->pluginsDir;
-        $modulesNamespaces['Widget'] = $config->application->widgetsDir;
-        $modulesNamespaces['Library'] = $config->application->librariesDir;
+        $modulesNamespaces['Engine'] = $config->directories->engine;
+        $modulesNamespaces['Plugin'] = $config->directories->plugins;
+        $modulesNamespaces['Widget'] = $config->directories->widgets;
+        $modulesNamespaces['Library'] = $config->directories->libraries;
 
         $loader = new Loader();
         $loader->registerNamespaces($modulesNamespaces);
 
-        if ($config->application->debug && $config->installed) {
+        if ($config->application->debug && $config->application->installed) {
             $eventsManager->attach(
                 'loader',
                 function ($event, $loader, $className) use ($di) {
@@ -262,7 +256,7 @@ class Application extends PhalconApplication
         register_shutdown_function(['\Engine\Exception', 'shutdown']);
         set_exception_handler(['\Engine\Exception', 'exception']);
 
-        if ($config->application->debug && $config->application->profiler && $config->installed) {
+        if ($config->application->debug && $config->application->profiler && $config->application->installed) {
             $profiler = new Profiler();
             $di->set('profiler', $profiler);
         }
@@ -317,7 +311,7 @@ class Application extends PhalconApplication
         $defaultModuleName = ucfirst(self::SYSTEM_DEFAULT_MODULE);
 
         // Check installation.
-        if (!$di->get('config')->installed) {
+        if (!$config->application->installed) {
             $router = new RouterAnnotations(false);
 
             $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
@@ -376,7 +370,7 @@ class Application extends PhalconApplication
                 $moduleName = ucfirst($module);
 
                 // Get all file names.
-                $files = scandir($config->application->modulesDir . $moduleName . '/Controller');
+                $files = scandir($config->directories->modules . $moduleName . '/Controller');
 
                 // Iterate files.
                 foreach ($files as $file) {
@@ -433,7 +427,7 @@ class Application extends PhalconApplication
      */
     protected function initDatabase($di, $config, $eventsManager)
     {
-        if (!$config->installed) {
+        if (!$config->application->installed) {
             return;
         }
 
@@ -462,7 +456,7 @@ class Application extends PhalconApplication
                         $profiler->startProfile($statement);
                     }
                     if ($event->getType() == 'afterQuery') {
-                        //Stop the active profile.
+                        // Stop the active profile.
                         $profiler->stopProfile();
                     }
                 }
@@ -481,7 +475,7 @@ class Application extends PhalconApplication
                 $modelsManager = new ModelsManager();
                 $modelsManager->setEventsManager($eventsManager);
 
-                //Attach a listener to models-manager
+                // Attach a listener to models-manager
                 $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
                 return $modelsManager;
@@ -495,10 +489,10 @@ class Application extends PhalconApplication
         $di->set(
             'modelsMetadata',
             function () use ($config) {
-                if (!$config->application->debug && isset($config->metadata)) {
-                    $metaDataConfig = $config->metadata;
+                if (!$config->application->debug && isset($config->application->metadata)) {
+                    $metaDataConfig = $config->application->metadata;
                     $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                    $metaData = new $metadataAdapter($config->metadata->toArray());
+                    $metaData = new $metadataAdapter($config->application->metadata->toArray());
                 } else {
                     $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
                 }
@@ -526,7 +520,7 @@ class Application extends PhalconApplication
         if (!isset($config->application->session)) {
             $session = new SessionFiles();
         } else {
-            $adapterClass = $config->application->session->adapter;
+            $adapterClass = 'Phalcon\Session\Adapter\\' . $config->application->session->adapter;
             $session = new $adapterClass($config->application->session->toArray());
         }
         $session->start();
@@ -690,38 +684,23 @@ class Application extends PhalconApplication
         };
 
         // Clear files cache.
-        $deleteFiles(glob($config->application->cache->cacheDir . '*'));
+        $deleteFiles(glob($config->application->cache->path . '*'));
 
         // Clear view cache.
         $deleteFiles(glob($config->application->view->compiledPath . '*'));
 
         // Clear metadata cache.
-        if ($config->metadata && $config->metadata->metaDataDir) {
-            $deleteFiles(glob($config->metadata->metaDataDir . '*'));
+        if ($config->application->metadata && $config->application->metadata->path) {
+            $deleteFiles(glob($config->application->metadata->path . '*'));
         }
 
         // Clear annotations cache.
-        if ($config->annotations && $config->annotations->annotationsDir) {
-            $deleteFiles(glob($config->annotations->annotationsDir . '*'));
+        if ($config->application->annotations && $config->application->annotations->path) {
+            $deleteFiles(glob($config->application->annotations->path . '*'));
         }
 
         // Clear assets.
         $this->_dependencyInjector->getShared('assets')->clear();
-    }
-
-    /**
-     * Save application config to file.
-     *
-     * @param Config|null $config Config object.
-     *
-     * @return void
-     */
-    public function saveConfig($config = null)
-    {
-        if ($config === null) {
-            $config = $this->_config;
-        }
-        EngineConfig::save($config);
     }
 
     /**

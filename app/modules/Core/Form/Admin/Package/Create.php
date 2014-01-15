@@ -20,6 +20,7 @@ namespace Core\Form\Admin\Package;
 
 use Core\Model\Package;
 use Engine\Application;
+use Engine\Config;
 use Engine\Db\AbstractModel;
 use Engine\Form;
 use Engine\Form\Validator\Regex;
@@ -168,7 +169,7 @@ class Create extends Form
         }
 
         // Also check that config file is writable.
-        if (!is_writable(ROOT_PATH . Application::SYSTEM_CONFIG_PATH)) {
+        if (!is_writable(ROOT_PATH . Config::CONFIG_PATH)) {
             $this->addError('Configuration file isn\'t writable...');
 
             return false;

@@ -20,12 +20,14 @@ namespace Core\Controller;
 
 use Core\Form\Install\Database as DatabaseForm;
 use Core\Form\Install\Finish as FinishForm;
+use Core\Model\Package;
+use Core\Model\Settings;
 use Engine\Asset\Manager as AssetManager;
+use Engine\Config;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Db\Schema;
 use Engine\Package\Manager as PackageManager;
 use Phalcon\Assets\Collection as AssetsCollection;
-use Phalcon\Config;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Http\ResponseInterface;
 use Phalcon\Mvc\Model\Manager as ModelManager;
@@ -200,7 +202,7 @@ class InstallController extends AbstractController
                     );
                 }
 
-                $this->app->saveConfig($this->config);
+                $this->config->save('database');
                 $this->_setPassed(__FUNCTION__, true);
             } catch (\Exception $ex) {
                 $form->addError($ex->getMessage());
@@ -275,14 +277,13 @@ class InstallController extends AbstractController
         }
 
         $this->_resetStates();
-        $this->config->installed = true;
-        $this->config->installedVersion = PE_VERSION;
-        $this->app->saveConfig();
-
-        // Setup database to perform theme installation.
         $this->_setupDatabase();
+
+        $packageManager = new PackageManager(Package::find());
+        $packageManager->generateMetadata();
+
         $assetsManager = new AssetManager($this->getDI(), false);
-        $assetsManager->installAssets();
+        $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
 
         return $this->response->redirect();
     }

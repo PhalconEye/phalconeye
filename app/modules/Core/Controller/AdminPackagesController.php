@@ -187,8 +187,13 @@ class AdminPackagesController extends AbstractAdminController
                 // create package database object
                 if (!$manifest->isUpdate) {
                     $package = new Package();
+                    $package->data = [
+                        'events' => (!empty($manifest['events']) ? $manifest['events'] : []),
+                        'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets'] : [])
+                    ];
                     $package->save($manifest->toArray());
-                    $this->_enablePackageConfig($package->name, $package->type, $manifest->toArray());
+                    $this->_enablePackageConfig($package);
+                    $packageManager->generateMetadata(Package::find());
 
                     // install package dependencies
                     if ($manifest->get('dependencies')) {
@@ -238,12 +243,19 @@ class AdminPackagesController extends AbstractAdminController
             return;
         }
 
+        $package = $form->getValues();
         $data = $form->getValues(false);
+
+        if (!empty($data['header'])) {
+            $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
+        }
+
         $packageManager = new Manager();
         $packageManager->createPackage($data);
-        $this->_enablePackageConfig($data['name'], $data['type']);
+        $this->_enablePackageConfig($package);
+        $packageManager->generateMetadata(Package::find());
 
-        switch ($data['type']) {
+        switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
                 $return = 'admin-packages';
                 break;
@@ -286,7 +298,6 @@ class AdminPackagesController extends AbstractAdminController
      */
     public function editAction($type, $name, $return)
     {
-
         $package = $this->_getPackage($type, $name);
         if (!$package) {
             return $this->response->redirect(['for' => $return]);
@@ -330,20 +341,20 @@ class AdminPackagesController extends AbstractAdminController
         $this->view->disable();
         $package = $this->_getPackage($type, $name);
         if ($package) {
-            $dependecies = $form->getValues();
-            $data = $package->toArray();
+            $dependencies = $form->getValues();
+            $dependenciesData = [];
 
             /**
              * Collect modules.
              */
-            if (!empty($dependecies['modules'])) {
-                foreach ($dependecies['modules'] as $dependecy) {
-                    $package = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $dependecy);
+            if (!empty($dependencies['modules'])) {
+                foreach ($dependencies['modules'] as $dependency) {
+                    $depPackage = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $dependency);
 
-                    $data['dependencies'][] = [
-                        'name' => $dependecy,
+                    $dependenciesData[] = [
+                        'name' => $dependency,
                         'type' => Manager::PACKAGE_TYPE_MODULE,
-                        'version' => $package->version,
+                        'version' => $depPackage->version,
                     ];
                 }
             }
@@ -351,54 +362,22 @@ class AdminPackagesController extends AbstractAdminController
             /**
              * Collect libraries.
              */
-            if (!empty($dependecies['libraries'])) {
-                foreach ($dependecies['libraries'] as $dependecy) {
-                    $package = $this->_getPackage(Manager::PACKAGE_TYPE_LIBRARY, $dependecy);
+            if (!empty($dependencies['libraries'])) {
+                foreach ($dependencies['libraries'] as $dependency) {
+                    $depPackage = $this->_getPackage(Manager::PACKAGE_TYPE_LIBRARY, $dependency);
 
-                    $data['dependencies'][] = [
-                        'name' => $dependecy,
+                    $dependenciesData[] = [
+                        'name' => $dependency,
                         'type' => Manager::PACKAGE_TYPE_LIBRARY,
-                        'version' => $package->version,
+                        'version' => $depPackage->version,
                     ];
                 }
             }
 
-            /**
-             * Collect hooks and widgets.
-             */
-            if ($type == Manager::PACKAGE_TYPE_MODULE) {
-                $moduleEvents = $this->config->events->get($name);
-                if (!empty($moduleEvents)) {
-                    foreach ($moduleEvents as $event) {
-                        $data['events'][] = $event;
-                    }
-                }
-
-                $query = $this->modelsManager->createBuilder()
-                    ->from(['t' => '\Core\Model\Widget'])
-                    ->where("t.module = :module:", ['module' => $name]);
-
-                $widgets = $query->getQuery()->execute();
-                foreach ($widgets as $widget) {
-                    $data['widgets'][] = [
-                        'name' => $widget->name,
-                        'module' => $name,
-                        'description' => $widget->description,
-                        'is_paginated' => $widget->is_paginated,
-                        'is_acl_controlled' => $widget->is_acl_controlled,
-                        'admin_form' => $widget->admin_orm,
-                        'enabled' => (bool)$widget->enabled
-                    ];
-                }
-            } elseif ($type == Manager::PACKAGE_TYPE_PLUGIN) {
-                $pluginEvent = $this->config->plugins->get($name);
-                if (isset($pluginEvent['events'])) {
-                    $data['events'] = $pluginEvent['events'];
-                }
-            }
+            $package->setDependencies($dependenciesData);
 
             $packageManager = new Manager();
-            $packageManager->exportPackage($name, $data);
+            $packageManager->exportPackage($package);
         }
     }
 
@@ -438,11 +417,12 @@ class AdminPackagesController extends AbstractAdminController
                 }
 
                 $packageManager = new Manager();
-                $packageManager->removePackage($package->name, $package->type);
+                $packageManager->removePackage($package);
 
                 $package->delete();
 
                 $this->_removePackageConfig($name, $package->type);
+                $packageManager->generateMetadata(Package::find());
                 $this->app->clearCache();
                 $this->flashSession->success('Package "' . $name . '" removed!');
             } catch (PackageException $e) {
@@ -480,7 +460,7 @@ class AdminPackagesController extends AbstractAdminController
             $package->enabled = 1;
             $package->save();
 
-            $this->_enablePackageConfig($name, $package->type);
+            $this->_enablePackageConfig($package);
             $this->app->clearCache();
         }
 
@@ -515,7 +495,9 @@ class AdminPackagesController extends AbstractAdminController
             $package->enabled = 0;
             $package->save();
 
-            $this->_disablePackageConfig($name, $package->type);
+            $this->_disablePackageConfig($package);
+            $packageManager = new Manager(Package::find());
+            $packageManager->generateMetadata();
             $this->app->clearCache();
         }
 
@@ -564,58 +546,32 @@ class AdminPackagesController extends AbstractAdminController
     {
         switch ($type) {
             case Manager::PACKAGE_TYPE_MODULE:
-                $modules = $this->config->modules->toArray();
-                unset($modules[$name]);
-                $this->config->modules = new Config($modules);
-
-                $events = $this->config->events->toArray();
-                unset($events[$name]);
-                $this->config->events = new Config($events);
-
                 // remove widgets
                 $this->db->delete(Widget::getTableName(), 'module = ?', [$name]);
                 break;
-            case Manager::PACKAGE_TYPE_THEME:
-                break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $widget = Widget::findFirstByName($name);
-                if ($widget) {
+                if ($widget = Widget::findFirstByName($name)) {
                     $widget->delete();
                 }
                 break;
+            case Manager::PACKAGE_TYPE_THEME:
             case Manager::PACKAGE_TYPE_PLUGIN:
-                $plugins = $this->config->plugins->toArray();
-                unset($plugins[$name]);
-                $this->config->plugins = new Config($plugins);
                 break;
         }
-
-        $this->app->saveConfig();
     }
 
     /**
      * Enable package in config.
      *
-     * @param string     $name Package name.
-     * @param string     $type Package type.
-     * @param null|array $data Package data.
+     * @param Package $package Package object.
      *
      * @return void
      */
-    private function _enablePackageConfig($name, $type, $data = null)
+    private function _enablePackageConfig(Package $package)
     {
-        switch ($type) {
+        switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
-                $modules = $this->config->modules->toArray();
-                $modules[$name] = true;
-                $this->config->modules = new Config($modules);
-
-                if (!empty($data['events'])) {
-                    $events = $this->config->events->toArray();
-                    $events[$name] = $data['events'];
-                    $this->config->events = new Config($events);
-                }
-
+                $data = $package->getData();
                 // Install widgets.
                 if (!empty($data['widgets'])) {
                     $errors = [];
@@ -642,91 +598,47 @@ class AdminPackagesController extends AbstractAdminController
                     }
                 }
 
-                // enable module widgets
-                $this->db->update(Widget::getTableName(), ['enabled'], [1], "module = '{$name}'");
-                break;
-            case Manager::PACKAGE_TYPE_THEME:
+                // Enable module widgets.
+                $this->db->update(Widget::getTableName(), ['enabled'], [1], "module = '{$package->name}'");
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $widget = Widget::findFirstByName($name);
+                $widget = Widget::findFirstByName($package->name);
                 if ($widget) {
                     $widget->enabled = 1;
                     $widget->save();
                 } else {
                     $widget = new Widget();
-                    $package = $this->_getPackage($type, $name);
+                    $package = $this->_getPackage($package->type, $package->name);
                     $data = $package->toArray();
-                    $data['name'] = ucfirst($name);
+                    $data['name'] = ucfirst($package->name);
                     $widget->save($data);
                 }
                 break;
-            case Manager::PACKAGE_TYPE_PLUGIN:
-                $plugins = $this->config->plugins->toArray();
-                if (empty($plugins[$name])) {
-                    if (!empty($data['events'])) {
-                        $plugins[$name] = [
-                            'enabled' => true,
-                            'events' => $data['events']
-                        ];
-                    } else {
-                        $plugins[$name] = [
-                            'enabled' => true,
-                            'events' => ''
-                        ];
-                    }
-                } else {
-                    $plugins[$name]['enabled'] = true;
-                }
-                $this->config->plugins = new Config($plugins);
-                break;
         }
-
-        $this->app->saveConfig();
     }
 
     /**
      * Disable package in config.
      *
-     * @param string $name Package name.
-     * @param string $type Package type.
+     * @param Package $package Package object.
      *
      * @return void
      */
-    private function _disablePackageConfig($name, $type)
+    private function _disablePackageConfig(Package $package)
     {
-        switch ($type) {
+        switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
-                $modules = $this->config->modules->toArray();
-                $modules[$name] = false;
-                $this->config->modules = new Config($modules);
-
                 // Disable module widgets.
-                $this->db->update(Widget::getTableName(), ['enabled'], [0], "module = '{$name}'");
-                break;
-            case Manager::PACKAGE_TYPE_THEME:
+                $this->db->update(Widget::getTableName(), ['enabled'], [0], "module = '{$package->name}'");
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $widget = Widget::findFirstByName($name);
+                $widget = Widget::findFirstByName($package->name);
                 if ($widget) {
                     $widget->enabled = 0;
                     $widget->save();
                 }
                 break;
-            case Manager::PACKAGE_TYPE_PLUGIN:
-                $plugins = $this->config->plugins->toArray();
-                if (empty($plugins[$name])) {
-                    $plugins[$name] = [
-                        'enabled' => false,
-                        'events' => ''
-                    ];
-                } else {
-                    $plugins[$name]['enabled'] = false;
-                }
-                $this->config->plugins = new Config($plugins);
-                break;
         }
-
-        $this->app->saveConfig();
     }
 
     /**
