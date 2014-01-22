@@ -18,9 +18,9 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form;
 use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
-use Engine\Form;
 
 /**
  * Form element - CkEditor.

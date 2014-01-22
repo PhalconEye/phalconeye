@@ -20,6 +20,7 @@ namespace Core\Form\Admin\Package;
 
 use Core\Form\Admin\Package\FieldSet\Widget;
 use Core\Model\Package;
+use Core\Model\Widget as WidgetModel;
 use Engine\Config;
 use Engine\Db\AbstractModel;
 use Engine\Form;
@@ -108,9 +109,6 @@ class Create extends Form
      */
     protected function _setConditions()
     {
-        $fieldSet = $this->getFieldSet(self::FIELDSET_WIDGET);
-        $fieldSet->setCondition('is_paginated', 'module', 'core');
-
         $this->setFieldSetCondition(self::FIELDSET_WIDGET, 'type', 'widget');
     }
 
@@ -121,10 +119,6 @@ class Create extends Form
      */
     protected function _setValidation()
     {
-        $this
-            ->addFilter('author', self::FILTER_INT)
-            ->addFilter('website', self::FILTER_UPPER);
-
         $fieldSet = $this->getFieldSet(self::FIELDSET_CONTENT);
         $fieldSet->getValidation()
             ->add(
@@ -187,25 +181,33 @@ class Create extends Form
             return false;
         }
 
+        if (isset($data['type']) && $data['type'] == 'widget' && !$this->hasEntity('widget')) {
+            $this->addEntity(new WidgetModel(), 'widget');
+        }
+
         if (!parent::isValid($data, $skipEntityCreation)) {
             return false;
         }
 
         // Check package existence.
-        /** @var \Phalcon\Mvc\Model\Query\Builder $query */
-        $query = $this->getDI()->get('modelsManager')->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
-            ->where('t.type = :type: AND t.name = :name:', ['type' => $data['type'], 'name' => $data['name']]);
-
-        /** @var \Phalcon\Mvc\Model\Resultset\Simple $package */
-        $package = $query->getQuery()->execute();
-        if ($package->count() == 1) {
+        $id = $this->getEntity()->id;
+        $condition = "type='{$data['type']}' AND name='{$data['name']}'" . ($id ? " AND id!='{$id}'" : '');
+        if (Package::findFirst($condition)) {
             $this->addError('Package with that name already exist!');
-
             return false;
         }
 
-        $this->getEntity()->save();
+        // Check widget existence.
+        if ($this->hasEntity('widget')) {
+            $name = ucfirst($data['name']);
+            $id = $this->getEntity('widget')->id;
+            $condition = "module='{$data['module']}' AND name='{$name}'" . ($id ? " AND id!='{$id}'" : '');
+
+            if (WidgetModel::findFirst($condition)) {
+                $this->addError('Widget with that name already exist!');
+                return false;
+            }
+        }
 
         return true;
     }

@@ -387,13 +387,14 @@ trait ElementsBehaviour
     /**
      * Checkbox element.
      *
-     * @param string      $name        Element name.
-     * @param string|null $label       Element label.
-     * @param string|null $description Element description.
-     * @param mixed|null  $value       Element value.
-     * @param bool        $isChecked   Element is checked.
-     * @param array       $options     Element options.
-     * @param array       $attributes  Element attributes.
+     * @param string      $name         Element name.
+     * @param string|null $label        Element label.
+     * @param string|null $description  Element description.
+     * @param mixed|null  $value        Element value.
+     * @param bool        $isChecked    Element is checked.
+     * @param mixed       $defaultValue Element default value.
+     * @param array       $options      Element options.
+     * @param array       $attributes   Element attributes.
      *
      * @return $this
      */
@@ -403,6 +404,7 @@ trait ElementsBehaviour
         $description = null,
         $value = null,
         $isChecked = false,
+        $defaultValue = null,
         array $options = [],
         array $attributes = []
     )
@@ -417,7 +419,8 @@ trait ElementsBehaviour
             ->setOption('label', $label)
             ->setOption('description', $description)
             ->setOption('checked', $isChecked)
-            ->setValue($value);
+            ->setOption('defaultValue', $defaultValue)
+            ->setAttribute('value', $value);
         $this->add($element);
 
         return $this;

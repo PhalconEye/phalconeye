@@ -19,8 +19,8 @@
 namespace Engine\Form\Behaviour;
 
 use Engine\Form;
-use Phalcon\Validation\Message\Group;
 use Phalcon\Validation\Message;
+use Phalcon\Validation\Message\Group;
 
 /**
  * FieldSet behaviour.

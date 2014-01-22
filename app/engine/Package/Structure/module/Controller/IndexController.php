@@ -29,6 +29,10 @@ namespace %nameUpper%\Controller;
 class IndexController extends AbstractController
 {
     /**
+     * Module index action.
+     *
+     * @return void
+     *
      * @Route("/", methods={"GET"}, name="%name%s")
      */
     public function indexAction()

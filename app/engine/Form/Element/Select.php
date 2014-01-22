@@ -18,11 +18,11 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Form;
 use Engine\Form\AbstractElement;
 use Engine\Form\Behaviour\TranslationBehaviour;
 use Engine\Form\ElementInterface;
 use Engine\Form\Exception;
-use Engine\Form;
 
 /**
  * Form element - Select.

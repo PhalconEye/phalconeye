@@ -43,7 +43,7 @@ class Header extends Form
 
         $this->addContentFieldSet()
             ->addRemoteFile('logo', 'Logo image (url)')
-            ->addCheckbox('show_title', 'Show site title', null, 1)
-            ->addCheckbox('show_auth', 'Show authentication links (logo, register, logout, etc)', null, 1);
+            ->addCheckbox('show_title', 'Show site title', null, 1, false, 0)
+            ->addCheckbox('show_auth', 'Show authentication links (logo, register, logout, etc)', null, 1, false, 0);
     }
 }

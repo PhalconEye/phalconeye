@@ -284,7 +284,8 @@ abstract class AbstractElement implements ElementInterface
             'required',
             'emptyAllowed',
             'ignore',
-            'htmlTemplate'
+            'htmlTemplate',
+            'defaultValue'
         ];
     }
 

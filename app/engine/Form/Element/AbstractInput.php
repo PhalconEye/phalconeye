@@ -47,7 +47,7 @@ abstract class AbstractInput extends AbstractElement implements ElementInterface
      */
     public function getDefaultAttributes()
     {
-        return ['id' => $this->getName(), 'name' => $this->getName(), 'type' => $this->getInputType()];
+        return array_merge(parent::getDefaultAttributes(), ['type' => $this->getInputType()]);
     }
 
     /**

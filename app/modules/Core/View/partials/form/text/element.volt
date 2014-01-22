@@ -15,11 +15,12 @@
 {% if instanceof(element, 'Engine\Form\FieldSet') %}
     {{ partial(resolveView("partials/form/default/fieldSet", 'core'), ['fieldSet': element]) }}
 {% else %}
-    {% if combined is not defined or not combined %}
-        <div class="form_element_container{% if form.hasErrors(element.getName()) %} validation_failed{% endif %}">
-    {% endif %}
-
     {% if element.useDefaultLayout() %}
+
+        {% if combined is not defined or not combined %}
+            <div class="form_element_container{% if form.hasErrors(element.getName()) %} validation_failed{% endif %}">
+        {% endif %}
+
         <div class="form_label">
             {% if element.getOption('label') %}
                 <label for="{{ element.getName() }}">
@@ -41,11 +42,12 @@
             {% endif %}
             {{ element.getValue() }}
         </div>
+
+        {% if combined is not defined or not combined %}
+            </div>
+        {% endif %}
+
     {% else %}
         {{ element.getValue() }}
-    {% endif %}
-
-    {% if combined is not defined or not combined %}
-        </div>
     {% endif %}
 {% endif %}

@@ -244,22 +244,28 @@ class Form implements ElementContainerInterface
      */
     public function setValue($name, $value, $container = null)
     {
+        $isRoot = false;
+        $found = false;
         if (!$container) {
+            $isRoot = true;
             $container = $this;
         }
 
         /** @var AbstractElement|FieldSetBehaviour $element */
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
-                $this->setValue($name, $value, $element);
-                return $this;
+                $found = $found || $this->setValue($name, $value, $element);
             } elseif (!$element->isIgnored() && $element->getName() == $name) {
                 $element->setValue($value);
                 return $this;
             }
         }
 
-        throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+        if ($isRoot && !$found) {
+            throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+        }
+
+        return $found;
     }
 
     /**
@@ -299,20 +305,28 @@ class Form implements ElementContainerInterface
      */
     public function getValue($name, $container = null)
     {
+        $isRoot = false;
+        $found = null;
         if (!$container) {
+            $isRoot = true;
             $container = $this;
         }
 
         /** @var AbstractElement|FieldSetBehaviour $element */
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
-                return $this->getValue($name, $element);
+                $value = $this->getValue($name, $element);
+                $found = ($value || $found ? $value : $found);
             } elseif (!$element->isIgnored() && $element->getName() == $name) {
                 return $element->getValue();
             }
         }
 
-        throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+        if ($isRoot && !$found) {
+            throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+        }
+
+        return $found;
     }
 
     /**
@@ -538,9 +552,9 @@ class Form implements ElementContainerInterface
         /**
          * What data must have element, that was not sent to server? If used null as default - all will be null.
          */
-        if ($this->_useNullValue) {
+        if ($this->_useDefaultValue) {
             if (!isset($data[$element->getName()]) || $data[$element->getName()] == '') {
-                $data[$element->getName()] = null;
+                $data[$element->getName()] = $element->getOption('defaultValue');
             }
         }
 

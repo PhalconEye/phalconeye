@@ -91,11 +91,11 @@ trait FormBehaviour
     protected $_useToken = false;
 
     /**
-     * Use null values if element is empty.
+     * Use default values if element is empty (Without setting element default - it is 'null').
      *
      * @var bool
      */
-    protected $_useNullValue = true;
+    protected $_useDefaultValue = true;
 
     /**
      * Elements filters.
@@ -290,10 +290,12 @@ trait FormBehaviour
      *
      * @return $this
      */
-    public function addEntity(AbstractModel $entity, $name = null)
+    public function addEntity($entity, $name = null)
     {
-        $this->_entities[$name] = $entity;
-        $this->setValues($entity->toArray());
+        if ($entity) {
+            $this->_entities[$name] = $entity;
+            $this->setValues($entity->toArray());
+        }
         return $this;
     }
 
@@ -311,6 +313,18 @@ trait FormBehaviour
     }
 
     /**
+     * Check if form has some entity.
+     *
+     * @param string $name Entity name.
+     *
+     * @return bool
+     */
+    public function hasEntity($name)
+    {
+        return isset($this->_entities[$name]);
+    }
+
+    /**
      * Get entity.
      *
      * @param string|null $name Entity name.
@@ -320,7 +334,7 @@ trait FormBehaviour
      */
     public function getEntity($name = null)
     {
-        if (!isset($this->_entities)) {
+        if (!$this->hasEntity($name)) {
             throw new Form\Exception(sprintf('Entity with name "%s" not found in container.', $name));
         }
 

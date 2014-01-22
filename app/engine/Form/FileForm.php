@@ -19,10 +19,10 @@
 namespace Engine\Form;
 
 use Engine\Exception;
+use Engine\Form\Behaviour\TranslationBehaviour;
+use Engine\Form;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
-use Engine\Form;
-use Engine\Form\Behaviour\TranslationBehaviour;
 use Phalcon\Filter;
 use Phalcon\Http\Request\FileInterface;
 use Phalcon\Tag as Tag;

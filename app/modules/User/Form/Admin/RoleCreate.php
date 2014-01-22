@@ -65,7 +65,7 @@ class RoleCreate extends Form
         $this->addContentFieldSet()
             ->addText('name')
             ->addTextArea('description')
-            ->addCheckbox('is_default', 'Is Default', null, 1);
+            ->addCheckbox('is_default', 'Is Default', null, 1, false, 0);
 
         $this->addFooterFieldSet()
             ->addButton('create')

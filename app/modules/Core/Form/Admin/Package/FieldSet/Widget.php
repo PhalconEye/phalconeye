@@ -20,7 +20,6 @@ namespace Core\Form\Admin\Package\FieldSet;
 
 use Core\Model\Package;
 use Engine\Form\FieldSet;
-use Engine\Form\Validator\Regex;
 use Engine\Package\Manager;
 
 /**
@@ -56,14 +55,18 @@ class Widget extends FieldSet
                 'Is Paginated?',
                 'If this enabled - widget will has additional control
                     enabled for allowed per page items count selection in admin form',
-                1
+                1,
+                false,
+                0
             )
             ->addCheckbox(
                 'is_acl_controlled',
                 'Is ACL controlled?',
                 'If this enabled - widget will has additional control
                     enabled for allowed roles selection in admin form',
-                1
+                1,
+                false,
+                0
             )
             ->addSelect(
                 'admin_form',
@@ -76,27 +79,8 @@ class Widget extends FieldSet
                 ]
             )
             ->addText('form_class', 'Form class', 'Enter existing form class')
-            ->addCheckbox('enabled', 'Enabled?', null, 1);
+            ->addCheckbox('enabled', 'Enabled?', null, 1, false, 0);
 
-        $this->_setValidation();
-    }
-
-    /**
-     * Set elements validation.
-     *
-     * @return void
-     */
-    protected function _setValidation()
-    {
-        $this->getValidation()
-            ->add(
-                'test',
-                new Regex(
-                    [
-                        'pattern' => '/[a-z]+/',
-                        'message' => 'TEEEEEEEEEEEST Name must be in lowercase and contains only letters.'
-                    ]
-                )
-            );
+        $this->setCondition('form_class', 'admin_form', 'form_class');
     }
 }

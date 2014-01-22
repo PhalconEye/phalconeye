@@ -19,8 +19,8 @@
 namespace Engine\Form;
 
 use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FormBehaviour;
 use Engine\Form;
+use Engine\Form\Behaviour\FormBehaviour;
 use Engine\Form\Behaviour\TranslationBehaviour;
 use Phalcon\DI;
 use Phalcon\Filter;

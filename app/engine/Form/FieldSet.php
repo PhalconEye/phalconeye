@@ -19,8 +19,8 @@
 namespace Engine\Form;
 
 use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form;
 use Engine\Form\Behaviour\FieldSetBehaviour;
+use Engine\Form;
 use Phalcon\Validation\Message\Group;
 
 

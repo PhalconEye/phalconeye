@@ -168,9 +168,15 @@ class Manager
     {
         $data['defaultModuleUpper'] = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
         $data['nameUpper'] = ucfirst($data['name']);
+        $data['moduleNamespace'] = '';
 
         if ($data['type'] == self::PACKAGE_TYPE_THEME) {
             $packageLocation = $this->getPackageLocation($data['type']) . $data['name'];
+        } elseif ($data['type'] == self::PACKAGE_TYPE_WIDGET && !empty($data['module'])) {
+            $data['moduleNamespace'] = ucfirst($data['module']);
+            $packageLocation = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) .
+                $data['moduleNamespace'] . '/Widget/' . $data['nameUpper'];
+            $data['moduleNamespace'] .= '\\';
         } else {
             $packageLocation = $this->getPackageLocation($data['type']) . $data['nameUpper'];
         }
@@ -332,7 +338,16 @@ class Manager
     public function removePackage($package)
     {
         $fullName = ucfirst($package->name);
-        $path = $this->getPackageLocation($package->type) . $fullName;
+        $packageData = $package->getData();
+
+        if ($package->type == self::PACKAGE_TYPE_THEME) {
+            $path = $this->getPackageLocation($package->type) . $package->name;
+        } elseif ($package->type == self::PACKAGE_TYPE_WIDGET && !empty($packageData['module'])) {
+            $path = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) .
+                ucfirst($packageData['module']) . '/Widget/' . $fullName;
+        } else {
+            $path = $this->getPackageLocation($package->type) . $fullName;
+        }
 
         // Check package metadata
         $metadataFile = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES . '/' .

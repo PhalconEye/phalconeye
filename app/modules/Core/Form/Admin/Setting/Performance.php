@@ -75,7 +75,7 @@ class Performance extends Form
              */
             ->addText('host', 'Memcached host', null, '127.0.0.1')
             ->addText('port', 'Memcached port', null, '11211')
-            ->addCheckbox('persistent', 'Create a persistent connection to memcached?', null, 1, true)
+            ->addCheckbox('persistent', 'Create a persistent connection to memcached?', null, 1, true, 0)
 
             /**
              * Mongo options.
@@ -92,7 +92,7 @@ class Performance extends Form
             /**
              * Other.
              */
-            ->addCheckbox('clear_cache', 'Clear cache', 'All system cache will be cleaned.', 1);
+            ->addCheckbox('clear_cache', 'Clear cache', 'All system cache will be cleaned.', 1, false, 0);
 
         $this->addFooterFieldSet()->addButton('save');
 

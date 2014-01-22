@@ -13,10 +13,10 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
 */
-%header %
-namespace Widget\%nameUpper %;
+%header%
+namespace %moduleNamespace%Widget\%nameUpper%;
 
-use Engine\Form as Form;
+use Engine\Form as Form;use Engine\Widget\Controller as WidgetController;
 
 /**
  * Widget %nameUpper%.
@@ -24,7 +24,7 @@ use Engine\Form as Form;
  * @category PhalconEye\Widget
  * @package  Widget
  */
-class Controller extends \Engine\Widget\Controller
+class Controller extends WidgetController
 {
     /**
      * Index action.

@@ -91,7 +91,7 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * @Column(type="text", nullable=true, column="data")
      */
-    public $data = false;
+    public $data;
 
     /**
      * Find package by type.
@@ -205,10 +205,10 @@ abstract class AbstractPackage extends AbstractModel
      */
     protected function beforeSave()
     {
-        if (is_array($this->data) && !empty($this->data)) {
-            $this->data = json_encode($this->data);
-        } else {
+        if (empty($this->data)) {
             $this->data = null;
+        } elseif (is_array($this->data)) {
+            $this->data = json_encode($this->data);
         }
     }
 

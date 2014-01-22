@@ -20,10 +20,10 @@ namespace Engine\Form\Validator;
 
 use Phalcon\DI;
 use Phalcon\Http\Request;
+use Phalcon\Validation;
 use Phalcon\Validation\Message\Group;
 use Phalcon\Validation\Validator;
 use Phalcon\Validation\ValidatorInterface;
-use Phalcon\Validation;
 
 /**
  * Form validator - Mime.

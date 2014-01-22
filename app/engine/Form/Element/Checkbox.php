@@ -47,6 +47,16 @@ class Checkbox extends AbstractElement implements ElementInterface
     }
 
     /**
+     * Get element default attribute.
+     *
+     * @return array
+     */
+    public function getDefaultAttributes()
+    {
+        return array_merge(parent::getDefaultAttributes(), ['type' => 'checkbox']);
+    }
+
+    /**
      * Sets the element option.
      *
      * @param string $value Element value.
@@ -55,16 +65,11 @@ class Checkbox extends AbstractElement implements ElementInterface
      */
     public function setValue($value)
     {
-        if ($this->_value === null) {
-            $this->_value = $value;
+        $this->_value = ($value == '' ? $this->getOption('defaultValue') : $value);
+        if ($this->_value == $this->getAttribute('value')) {
+            $this->setOption('checked', 'checked');
         } else {
-            if ($this->_value == $value) {
-                $this->setOption('checked', 'checked');
-                $this->setOption('ignore', false);
-            } else {
-                $this->setOption('checked', null);
-                $this->setOption('ignore', true);
-            }
+            $this->setOption('checked', null);
         }
 
         return $this;
@@ -81,7 +86,7 @@ class Checkbox extends AbstractElement implements ElementInterface
             'htmlTemplate',
             '
             <div class="form_element_radio">
-            <input type="checkbox" value="%s"' . $this->_renderAttributes() . '%s/>
+            <input' . $this->_renderAttributes() . '%s/>
             </div>
             '
         );
@@ -96,7 +101,6 @@ class Checkbox extends AbstractElement implements ElementInterface
     {
         return sprintf(
             $this->getHtmlTemplate(),
-            $this->getValue(),
             ($this->getOption('checked') ? ' checked="checked"' : '')
         );
     }

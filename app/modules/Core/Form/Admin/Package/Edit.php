@@ -19,7 +19,8 @@
 namespace Core\Form\Admin\Package;
 
 use Core\Model\Package;
-use Engine\Db\AbstractModel;
+use Engine\Form\Validator\Regex;
+use Engine\Package\Manager;
 
 /**
  * Edit package.
@@ -41,20 +42,29 @@ class Edit extends Create
     protected $_link;
 
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
-     * @param string             $link  Back link.
+     * @param Package $entity Entity object.
+     * @param string  $link   Back link.
      */
-    public function __construct($model = null, $link = 'admin-packages')
+    public function __construct(Package $entity = null, $link = 'admin-packages')
     {
         $this->_link = $link;
+        parent::__construct();
 
-        if ($model === null) {
-            $model = new Package();
+        if (!$entity) {
+            $entity = new Package();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
+        if ($entity->type == Manager::PACKAGE_TYPE_WIDGET) {
+            $widget = $entity->getWidget();
+            if ($widget->admin_form && $widget->admin_form != 'action') {
+                $this->setValue('form_class', $widget->admin_form);
+                $widget->admin_form = 'form_class';
+            }
+            $this->addEntity($widget, 'widget');
+        }
     }
 
     /**
@@ -72,11 +82,37 @@ class Edit extends Create
         $this->getFieldSet(self::FIELDSET_CONTENT)
             ->remove('name')
             ->remove('type')
-            ->remove('header');
+            ->remove('header')
+            ->addHidden('type')
+            ->addHidden('name');
 
         $this->getFieldSet(self::FIELDSET_FOOTER)
             ->clearElements()
             ->addButton('save')
             ->addButtonLink('cancel', 'Cancel', ['for' => $this->_link]);
+
+        $this->getFieldSet(self::FIELDSET_WIDGET)
+            ->remove('module')
+            ->addHidden('module');
+    }
+
+    /**
+     * Set elements validation.
+     *
+     * @return void
+     */
+    protected function _setValidation()
+    {
+        $fieldSet = $this->getFieldSet(self::FIELDSET_CONTENT);
+        $fieldSet->getValidation()
+            ->add(
+                'version',
+                new Regex(
+                    [
+                        'pattern' => '/\d+(\.\d+)+/',
+                        'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
+                    ]
+                )
+            );
     }
 }

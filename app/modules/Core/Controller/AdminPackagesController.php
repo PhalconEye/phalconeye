@@ -25,6 +25,7 @@ use Core\Form\Admin\Package\Upload as UploadForm;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Widget;
+use Engine\Form;
 use Engine\Navigation;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
@@ -239,12 +240,14 @@ class AdminPackagesController extends AbstractAdminController
     {
         $this->view->form = $form = new CreateForm();
 
-        if (!$this->request->isPost() || !$form->isValid(null, true)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $package = $form->getEntity();
         $data = $form->getValues();
+        /** @var Package $package */
+        $package = $form->getEntity();
+        $this->_setWidgetData($form, $package, $data);
 
         if (!empty($data['header'])) {
             $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
@@ -305,9 +308,13 @@ class AdminPackagesController extends AbstractAdminController
 
         $this->view->form = $form = new EditForm($package, $return);
 
-        if (!$this->request->isPost() || !$form->isValid($_POST, null, true)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
+
+        $data = $form->getValues();
+        $package = $form->getEntity();
+        $this->_setWidgetData($form, $package, $data);
 
         $this->flashSession->success('Package saved!');
 
@@ -421,7 +428,7 @@ class AdminPackagesController extends AbstractAdminController
 
                 $package->delete();
 
-                $this->_removePackageConfig($name, $package->type);
+                $this->_removePackageConfig($package);
                 $packageManager->generateMetadata(Package::find());
                 $this->app->clearCache();
                 $this->flashSession->success('Package "' . $name . '" removed!');
@@ -537,20 +544,19 @@ class AdminPackagesController extends AbstractAdminController
     /**
      * Remove package from config.
      *
-     * @param string $name Package name.
-     * @param string $type Package type.
+     * @param Package $package Package object.
      *
      * @return void
      */
-    protected function _removePackageConfig($name, $type)
+    protected function _removePackageConfig($package)
     {
-        switch ($type) {
+        switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
                 // remove widgets
-                $this->db->delete(Widget::getTableName(), 'module = ?', [$name]);
+                $this->db->delete(Widget::getTableName(), 'module = ?', [$package->name]);
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                if ($widget = Widget::findFirstByName($name)) {
+                if ($widget = $package->getWidget()) {
                     $widget->delete();
                 }
                 break;
@@ -567,7 +573,7 @@ class AdminPackagesController extends AbstractAdminController
      *
      * @return void
      */
-    private function _enablePackageConfig(Package $package)
+    protected function _enablePackageConfig(Package $package)
     {
         switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
@@ -602,16 +608,9 @@ class AdminPackagesController extends AbstractAdminController
                 $this->db->update(Widget::getTableName(), ['enabled'], [1], "module = '{$package->name}'");
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $widget = Widget::findFirstByName($package->name);
-                if ($widget) {
+                if ($widget = $package->getWidget()) {
                     $widget->enabled = 1;
                     $widget->save();
-                } else {
-                    $widget = new Widget();
-                    $package = $this->_getPackage($package->type, $package->name);
-                    $data = $package->toArray();
-                    $data['name'] = ucfirst($package->name);
-                    $widget->save($data);
                 }
                 break;
         }
@@ -624,7 +623,7 @@ class AdminPackagesController extends AbstractAdminController
      *
      * @return void
      */
-    private function _disablePackageConfig(Package $package)
+    protected function _disablePackageConfig(Package $package)
     {
         switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
@@ -632,8 +631,7 @@ class AdminPackagesController extends AbstractAdminController
                 $this->db->update(Widget::getTableName(), ['enabled'], [0], "module = '{$package->name}'");
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $widget = Widget::findFirstByName($package->name);
-                if ($widget) {
+                if ($widget = $package->getWidget()) {
                     $widget->enabled = 0;
                     $widget->save();
                 }
@@ -648,7 +646,7 @@ class AdminPackagesController extends AbstractAdminController
      *
      * @return bool
      */
-    private function _hasDependencies(Package $package)
+    protected function _hasDependencies(Package $package)
     {
         $dependencies = $package->getRelatedPackages();
         /** @var \Phalcon\Mvc\Model\Resultset\Simple $dependencies */
@@ -664,6 +662,37 @@ class AdminPackagesController extends AbstractAdminController
         }
 
         return false;
+    }
+
+    /**
+     * Set widget data.
+     *
+     * @param Form    $form    Form object.
+     * @param Package $package Package object.
+     * @param array   $data    Post data.
+     *
+     * @return void
+     */
+    protected function _setWidgetData(Form $form, Package $package, $data)
+    {
+        if (!$form->hasEntity('widget')) {
+            return;
+        }
+        $widget = $form->getEntity('widget');
+        $widget->name = ucfirst($widget->name);
+        $widget->admin_form = ($widget->admin_form == 'form_class' ? $data['form_class'] : $widget->admin_form);
+        $widget->description =
+            (!empty($data['description']) ? $data['description'] : ucfirst($widget->name) . ' widget.');
+        $widget->save();
+
+        if ($widget->module) {
+            $package->data = [
+                'module' => $widget->module,
+                'widget_id' => $widget->id
+            ];
+        }
+
+        $package->save();
     }
 }
 

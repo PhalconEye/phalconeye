@@ -41,4 +41,14 @@ class Hidden extends AbstractInput implements ElementInterface
     {
         return 'hidden';
     }
+
+    /**
+     * If element is need to be rendered in default layout.
+     *
+     * @return bool
+     */
+    public function useDefaultLayout()
+    {
+        return false;
+    }
 }

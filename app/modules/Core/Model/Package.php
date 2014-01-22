@@ -106,4 +106,19 @@ class Package extends AbstractPackage
 
         return json_encode($data, JSON_PRETTY_PRINT);
     }
+
+    /**
+     * Get widget object.
+     *
+     * @return Widget||null
+     */
+    public function getWidget()
+    {
+        if ($this->type !== Manager::PACKAGE_TYPE_WIDGET) {
+            return null;
+        }
+
+        $data = $this->getData();
+        return Widget::findFirstById($data['widget_id']);
+    }
 }

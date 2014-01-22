@@ -12,6 +12,7 @@
 #}
 
 %header%
+{% extends "../../../Core/View/layouts/widget.volt" %}
 
 {% block content %}
 
