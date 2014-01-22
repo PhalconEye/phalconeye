@@ -62,19 +62,21 @@ class Edit extends Create
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        parent::init();
+        parent::initialize();
         $this
-            ->setOption('title', "Edit Package")
-            ->setOption('description', "Edit this package.");
+            ->setTitle('Edit Package')
+            ->setDescription('Edit this package.');
 
-        $this->removeElement('name');
-        $this->removeElement('type');
-        $this->removeElement('header');
+        $this->getFieldSet(self::FIELDSET_CONTENT)
+            ->remove('name')
+            ->remove('type')
+            ->remove('header');
 
-        $this->clearButtons();
-        $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', ['for' => $this->_link]);
+        $this->getFieldSet(self::FIELDSET_FOOTER)
+            ->clearElements()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => $this->_link]);
     }
 }

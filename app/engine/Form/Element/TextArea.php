@@ -18,9 +18,8 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\Element\Traits\Description;
+use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
-use Phalcon\Forms\Element\TextArea as PhalconTextArea;
 
 /**
  * Form element - Text area.
@@ -32,17 +31,40 @@ use Phalcon\Forms\Element\TextArea as PhalconTextArea;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class TextArea extends PhalconTextArea implements ElementInterface
+class TextArea extends AbstractElement implements ElementInterface
 {
-    use Description;
+    /**
+     * Get element html template.
+     *
+     * @return string
+     */
+    public function getHtmlTemplate()
+    {
+        return $this->getOption('htmlTemplate', '<textarea' . $this->_renderAttributes() . '>%s</textarea>');
+    }
 
     /**
-     * If element is need to be rendered in default layout.
+     * Sets the element option.
      *
-     * @return bool
+     * @param string $value Element value.
+     *
+     * @return $this
      */
-    public function useDefaultLayout()
+    public function setValue($value)
     {
-        return true;
+        return parent::setValue(htmlentities($value));
+    }
+
+    /**
+     * Render element.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        return sprintf(
+            $this->getHtmlTemplate(),
+            $this->getValue()
+        );
     }
 }

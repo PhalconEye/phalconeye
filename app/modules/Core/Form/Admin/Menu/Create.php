@@ -35,17 +35,19 @@ use Engine\Form;
 class Create extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new Menu();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new Menu();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
 
     /**
@@ -53,15 +55,19 @@ class Create extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Menu Creation")
-            ->setOption('description', "Create new menu.");
+            ->setTitle('Menu Creation')
+            ->setDescription('Create new menu.');
 
-        $this->addElement('text', 'name', ['label' => 'Name']);
+        $content = $this->addContentFieldSet()
+            ->addText('name');
 
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-menus']);
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-menus']);
+
+        $content->setRequired('name');
     }
 }

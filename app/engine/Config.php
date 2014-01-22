@@ -104,7 +104,7 @@ class Config extends PhalconConfig
             $config = self::_getConfiguration($stage);
         } else {
             if (file_exists(self::CONFIG_CACHE_PATH)) {
-                $config = new Config(include_once(self::CONFIG_CACHE_PATH));
+                $config = new Config(include_once(self::CONFIG_CACHE_PATH), $stage);
             } else {
                 $config = self::_getConfiguration($stage);
                 $config->refreshCache();
@@ -125,7 +125,7 @@ class Config extends PhalconConfig
     }
 
     /**
-     * Save config file into cached config file.
+     * Save config.
      *
      * @param string|array $sections Config section name to save. By default: Config::CONFIG_DEFAULT_SECTION.
      *
@@ -161,7 +161,7 @@ class Config extends PhalconConfig
      */
     protected static function _getConfiguration($stage)
     {
-        $config = new Config();
+        $config = new Config(null, $stage);
         $configDirectory = ROOT_PATH . self::CONFIG_PATH . $stage;
         foreach (scandir($configDirectory) as $file) {
             if ($file == "." || $file == "..") {

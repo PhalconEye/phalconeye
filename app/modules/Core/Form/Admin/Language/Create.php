@@ -20,7 +20,8 @@ namespace Core\Form\Admin\Language;
 
 use Core\Model\Language;
 use Engine\Db\AbstractModel;
-use Engine\Form;
+use Engine\Form\FieldSet;
+use Engine\Form\FileForm;
 use Phalcon\Validation\Validator\StringLength;
 
 /**
@@ -33,20 +34,22 @@ use Phalcon\Validation\Validator\StringLength;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Create extends Form
+class Create extends FileForm
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new Language();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new Language();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
 
     /**
@@ -54,50 +57,48 @@ class Create extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Language Creation")
-            ->setOption('description', "Create new language.");
+            ->setTitle('Language Creation')
+            ->setDescription('Create new language.');
 
-        $this->addElement(
-            'text',
-            'name',
-            [
-                'label' => 'Name'
-            ]
-        );
+        $content = $this->addContentFieldSet()
+            ->addText('name')
+            ->addText('language')
+            ->addText('locale')
+            ->addFile('icon', null, null, true);
 
-        $this->addElement(
-            'text',
-            'language',
-            [
-                'label' => 'Language',
-                'required' => true,
-                'validators' => [new StringLength(['min' => 2, 'max' => 2])]
-            ]
-        );
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-languages']);
 
-        $this->addElement(
-            'text',
-            'locale',
-            [
-                'label' => 'Locale',
-                'required' => true,
-                'validators' => [new StringLength(['min' => 5, 'max' => 5])]
-            ]
-        );
+        $this->_setValidation($content);
+    }
 
-        $this->addElement(
-            'file',
+    /**
+     * Set form validation.
+     *
+     * @param FieldSet $content Content object.
+     *
+     * @return void
+     */
+    protected function _setValidation($content)
+    {
+        $content
+            ->setRequired('language')
+            ->setRequired('locale');
+
+        $content->getValidation()
+            ->add('language', new StringLength(['min' => 2, 'max' => 2]))
+            ->add('locale', new StringLength(['min' => 5, 'max' => 5]));
+
+        $this->setImageTransformation(
             'icon',
             [
-                'label' => 'Icon'
+                'adapter' => 'GD',
+                'resize' => [32, 32]
             ]
         );
-
-
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-languages']);
     }
 }

@@ -19,6 +19,7 @@
 namespace User\Controller;
 
 use Core\Controller\AbstractAdminController;
+use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Paginator\Adapter\QueryBuilder;
 use User\Form\Admin\Create as CreateForm;
@@ -121,11 +122,11 @@ class AdminUsersController extends AbstractAdminController
         $form = new CreateForm();
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid(null, true)) {
             return;
         }
 
-        $user = $form->getValues();
+        $user = $form->getEntity();
         $user->setPassword($user->password);
         $user->role_id = Role::getDefaultRole()->id;
         $user->save();
@@ -161,13 +162,33 @@ class AdminUsersController extends AbstractAdminController
         $form = new EditForm($item);
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
         $this->flashSession->success('Object saved!');
 
         return $this->response->redirect(['for' => 'admin-users']);
+    }
+
+    /**
+     * View user details.
+     *
+     * @param int $id User identity.
+     *
+     * @return mixed
+     *
+     * @Get("/view/{id:[0-9]+}", name="admin-users-view")
+     */
+    public function viewAction($id)
+    {
+        $user = User::findFirst($id);
+        $this->view->form = $form = Form\EntityForm::factory($user, [], [['password']]);
+
+        $form
+            ->setTitle('User details')
+            ->addFooterFieldSet()
+            ->addButtonLink('back', 'Back', ['for' => 'admin-users']);
     }
 
     /**
@@ -230,11 +251,11 @@ class AdminUsersController extends AbstractAdminController
         $form = new RoleCreateForm();
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $item = $form->getValues();
+        $item = $form->getEntity();
         if ($item->is_default) {
             $this->db->update(
                 $item->getSource(),
@@ -267,11 +288,11 @@ class AdminUsersController extends AbstractAdminController
         $form = new RoleEditForm($item);
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $item = $form->getValues();
+        $item = $form->getEntity();
         if ($item->is_default) {
             $this->db->update(
                 Role::getTableName(),

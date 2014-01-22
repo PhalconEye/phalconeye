@@ -62,6 +62,9 @@ class InstallController extends AbstractController
         'mbstring' => false,
         'mcrypt' => false,
         'iconv' => false,
+        'gd' => false,
+        'fileinfo' => false,
+        'zip' => false,
     ];
 
     /**
@@ -230,10 +233,10 @@ class InstallController extends AbstractController
         }
 
         $form = new FinishForm();
-        if ($this->request->isPost() && $form->isValid($this->request->getPost())) {
+        if ($this->request->isPost() && $form->isValid()) {
 
             $password = $this->request->getPost('password', 'string');
-            $repeatPassword = $this->request->getPost('password', 'string');
+            $repeatPassword = $this->request->getPost('repeatPassword', 'string');
             if ($password != $repeatPassword) {
                 $form->addError("Passwords doesn't match!");
                 $this->view->form = $form;
@@ -276,7 +279,9 @@ class InstallController extends AbstractController
             return $this->_selectAction();
         }
 
-        $this->_resetStates();
+        foreach ($this->_actions as $action) {
+            $this->_setPassed($action, false);
+        }
         $this->_setupDatabase();
 
         $packageManager = new PackageManager(Package::find());
@@ -294,7 +299,7 @@ class InstallController extends AbstractController
      * @param string $action Action name.
      * @param bool   $passed Is passed variable.
      */
-    private function _setPassed($action, $passed)
+    protected function _setPassed($action, $passed)
     {
         $this->session->set('installation_action_' . $action, $passed);
     }
@@ -306,7 +311,7 @@ class InstallController extends AbstractController
      *
      * @return bool
      */
-    private function _isPassed($action)
+    protected function _isPassed($action)
     {
         return $this->session->get('installation_action_' . $action);
     }
@@ -316,7 +321,7 @@ class InstallController extends AbstractController
      *
      * @return ResponseInterface
      */
-    private function _selectAction()
+    protected function _selectAction()
     {
         foreach ($this->_actions as $action) {
             if (!$this->_isPassed($action)) {
@@ -328,25 +333,13 @@ class InstallController extends AbstractController
     }
 
     /**
-     * Reset action states.
-     *
-     * @return void
-     */
-    private function _resetStates()
-    {
-        foreach ($this->_actions as $action) {
-            $this->_setPassed($action, false);
-        }
-    }
-
-    /**
      * Setup database connection.
      *
      * @param array|null $connectionSettings Connection data.
      *
      * @return void
      */
-    private function _setupDatabase($connectionSettings = null)
+    protected function _setupDatabase($connectionSettings = null)
     {
         if ($connectionSettings != null) {
             $this->config->database = new Config($connectionSettings);
@@ -366,7 +359,6 @@ class InstallController extends AbstractController
         );
 
         $this->di->set('db', $connection);
-
         $this->di->set(
             'modelsManager',
             function () use ($config, $eventsManager) {

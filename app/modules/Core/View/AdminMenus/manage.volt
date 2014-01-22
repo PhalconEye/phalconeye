@@ -17,15 +17,10 @@
 
 {% block title %}{{ "Manage menu"|trans }}{% endblock %}
 
-{% block header %}
-    <div class="navbar navbar-header">
-        <div class="navbar-inner">
-            {{ navigation.render() }}
-        </div>
-    </div>
-{% endblock %}
-
 {% block head %}
+    {{ helper('assets').addJs('assets/js/core/admin/menu.js') }}
+    {{ helper('assets').addJs('assets/js/core/admin/files.js') }}
+
     <script type="text/javascript">
         var menuItemsData = {
             'menu_id': {{ menu.id }},
@@ -37,10 +32,17 @@
             {% endif %}
         };
 
-        {{ helper('i18n').js('Are you really want to delete this menu item?') }}
+        {{ helper('i18n', 'core').js('Are you really want to delete this menu item?') }}
 
     </script>
+{% endblock %}
 
+{% block header %}
+    <div class="navbar navbar-header">
+        <div class="navbar-inner">
+            {{ navigation.render() }}
+        </div>
+    </div>
 {% endblock %}
 
 {% block content %}

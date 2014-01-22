@@ -50,5 +50,5 @@ var translatorData = translatorData || [];
             }
         };
     });
-}(window, jQuery, PE, translatorData));
+}(window, jQuery, PhalconEye, translatorData));
 

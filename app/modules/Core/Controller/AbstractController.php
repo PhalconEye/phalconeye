@@ -19,7 +19,9 @@
 namespace Core\Controller;
 
 use Core\Model\Page;
+use Engine\DependencyInjection;
 use Phalcon\Db\Column;
+use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 
@@ -38,6 +40,9 @@ use Phalcon\Mvc\View;
  * @property \Engine\Application     $app
  * @property \Engine\Asset\Manager   $assets
  * @property \Engine\Config          $config
+ * @property DependencyInjection|DI  $di
+ *
+ * @method \Engine\DependencyInjection|\Phalcon\DI getDI()
  */
 abstract class AbstractController extends PhalconController
 {
@@ -65,7 +70,9 @@ abstract class AbstractController extends PhalconController
             ->addJs('assets/js/core/core.js')
             ->addJs('assets/js/core/i18n.js')
             ->addJs('assets/js/core/autocomplete.js')
-            ->addJs('assets/js/core/modal.js');
+            ->addJs('assets/js/core/modal.js')
+            ->addJs('assets/js/core/form.js')
+            ->addJs('assets/js/core/widget.js');
 
         if ($this->config->application->debug && $this->di->has('profiler')) {
             $this->di->get('assets')

@@ -37,26 +37,26 @@ class Menu extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this
-            ->setOption('description', "Select menu that will be rendered.");
+        $this->setDescription('Select menu that will be rendered.');
 
-        $this->addElement('text', 'title', ['label' => 'Title']);
-        $this->addElement('text', 'class', ['label' => 'Menu css class']);
-        $this->addElement(
-            'text',
-            'menu',
-            [
-                'label' => 'Menu',
-                'description' => 'Start typing to see menus variants',
-                'data-link' => $this->di->get('url')->get('admin/menus/suggest'),
-                'data-target' => '#menu_id',
-                'autocomplete' => 'off',
-                'data-autocomplete' => 'true',
-            ]
-        );
-
-        $this->addElement('hidden', 'menu_id');
+        $this->addContentFieldSet()
+            ->addText('title')
+            ->addText('class', 'Menu css class')
+            ->addText(
+                'menu',
+                'Menu',
+                'Start typing to see menus variants',
+                null,
+                [],
+                [
+                    'data-link' => $this->getDI()->getUrl()->get('admin/menus/suggest'),
+                    'data-target' => '#menu_id',
+                    'data-autocomplete' => 'true',
+                    'autocomplete' => 'off'
+                ]
+            )
+            ->addHidden('menu_id');
     }
 }

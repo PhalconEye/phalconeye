@@ -38,7 +38,7 @@
             </div>
             <div class="clear"></div>
         </div>
-        {{ form.renderForm() }}
+        {{ form.render('partials/form/default') }}
     </div>
 </div>
 {% endblock %}

@@ -18,8 +18,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\Element;
-use Engine\Form\Element\Traits\Description;
+use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 
 /**
@@ -32,16 +31,17 @@ use Engine\Form\ElementInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Html extends Element implements ElementInterface
+class Html extends AbstractElement implements ElementInterface
 {
-    use Description;
-
     /**
-     * Current element html.
+     * Get allowed options for this element.
      *
-     * @var string
+     * @return array
      */
-    protected $_html = '';
+    public function getAllowedOptions()
+    {
+        return [];
+    }
 
     /**
      * If element is need to be rendered in default layout.
@@ -54,19 +54,23 @@ class Html extends Element implements ElementInterface
     }
 
     /**
-     * Create HTML element.
+     * If element is need to be rendered in default layout.
      *
-     * @param string $name       Element name.
-     * @param null   $attributes Element attributes.
+     * @return bool
      */
-    public function __construct($name, $attributes = null)
+    public function isIgnored()
     {
-        if (isset($attributes['html'])) {
-            $this->_html = $attributes['html'];
-            unset($attributes['html']);
-        }
+        return true;
+    }
 
-        parent::__construct($name, $attributes);
+    /**
+     * Get element html template.
+     *
+     * @return string
+     */
+    public function getHtmlTemplate()
+    {
+        return '';
     }
 
     /**
@@ -76,6 +80,6 @@ class Html extends Element implements ElementInterface
      */
     public function render()
     {
-        return $this->_html;
+        return $this->getValue();
     }
 }

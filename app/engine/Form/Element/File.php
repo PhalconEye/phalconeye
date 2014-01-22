@@ -18,9 +18,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
-use Phalcon\Forms\Element\File as PhalconFile;
 
 /**
  * Form element - File selection.
@@ -32,17 +30,38 @@ use Phalcon\Forms\Element\File as PhalconFile;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class File extends PhalconFile implements ElementInterface
+class File extends AbstractInput implements ElementInterface
 {
-    use Description;
+    /**
+     * Get allowed options for this element.
+     *
+     * @return array
+     */
+    public function getAllowedOptions()
+    {
+        return array_merge(parent::getAllowedOptions(), ['isImage']);
+    }
 
     /**
-     * If element is need to be rendered in default layout
+     * Get this input element type.
      *
-     * @return bool
+     * @return string
      */
-    public function useDefaultLayout()
+    public function getInputType()
     {
-        return true;
+        return 'file';
+    }
+
+    /**
+     * Returns the element's value.
+     *
+     * @return mixed
+     */
+    public function getValue()
+    {
+        if ($this->getOption('isImage')) {
+            return $this->getDI()->getUrl()->get(parent::getValue());
+        }
+        return parent::getValue();
     }
 }

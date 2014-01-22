@@ -28,6 +28,7 @@ use Phalcon\Acl\Resource as AclResource;
 use Phalcon\DI;
 use Phalcon\Events\Event as PhalconEvent;
 use Phalcon\Mvc\Dispatcher;
+use Phalcon\Text;
 use User\Model\Role;
 use User\Model\User;
 
@@ -226,18 +227,19 @@ class Acl extends AbstractApi
         $controller = $dispatcher->getControllerName();
 
         // Check admin area.
-        if (substr($controller, 0, 5) == 'Admin') {
+        if (
+            Text::startsWith($controller, 'Admin', true) &&
+            $acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW
+        ) {
+            return $dispatcher->forward(
+                [
+                    'module' => Application::SYSTEM_DEFAULT_MODULE,
+                    'namespace' => ucfirst(Application::SYSTEM_DEFAULT_MODULE) . '\Controller',
+                    "controller" => 'Error',
+                    "action" => 'show404'
+                ]
+            );
 
-            if ($acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW) {
-                return $dispatcher->forward(
-                    [
-                        'module' => Application::SYSTEM_DEFAULT_MODULE,
-                        'namespace' => ucfirst(Application::SYSTEM_DEFAULT_MODULE) . '\Controller',
-                        "controller" => 'Error',
-                        "action" => 'show404'
-                    ]
-                );
-            }
         }
 
         return !$event->isStopped();

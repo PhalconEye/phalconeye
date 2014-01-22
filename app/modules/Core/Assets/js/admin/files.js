@@ -26,5 +26,5 @@
             }
         }
     });
-}(window, jQuery, PE));
+}(window, jQuery, PhalconEye));
 

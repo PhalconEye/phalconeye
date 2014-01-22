@@ -18,7 +18,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ form.renderForm() }}
+            {{ form.render('partials/form/default') }}
         </div>
         <!--/row-->
     </div><!--/span-->

@@ -45,43 +45,25 @@ class System extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "System settings")
-            ->setOption('description', "All system settings here.");
+            ->setTitle('System settings')
+            ->setDescription('All system settings here.');
 
-        $this->addElement(
-            'text',
-            'system_title',
-            [
-                'label' => 'Site name',
-                'value' => Settings::getSetting('system_title', '')
-            ]
-        );
-
-
-        $this->addElement(
-            'select',
-            'system_theme',
-            [
-                'label' => 'Theme',
-                'options' => $this->_getThemeOptions(),
-                'value' => Settings::getSetting('system_theme')
-            ]
-        );
+        $this->addContentFieldSet()
+            ->addText('system_title', 'Site name', null, Settings::getSetting('system_title', ''))
+            ->addSelect('system_theme', 'Theme', null, $this->_getThemeOptions(), Settings::getSetting('system_theme'))
+            ->addSelect(
+                'system_default_language',
+                'Default language',
+                null,
+                $this->_getLanguageOptions(),
+                Settings::getSetting('system_default_language')
+            );
 
 
-        $this->addElement(
-            'select',
-            'system_default_language', [
-                'label' => 'Default language',
-                'options' => $this->_getLanguageOptions(),
-                'value' => Settings::getSetting('system_default_language')
-            ]
-        );
-
-        $this->addButton('Save', true);
+        $this->addButton('save');
     }
 
 
@@ -103,6 +85,11 @@ class System extends Form
         return $themes;
     }
 
+    /**
+     * Get language options.
+     *
+     * @return array
+     */
     protected function _getLanguageOptions()
     {
         $languages = ['auto' => 'Auto detect'];

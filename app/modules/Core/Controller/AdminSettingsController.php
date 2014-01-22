@@ -47,7 +47,7 @@ class AdminSettingsController extends AbstractAdminController
         $form = new SystemSettingsForm();
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 

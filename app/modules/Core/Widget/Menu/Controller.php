@@ -96,7 +96,7 @@ class Controller extends WidgetController
             $navigationItems[$index] = ['title' => $item->title];
 
             if ($subItems && $subItems->count() > 0) {
-                $navigationItems[$index]['items'] = $this->_composeNavigation($subItems);
+                $navigationItems[$index]['items'] = $this->_composeNavigationItems($subItems);
             } else {
                 $navigationItems[$index]['href'] = $item->getHref();
                 $navigationItems[$index]['target'] = $item->target;

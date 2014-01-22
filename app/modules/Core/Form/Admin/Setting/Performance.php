@@ -37,155 +37,120 @@ class Performance extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this
-            ->setOption('title', "Performance settings");
+        $this->setTitle('Performance settings');
 
-        $this->addElement(
-            'text',
-            'prefix',
-            [
-                'label' => 'Cache prefix',
-                'description' => 'Example "pe_"',
-                'value' => "pe_"
-            ]
-        );
-
-        $this->addElement(
-            'text',
-            'lifetime',
-            [
-                'label' => 'Cache lifetime',
-                'description' =>
-                    'This determines how long the system will keep cached data before
+        $this->addContentFieldSet()
+            ->addText('prefix', 'Cache prefix', 'Example: "pe_"', 'pe_')
+            ->addText(
+                'lifetime',
+                'Cache lifetime',
+                'This determines how long the system will keep cached data before
                     reloading it from the database server.
                     A shorter cache lifetime causes greater database server CPU usage,
                     however the data will be more current.',
-                'filter' => 'int',
-                'value' => 86400
-            ]
-        );
-
-        $this->addElement(
-            'select',
-            'adapter',
-            [
-                'label' => 'Cache adapter',
-                'description' => 'Cache type. Where cache will be stored.',
-                'options' => [
+                86400
+            )
+            ->addSelect(
+                'adapter',
+                'Cache adapter',
+                'Cache type. Where cache will be stored.',
+                [
                     0 => 'File',
                     1 => 'Memcached',
                     2 => 'APC',
                     3 => 'Mongo'
                 ],
-                'value' => 0
-            ]
-        );
+                0
+            )
 
-        /**
-         * File options
-         */
-        $this->addElement(
-            'text',
-            'cacheDir',
-            [
-                'label' => 'Files location',
-                'value' => 'path_to_dir'
-            ]
-        );
+            /**
+             * File options
+             */
+            ->addText('path', 'Files location', null, ROOT_PATH . '/app/var/cache/data/')
 
+            /**
+             * Memcached options.
+             */
+            ->addText('host', 'Memcached host', null, '127.0.0.1')
+            ->addText('port', 'Memcached port', null, '11211')
+            ->addCheckbox('persistent', 'Create a persistent connection to memcached?', null, 1, true)
 
-        /**
-         * Memcached options.
-         */
-        $this->addElement(
-            'text',
-            'host',
-            [
-                'label' => 'Memcached host',
-                'value' => '127.0.0.1'
-            ]
-        );
+            /**
+             * Mongo options.
+             */
+            ->addText(
+                'server',
+                'A MongoDB connection string',
+                null,
+                'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
+            )
+            ->addText('db', 'Mongo database name', null, 'database')
+            ->addText('collection', 'Mongo collection in the database', null, 'collection')
 
-        $this->addElement(
-            'text',
-            'port',
-            [
-                'label' => 'Memcached port',
-                'value' => '11211'
-            ]
-        );
+            /**
+             * Other.
+             */
+            ->addCheckbox('clear_cache', 'Clear cache', 'All system cache will be cleaned.', 1);
 
-        $this->addElement(
-            'check',
-            'persistent',
-            [
-                'label' => 'Create a persitent connection to memcached?',
-                'options' => 1,
-                'value' => true
-            ]
-        );
+        $this->addFooterFieldSet()->addButton('save');
 
-        /**
-         * Mongo options.
-         */
-        $this->addElement(
-            'text',
-            'server',
-            [
-                'label' => 'A MongoDB connection string',
-                'value' => 'mongodb://[username:password@]host1[:port1][,host2[:port2],...[,hostN[:portN]]]'
-            ]
-        );
-
-        $this->addElement(
-            'text',
-            'db', [
-                'label' => 'Mongo database name',
-                'value' => 'database'
-            ]
-        );
-
-        $this->addElement(
-            'text',
-            'collection',
-            [
-                'label' => 'Mongo collection in the database',
-                'value' => 'collection'
-            ]
-        );
-
-        $this->addElement(
-            'check',
-            'clear_cache',
-            [
-                'label' => 'Clear cache',
-                'description' => 'All system cache will be cleaned.',
-                'options' => 1
-            ]
-        );
-
-        $this->addButton('Save', true);
+        $this->addFilter('lifetime', self::FILTER_INT);
+        $this->_setConditions();
     }
 
     /**
-     * Validation.
+     * Validates the form.
      *
-     * @param null|array $data Validation data.
+     * @param array $data               Data to validate.
+     * @param bool  $skipEntityCreation Skip entity creation.
      *
-     * @return bool
+     * @return boolean
      */
-    public function isValid($data = null)
+    public function isValid($data = null, $skipEntityCreation = false)
     {
+        if (!$data) {
+            $data = $this->getDI()->getRequest()->getPost();
+        }
+
         if (isset($data['adapter']) && $data['adapter'] == '0') {
-            if (empty($data['cacheDir']) || !is_dir($data['cacheDir'])) {
+            if (empty($data['path']) || !is_dir($data['path'])) {
                 $this->addError('Files location isn\'t correct!');
 
                 return false;
             }
         }
 
-        return parent::isValid($data);
+        return parent::isValid($data, $skipEntityCreation);
+    }
+
+    /**
+     * Set form conditions.
+     *
+     * @return void
+     */
+    protected function _setConditions()
+    {
+        $content = $this->getFieldSet(self::FIELDSET_CONTENT);
+
+        /**
+         * Files conditions.
+         */
+        $content->setCondition('path', 'adapter', 0);
+
+        /**
+         * Memcached conditions.
+         */
+        $content->setCondition('host', 'adapter', 1);
+        $content->setCondition('port', 'adapter', 1);
+        $content->setCondition('persistent', 'adapter', 1);
+
+        /**
+         * Mongo conditions.
+         */
+        $content->setCondition('server', 'adapter', 3);
+        $content->setCondition('db', 'adapter', 3);
+        $content->setCondition('collection', 'adapter', 3);
     }
 }

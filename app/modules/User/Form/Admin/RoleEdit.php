@@ -35,15 +35,16 @@ class RoleEdit extends RoleCreate
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        parent::init();
+        parent::initialize();
         $this
-            ->setOption('title', "Edit Role")
-            ->setOption('description', "Edit this role.");
+            ->setTitle('Edit Role')
+            ->setDescription('Edit this role.');
 
-        $this->clearButtons();
-        $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-users-roles']);
+        $this->getFieldSet(self::FIELDSET_FOOTER)
+            ->clearElements()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-users-roles']);
     }
 }

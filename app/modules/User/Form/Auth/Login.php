@@ -37,33 +37,21 @@ class Login extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Login")
-            ->setOption('description', "Use you email or username to login.")
-            ->setAttrib('class', 'form_login')
-            ->setAttrib('autocomplete', 'off');
+            ->setTitle('Login')
+            ->setDescription('Use you email or username to login.')
+            ->setAttribute('class', 'form_login');
 
-        $this->addElement(
-            'text',
-            'login',
-            [
-                'label' => 'Username/Email',
-                'required' => true
-            ]
-        );
+        $this->addContentFieldSet()
+            ->addText('login')
+            ->addPassword('password')
+            ->setRequired('login')
+            ->setRequired('password');
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'label' => 'Password',
-                'required' => true
-            ]
-        );
-
-        $this->addButton('Login', true);
-        $this->addButtonLink('Register', ['for' => 'register']);
+        $this->addFooterFieldSet()
+            ->addButton('enter')
+            ->addButtonLink('register', 'Register', ['for' => 'register']);
     }
 }

@@ -12,6 +12,8 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
 */
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
@@ -27,7 +29,7 @@ define('APPLICATION_STAGE', (getenv('PHALCONEYE_STAGE') ? getenv('PHALCONEYE_STA
  * Versions.
  */
 define('PE_VERSION', '0.4.0');
-define('PHALCON_VERSION_REQUIRED', '1.2.4');
+define('PHALCON_VERSION_REQUIRED', '1.3.0');
 define('PHP_VERSION_REQUIRED', '5.4.0');
 
 /**
@@ -43,20 +45,16 @@ if (!defined('PUBLIC_PATH')) {
 
 require_once ROOT_PATH . "/app/engine/Config.php";
 require_once ROOT_PATH . "/app/engine/Exception.php";
-try {
-    if (php_sapi_name() !== 'cli') {
-        require_once ROOT_PATH . "/app/engine/Application.php";
-        $application = new Engine\Application();
-    } else {
-        require_once ROOT_PATH . "/app/engine/Application.php";
-        require_once ROOT_PATH . "/app/engine/Cli.php";
-        $application = new Engine\Cli();
-    }
 
-    $application->run();
-    echo $application->getOutput();
-} catch (\Exception $e) {
-    \Engine\Exception::exception($e);
-    throw $e;
+if (php_sapi_name() !== 'cli') {
+    require_once ROOT_PATH . "/app/engine/Application.php";
+    $application = new Engine\Application();
+} else {
+    require_once ROOT_PATH . "/app/engine/Application.php";
+    require_once ROOT_PATH . "/app/engine/Cli.php";
+    $application = new Engine\Cli();
 }
+
+$application->run();
+echo $application->getOutput();
 

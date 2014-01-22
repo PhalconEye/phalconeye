@@ -34,15 +34,17 @@ class Edit extends Create
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
+        parent::initialize();
         $this
-            ->setOption('title', "Edit Menu")
-            ->setOption('description', "Edit this menu.");
+            ->setTitle('Edit Menu')
+            ->setDescription('Edit this menu.');
 
-        $this->addElement('text', 'name', ['label' => 'Name']);
 
-        $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-menus']);
+        $this->getFieldSet(self::FIELDSET_FOOTER)
+            ->clearElements()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-menus']);
     }
 }

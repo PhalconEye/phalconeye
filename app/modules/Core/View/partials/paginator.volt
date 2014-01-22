@@ -9,6 +9,8 @@
    If you did not receive a copy of the license and are unable to
    obtain it through the world-wide-web, please send an email
    to phalconeye@gmail.com so we can send you a copy immediately.
+
+   Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
 #}
 
 {% if paginator.total_pages > 1 %}
@@ -26,8 +28,8 @@
     <div class="pagination">
         <ul>
             {% if paginator.current > 1 %}
-                <li><a href="{{ helper('url', 'engine').paginatorUrl() }}">{{ 'First' |trans }}</a></li>
-                <li><a href="{{ helper('url', 'engine').paginatorUrl(paginator.before) }}">&laquo;</a></li>
+                <li><a href="{{ helper('url').paginatorUrl() }}">{{ 'First' |trans }}</a></li>
+                <li><a href="{{ helper('url').paginatorUrl(paginator.before) }}">&laquo;</a></li>
             {% endif %}
 
             {% for pageIndex in startIndex..paginator.total_pages %}
@@ -36,12 +38,12 @@
                 {% endif %}
 
                 <li {% if pageIndex is paginator.current %}class="active"{% endif %}><a
-                       href="{{ helper('url', 'engine').paginatorUrl(pageIndex) }}">{{ pageIndex }}</a></li>
+                       href="{{ helper('url').paginatorUrl(pageIndex) }}">{{ pageIndex }}</a></li>
             {% endfor %}
 
             {% if paginator.current < paginator.total_pages %}
-                <li><a href="{{ helper('url', 'engine').paginatorUrl(paginator.current + 1) }}">&raquo;</a></li>
-                <li><a href="{{ helper('url', 'engine').paginatorUrl(paginator.last ) }}">{{ 'Last' |trans }}</a></li>
+                <li><a href="{{ helper('url').paginatorUrl(paginator.current + 1) }}">&raquo;</a></li>
+                <li><a href="{{ helper('url').paginatorUrl(paginator.last ) }}">{{ 'Last' |trans }}</a></li>
             {% endif %}
         </ul>
     </div>

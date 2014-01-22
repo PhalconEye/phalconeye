@@ -169,7 +169,7 @@ class AdminPackagesController extends AbstractAdminController
     {
         $this->view->form = $form = new UploadForm();
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
@@ -239,12 +239,12 @@ class AdminPackagesController extends AbstractAdminController
     {
         $this->view->form = $form = new CreateForm();
 
-        if (!$this->request->isPost() || !$form->isValid($_POST, null, true)) {
+        if (!$this->request->isPost() || !$form->isValid(null, true)) {
             return;
         }
 
-        $package = $form->getValues();
-        $data = $form->getValues(false);
+        $package = $form->getEntity();
+        $data = $form->getValues();
 
         if (!empty($data['header'])) {
             $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
@@ -334,7 +334,7 @@ class AdminPackagesController extends AbstractAdminController
         $this->view->form = $form = new ExportForm(['name' => $name, 'type' => $type]);
 
         $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
-        if (!$skipForm && (!$this->request->isPost() || !$form->isValid($_POST))) {
+        if (!$skipForm && (!$this->request->isPost() || !$form->isValid())) {
             return;
         }
 

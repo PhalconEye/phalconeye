@@ -13,8 +13,11 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Create new package"|trans }}{% endblock %}
+{% block head %}
+    {{ helper('assets').addJs('assets/js/core/admin/package-create.js') }}
+{% endblock %}
 
+{% block title %}{{ "Create new package"|trans }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">
@@ -27,7 +30,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ form.renderForm() }}
+            {{ form.render('partials/form/default') }}
         </div>
         <!--/row-->
     </div><!--/span-->

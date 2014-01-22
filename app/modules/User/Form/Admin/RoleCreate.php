@@ -35,56 +35,40 @@ use User\Model\Role;
 class RoleCreate extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel|null $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new Role();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new Role();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
+
 
     /**
      * Add elements to form.
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Role Creation")
-            ->setOption('description', "Create new role.");
+            ->setTitle('Role Creation')
+            ->setDescription('Create new role.');
 
-        $this->addElement(
-            'text',
-            'name',
-            [
-                'label' => 'name',
-            ]
-        );
+        $this->addContentFieldSet()
+            ->addText('name')
+            ->addTextArea('description')
+            ->addCheckbox('is_default', 'Is Default', null, 1);
 
-        $this->addElement(
-            'textArea',
-            'description',
-            [
-                'label' => 'Description'
-            ]
-        );
-
-        $this->addElement(
-            'check',
-            'is_default',
-            [
-                'label' => 'Is Default',
-                'options' => 1
-            ]
-        );
-
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-users-roles']);
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-users-roles']);
     }
 }

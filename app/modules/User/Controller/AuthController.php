@@ -21,10 +21,10 @@ namespace User\Controller;
 use Core\Controller\AbstractController;
 use Phalcon\Db\Column;
 use Phalcon\Http\ResponseInterface;
-use User\Model\Role;
-use User\Model\User;
 use User\Form\Auth\Login as LoginForm;
 use User\Form\Auth\Register as RegisterForm;
+use User\Model\Role;
+use User\Model\User;
 
 /**
  * Auth handler.
@@ -52,10 +52,8 @@ class AuthController extends AbstractController
         }
 
         $form = new LoginForm();
-
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             $this->view->form = $form;
-
             return;
         }
 
@@ -113,16 +111,16 @@ class AuthController extends AbstractController
 
         $form = new RegisterForm();
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             $this->view->form = $form;
 
             return;
         }
 
-        $password = $this->request->getPost('password', 'string');
-        $repeatPassword = $this->request->getPost('password', 'string');
+        $password = $form->getValue('password');
+        $repeatPassword = $form->getValue('repeatPassword');
         if ($password != $repeatPassword) {
-            $form->addError("Passwords doesn't match!");
+            $form->addError("Passwords doesn't match!", 'password');
             $this->view->form = $form;
 
             return;

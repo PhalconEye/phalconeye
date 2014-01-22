@@ -36,14 +36,13 @@ class Exception extends PhalconException
     /**
      * Inject logging logic.
      *
-     * @param string    $message  Message text.
-     * @param int       $code     Exception code.
-     * @param Exception $previous Previous exception.
+     * @param string     $message  Message text.
+     * @param int        $code     Exception code.
+     * @param \Exception $previous Previous exception.
      */
-    public function __construct($message = '', $code = 0, Exception $previous = null)
+    public function __construct($message = '', $code = 0, \Exception $previous = null)
     {
         parent::__construct($message, $code, $previous);
-        self::exception($this);
     }
 
     /**

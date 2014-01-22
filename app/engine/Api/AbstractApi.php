@@ -19,7 +19,6 @@
 namespace Engine\Api;
 
 use Engine\DependencyInjection;
-use Engine\Exception;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 

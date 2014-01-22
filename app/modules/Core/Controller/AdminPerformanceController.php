@@ -44,7 +44,6 @@ class AdminPerformanceController extends AbstractAdminController
      */
     public function indexAction()
     {
-        $this->assets->addJs('assets/js/core/admin/performance.js');
         $form = new PerformanceForm();
         $this->view->form = $form;
 
@@ -67,7 +66,7 @@ class AdminPerformanceController extends AbstractAdminController
 
         $form->setValues($cacheData);
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
@@ -83,7 +82,7 @@ class AdminPerformanceController extends AbstractAdminController
         switch ($data['adapter']) {
             case 0:
                 $cacheData['adapter'] = 'File';
-                $cacheData['path'] = $data['cacheDir'];
+                $cacheData['path'] = $data['path'];
                 break;
             case 1:
                 $cacheData['adapter'] = 'Memcache';

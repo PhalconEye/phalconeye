@@ -9,6 +9,8 @@
    If you did not receive a copy of the license and are unable to
    obtain it through the world-wide-web, please send an email
    to phalconeye@gmail.com so we can send you a copy immediately.
+
+   Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
 #}
 
 {# main.volt #}
@@ -35,7 +37,7 @@
 
     <div id="header">
         {% if disableHeader is not defined %}
-        {{ helper('renderer').renderContent('header') }}
+        {{ helper('renderer', 'core').renderContent('header') }}
         {% endif %}
 
         {%- block header -%}
@@ -53,7 +55,7 @@
 
     <div id="footer">
         {% if disableFooter is not defined %}
-        {{ helper('renderer').renderContent('footer') }}
+        {{ helper('renderer', 'core').renderContent('footer') }}
         {% endif %}
         {%- block footer -%}
         {%- endblock -%}

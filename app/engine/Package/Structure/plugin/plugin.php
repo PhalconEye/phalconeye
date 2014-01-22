@@ -16,8 +16,6 @@
 %header%
 namespace Plugin\%nameUpper%;
 
-use Phalcon\Mvc\User\Plugin as PhalconPlugin;
-
 /**
  * Plugin %nameUpper%.
  *

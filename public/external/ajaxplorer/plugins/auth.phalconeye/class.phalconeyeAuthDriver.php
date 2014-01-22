@@ -31,8 +31,20 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
         if (!defined('ROOT_PATH')) {
             define('ROOT_PATH', $_SERVER['DOCUMENT_ROOT'] . '/../');
         }
+        if (!defined('PUBLIC_PATH')) {
+            define('PUBLIC_PATH', dirname(__FILE__));
+        }
 
-        require_once ROOT_PATH . "app/engine/Application.php";
+        /**
+         * Stages.
+         */
+        define('APPLICATION_STAGE_DEVELOPMENT', 'development');
+        define('APPLICATION_STAGE_PRODUCTION', 'production');
+        define('APPLICATION_STAGE', (getenv('PHALCONEYE_STAGE') ? getenv('PHALCONEYE_STAGE') : APPLICATION_STAGE_PRODUCTION));
+
+        require_once ROOT_PATH . "/app/engine/Config.php";
+        require_once ROOT_PATH . "/app/engine/Exception.php";
+        require_once ROOT_PATH . "/app/engine/Application.php";
         $application = new \Engine\Application();
         $application->run('session');
 

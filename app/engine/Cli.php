@@ -20,8 +20,6 @@ namespace Engine;
 
 use Engine\Console\AbstractCommand;
 use Engine\Console\Command\Assets;
-use Engine\Console\Command\Cache;
-use Engine\Console\Command\Database;
 use Engine\Console\CommandsListener;
 use Engine\Console\ConsoleUtil;
 

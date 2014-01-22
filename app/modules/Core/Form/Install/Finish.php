@@ -39,55 +39,50 @@ class Finish extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this->addElement(
-            'text',
-            'username',
-            [
-                'label' => 'Username',
-                'autocomplete' => 'off',
-                'required' => true,
-                'validators' => [new StringLength(['min' => 2])]
-            ]
-        );
+        $this->setAttribute('autocomplete', 'off');
 
-        $this->addElement(
-            'text',
-            'email',
-            [
-                'label' => 'Email',
-                'autocomplete' => 'off',
-                'description' => 'You will use your email address to login.',
-                'required' => true,
-                'validators' => [new Email()]
-            ]
-        );
+        $content = $this->addContentFieldSet()
+            ->addText('username', null, null, null, [], ['autocomplete' => 'off'])
+            ->addText('email', null, 'You will use your email address to login.', null, [], ['autocomplete' => 'off'])
+            ->addPassword(
+                'password',
+                null,
+                'Passwords must be at least 6 characters in length.',
+                [],
+                ['autocomplete' => 'off']
+            )
+            ->addPassword(
+                'repeatPassword',
+                null,
+                'Enter your password again for confirmation.',
+                [],
+                ['autocomplete' => 'off']
+            );
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'label' => 'Password',
-                'autocomplete' => 'off',
-                'description' => 'Passwords must be at least 6 characters in length.',
-                'required' => true,
-                'validators' => [new StringLength(['min' => 6])]
-            ]
-        );
+        $this->addFooterFieldSet()->addButton('complete');
+        $this->_setValidation($content);
+    }
 
-        $this->addElement(
-            'password',
-            'repeatPassword',
-            [
-                'label' => 'Password Repeat',
-                'autocomplete' => 'off',
-                'description' => 'Enter your password again for confirmation.',
-                'required' => true,
-                'validators' => [new StringLength(['min' => 6])]
-            ]
-        );
-
-        $this->addButton('Complete', true);
+    /**
+     * Set form validation.
+     *
+     * @param Form|Form\FieldSet $content Container object.
+     *
+     * @return void
+     */
+    protected function _setValidation($content)
+    {
+        $content
+            ->setRequired('username')
+            ->setRequired('email')
+            ->setRequired('password')
+            ->setRequired('repeatPassword')
+            ->getValidation()
+            ->add('username', new StringLength(['min' => 2]))
+            ->add('email', new Email())
+            ->add('password', new StringLength(['min' => 6]))
+            ->add('repeatPassword', new StringLength(['min' => 6]));
     }
 }

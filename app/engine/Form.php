@@ -19,11 +19,20 @@
 namespace Engine;
 
 use Engine\Db\AbstractModel;
-use Engine\Form\Element;
+use Engine\Form\AbstractElement;
+use Engine\Form\Behaviour\ContainerBehaviour;
+use Engine\Form\Behaviour\FieldSetBehaviour;
+use Engine\Form\Behaviour\FormBehaviour;
+use Engine\Form\Behaviour\TranslationBehaviour;
+use Engine\Form\ConditionResolver;
+use Engine\Form\ElementContainerInterface;
+use Engine\Form\FieldSet;
+use Engine\Form\Validation;
 use Phalcon\Filter;
-use Phalcon\Forms\Form as PhalconForm;
+use Phalcon\Mvc\View;
 use Phalcon\Tag as Tag;
 use Phalcon\Translate;
+use Phalcon\Validation\Message\Group;
 
 /**
  * Form class.
@@ -35,28 +44,36 @@ use Phalcon\Translate;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Form extends PhalconForm
+class Form implements ElementContainerInterface
 {
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
+
+    use FieldSetBehaviour,
+        FormBehaviour,
+        TranslationBehaviour;
+
     const
         /**
          * Request method type - delete.
          */
-        METHOD_DELETE = 'delete',
+        METHOD_DELETE = 'DELETE',
 
         /**
          * Request method type - get.
          */
-        METHOD_GET = 'get',
+        METHOD_GET = 'GET',
 
         /**
          * Request method type - post.
          */
-        METHOD_POST = 'post',
+        METHOD_POST = 'POST',
 
         /**
          * Request method type - put.
          */
-        METHOD_PUT = 'put';
+        METHOD_PUT = 'PUT';
 
 
     const
@@ -70,430 +87,145 @@ class Form extends PhalconForm
          */
         ENCTYPE_MULTIPART = 'multipart/form-data';
 
-    /**
-     * Form messages
-     */
-    const MESSAGE_FIELD_REQUIRED = "Field '%s' is required!";
+    const
+        /**
+         * Message about required field.
+         */
+        MESSAGE_FIELD_IS_REQUIRED = "Field '%s' is required!",
 
-    /**
-     * Translation object.
-     *
-     * @var Translate
-     */
-    private $_trans = null;
+        /**
+         * Message about empty field data.
+         */
+        MESSAGE_FIELD_IS_EMPTY = "Field '%s' can not be empty!",
 
-    /**
-     * Element related data.
-     *
-     * @var array
-     */
-    private $_elementsData = [];
+        /**
+         * Message about missing element.
+         */
+        MESSAGE_ELEMENT_NOT_FOUND = 'Element with name "%s" not found in form.',
 
-    /**
-     * Already ordered elements.
-     *
-     * @var array
-     */
-    private $_orderedElements = [];
+        /**
+         * Message about missing fieldset.
+         */
+        MESSAGE_FIELDSET_NOT_FOUND = 'Fieldset with name "%s" not found in form.',
 
-    /**
-     * Form buttons.
-     *
-     * @var array
-     */
-    private $_buttons = [];
+        /**
+         * Missing value in collection.
+         */
+        MESSAGE_VALUE_NOT_FOUND = 'Value "%s" not found in collection.';
 
-    /**
-     * Current order index.
-     *
-     * @var int
-     */
-    private $_currentOrder = 1;
+    const
+        /**
+         * Fieldset content name.
+         */
+        FIELDSET_CONTENT = 'form_content',
 
-    /**
-     * Current errors.
-     *
-     * @var array
-     */
-    private $_errors = [];
+        /**
+         * Fieldset footer name.
+         */
+        FIELDSET_FOOTER = 'form_footer';
 
-    /**
-     * Current notices.
-     *
-     * @var array
-     */
-    private $_notices = [];
+    const
+        /**
+         * Filter type 'string'.
+         */
+        FILTER_STRING = 'string',
 
-    /**
-     * Use token?
-     *
-     * @var bool
-     */
-    private $_useToken = false;
+        /**
+         * Filter type 'email'.
+         */
+        FILTER_EMAIL = 'email',
 
-    /**
-     * Use null values if element is empty.
-     *
-     * @var bool
-     */
-    private $_useNullValue = true;
+        /**
+         * Filter type 'email'.
+         */
+        FILTER_INT = 'int',
 
-    /**
-     * Is validation finished?
-     *
-     * @var bool
-     */
-    private $_validationFinished = false;
+        /**
+         * Filter type 'float'.
+         */
+        FILTER_FLOAT = 'float',
 
-    /**
-     * Form has validators?
-     *
-     * @var bool
-     */
-    private $_hasValidators = false;
+        /**
+         * Filter type 'alphanum'.
+         */
+        FILTER_ALPHANUM = 'alphanum',
 
-    /**
-     * Elements has been prepared?
-     *
-     * @var bool
-     */
-    private $_elementsPrepared = false;
+        /**
+         * Filter type 'striptags'.
+         */
+        FILTER_STRIPTAGS = 'striptags',
 
-    /**
-     * All elements options.
-     *
-     * @var array
-     */
-    private $_elementsOptions = [
-        'label',
-        'description',
-        'filters',
-        'required',
-        'validators'
-    ];
+        /**
+         * Filter type 'trim'.
+         */
+        FILTER_TRIM = 'trim',
 
-    /**
-     * Current action.
-     *
-     * @var string
-     */
-    protected $_action;
+        /**
+         * Filter type 'lower'.
+         */
+        FILTER_LOWER = 'lower',
 
-    /**
-     * Form title.
-     *
-     * @var string
-     */
-    private $_title;
-
-    /**
-     * From description.
-     *
-     * @var string
-     */
-    private $_description;
-
-    /**
-     * Form attributes.
-     *
-     * @var array
-     */
-    private $_attribs = [];
-
-    /**
-     * Form current method.
-     *
-     * @var string
-     */
-    private $_method = self::METHOD_POST;
-
-    /**
-     * Form current encyption type.
-     *
-     * @var string
-     */
-    private $_enctype = self::ENCTYPE_URLENCODED;
+        /**
+         * Filter type 'upper'.
+         */
+        FILTER_UPPER = 'upper';
 
     /**
      * Form constructor.
-     *
-     * @param AbstractModel $entity Some entity.
      */
-    public function __construct(AbstractModel $entity = null)
+    public function __construct()
     {
+        $this->__DIConstruct();
+
         // Collect profile info.
-        $config = $this->di->get('config');
-        if ($config->application->debug && $this->di->has('profiler')) {
-            $this->di->get('profiler')->start();
+        $config = $this->getDI()->get('config');
+        if ($config->application->debug && $this->getDI()->has('profiler')) {
+            $this->getDI()->get('profiler')->start();
         }
 
-        $this->_trans = $this->di->get('trans');
+        $this->_validation = new Validation($this);
+        $this->_translator = $this->getDI()->get('trans');
         $this->_action = substr($_SERVER['REQUEST_URI'], 1);
-        parent::__construct($entity);
 
-        if (method_exists($this, 'init')) {
-            $this->init();
+        $this->_errors = new Group();
+        $this->_notices = new Group();
+        $this->_conditionsResolver = new ConditionResolver($this);
+
+        if (method_exists($this, 'initialize')) {
+            $this->initialize();
         }
 
         // Collect profile info.
-        if ($config->application->debug && $this->di->has('profiler')) {
-            $this->di->get('profiler')->stop(get_called_class(), 'form');
+        if ($config->application->debug && $this->getDI()->has('profiler')) {
+            $this->getDI()->get('profiler')->stop(get_called_class(), 'form');
         }
-    }
-
-    /**
-     * Clear all elements from form.
-     *
-     * @return void
-     */
-    public function clearElements()
-    {
-        $this->_elementsData = [];
-    }
-
-
-    /**
-     * Clear all buttons from form.
-     *
-     * @return void
-     */
-    public function clearButtons()
-    {
-        $this->_buttons = [];
-    }
-
-    /**
-     * Add new element to form.
-     *
-     * @param string $type   Element type, look at \Engine\Form\Element\*
-     * @param string $name   Element name
-     * @param array  $params Element params.
-     * @param null   $order  Element order.
-     *
-     * @throws Exception
-     * @return $this
-     */
-    public function addElement($type, $name, $params = [], $order = null)
-    {
-        $elementClass = '\Engine\Form\Element\\' . ucfirst($type);
-        if (!class_exists($elementClass)) {
-            throw new Exception("Element with type '{$type}' doesn't exist.");
-        }
-
-        if ($order === null) {
-            $order = $this->_currentOrder++;
-        }
-
-        // Check file input.
-        if ($type == "file") {
-            $this->_enctype = self::ENCTYPE_MULTIPART;
-        }
-
-        $onlyParams = array_intersect_key($params, array_flip($this->_elementsOptions));
-        $attributes = array_diff_key($params, $onlyParams);
-
-        /* @var Element $element */
-        $element = new $elementClass($name, $attributes);
-
-        // Set default value.
-        if ($this->_entity && isset($this->_entity->$name)) {
-            $element->setDefault($this->_entity->$name);
-        }
-
-        $this->_elementsData[$name] = [
-            'type' => $type,
-            'element' => $element,
-            'params' => $onlyParams,
-            'attributes' => $attributes,
-            'order' => $order
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Add button element.
-     *
-     * @param string $name     Button name.
-     * @param bool   $isSubmit Button type is submit ?
-     * @param array  $params   Button param.
-     *
-     * @return $this
-     */
-    public function addButton($name, $isSubmit = false, $params = [])
-    {
-        $this->_buttons[$name] = [
-            'name' => $name,
-            'is_submit' => $isSubmit,
-            'params' => $params
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Add link element.
-     *
-     * @param string $name   Link name.
-     * @param string $href   Link href.
-     * @param array  $params Link params.
-     *
-     * @return $this
-     */
-    public function addButtonLink($name, $href = 'javascript:;', $params = [])
-    {
-        $this->_buttons[$name] = [
-            'name' => $name,
-            'href' => $href,
-            'is_submit' => false,
-            'is_link' => true,
-            'params' => $params
-        ];
-
-        return $this;
-    }
-
-    /**
-     * Remove element by name (short function, same as removeElement).
-     *
-     * @param string $name Element name.
-     *
-     * @return $this
-     */
-    public function remove($name)
-    {
-        return $this->removeElement($name);
-    }
-
-    /**
-     * Remove element by name.
-     *
-     * @param string $name Element name.
-     *
-     * @return $this
-     */
-    public function removeElement($name)
-    {
-        if ($this->_elementsPrepared && $this->has($name)) {
-            parent::remove($name);
-        }
-
-        if (!empty($this->_elementsData[$name])) {
-            unset($this->_elementsData[$name]);
-        }
-
-        return $this;
-    }
-
-    /**
-     * Get element object.
-     *
-     * @param string $name Element name.
-     *
-     * @return Element
-     * @throws Exception
-     */
-    public function getElement($name)
-    {
-        if (empty($this->_elementsData[$name])) {
-            throw new Exception('Form has no element "' . $name . '"');
-        }
-
-        return $this->_elementsData[$name]['element'];
-    }
-
-    /**
-     * Set element attribute.
-     *
-     * @param string $name  Element name.
-     * @param string $key   Attribute name.
-     * @param string $value Attribute value.
-     *
-     * @return $this
-     */
-    public function setElementAttrib($name, $key, $value)
-    {
-        $element = $this->getElement($name);
-        $element->setAttribute($key, $value);
-
-        return $this;
-    }
-
-    /**
-     * Set form option.
-     *
-     * @param string $key   Option name.
-     * @param string $value Option value.
-     *
-     * @return $this
-     */
-    public function setOption($key, $value)
-    {
-        if (property_exists($this, "_" . $key)) {
-            $this->{"_" . $key} = $value;
-        }
-
-        return $this;
-    }
-
-    /**
-     * Set form attribute.
-     *
-     * @param string $key   Attribute name.
-     * @param string $value Attribute value.
-     *
-     * @return $this
-     */
-    public function setAttrib($key, $value)
-    {
-        $this->_attribs[$key] = $value;
-
-        return $this;
-    }
-
-    /**
-     * Add error message.
-     *
-     * @param string $message Message text.
-     *
-     * @return $this
-     */
-    public function addError($message)
-    {
-        $this->_errors[] = $message;
-
-        return $this;
-    }
-
-    /**
-     * Add notice message.
-     *
-     * @param string $message Message text.
-     *
-     * @return $this
-     */
-    public function addNotice($message)
-    {
-        $this->_notices[] = $message;
-
-        return $this;
     }
 
     /**
      * Set form values.
      *
-     * @param array $values Form values.F
+     * @param array              $values    Form values.
+     * @param Form|FieldSet|null $container Elements container.
      *
      * @return $this
      */
-    public function setValues($values)
+    public function setValues($values, $container = null)
     {
-        foreach ($this->_elementsData as $name => $element) {
-            if (isset($values[$name])) {
-                $element['element']->setDefault($values[$name]);
-                $this->_elementsData[$name]['attributes']['value'] = $values[$name];
-            } else {
-                $element['element']->setDefault(null);
+        if (empty($values)) {
+            return $this;
+        }
+
+        if (!$container) {
+            $container = $this;
+        }
+
+        /** @var AbstractElement|FieldSetBehaviour $element */
+        foreach ($container->getAll() as $element) {
+            $elementName = str_replace('[]', '', $element->getName());
+            if ($element instanceof FieldSet) {
+                $this->setValues($values, $element);
+            } elseif (array_key_exists($elementName, $values) && !$element->isIgnored()) {
+                $element->setValue($values[$elementName]);
             }
         }
 
@@ -503,369 +235,364 @@ class Form extends PhalconForm
     /**
      * Set element value by name.
      *
-     * @param string $name  Element name.
-     * @param string $value Element value.
+     * @param string        $name      Element name.
+     * @param string        $value     Element value.
+     * @param Form|FieldSet $container Elements container.
      *
+     * @throws Form\Exception
      * @return $this
      */
-    public function setValue($name, $value)
+    public function setValue($name, $value, $container = null)
     {
-        $this->getElement($name)->setDefault($value);
+        if (!$container) {
+            $container = $this;
+        }
 
-        return $this;
+        /** @var AbstractElement|FieldSetBehaviour $element */
+        foreach ($container->getAll() as $element) {
+            if ($element instanceof FieldSet) {
+                $this->setValue($name, $value, $element);
+                return $this;
+            } elseif (!$element->isIgnored() && $element->getName() == $name) {
+                $element->setValue($value);
+                return $this;
+            }
+        }
+
+        throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
     }
 
     /**
      * Get form values.
      *
-     * @param bool $getEntity Get entity if possible instead of array data.
+     * @param Form|FieldSet|null $container Elements container.
      *
      * @return array
      */
-    public function getValues($getEntity = true)
+    public function getValues($container = null)
     {
-        if ($getEntity && $this->_entity !== null) {
-            return $this->_entity;
-        } else {
-            $values = [];
-            foreach (array_keys($this->_elementsData) as $name) {
-                if (isset($_POST[$name]) && isset($this->_elementsData[$name]['attributes']['value'])) {
-                    $values[$name] = $this->_elementsData[$name]['attributes']['value'];
-                } else {
-                    $values[$name] = null;
-                }
-            }
-
-            return $values;
+        if (!$container) {
+            $container = $this;
         }
+
+        /** @var AbstractElement|FieldSetBehaviour $element */
+        $values = [];
+        foreach ($container->getAll() as $element) {
+            if ($element instanceof FieldSet) {
+                $values += $this->getValues($element);
+            } elseif (!$element->isIgnored()) {
+                $values[str_replace('[]', '', $element->getName())] = $element->getValue();
+            }
+        }
+
+        return $values;
     }
 
     /**
      * Get element value by name.
      *
-     * @param string $name Element name.
+     * @param string             $name      Element name.
+     * @param Form|FieldSet|null $container Elements container.
      *
-     * @throws Exception
+     * @throws Form\Exception
      * @return mixed|null
      */
-    public function getValue($name)
+    public function getValue($name, $container = null)
     {
-        $name = str_replace('[]', '', $name);
-
-        $value = parent::getValue($name);
-        if ($value !== null) {
-            return $value;
+        if (!$container) {
+            $container = $this;
         }
 
-        if (!isset($this->_elementsData[$name])) {
-            throw new Exception('Form has no element "' . $name . '"');
+        /** @var AbstractElement|FieldSetBehaviour $element */
+        foreach ($container->getAll() as $element) {
+            if ($element instanceof FieldSet) {
+                return $this->getValue($name, $element);
+            } elseif (!$element->isIgnored() && $element->getName() == $name) {
+                return $element->getValue();
+            }
         }
 
-        if (!isset($this->_elementsData[$name]['attributes']['value'])) {
-            return null;
-        }
-
-        return $this->_elementsData[$name]['attributes']['value'];
+        throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
     }
 
     /**
-     * Prepare elements to render or validation.
-     * This method add element and validator to Phalcon form class.
+     * Render form.
      *
-     * @return void
+     * @param string $viewPath Form view path.
+     *
+     * @return string
      */
-    protected function prepareElements()
+    public function render($viewPath)
     {
-        if ($this->_elementsPrepared) {
-            return;
-        }
-
-        $this->_orderedElements = $this->_elementsData;
-
-        // Sort elements by order.
-        usort(
-            $this->_orderedElements, function ($a, $b) {
-                return $a['order'] - $b['order'];
-            }
-        );
-
-        // Add elements to Phalcon form class.
-        foreach ($this->_orderedElements as $element) {
-            if (!empty($element['params']['label'])) {
-                $element['element']->setLabel($element['params']['label']);
-            }
-            if (!empty($element['params']['description'])) {
-                $element['element']->setDescription($element['params']['description']);
-            }
-            if (!empty($element['params']['filters'])) {
-                $element['element']->setFilters($element['params']['filters']);
-            }
-            if (!empty($element['params']['validators']) && is_array($element['params']['validators'])) {
-                $this->_hasValidators = true;
-                foreach ($element['params']['validators'] as $validator) {
-                    $element['element']->addValidator($validator);
-                }
-            }
-
-            $this->add($element['element']);
-        }
-
-        $this->_elementsPrepared = true;
+        /** @var View $view */
+        $view = $this->getDI()->get('view');
+        return $view->partial($viewPath, ['form' => $this]);
     }
+
+    /**
+     * Form open tag.
+     *
+     * @return string
+     */
+    public function openTag()
+    {
+        return Tag::form(
+            array_merge(
+                $this->getAttributes(),
+                [$this->getAction(), 'method' => $this->getMethod(), 'enctype' => $this->getEncodingType()]
+            )
+        );
+    }
+
+    /**
+     * Form closing tag.
+     *
+     * @return string
+     */
+    public function closeTag()
+    {
+        return '</form>';
+    }
+
+    /**
+     * Add footer fieldset.
+     *
+     * @return FieldSet
+     */
+    public function addContentFieldSet()
+    {
+        $fieldSet = new Form\FieldSet(self::FIELDSET_CONTENT);
+        $this->addFieldSet($fieldSet);
+
+        return $fieldSet;
+    }
+
+    /**
+     * Add footer fieldset.
+     *
+     * @param bool $combined Combine elements?
+     *
+     * @return FieldSet
+     */
+    public function addFooterFieldSet($combined = true)
+    {
+        $fieldSet = new Form\FieldSet(self::FIELDSET_FOOTER, null, ['class' => self::FIELDSET_FOOTER]);
+        $fieldSet->combineElements($combined);
+        $this->addFieldSet($fieldSet);
+
+        return $fieldSet;
+    }
+
 
     /**
      * Validates the form.
      *
-     * @param array         $data               Data to validate.
-     * @param AbstractModel $entity             Entity to validate.
-     * @param bool          $skipEntityCreation Skip entity creation.
+     * @param array $data               Data to validate.
+     * @param bool  $skipEntityCreation Skip entity creation.
      *
      * @return boolean
      */
-    public function isValid($data = null, $entity = null, $skipEntityCreation = false)
+    public function isValid($data = null, $skipEntityCreation = false)
     {
-        if ($this->_useToken && !$this->di->get('security')->checkToken()) {
+        if (!$data) {
+            $data = $this->getDI()->getRequest()->getPost();
+        }
+
+        /**
+         * Check token.
+         */
+        if ($this->_useToken && !$this->getDI()->get('security')->checkToken()) {
             $this->addError('Token is not valid!');
-
-            return false;
-        }
-        $elementsData = $this->_elementsData;
-
-        // Save values in form.
-        $this->setValues($data);
-
-        // Filter and check required.
-        $requiredFailed = false;
-        $filter = new Filter();
-        foreach ($elementsData as $name => $element) {
-
-            // filter
-            if (isset($data[$name]) && isset($elementsData[$name]['params']['filter'])) {
-                $data[$name] = $filter->sanitize($data[$name], $elementsData[$name]['params']['filter']);
-            }
-
-            if (isset($element['params']['required']) && $element['params']['required'] === true) {
-                if (!isset($data[$name]) || empty($data[$name])) {
-                    $this->addError(
-                        sprintf(
-                            self::MESSAGE_FIELD_REQUIRED,
-                            !empty($element['params']['label']) ? $this->_trans->_($element['params']['label']) : $name
-                        )
-                    );
-                    $requiredFailed = true;
-                }
-            }
-
-            if ($this->_useNullValue) {
-                if (isset($data[$name]) && empty($data[$name])) {
-                    $data[$name] = null;
-                }
-            }
-        }
-
-        if ($requiredFailed) {
+            $this->setValues($data);
             return false;
         }
 
-        $this->setValues($data);
-        $this->prepareElements();
-
-        $parentIsValid = parent::isValid($data, $this->_entity);
-        $this->_validationFinished = true;
-
-        return $this->_isEntityValid($entity, $data, $parentIsValid, $skipEntityCreation);
-    }
-
-    protected function _isEntityValid($entity, $data, $parentIsValid, $skipEntityCreation)
-    {
-        $modelIsValid = true;
-        if ($this->_entity !== null) {
-            if ($entity !== null) {
-                $this->_entity = $entity;
-            }
-
-            $this->bind($data, $this->_entity);
-            if ($parentIsValid) {
-                if ($skipEntityCreation) {
-                    if (method_exists($this->_entity, 'validation')) {
-                        $modelIsValid = ($this->_entity->validation() !== false);
-                    }
-                } else {
-                    $modelIsValid = $this->_entity->save();
-                }
-            }
+        /**
+         * Check conditions.
+         */
+        $this->_conditionsResolver->resolve($data);
+        foreach ($this->getFieldSets() as $fieldSet) {
+            $this->_conditionsResolver->resolve($data, $fieldSet);
         }
 
-        return $modelIsValid && $parentIsValid;
+        /**
+         * Validate all elements and fieldsets.
+         */
+        $isValid = $this->_validateElements($this, $data, true);
+
+        /**
+         * Set filtered data again.
+         */
+        $this->setValues($data);
+
+        /**
+         * There is something wrong...
+         */
+        if (!$isValid) {
+            return false;
+        }
+
+        /**
+         * Check validators.
+         */
+        $this->_checkValidators($data);
+
+        if ($this->hasErrors()) {
+            return false;
+        }
+
+        /**
+         * ...and check entity.
+         */
+        return $this->_validateEntity($data, $skipEntityCreation);
     }
 
     /**
-     * Render the form.
+     * Check elements validators.
      *
-     * @return string
+     * @param array    $data      Form data.
+     * @param FieldSet $container Form fieldset.
      *
-     * @TODO: Refactor this.
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
+     * @return array
      */
-    public function renderForm()
+    protected function _checkValidators($data, $container = null)
     {
-        if (empty($this->_elementsData)) {
-            return "";
-        }
-        $trans = $this->_trans;
-        $this->prepareElements();
-
-        $content =
-            Tag::form(
-                array_merge(
-                    $this->_attribs,
-                    [$this->_action, 'method' => $this->_method, 'enctype' => $this->_enctype]
-                )
-            ) . '<div>';
-
-        ///////////////////////////////////////////
-        /// Title and Description
-        //////////////////////////////////////////
-        if (!empty($this->_title) || !empty($this->_description)) {
-            $content .= '<div class="form_header"><h3>' .
-                $trans->_($this->_title) . '</h3><p>' .
-                $trans->_($this->_description) . '</p></div>';
+        if (!$container) {
+            $container = $this;
         }
 
-        ///////////////////////////////////////////
-        /// Error Messages
-        //////////////////////////////////////////
-
-        if (
-            !empty($this->_errors) ||
-            count($this->_messages) != 0 ||
-            ($this->_entity != null && count($this->_entity->getMessages()) != 0)
-        ) {
-            $content .= '<ul class="form_errors">';
-            foreach ($this->_errors as $error) {
-                $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error));
-            }
-            if (count($this->_messages) != 0) {
-                foreach ($this->getMessages() as $error) {
-                    $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error->getMessage()));
-                }
-            }
-            if ($this->_entity != null && $this->_entity->getMessages()) {
-                foreach ($this->_entity->getMessages() as $error) {
-                    $content .= sprintf('<li class="alert alert-error">%s</li>', $trans->_($error));
-                }
-            }
-            $content .= '</ul>';
+        $container->addErrorsGroup($container->getValidation()->validate($data));
+        foreach ($container->getFieldSets() as $fieldSet) {
+            $this->_checkValidators($data, $fieldSet);
         }
+    }
 
-        ///////////////////////////////////////////
-        /// Notice Messages
-        //////////////////////////////////////////
-        if (!empty($this->_notices)) {
-            $content .= '<ul class="form_notices">';
-            foreach ($this->_notices as $notice) {
-                $content .= sprintf('<li class="alert alert-success">%s</li>', $trans->_($notice));
-            }
-            $content .= '</ul>';
-        }
-
-        ///////////////////////////////////////////
-        /// Elements
-        //////////////////////////////////////////
-
-        $content .= '<div class="form_elements">';
-        $hiddenFields = [];
-        /* @var Element $element */
-        foreach ($this as $element) {
-
-            $elementData = $this->_elementsData[$element->getName()];
-
-            if ($elementData['type'] == 'hidden') {
-                $hiddenFields[] = $element;
-                continue;
-            }
-
-            // multiple option specific
-            if (isset($elementData['attributes']['multiple'])) {
-                $element->setName($element->getName() . '[]');
-            }
-
-            $content .= '<div class="form_element_container">';
-            $label = (!empty($elementData['params']['label']) ?
-                sprintf('<label for="%s">%s</label>', $element->getName(), $trans->_($elementData['params']['label'])) :
-                ''
-            );
-            $description = (!empty($elementData['params']['description']) ?
-                sprintf('<p>%s</p>', $trans->_($elementData['params']['description'])) :
-                ''
-            );
-
-            if ($element->useDefaultLayout()) {
-                $content .= sprintf('<div class="form_label">%s%s</div>', $label, $description);
-                $content .= sprintf('<div class="form_element">%s</div>', $element->render());
+    /**
+     * Validate all elements in container.
+     *
+     * @param FieldSetBehaviour $container Elements container.
+     * @param array             &$data     Form data.
+     * @param bool              $isValid   Validation flag.
+     *
+     * @return bool
+     */
+    protected function _validateElements($container, &$data, $isValid)
+    {
+        /** @var AbstractElement|FieldSet $element */
+        foreach ($container->getAll() as $element) {
+            if ($element instanceof FieldSet) {
+                $isValid = $isValid && $this->_validateElements($element, $data, $isValid);
             } else {
-                $content .= $element->render();
+                $isValid = $isValid && $this->_validateElement($data, $element);
+            }
+        }
+
+        return $isValid;
+    }
+
+    /**
+     * Validate entity model.
+     *
+     * @param array           &$data   Data to validate.
+     * @param AbstractElement $element Element object.
+     *
+     * @return bool
+     */
+    protected function _validateElement(&$data, $element)
+    {
+        $isValid = true;
+        if ($element->isIgnored()) {
+            return $isValid;
+        }
+
+        // Filter data.
+        if (!empty($this->_filters[$element->getName()])) {
+            foreach ($this->_filters[$element->getName()] as $filter) {
+                $data[$element->getName()] = $this->getDI()->get('filter')->sanitize(
+                    $data[$element->getName()],
+                    $filter
+                );
+            }
+        }
+
+        // Check field requirement.
+        if ($element->getOption('required')) {
+            if (!isset($data[$element->getName()])) {
+                $isValid = false;
+                $this->addError(
+                    sprintf($this->__(self::MESSAGE_FIELD_IS_REQUIRED), $this->__($element->getOption('label'))),
+                    $element->getName()
+                );
             }
 
-            $content .= '</div>';
-        }
-        $content .= '</div><div class="clear"></div>';
-
-        // render hidden fields
-        foreach ($hiddenFields as $element) {
-            $content .= $element->render();
-        }
-
-        ///////////////////////////////////////////
-        /// Token
-        //////////////////////////////////////////
-        if ($this->_useToken) {
-            $tokenKey = $this->security->getTokenKey();
-            $token = $this->security->getToken();
-            $content .= sprintf('<input type="hidden" name="%s" value="%s">', $tokenKey, $token);
-        }
-
-        ///////////////////////////////////////////
-        /// Buttons
-        //////////////////////////////////////////
-        if (!empty($this->_buttons)) {
-            $url = $this->di->get('url');
-            $content .= '<div class="form_footer">';
-            foreach ($this->_buttons as $button) {
-
-                $attribs = "";
-                if (!empty($button['params']['class'])) {
-                    $button['params']['class'] .= ' btn';
-                } else {
-                    $button['params']['class'] = 'btn';
-                }
-
-                if ($button['is_submit'] === true) {
-                    $button['params']['class'] .= ' btn-primary';
-                }
-
-                foreach ($button['params'] as $key => $param) {
-                    $attribs .= ' ' . $key . '="' . $param . '"';
-                }
-
-                if (!empty($button['is_link']) && $button['is_link'] == true) {
-                    $content .= sprintf(
-                        '<a href="%s" %s>%s</a>', $url->get($button['href']), $attribs, $trans->_($button['name'])
-                    );
-                } else {
-                    $content .= sprintf(
-                        '<button%s%s>%s</button>',
-                        ($button['is_submit'] === true ? ' type="submit"' : ''),
-                        $attribs,
-                        $this->_trans->_($button['name'])
-                    );
-                }
-
+            // Check that field can not be empty.
+            if (!$element->getOption('emptyAllowed') && empty($data[$element->getName()])) {
+                $isValid = false;
+                $this->addError(
+                    sprintf($this->__(self::MESSAGE_FIELD_IS_EMPTY), $this->__($element->getOption('label'))),
+                    $element->getName()
+                );
             }
-            $content .= '</div>';
         }
-        $content .= '</div></form>';
 
-        return $content;
+        /**
+         * What data must have element, that was not sent to server? If used null as default - all will be null.
+         */
+        if ($this->_useNullValue) {
+            if (!isset($data[$element->getName()]) || $data[$element->getName()] == '') {
+                $data[$element->getName()] = null;
+            }
+        }
+
+        return $isValid;
+    }
+
+    /**
+     * Validate entity model.
+     *
+     * @param array $data               Data to validate.
+     * @param bool  $skipEntityCreation Skip entity creation.
+     *
+     * @return bool
+     */
+    protected function _validateEntity($data, $skipEntityCreation)
+    {
+        $isValid = true;
+        if (!empty($this->_entities)) {
+
+            // Create a transaction manager.
+            $manager = $this->getDI()->getTransactions();
+
+            // Request a transaction.
+            $transaction = $manager->get();
+            try {
+                /** @var AbstractModel $entity */
+                foreach ($this->_entities as $entity) {
+                    if ($skipEntityCreation) {
+                        $entity->assign($data);
+                        if (method_exists($entity, 'validation')) {
+                            $isValid = ($entity->validation() !== false);
+                        }
+                    } else {
+                        $isValid = $entity->save($data);
+                        if (!$isValid) {
+                            foreach ($entity->getMessages() as $message) {
+                                $this->addError($message->getMessage(), $message->getField());
+                            }
+                            $transaction->rollback();
+                        }
+                    }
+                }
+
+                // Everything goes fine, let's commit the transaction.
+                $transaction->commit();
+            } catch (\Exception $e) {
+                if ($transaction->isValid()) {
+                    $transaction->rollback();
+                }
+            }
+        }
+
+        return $isValid;
     }
 }

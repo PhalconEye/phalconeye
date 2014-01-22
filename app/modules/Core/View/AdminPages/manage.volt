@@ -16,6 +16,8 @@
 {% block title %}{{ 'Pages' | trans }}{% endblock %}
 
 {% block head %}
+    {{ helper('assets').addJs('assets/js/core/admin/files.js') }}
+
     <script type="text/javascript">
     //var currentLayoutType =  'top,right,middle,left,bottom';
     var currentLayoutType = '{{currentPage.layout}}';
@@ -112,7 +114,7 @@
             "layout": element.parent().attr("layout")
         };
 
-        PE.modal.open(url, data);
+        PhalconEye.modal.open(url, data);
     };
 
     var removeAction = function (element) {

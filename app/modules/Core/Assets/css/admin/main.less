@@ -161,7 +161,7 @@ input, textarea, select {
   width: 734px !important;
   height: auto !important;
   border: 3px solid black !important;
-  background-image: url('/external/peadmin/images/content/placeholder.png') !important;
+  background-image: url('/assets/img/core/admin/content/placeholder.png') !important;
   background-repeat: repeat;
   overflow: hidden !important;
 }
@@ -170,7 +170,7 @@ input, textarea, select {
   width: 734px !important;
   height: auto !important;
   border: 3px solid black !important;
-  background-image: url('/external/peadmin/images/content/placeholder.png') !important;
+  background-image: url('/assets/img/core/admin/content/placeholder.png') !important;
   background-repeat: repeat;
   overflow: hidden !important;
 }
@@ -356,7 +356,7 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
 }
 
 .modal-body form .form_label {
-  width: 140px !important;
+  width: 145px !important;
   margin-right: 10px !important;
 }
 
@@ -384,7 +384,12 @@ form .form_header > p {
   color: #969696;
 }
 
-form .form_elements > div {
+form fieldset {
+  clear: both;
+}
+
+form .form_elements > div,
+form fieldset > div {
   min-height: 30px;
   clear: both;
   padding-top: 10px;
@@ -420,6 +425,17 @@ form .form_elements .form_element textarea {
   height: 100px;
 }
 
+form .form_element_file_image {
+  text-align: center;
+  width: 220px;
+}
+
+form .form_element_file_image img{
+  max-width: 220px;
+  max-height: 220px;
+  margin: 0 10px 10px 10px;
+}
+
 form .form_footer {
   float: left;
   clear: both;
@@ -428,6 +444,16 @@ form .form_footer {
 
 form .form_footer .btn + .btn {
   margin-left: 10px;
+}
+
+form .form_elements .validation_failed label {
+  color: red;
+}
+
+form .form_elements .validation_failed input,
+form .form_elements .validation_failed textarea,
+form .form_elements .validation_failed select, {
+  border: 1px solid red;
 }
 
 .form_errors,
@@ -833,7 +859,7 @@ form .form_footer .btn + .btn {
 }
 
 .modal_loading span {
-  background: url('/external/phalconeye/images/progress.gif') no-repeat center center;
+  background: url('/assets/img/core/loading_white.gif') no-repeat center center;
   display: block;
   width: 100%;
   height: 100%;

@@ -18,7 +18,7 @@
 
 namespace Engine\Package;
 
-use \Engine\Exception;
+use Engine\Exception;
 
 /**
  * Current url helper.

@@ -6,43 +6,10 @@
     "version": "0.4.0",
     "author": "PhalconEye Team",
     "website": "http:\/\/phalconeye.com\/",
-    "dependencies": [
-        {
-            "name": "core",
-            "type": "module",
-            "version": "0.4.0"
-        }
-    ],
     "events": [
 
     ],
     "widgets": [
-        {
-            "name": "HtmlBlock",
-            "module": "user",
-            "description": "Insert any HTML of you choice",
-            "is_paginated": "0",
-            "is_acl_controlled": "1",
-            "admin_form": "action",
-            "enabled": true
-        },
-        {
-            "name": "Menu",
-            "module": "user",
-            "description": "Render menu",
-            "is_paginated": "0",
-            "is_acl_controlled": "1",
-            "admin_form": "\\Core\\Form\\Admin\\Widget\\Menu",
-            "enabled": true
-        },
-        {
-            "name": "Header",
-            "module": "user",
-            "description": "Settings for header of you site.",
-            "is_paginated": "0",
-            "is_acl_controlled": "1",
-            "admin_form": "\\Core\\Form\\Admin\\Widget\\Header",
-            "enabled": true
-        }
+
     ]
 }

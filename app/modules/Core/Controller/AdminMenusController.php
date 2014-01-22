@@ -116,13 +116,13 @@ class AdminMenusController extends AbstractAdminController
         $form = new Create();
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(['for' => "admin-menus-manage", 'id' => $form->getValues()->id]);
+        return $this->response->redirect(['for' => "admin-menus-manage", 'id' => $form->getEntity()->id]);
     }
 
     /**
@@ -144,7 +144,7 @@ class AdminMenusController extends AbstractAdminController
         $form = new Edit($item);
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
@@ -187,10 +187,6 @@ class AdminMenusController extends AbstractAdminController
      */
     public function manageAction($id)
     {
-        $this->assets->get('js')
-            ->addJs('assets/js/core/admin/menu.js')
-            ->addJs('assets/js/core/admin/files.js');
-
         $item = Menu::findFirst($id);
         if (!$item) {
             return $this->response->redirect(['for' => "admin-menus"]);
@@ -247,15 +243,14 @@ class AdminMenusController extends AbstractAdminController
         ];
 
         $form->setValues($data);
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $urlType = $this->request->getPost('url_type', 'int', 0);
-        $item = $form->getValues();
+        $item = $form->getEntity();
 
         // Clear url type.
-        if ($urlType == 0) {
+        if ($form->getValue('url_type') == 0) {
             $item->pageId = null;
         } else {
             $item->url = null;
@@ -275,11 +270,6 @@ class AdminMenusController extends AbstractAdminController
 
         if ($orderItem->id != $item->id) {
             $item->item_order = $orderItem->item_order + 1;
-        }
-
-        $roles = $this->request->get('roles');
-        if ($roles == null) {
-            $item->setRoles([]);
         }
 
         $item->save();
@@ -317,32 +307,22 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $form->setValues($data);
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $item = $form->getValues();
+        $item = $form->getEntity();
+
         // Clear url type.
-        $urlType = $this->request->getPost('url_type', 'int', 0);
-        if ($urlType == 0) {
+        if ($form->getValue('url_type') == 0) {
             $item->pageId = null;
         } else {
             $item->url = null;
         }
 
-        $roles = $this->request->get('roles');
-        if ($roles == null) {
-            $item->roles = [];
-        }
-
-        $languages = $this->request->get('languages');
-        if ($languages == null) {
-            $item->languages = [];
-        }
-
         $item->save();
 
-        $this->view->edited = $form->getValues();
+        $this->view->edited = true;
     }
 
     /**

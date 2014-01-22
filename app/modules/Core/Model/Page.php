@@ -96,32 +96,6 @@ class Page extends AbstractModel
     public $view_count = 0;
 
     /**
-     * Returns the value of field roles
-     *
-     * @return string
-     */
-    public function getRoles()
-    {
-        if (is_array($this->roles)) {
-            return $this->roles;
-        }
-
-        return json_decode($this->roles);
-    }
-
-    /**
-     * Prepare json string to object to interact.
-     *
-     * @return void
-     */
-    public function prepareRoles()
-    {
-        if (!is_array($this->roles)) {
-            $this->roles = json_decode($this->roles);
-        }
-    }
-
-    /**
      * Set widgets data related to page.
      *
      * @param array $widgets Widgets data.
@@ -248,12 +222,11 @@ class Page extends AbstractModel
     public function isAllowed()
     {
         $viewer = User::getViewer();
-        $roles = $this->getRoles();
-        if (empty($roles)) {
+        if (empty($this->roles)) {
             return true;
         }
 
-        return in_array($viewer->getRoleId(), $roles);
+        return in_array($viewer->getRoleId(), $this->roles);
     }
 
     /**
@@ -268,7 +241,6 @@ class Page extends AbstractModel
         }
 
         $this->validate(new PresenceOf(['field' => 'title']));
-
         $this->validate(new Uniqueness(['field' => 'url']));
 
         if ($this->validationHasFailed() == true) {
@@ -287,16 +259,28 @@ class Page extends AbstractModel
     }
 
     /**
+     * Spell some logic after fetching.
+     *
+     * @return void
+     */
+    protected function afterFetch()
+    {
+        if (!empty($this->roles)) {
+            $this->roles = json_decode($this->roles);
+        }
+    }
+
+    /**
      * Logic before save.
      *
      * @return void
      */
     protected function beforeSave()
     {
-        if (is_array($this->roles) && !empty($this->roles)) {
-            $this->roles = json_encode($this->roles);
-        } else {
+        if (empty($this->roles)) {
             $this->roles = null;
+        } elseif (is_array($this->roles)) {
+            $this->roles = json_encode($this->roles);
         }
     }
 }

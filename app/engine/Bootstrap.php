@@ -23,8 +23,9 @@ use Engine\Plugin\NotFound;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
-use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Events\Manager;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 
 /**
  * Bootstrap class.
@@ -59,15 +60,15 @@ abstract class Bootstrap implements BootstrapInterface
     /**
      * Events manager.
      *
-     * @var EventsManager
+     * @var Manager
      */
     private $_em;
 
     /**
      * Create Bootstrap.
      *
-     * @param DiInterface   $di Dependency injection.
-     * @param EventsManager $em Events manager.
+     * @param DiInterface $di Dependency injection.
+     * @param Manager     $em Events manager.
      */
     public function __construct($di, $em)
     {
@@ -120,7 +121,7 @@ abstract class Bootstrap implements BootstrapInterface
 
                                 $compiler = $volt->getCompiler();
 
-                                // Register helper.
+                                // Register helpers.
                                 $compiler->addFunction(
                                     'helper',
                                     function ($resolvedArgs) use ($di) {
@@ -128,18 +129,40 @@ abstract class Bootstrap implements BootstrapInterface
                                     }
                                 );
 
-                                // Register translation filter.
+                                // Register other functions.
+                                $compiler->addFunction(
+                                    'classof',
+                                    function ($resolvedArgs) {
+                                        return 'get_class(' . $resolvedArgs . ')';
+                                    }
+                                );
+
+                                $compiler->addFunction(
+                                    'instanceof',
+                                    function ($resolvedArgs) {
+                                        $resolvedArgs = explode(',', $resolvedArgs);
+                                        $resolvedArgs[1] = trim(str_replace(["'", '"'], ['', ''], $resolvedArgs[1]));
+                                        return $resolvedArgs[0] . ' instanceof ' . $resolvedArgs[1];
+                                    }
+                                );
+
+                                $compiler->addFunction(
+                                    'resolveView',
+                                    function ($resolvedArgs, $params) {
+                                        $value = $params[0]['expr']['value'];
+                                        if (isset($params[1])) {
+                                            $value = '../../' .
+                                                ucfirst($params[1]['expr']['value']) . '/View/' . $value;
+                                        }
+                                        return "'" . $value . "'";
+                                    }
+                                );
+
+                                // Register other filters.
                                 $compiler->addFilter(
                                     'trans',
                                     function ($resolvedArgs) {
                                         return '$this->trans->query(' . $resolvedArgs . ')';
-                                    }
-                                );
-
-                                $compiler->addFilter(
-                                    'dump',
-                                    function ($resolvedArgs) {
-                                        return 'var_dump(' . $resolvedArgs . ')';
                                     }
                                 );
 

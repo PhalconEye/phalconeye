@@ -37,173 +37,119 @@ use User\Model\Role;
 class CreateItem extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new MenuItem();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new MenuItem();
         }
 
-        $model->prepareRoles();
-        $model->prepareLanguages();
-
-        parent::__construct($model);
-
+        $this->addEntity($entity);
     }
+
 
     /**
      * Initialize form.
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this
-            ->setOption('description', "This menu item will be available under menu or parent menu item.");
+        $this->setDescription('This menu item will be available under menu or parent menu item.');
 
-
-        $this->addElement('text', 'title', ['label' => 'Title']);
-
-
-        $this->addElement(
-            'select',
-            'target',
-            [
-                'label' => 'Target',
-                'description' => 'Link type',
-                'options' => [
+        $content = $this->addContentFieldSet()
+            ->addText('title')
+            ->addSelect(
+                'target',
+                'Target',
+                'Link type',
+                [
                     null => 'Default link',
                     MenuItem::ITEM_TARGET_BLANK => 'Opens the linked document in a new window or tab',
                     MenuItem::ITEM_TARGET_PARENT => 'Opens the linked document in the parent frame',
                     MenuItem::ITEM_TARGET_TOP => 'Opens the linked document in the full body of the window',
                 ]
-            ]
-        );
-
-        $this->addElement(
-            'radio',
-            'url_type',
-            [
-                'label' => 'Select url type',
-                'options' => [
-                    0 => 'Url',
-                    1 => 'System page'
-                ],
-                'value' => 0
-            ]
-        );
-
-        $this->addElement('text', 'url', ['label' => 'Url']);
-
-        $this->addElement(
-            'text',
-            'page',
-            [
-                'label' => 'Page',
-                'description' => 'Start typing to see pages variants.',
-                'data-link' => $this->di->get('url')->get('admin/pages/suggest'),
-                'data-target' => '#page_id',
-                'autocomplete' => 'off',
-                'data-autocomplete' => 'true',
-            ]
-        );
-
-        $this->addElement(
-            'textArea',
-            'onclick',
-            [
-                'label' => 'Onclick',
-                'description' => 'Type JS action that will be performed when this menu item is selected.'
-            ]
-        );
-
-        $this->addElement(
-            'textArea',
-            'tooltip',
-            [
-                'label' => 'Tooltip'
-            ]
-        );
-
-        $this->addElement(
-            'html',
-            'ckeditor',
-            [
-                'ignore' => true,
-                'html' =>
-                    '<script type="text/javascript">
-                    $(document).ready(setTimeout(function () {CKEDITOR.replace("tooltip");}, 300));
-                    </script>'
-            ],
-            1000
-        );
-
-        $this->addElement(
-            'select',
-            'tooltip_position',
-            [
-                'label' => 'Tooltip position',
-                'options' => [
+            )
+            ->addRadio('url_type', 'Select url type', null, [0 => 'Url', 1 => 'System page'])
+            ->addText('url')
+            ->addText(
+                'page',
+                'Page',
+                'Start typing to see pages variants.',
+                null,
+                [],
+                [
+                    'data-link' => $this->getDI()->getUrl()->get('admin/pages/suggest'),
+                    'data-target' => '#page_id',
+                    'autocomplete' => 'off',
+                    'data-autocomplete' => 'true',
+                ]
+            )
+            ->addTextArea(
+                'onclick',
+                'OnClick',
+                'Type JS action that will be performed when this menu item is selected.'
+            )
+            ->addCkEditor('tooltip')
+            ->addSelect(
+                'tooltip_position',
+                'Tooltip position',
+                null,
+                [
                     MenuItem::ITEM_TOOLTIP_POSITION_TOP => 'Top',
                     MenuItem::ITEM_TOOLTIP_POSITION_BOTTOM => 'Bottom',
                     MenuItem::ITEM_TOOLTIP_POSITION_LEFT => 'Left',
                     MenuItem::ITEM_TOOLTIP_POSITION_RIGHT => 'Right'
                 ]
-            ]
-        );
-
-        $this->addElement(
-            'remoteFile',
-            'icon',
-            [
-                'label' => 'Icon',
-                'title' => $this->di->get('trans')->_('Select file')
-            ]
-        );
-
-        $this->addElement(
-            'select',
-            'icon_position',
-            [
-                'label' => 'Icon position',
-                'options' => [
+            )
+            ->addRemoteFile('icon', 'Select icon')
+            ->addSelect(
+                'icon_position',
+                'Icon position',
+                null,
+                [
                     MenuItem::ITEM_ICON_POSITION_LEFT => 'Left',
                     MenuItem::ITEM_ICON_POSITION_RIGHT => 'Right'
                 ]
-            ]
-        );
-
-        $this->addElement(
-            'select',
-            'languages',
-            [
-                'label' => 'Languages',
-                'description' =>
-                    'Choose the language in which the menu item will be displayed.
+            )
+            ->addMultiSelect(
+                'languages',
+                'Languages',
+                'Choose the language in which the menu item will be displayed.
                     If no one selected - will be displayed at all.',
-                'options' => Language::find(),
-                'using' => ['locale', 'name'],
-                'multiple' => 'multiple'
-            ]
-        );
+                Language::find(),
+                null,
+                ['using' => ['locale', 'name']]
+            )
+            ->addMultiSelect(
+                'roles',
+                'Roles',
+                'If no value is selected, will be allowed to all (also as all selected).',
+                Role::find(),
+                null,
+                ['using' => ['id', 'name']]
+            )
+            ->addHidden('page_id')
+            ->addHidden('menu_id')
+            ->addHidden('parent_id');
 
-        $this->addElement(
-            'select',
-            'roles',
-            [
-                'label' => 'Roles',
-                'description' => 'If no value is selected, will be allowed to all (also as all selected).',
-                'options' => Role::find(),
-                'using' => ['id', 'name'],
-                'multiple' => 'multiple'
-            ]
-        );
+        $this->_setValidation($content);
+    }
 
-        $this->addElement('hidden', 'page_id');
-        $this->addElement('hidden', 'menu_id');
-        $this->addElement('hidden', 'parent_id');
+    /**
+     * Set form validation.
+     *
+     * @param Form\FieldSet $content Content object.
+     *
+     * @return void
+     */
+    protected function _setValidation($content)
+    {
+        $content->setRequired('title');
     }
 }

@@ -18,9 +18,9 @@
 
 namespace Engine\Plugin;
 
-use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 use Phalcon\Dispatcher;
 use Phalcon\Events\Event;
+use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 
 /**
  * Cache plugin.

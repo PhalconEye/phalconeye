@@ -18,8 +18,8 @@
 
 namespace Core\Form\Admin\Package;
 
+use Core\Form\Admin\Package\FieldSet\Widget;
 use Core\Model\Package;
-use Engine\Application;
 use Engine\Config;
 use Engine\Db\AbstractModel;
 use Engine\Form;
@@ -38,18 +38,26 @@ use Engine\Package\Manager;
  */
 class Create extends Form
 {
+    const
+        /**
+         * Widget fieldset name.
+         */
+        FIELDSET_WIDGET = 'widget_info';
+
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new Package();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new Package();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
 
     /**
@@ -57,125 +65,129 @@ class Create extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Package Creation")
-            ->setOption('description', "Create new package.");
+            ->setTitle('Package Creation')
+            ->setDescription('Create new package.');
 
-        $this->addElement(
-            'text',
-            'name',
-            [
-                'label' => 'Name',
-                'description' => 'Name must be in lowecase and contains only letters.',
-                'validators' => [
-                    new Regex(
-                        [
-                            'pattern' => '/[a-z]+/',
-                            'message' => 'Name must be in lowecase and contains only letters.'
-                        ]
-                    )
-                ]
-            ]
-        );
+        $this->_addElements();
+        $this->_setConditions();
+        $this->_setValidation();
+        $this->_addButtons();
+    }
 
-        $this->addElement(
-            'select',
-            'type',
-            [
-                'label' => 'Package type',
-                'options' => Manager::$allowedTypes
-            ]
-        );
+    /**
+     * Add main package form elements.
+     *
+     * @return void
+     */
+    protected function _addElements()
+    {
+        $this->addContentFieldSet()
+            ->addText('name', 'Name', 'Name must be in lowercase and contains only letters.')
+            ->addSelect('type', 'Package type', null, Manager::$allowedTypes)
+            ->addText('title')
+            ->addTextArea('description')
+            ->addText('version', 'Version', 'Type package version. Ex.: 0.5.7')
+            ->addText('author', 'Author', 'Who create this package? Identify yourself!')
+            ->addText('website', 'Website', 'Where user will look for new version?')
+            ->addTextArea(
+                'header',
+                'Header comments',
+                'This text will be placed in each file of package. Use comment block /**  **/.'
+            );
 
-        $this->addElement(
-            'text',
-            'title',
-            [
-                'label' => 'Title'
-            ]
-        );
+        $this->addFieldSet(new Widget(self::FIELDSET_WIDGET));
+    }
 
-        $this->addElement('textArea', 'description', ['label' => 'Description']);
+    /**
+     * Set elements conditions.
+     *
+     * @return void
+     */
+    protected function _setConditions()
+    {
+        $fieldSet = $this->getFieldSet(self::FIELDSET_WIDGET);
+        $fieldSet->setCondition('is_paginated', 'module', 'core');
 
-        $this->addElement(
-            'text',
-            'version',
-            [
-                'label' => 'Version',
-                'description' => 'Type package version. Ex.: 0.5.7',
-                'validators' => [
-                    new Regex(
-                        [
-                            'pattern' => '/\d+(\.\d+)+/',
-                            'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
-                        ]
-                    )
-                ]
-            ]
-        );
+        $this->setFieldSetCondition(self::FIELDSET_WIDGET, 'type', 'widget');
+    }
 
-        $this->addElement(
-            'text',
-            'author',
-            [
-                'label' => 'Author',
-                'description' => 'Who create this package? Identify youself!'
-            ]
-        );
+    /**
+     * Set elements validation.
+     *
+     * @return void
+     */
+    protected function _setValidation()
+    {
+        $this
+            ->addFilter('author', self::FILTER_INT)
+            ->addFilter('website', self::FILTER_UPPER);
 
-        $this->addElement(
-            'text',
-            'website',
-            [
-                'label' => 'Website',
-                'description' => 'Where user will look for new version?'
-            ]
-        );
+        $fieldSet = $this->getFieldSet(self::FIELDSET_CONTENT);
+        $fieldSet->getValidation()
+            ->add(
+                'name',
+                new Regex(
+                    [
+                        'pattern' => '/[a-z]+/',
+                        'message' => 'Name must be in lowercase and contains only letters.'
+                    ]
+                )
+            )
+            ->add(
+                'version',
+                new Regex(
+                    [
+                        'pattern' => '/\d+(\.\d+)+/',
+                        'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'
+                    ]
+                )
+            );
+    }
 
-        $this->addElement(
-            'textArea',
-            'header',
-            [
-                'label' => 'Header comments',
-                'description' => 'This text will be placed in each file of package. Use comment block /**  **/.'
-            ]
-        );
-
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-packages']);
-
+    /**
+     * Add form buttons.
+     */
+    protected function _addButtons()
+    {
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-packages']);
     }
 
     /**
      * Validates the form.
      *
-     * @param array         $data               Data to validate.
-     * @param AbstractModel $entity             Entity to validate.
-     * @param bool          $skipEntityCreation Skip entity creation.
+     * @param array $data               Data to validate.
+     * @param bool  $skipEntityCreation Skip entity creation.
      *
      * @return boolean
      */
-    public function isValid($data = null, $entity = null, $skipEntityCreation = false)
+    public function isValid($data = null, $skipEntityCreation = true)
     {
+        if (!$data) {
+            $data = $this->getDI()->getRequest()->getPost();
+        }
+
         // Check package location.
         $packageManager = new Manager();
         $path = $packageManager->getPackageLocation($data['type']);
         if (!is_writable($path)) {
             $this->addError('Can not create package. Package location isn\'t writable: ' . $path);
-
+            $this->setValues($data);
             return false;
         }
 
         // Also check that config file is writable.
         if (!is_writable(ROOT_PATH . Config::CONFIG_PATH)) {
             $this->addError('Configuration file isn\'t writable...');
-
+            $this->setValues($data);
             return false;
         }
 
-        if (!parent::isValid($data, $entity, $skipEntityCreation)) {
+        if (!parent::isValid($data, $skipEntityCreation)) {
             return false;
         }
 

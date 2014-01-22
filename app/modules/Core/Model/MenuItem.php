@@ -39,6 +39,9 @@ use User\Model\User;
  * @BelongsTo("parent_id", '\Core\Model\MenuItem', "id", {
  *  "alias": "MenuItem"
  * })
+ * @HasMany("id", "\Core\Model\MenuItem", "parent_id", {
+ *  "alias": "MenuItem"
+ * })
  *
  * @method static \Core\Model\MenuItem findFirst($parameters = null)
  */
@@ -263,18 +266,6 @@ class MenuItem extends AbstractModel
     }
 
     /**
-     * Prepare json string to object to interact.
-     *
-     * @return void
-     */
-    public function prepareRoles()
-    {
-        if (!is_array($this->roles)) {
-            $this->roles = json_decode($this->roles);
-        }
-    }
-
-    /**
      * Get menu item href.
      *
      * @return null|string
@@ -330,14 +321,32 @@ class MenuItem extends AbstractModel
     protected function beforeDelete()
     {
         $flag = true;
-        foreach ($this->getMenuItems() as $item) {
-            $flag = $item->delete();
-            if (!$flag) {
-                break;
+        if ($menuItems = $this->getMenuItems()) {
+            foreach ($menuItems as $item) {
+                $flag = $item->delete();
+                if (!$flag) {
+                    break;
+                }
             }
         }
 
         return $flag;
+    }
+
+    /**
+     * Spell some logic after fetching.
+     *
+     * @return void
+     */
+    protected function afterFetch()
+    {
+        if (!empty($this->roles)) {
+            $this->roles = json_decode($this->roles);
+        }
+
+        if (!empty($this->languages)) {
+            $this->languages = json_decode($this->languages);
+        }
     }
 
     /**
@@ -347,16 +356,16 @@ class MenuItem extends AbstractModel
      */
     protected function beforeSave()
     {
-        if (is_array($this->roles) && !empty($this->roles)) {
-            $this->roles = json_encode($this->roles);
-        } else {
+        if (empty($this->roles)) {
             $this->roles = null;
+        } elseif (is_array($this->roles)) {
+            $this->roles = json_encode($this->roles);
         }
 
-        if (is_array($this->languages) && !empty($this->languages)) {
-            $this->languages = json_encode($this->languages);
-        } else {
+        if (empty($this->languages)) {
             $this->languages = null;
+        } elseif (is_array($this->languages)) {
+            $this->languages = json_encode($this->languages);
         }
     }
 }

@@ -36,18 +36,19 @@ use User\Model\Role;
 class Create extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new Page();
-        }
-        $model->prepareRoles();
+        parent::__construct();
 
-        parent::__construct($model);
+        if (!$entity) {
+            $entity = new Page();
+        }
+
+        $this->addEntity($entity);
     }
 
     /**
@@ -55,49 +56,60 @@ class Create extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "Page Creation")
-            ->setOption('description', "Create new page.");
+            ->setTitle('Page Creation')
+            ->setDescription('Create new page.');
 
-        $this->addElement('text', 'title', ['label' => 'Title']);
+        $content = $this->addContentFieldSet()
+            ->addText('title')
+            ->addText(
+                'url',
+                'Url',
+                'Page will be available under http://' . $_SERVER['HTTP_HOST'] . '/page/[URL NAME]'
+            )
+            ->addTextArea('description')
+            ->addTextArea('keywords')
+            ->addTextArea(
+                'controller',
+                'Controller',
+                'Controller and action name that will handle this page. Example: NameController->someAction',
+                null,
+                ['emptyAllowed' => true]
+            )
+            ->addMultiSelect(
+                'roles',
+                'Roles',
+                'If no value is selected, will be allowed to all (also as all selected).',
+                Role::find(),
+                null,
+                ['using' => ['id', 'name']]
+            );
 
-        $this->addElement(
-            'text',
-            'url',
-            [
-                'label' => 'Url',
-                'description' => 'Page will be available under http://' . $_SERVER['HTTP_HOST'] . '/page/[URL NAME]'
-            ]
-        );
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-pages']);
 
-        $this->addElement('textArea', 'description', ['label' => 'Description']);
-        $this->addElement('textArea', 'keywords', ['label' => 'Keywords']);
+        $this->_setValidation($content);
+    }
 
-        $this->addElement(
-            'text',
-            'controller',
-            [
-                'label' => 'Controller',
-                'description' =>
-                    'Controller and action name that will handle this page. Example: NameController->someAction'
-            ]
-        );
-
-        $this->addElement(
-            'select',
-            'roles',
-            [
-                'label' => 'Roles',
-                'description' => 'If no value is selected, will be allowed to all (also as all selected).',
-                'options' => Role::find(),
-                'using' => ['id', 'name'],
-                'multiple' => 'multiple'
-            ]
-        );
-
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-pages']);
+    /**
+     * Set form validation.
+     *
+     * @param Form\FieldSet $content Fieldset object.
+     */
+    protected function _setValidation($content)
+    {
+        $content->getValidation()
+            ->add(
+                'controller',
+                new Form\Validator\Regex(
+                    [
+                        'pattern' => '/$|(.*)Controller->(.*)Action/',
+                        'message' => 'Wrong controller name. Example: NameController->someAction'
+                    ]
+                )
+            );
     }
 }

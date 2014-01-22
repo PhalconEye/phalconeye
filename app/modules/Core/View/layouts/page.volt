@@ -9,6 +9,8 @@
    If you did not receive a copy of the license and are unable to
    obtain it through the world-wide-web, please send an email
    to phalconeye@gmail.com so we can send you a copy immediately.
+
+   Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
 #}
 
 {% extends "layouts/main.volt" %}
@@ -26,7 +28,7 @@
     {% if "top" in (content|keys) %}
         <div id="general-content-full-top">
             {% for widget in content["top"] %}
-                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -35,7 +37,7 @@
     {% if "left" in (content|keys) %}
         <div id="general-content-left">
             {% for widget in content["left"] %}
-                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -44,7 +46,7 @@
     {% if "right" in (content|keys) %}
         <div id="general-content-right">
             {% for widget in content["right"] %}
-                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}
@@ -56,7 +58,7 @@
         {% if ("right" in (content|keys)) and ("left" in (content|keys)) %}
             <div id="general-content">
                 {% for widget in content["middle"] %}
-                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -64,7 +66,7 @@
         {% if ("right" in (content|keys)) and ("left" not in (content|keys)) %}
             <div id="general-content-column-left">
                 {% for widget in content["middle"] %}
-                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -72,7 +74,7 @@
         {% if ("left" in (content|keys)) and ("right" not in (content|keys)) %}
             <div id="general-content-column-right">
                 {% for widget in content["middle"] %}
-                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
 
@@ -82,7 +84,7 @@
         {% if ("right" not in (content|keys)) and ("left" not in (content|keys)) %}
             <div id="general-content-full">
                 {% for widget in content["middle"] %}
-                    {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                    {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
                 {% endfor %}
             </div>
         {% endif %}
@@ -93,7 +95,7 @@
     {% if "bottom" in (content|keys) %}
         <div id="general-content-full-bottom">
             {% for widget in content["bottom"] %}
-                {{ helper('renderer').renderWidget(widget.widget_id, widget.getParams()) }}
+                {{ helper('renderer', 'core').renderWidget(widget.widget_id, widget.getParams()) }}
             {% endfor %}
         </div>
     {% endif %}

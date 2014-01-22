@@ -20,6 +20,7 @@ namespace User\Form\Admin;
 
 use Engine\Db\AbstractModel;
 use Engine\Form;
+use Phalcon\Validation\Validator\Email;
 use User\Model\Role;
 use User\Model\User;
 
@@ -36,17 +37,19 @@ use User\Model\User;
 class Create extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new User();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new User();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
 
     /**
@@ -54,50 +57,35 @@ class Create extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', "User Creation")
-            ->setOption('description', "Create new user.")
-            ->setAttrib('autocomplete', 'off');
+            ->setTitle('User Creation')
+            ->setDescription('Create new user.')
+            ->setAttribute('autocomplete', 'off');
 
+        $content = $this->addContentFieldSet()
+            ->addText('username', null, null, null, [], ['autocomplete' => 'off'])
+            ->addPassword('password', null, null, [], ['autocomplete' => 'off'])
+            ->addText('email', null, null, null, [], ['autocomplete' => 'off'])
+            ->addSelect('role_id', 'Role', 'Select user role', Role::find(), null, ['using' => ['id', 'name']]);
 
-        $this->addElement(
-            'text',
-            'username', [
-                'label' => 'Username',
-                'autocomplete' => 'off'
-            ]
-        );
+        $this->addFooterFieldSet()
+            ->addButton('create')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-users']);
 
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'label' => 'Password',
-                'autocomplete' => 'off'
-            ]
-        );
+        $this->_setValidation($content);
+    }
 
-        $this->addElement(
-            'text',
-            'email', [
-                'label' => 'Email'
-            ]
-        );
-
-        $this->addElement(
-            'select',
-            'role_id',
-            [
-                'label' => 'Role',
-                'description' => 'Select user role',
-                'options' => Role::find(),
-                'using' => ['id', 'name']
-            ]
-        );
-
-        $this->addButton('Create', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-users']);
+    /**
+     * Set form validation.
+     *
+     * @param Form\FieldSet $content Content fieldset.
+     *
+     * @return void
+     */
+    protected function _setValidation($content)
+    {
+        $content->getValidation()->add('email', new Email());
     }
 }

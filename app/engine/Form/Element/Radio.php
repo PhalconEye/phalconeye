@@ -18,10 +18,10 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Exception;
-use Engine\Form\Element\Traits\Description;
+use Engine\Form\AbstractElement;
+use Engine\Form\Behaviour\TranslationBehaviour;
 use Engine\Form\ElementInterface;
-use Phalcon\Forms\Element\Select as PhalconSelect;
+use Engine\Form\Exception;
 
 /**
  * Form element - Radiobox.
@@ -33,102 +33,96 @@ use Phalcon\Forms\Element\Select as PhalconSelect;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Radio extends PhalconSelect implements ElementInterface
+class Radio extends AbstractElement implements ElementInterface
 {
-    use Description;
-
-    const
-        /**
-         * Defines html patter for this element.
-         */
-        HTML_PATTERN = '
-        <div class="form_element_radio">
-        <input type="radio" value="%s" %s/>
-        <label>%s</label>
-        </div>';
+    use TranslationBehaviour;
 
     /**
-     * Create element.
+     * Returns the element's option.
      *
-     * @param string $name       Element name.
-     * @param null   $options    Element options.
-     * @param null   $attributes Element attributes.
+     * @param string $name    Option name.
+     * @param mixed  $default Default value.
+     *
+     * @throws \Engine\Form\Exception
+     * @return mixed|null
      */
-    public function __construct($name, $options = null, $attributes = null)
+    public function getOption($name, $default = null)
     {
-        $optionsData = (!empty($options['options']) ? $options['options'] : null);
-        unset($options['options']);
-        if (!is_array($attributes)) {
-            $attributes = [];
+        if (!isset($this->_options[$name])) {
+            return $default;
         }
-        $options = array_merge($options, $attributes);
-        parent::__construct($name, $optionsData, $options);
-    }
 
-    /**
-     * If element is need to be rendered in default layout.
-     *
-     * @return bool
-     */
-    public function useDefaultLayout()
-    {
-        return true;
-    }
+        if ($name == 'elementOptions') {
+            $elementOptions = $this->_options[$name];
+            if (!is_array($elementOptions)) {
+                $data = [];
+                $using = $this->getOption('using');
 
-    /**
-     * Render current element to html.
-     *
-     * @param null|array $attributes Html attributes.
-     *
-     * @return string
-     * @throws Exception
-     */
-    public function render($attributes = null)
-    {
-        $content = '';
-        $options = $this->getOptions();
-        $attributes = array_merge($this->getAttributes(), $attributes);
-        $value = (isset($attributes['value']) ? $attributes['value'] : null);
+                if (!$using || !is_array($using) || count($using) != 2) {
+                    throw new Exception("The 'using' parameter is required to be an array with 2 values.");
+                }
 
-        if (is_array($options)) {
-            foreach ($options as $key => $option) {
-                $content .= sprintf(self::HTML_PATTERN, $key, ($key == $value ? 'checked="checked"' : ''), $option);
+                $keyAttribute = array_shift($using);
+                $valueAttribute = array_shift($using);
+
+                foreach ($elementOptions as $option) {
+                    /** @var \Phalcon\Mvc\Model $option */
+                    $data[$option->readAttribute($keyAttribute)] = $option->readAttribute($valueAttribute);
+                }
+
+                $this->setOption('elementOptions', $data);
             }
-
-            return $content;
         }
 
-        return $this->_renderUsing($attributes, $options, $value);
+        return $this->_options[$name];
     }
 
     /**
-     * Render element with 'using' attribute.
+     * Get allowed options for this element.
      *
-     * @param array $attributes Html attributes.
-     * @param array $options    Element options.
-     * @param mixed $value      Element value.
+     * @return array
+     */
+    public function getAllowedOptions()
+    {
+        return array_merge(parent::getAllowedOptions(), ['elementOptions', 'disabledOptions', 'using']);
+    }
+
+    /**
+     * Get element html template.
      *
      * @return string
-     * @throws \Engine\Exception
      */
-    protected function _renderUsing($attributes, $options, $value)
+    public function getHtmlTemplate()
     {
-        if (!isset($attributes['using']) || !is_array($attributes['using']) || count($attributes['using']) != 2) {
-            throw new Exception("The 'using' parameter is required to be an array with 2 values.");
-        }
+        return $this->getOption(
+            'htmlTemplate',
+            '
+                <div class="form_element_radio">
+                    <input type="radio" value="%s"' . $this->_renderAttributes() . '%s%s/>
+                    <label>%s</label>
+                </div>
+            '
+        );
+    }
+
+    /**
+     * Render element.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        $elementOptions = $this->getOption('elementOptions');
+        $disabledOptions = $this->getOption('disabledOptions', []);
 
         $content = '';
-        $keyAttribute = array_shift($attributes['using']);
-        $valueAttribute = array_shift($attributes['using']);
-        foreach ($options as $option) {
-            /** @var \Phalcon\Mvc\Model $option */
-            $optionKey = $option->readAttribute($keyAttribute);
-            $optionValue = $option->readAttribute($valueAttribute);
+        foreach ($elementOptions as $key => $value) {
             $content .= sprintf(
-                self::HTML_PATTERN,
-                $optionKey,
-                ($optionKey == $value ? 'checked="checked"' : ''),
-                $optionValue
+                $this->getHtmlTemplate(),
+                $key,
+                ($key == $this->getValue() ? ' checked="checked"' : ''),
+                (in_array($key, $disabledOptions) ? ' disabled="disabled"' : ''),
+                $this->__($value)
             );
         }
 

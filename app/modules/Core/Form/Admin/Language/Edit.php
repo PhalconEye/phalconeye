@@ -35,16 +35,16 @@ class Edit extends Create
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        parent::init();
+        parent::initialize();
         $this
-            ->setOption('title', "Edit Language")
-            ->setOption('description', "Edit this language.");
+            ->setTitle('Edit Language')
+            ->setDescription('Edit this language.');
 
-
-        $this->clearButtons();
-        $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-languages']);
+        $this->getFieldSet(self::FIELDSET_FOOTER)
+            ->clearElements()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-languages']);
     }
 }

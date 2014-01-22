@@ -20,7 +20,6 @@ namespace Core\Model;
 
 use Engine\Db\AbstractModel;
 use Phalcon\Mvc\Model\Message;
-use Phalcon\Mvc\Model\Validator\Uniqueness;
 
 /**
  * Language.
@@ -39,6 +38,17 @@ use Phalcon\Mvc\Model\Validator\Uniqueness;
  */
 class Language extends AbstractModel
 {
+    const
+        /**
+         * Icon files location.
+         */
+        LANGUAGE_ICON_LOCATION = 'files/languages/',
+
+        /**
+         * Compiled languages location.
+         */
+        LANGUAGE_CACHE_LOCATION = '/app/var/cache/languages/';
+
     /**
      * @Primary
      * @Identity
@@ -66,6 +76,15 @@ class Language extends AbstractModel
      */
     public $icon = null;
 
+    /**
+     * Get cache file location.
+     *
+     * @return string
+     */
+    public function getCacheLocation()
+    {
+        return ROOT_PATH . self::LANGUAGE_CACHE_LOCATION . $this->language . '.php';
+    }
 
     /**
      * Return the related "LanguageTranslation" model.
@@ -109,11 +128,22 @@ class Language extends AbstractModel
      */
     public function beforeDelete()
     {
-        $config = $this->getDI()->get('config');
-        $languageFile = $config->application->cache->path . '../languages/' . $this->language . '.php';
-        @unlink($languageFile);
+        @unlink($this->getCacheLocation());
+        if (!empty($this->icon)) {
+            @unlink(PUBLIC_PATH . '/' . $this->icon);
+        }
 
         $this->getLanguageTranslation()->delete();
+    }
+
+    /**
+     * Get full icon path.
+     *
+     * @return string
+     */
+    public function getIcon()
+    {
+        return $this->getDI()->getUrl()->get($this->icon);
     }
 
     /**

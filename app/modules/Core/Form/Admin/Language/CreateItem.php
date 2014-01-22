@@ -35,17 +35,19 @@ use Engine\Form;
 class CreateItem extends Form
 {
     /**
-     * Form constructor.
+     * Create form.
      *
-     * @param null|AbstractModel $model Model object.
+     * @param AbstractModel $entity Entity object.
      */
-    public function __construct($model = null)
+    public function __construct(AbstractModel $entity = null)
     {
-        if ($model === null) {
-            $model = new LanguageTranslation();
+        parent::__construct();
+
+        if (!$entity) {
+            $entity = new LanguageTranslation();
         }
 
-        parent::__construct($model);
+        $this->addEntity($entity);
     }
 
     /**
@@ -53,10 +55,11 @@ class CreateItem extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this->addElement('textArea', 'original', ['label' => 'Original']);
-        $this->addElement('textArea', 'translated', ['label' => 'Translated']);
-        $this->addElement('hidden', 'language_id');
+        $this
+            ->addTextArea('original')
+            ->addTextArea('translated')
+            ->addHidden('language_id');
     }
 }

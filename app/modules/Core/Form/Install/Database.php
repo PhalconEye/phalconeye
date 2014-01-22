@@ -37,60 +37,28 @@ class Database extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this->setOption('title', 'Database settings');
+        $this->setTitle('Database settings');
 
-        $this->addElement(
-            'select',
-            'adapter',
-            [
-                'label' => 'Database adapter',
-                'options' => [
+        $this->addContentFieldSet()
+            ->addSelect(
+                'adapter',
+                'Database adapter',
+                null,
+                [
                     'Mysql' => 'MySQL',
                     'Oracle' => 'Oracle',
                     'Postgresql' => 'PostgreSQL',
                     'Sqlite' => 'SQLite'
                 ],
-                'value' => 'Mysql'
-            ]
-        );
+                'Mysql'
+            )
+            ->addText('host', 'Database host', null, 'localhost')
+            ->addText('username', 'Username', null, 'root')
+            ->addPassword('password')
+            ->addText('dbname', 'Database name', null, 'phalconeye');
 
-        $this->addElement(
-            'text',
-            'host',
-            [
-                'label' => 'Database host',
-                'value' => 'localhost'
-            ]
-        );
-
-        $this->addElement(
-            'text',
-            'username',
-            [
-                'label' => 'Username',
-                'value' => 'root'
-            ]
-        );
-
-        $this->addElement(
-            'password',
-            'password',
-            [
-                'label' => 'Password',
-            ]
-        );
-
-        $this->addElement(
-            'text',
-            'dbname',
-            [
-                'label' => 'Database name',
-                'value' => 'phalconeye'
-            ]
-        );
-
-        $this->addButton('Continue', true);
+        $this->addFooterFieldSet()->addButton('continue');
     }
 }

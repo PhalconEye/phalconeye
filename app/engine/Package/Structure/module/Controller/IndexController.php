@@ -16,7 +16,7 @@
 %header%
 namespace %nameUpper%\Controller;
 
-use %defaultModuleUpper%\Controller\AbstractController;
+%defaultModuleUpper%\Controller\AbstractController;
 
 /**
  * Index controller.

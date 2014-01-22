@@ -55,5 +55,5 @@
 
         root.autocomplete.init();
     });
-}(window, jQuery, PE));
+}(window, jQuery, PhalconEye));
 

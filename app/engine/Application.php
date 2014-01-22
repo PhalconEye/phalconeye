@@ -26,8 +26,8 @@ use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
-use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Adapter;
+use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
@@ -35,16 +35,17 @@ use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
 use Phalcon\Logger\Adapter\File;
-use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Logger;
+use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
-use Phalcon\Mvc\Router;
+use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
-use Phalcon\Session\Adapter\Files as SessionFiles;
 use Phalcon\Session\Adapter as SessionAdapter;
+use Phalcon\Session\Adapter\Files as SessionFiles;
 
 /**
  * Application class.
@@ -405,13 +406,14 @@ class Application extends PhalconApplication
         if ($config->application->logger->enabled) {
             $di->set(
                 'logger',
-                function () use ($config) {
-                    $logger = new File($config->application->logger->path . "main.log");
-                    $formatter = new FormatterLine($config->application->logger->format);
+                function ($file = 'main', $format = null) use ($config) {
+                    $logger = new File($config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log');
+                    $formatter = new FormatterLine(($format ? $format : $config->application->logger->format));
                     $logger->setFormatter($formatter);
 
                     return $logger;
-                }
+                },
+                false
             );
         }
     }
@@ -637,6 +639,12 @@ class Application extends PhalconApplication
             );
         }
 
+        $di->setShared(
+            'transactions',
+            function () {
+                return new TxManager();
+            }
+        );
         $di->setShared('assets', new AssetsManager($di));
         $di->setShared('widgets', new Catalog());
     }

@@ -31,7 +31,7 @@
         {% else %}
             {{ 'Welcome, ' |trans }}{{ helper('user', 'user').current().username }}&nbsp;
             |
-            {% if helper('security').isAllowed('AdminArea', 'access') %}
+            {% if helper('security', 'core').isAllowed('AdminArea', 'access') %}
                 <a href="{{ url('admin') }}">{{ 'Admin panel' | trans }}</a>
             {% endif %}
             <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a>

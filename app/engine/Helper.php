@@ -57,7 +57,7 @@ abstract class Helper extends Tag
      * @return mixed
      * @throws Exception
      */
-    public static function getInstance($name, $module = Application::SYSTEM_DEFAULT_MODULE)
+    public static function getInstance($name, $module = 'engine')
     {
         $name = ucfirst($name);
         $module = ucfirst($module);

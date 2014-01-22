@@ -22,7 +22,6 @@ use Core\Api\Acl;
 use Engine\Db\AbstractModel;
 use Engine\Db\Model\Behavior\Timestampable;
 use Phalcon\DI;
-use Phalcon\Mvc\Model\ResultsetInterface;
 use Phalcon\Mvc\Model\Validator\Email;
 use Phalcon\Mvc\Model\Validator\StringLength;
 use Phalcon\Mvc\Model\Validator\Uniqueness;

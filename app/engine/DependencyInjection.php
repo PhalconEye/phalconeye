@@ -30,14 +30,19 @@ use Phalcon\DiInterface;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @method \Phalcon\Mvc\Model\Transaction\Manager getTransactions()
+ * @method \Engine\Asset\Manager getAssets()
+ * @method \Phalcon\Mvc\Url getUrl()
+ * @method \Phalcon\Logger\Adapter getLogger($file = 'main', $format = null)
+ * @method \Phalcon\Http\Request getRequest()
  */
-
 trait DependencyInjection
 {
     /**
      * Dependency injection container.
      *
-     * @var DI
+     * @var DependencyInjection|DI
      */
     private $_di;
 
@@ -69,7 +74,7 @@ trait DependencyInjection
     /**
      * Get DI.
      *
-     * @return DI
+     * @return DependencyInjection|DI
      */
     public function getDI()
     {

@@ -78,5 +78,5 @@ var menuItemsData = menuItemsData || [];
             container.append(defaultItem().replace(/element-id/gi, id).replace('element-label', label));
         };
     });
-}(window, jQuery, PE, menuItemsData));
+}(window, jQuery, PhalconEye, menuItemsData));
 

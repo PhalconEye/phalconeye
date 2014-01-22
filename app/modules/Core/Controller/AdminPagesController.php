@@ -110,20 +110,19 @@ class AdminPagesController extends AbstractAdminController
         $form = new CreateForm();
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $page = $form->getValues();
-        $url = $page->url;
-        if (!empty($url)) {
-            $page->url = str_replace('/', '', str_replace('\\', '', $url));
+        $page = $form->getEntity();
+        if (!empty($page->url)) {
+            $page->url = str_replace('/', '', str_replace('\\', '', $page->url));
         }
 
         $page->save();
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(['for' => "admin-pages-manage", 'id' => $form->getValues()->id]);
+        return $this->response->redirect(['for' => "admin-pages-manage", 'id' => $page->id]);
     }
 
     /**
@@ -146,19 +145,13 @@ class AdminPagesController extends AbstractAdminController
         $form = new EditForm($page);
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $page = $form->getValues();
-        $url = $page->url;
-        if (!empty($url) && $url != '/') {
-            $page->url = str_replace('/', '', str_replace('\\', '', $url));
-        }
-
-        $roles = $this->request->get('roles');
-        if ($roles == null) {
-            $page->roles = [];
+        $page = $form->getEntity();
+        if (!empty($page->url) && $page->url != '/') {
+            $page->url = str_replace('/', '', str_replace('\\', '', $page->url));
         }
 
         $page->save();
@@ -223,7 +216,7 @@ class AdminPagesController extends AbstractAdminController
         $bundlesWidgetsMetadata = [];
         foreach ($widgets as $widget) {
             $moduleName = $widget->module;
-            if (!$moduleName) {
+            if (!$moduleName || empty($modules[$moduleName])) {
                 $moduleName = 'Other';
             } else {
                 $moduleName = $modules[$moduleName];
@@ -314,7 +307,7 @@ class AdminPagesController extends AbstractAdminController
         // building widget form
         $adminForm = $widgetMetadata->admin_form;
         if (empty($adminForm)) {
-            $form->addElement('text', 'title', ['label' => 'Title']);
+            $form->addText('title');
         } elseif ($adminForm == 'action') {
             $widgetName = $widgetMetadata->name;
             if ($widgetMetadata->module !== null) {
@@ -322,30 +315,29 @@ class AdminPagesController extends AbstractAdminController
             } else {
                 $widgetClass = '\Widget\\' . $widgetName . '\Controller';
             }
-            $widgetObject = new $widgetClass();
-            $widgetObject->start();
-            $form = call_user_func_array([$widgetObject, "adminAction"], $_REQUEST);
+            $widgetController = new $widgetClass();
+            $widgetController->setDefaults($widgetName);
+            $widgetController->prepare();
+            $form = $widgetController->adminAction();
         } else {
             $form = new $adminForm();
         }
 
         if ($widgetMetadata->is_paginated == 1) {
-            $form->addElement('text', 'count', ['label' => 'Items count', 'value' => 10], 10000);
+            $form->addText('count', 'Items count', null, 10);
+            $form->setOrder('count', 1000);
         }
 
         if ($widgetMetadata->is_acl_controlled == 1) {
-            $form->addElement(
-                'select',
+            $form->addMultiSelect(
                 'roles',
-                [
-                    'label' => 'Roles',
-                    'options' => Role::find(),
-                    'using' => ['id', 'name'],
-                    'multiple' => 'multiple'
-                ],
-                10000
+                'Roles',
+                null,
+                Role::find(),
+                null,
+                ['using' => ['id', 'name']]
             );
-
+            $form->setOrder('roles[]', 1000);
         }
 
         // set form values
@@ -353,7 +345,7 @@ class AdminPagesController extends AbstractAdminController
             $form->setValues($widgetParams);
         }
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             $this->view->form = $form;
             $this->view->id = $id;
             $this->view->name = $widgetMetadata->name;

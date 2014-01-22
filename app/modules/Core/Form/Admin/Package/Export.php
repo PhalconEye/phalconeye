@@ -56,9 +56,12 @@ class Export extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this->setOption('description', 'Select package dependency (not necessarily).');
+        $this->setDescription('Select package dependency (not necessarily).');
+
+        $content = $this->addContentFieldSet();
+
         if ($this->_exclude['type'] != Manager::PACKAGE_TYPE_LIBRARY) {
             $query = $this->getDI()->get('modelsManager')->createBuilder()
                 ->from(['t' => '\Core\Model\Package'])
@@ -69,15 +72,13 @@ class Export extends Form
                 $query->andWhere("t.name != :name:", ['name' => $this->_exclude['name']]);
             }
 
-            $this->addElement(
-                'select',
+            $content->addMultiSelect(
                 'modules',
-                [
-                    'label' => 'Modules',
-                    'options' => $query->getQuery()->execute(),
-                    'using' => ['name', 'title'],
-                    'multiple' => 'multiple'
-                ]
+                'Modules',
+                null,
+                $query->getQuery()->execute(),
+                null,
+                ['using' => ['name', 'title']]
             );
         }
 
@@ -90,15 +91,13 @@ class Export extends Form
             $query->andWhere("t.name != :name:", ['name' => $this->_exclude['name']]);
         }
 
-        $this->addElement(
-            'select',
+        $content->addMultiSelect(
             'libraries',
-            [
-                'label' => 'Libraries',
-                'options' => $query->getQuery()->execute(),
-                'using' => ['name', 'title'],
-                'multiple' => 'multiple'
-            ]
+            'Libraries',
+            null,
+            $query->getQuery()->execute(),
+            null,
+            ['using' => ['name', 'title']]
         );
     }
 }

@@ -18,8 +18,8 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\Element;
-use Engine\Form\Element\Traits\Description;
+use Engine\Form\AbstractElement;
+use Engine\Form\Behaviour\TranslationBehaviour;
 use Engine\Form\ElementInterface;
 
 /**
@@ -32,62 +32,45 @@ use Engine\Form\ElementInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class RemoteFile extends Element implements ElementInterface
+class RemoteFile extends AbstractElement implements ElementInterface
 {
-    use Description;
+    use TranslationBehaviour;
+
+    const
+        /**
+         * Ajaxplorer url.
+         */
+        EDITOR_URL = '/external/ajaxplorer/?external_selector_type=popup&relative_path=/files';
 
     /**
-     * Ajaxplorer link.
+     * Get allowed options for this element.
      *
-     * @var string
+     * @return array
      */
-    private $_editorUrl = '/external/ajaxplorer/?external_selector_type=popup&relative_path=/files';
-
-    /**
-     * Element value.
-     *
-     * @var
-     */
-    protected $_value;
-
-    /**
-     * Create Remote element.
-     *
-     * @param string $name       Element name.
-     * @param null   $attributes Element attributes.
-     */
-    public function __construct($name, $attributes = null)
+    public function getAllowedOptions()
     {
-        if (!empty($attributes['value'])) {
-            $this->_value = $attributes['value'];
-        }
-
-        parent::__construct($name, $attributes);
+        return array_merge(parent::getAllowedOptions(), ['buttonTitle']);
     }
 
     /**
-     * If element is need to be rendered in default layout.
+     * Get element html template.
      *
-     * @return bool
+     * @return string
      */
-    public function useDefaultLayout()
+    public function getHtmlTemplate()
     {
-        return true;
-    }
-
-    /**
-     * Set default value.
-     *
-     * @param mixed $value Element value.
-     *
-     * @return ElementInterface
-     */
-    public function setDefault($value)
-    {
-        $this->_value = $value;
-        parent::setDefault($value);
-
-        return $this;
+        return $this->getOption(
+            'htmlTemplate',
+            '
+                <div class="form_element_remote_file">
+                    <input type="text" name="%s" id="%s" value="%s" />
+                    <input onclick="PhalconEye.ajaxplorer.openAjaxplorerPopup($(this).parent(), \'%s\', \'%s\');"
+                           type="button"
+                           class="btn btn-primary"
+                           value="%s"/>
+                </div>
+            '
+        );
     }
 
     /**
@@ -97,31 +80,17 @@ class RemoteFile extends Element implements ElementInterface
      */
     public function render()
     {
-        if ($this->_value === null) {
-            $this->_value = $this->getForm()->getValue($this->getName());
-        }
-
-        $attributes = $this->getAttributes();
-        $buttonTitle = 'Select file';
-        if (isset($attributes['title'])) {
-            $buttonTitle = $attributes['title'];
-            unset($attributes['title']);
+        $buttonTitle = $this->getOption('buttonTitle');
+        if (!$buttonTitle) {
+            $buttonTitle = $this->__('Select file');
         }
 
         return sprintf(
-            '
-            <div class="form_element_remote_file">
-                <input type="text" name="%s" id="%s" value="%s" />
-                <input onclick="PE.ajaxplorer.openAjaxplorerPopup($(this).parent(), \'%s\', \'%s\');"
-                       type="button"
-                       class="btn btn-primary"
-                       value="%s"/>
-            </div>
-            ',
+            $this->getHtmlTemplate(),
             $this->getName(),
             $this->getName(),
-            $this->_value,
-            $this->_editorUrl,
+            $this->getValue(),
+            self::EDITOR_URL,
             $buttonTitle,
             $buttonTitle
         );

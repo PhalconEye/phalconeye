@@ -18,7 +18,8 @@
 
 namespace Core\Form\Admin\Package;
 
-use Engine\Form;
+use Engine\Form\FileForm;
+use Engine\Form\Validator\MimeType;
 
 /**
  * Upload package.
@@ -30,28 +31,28 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Upload extends Form
+class Upload extends FileForm
 {
     /**
      * Initialize form.
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
         $this
-            ->setOption('title', 'Install new package')
-            ->setOption('description', 'Select package you want to install (zip extension).');
+            ->setTitle('Install new package')
+            ->setDescription('Select package you want to install (zip extension).');
 
-        $this->addElement(
-            'file',
-            'package',
-            [
-                'label' => 'Package',
-            ]
-        );
+        $this->addContentFieldSet()
+            ->addFile('package')
+            ->getValidation()
+            ->add('package', new MimeType(['type' => 'application/zip']));
 
-        $this->addButton('Upload', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-packages']);
+        $this->addFooterFieldSet()
+            ->addButton('upload')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-packages']);
+
+
     }
 }

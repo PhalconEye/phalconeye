@@ -18,7 +18,6 @@
 
 namespace Engine\Asset;
 
-use Core\Model\Settings;
 use Engine\Asset\Css\Less;
 use Engine\DependencyInjection;
 use Engine\Package\Utilities as FsUtilities;
@@ -63,6 +62,13 @@ class Manager extends AssetManager
      * @var Config
      */
     protected $_config;
+
+    /**
+     * Inline <head> code.
+     *
+     * @var array
+     */
+    protected $_inline = [];
 
     /**
      * Initialize assets manager.
@@ -214,5 +220,42 @@ class Manager extends AssetManager
             ->setTargetUri($local . self::FILENAME_STYLE)
             ->addFilter(new Cssmin())
             ->join(!$this->_config->application->debug);
+    }
+
+    /**
+     * Add <head> inline code.
+     *
+     * @param string $name Identification.
+     * @param string $code Code to add to <head> tag.
+     *
+     * @return $this
+     */
+    public function addInline($name, $code)
+    {
+        $this->_inline[$name] = $code;
+        return $this;
+    }
+
+    /**
+     * Remove inline code.
+     *
+     * @param string $name Identification.
+     *
+     * @return $this
+     */
+    public function removeInline($name)
+    {
+        unset($this->_inline[$name]);
+        return $this;
+    }
+
+    /**
+     * Get <head> tag inline code.
+     *
+     * @return string
+     */
+    public function outputInline()
+    {
+        return implode('\n', $this->_inline);
     }
 }

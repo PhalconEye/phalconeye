@@ -25,6 +25,7 @@ use Core\Form\Admin\Language\EditItem;
 use Core\Model\Language;
 use Core\Model\LanguageTranslation;
 use Engine\Exception;
+use Engine\Form\FileForm;
 use Engine\Navigation;
 use Phalcon\Http\ResponseInterface;
 use Phalcon\Paginator\Adapter\QueryBuilder;
@@ -43,12 +44,6 @@ use Phalcon\Paginator\Adapter\QueryBuilder;
  */
 class AdminLanguagesController extends AbstractAdminController
 {
-    const
-        /**
-         * Language flags directory location.
-         */
-        FLAGS_DIR = '/files/languages/';
-
     /**
      * Init controller.
      *
@@ -118,38 +113,26 @@ class AdminLanguagesController extends AbstractAdminController
      */
     public function createAction()
     {
-        $form = new Create();
-        $this->view->form = $form;
+        $this->view->form = $form = new Create();
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        if (!is_dir(PUBLIC_PATH . self::FLAGS_DIR)) {
-            mkdir(PUBLIC_PATH . self::FLAGS_DIR, 766, true);
-        }
+        /** @var Language $language */
+        $language = $form->getEntity();
 
-        $files = $this->request->getUploadedFiles();
-        $lang = $form->getValues();
+        // Check uploaded files.
+        $this->_setLanguageIcon($language, $form);
 
-        // upload flag
-        if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->language . substr($files[0]->name, -4);
-            @unlink(PUBLIC_PATH . $iconPath);
-            $files[0]->moveTo(PUBLIC_PATH . $iconPath);
-            $lang->icon = $iconPath;
-            $lang->save();
-        }
-
-        // check language file
-        $file = ROOT_PATH . '/app/var/languages/' . $lang->language . '.php';
+        // Check language file.
+        $file = $language->getCacheLocation();
         if (!file_exists($file)) {
             file_put_contents($file, '<?php' . PHP_EOL . PHP_EOL . '$messages = [];');
         }
 
-        $lang->save();
+        $language->save();
         $this->flashSession->success('New object created successfully!');
-
         return $this->response->redirect(['for' => "admin-languages"]);
     }
 
@@ -172,20 +155,15 @@ class AdminLanguagesController extends AbstractAdminController
         $form = new Edit($item);
         $this->view->form = $form;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $files = $this->request->getUploadedFiles();
-        $lang = $form->getValues();
+        /** @var Language $language */
+        $language = $form->getEntity();
 
-        if (count($files) == 1) {
-            $iconPath = self::FLAGS_DIR . $lang->language . substr($files[0]->name, -4);
-            @unlink(PUBLIC_PATH . $iconPath);
-            $files[0]->moveTo(PUBLIC_PATH . $iconPath);
-            $lang->icon = $iconPath;
-            $lang->save();
-        }
+        // Check uploaded files.
+        $this->_setLanguageIcon($language, $form);
 
         $this->flashSession->success('Object saved!');
 
@@ -280,12 +258,11 @@ class AdminLanguagesController extends AbstractAdminController
         ];
 
         $form->setValues($data);
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $item = $form->getValues();
-        $this->view->created = $item;
+        $this->view->created = true;
     }
 
     /**
@@ -308,11 +285,11 @@ class AdminLanguagesController extends AbstractAdminController
         ];
 
         $form->setValues($data);
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
-        $this->view->edited = $form->getValues();
+        $this->view->edited = true;
     }
 
     /**
@@ -369,6 +346,41 @@ class AdminLanguagesController extends AbstractAdminController
         }
 
         return $this->response->redirect(['for' => 'admin-languages']);
+    }
+
+    /**
+     * Check and set icon for language.
+     *
+     * @param Language $language Language object.
+     * @param FileForm $form     Form object.
+     *
+     * @return void
+     */
+    protected function _setLanguageIcon($language, $form)
+    {
+        // Upload language icon.
+        if (!$form->hasFiles()) {
+            return;
+        }
+
+        if (!is_dir(PUBLIC_PATH . '/' . Language::LANGUAGE_ICON_LOCATION)) {
+            mkdir(PUBLIC_PATH . '/' . Language::LANGUAGE_ICON_LOCATION, 766, true);
+        }
+
+        $files = $form->getFiles();
+        $iconPath = Language::LANGUAGE_ICON_LOCATION .
+            $language->language .
+            '.' . pathinfo($files[0]->getName(), PATHINFO_EXTENSION);
+        $fullIconPath = PUBLIC_PATH . '/' . $iconPath;
+
+        if (file_exists($fullIconPath)) {
+            @unlink($fullIconPath);
+        }
+
+        $files[0]->moveTo($fullIconPath);
+
+        $language->icon = $iconPath;
+        $language->save();
     }
 }
 

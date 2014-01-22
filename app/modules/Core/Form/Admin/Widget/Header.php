@@ -37,20 +37,13 @@ class Header extends Form
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        $this
-            ->setOption('description', "Settings for header of you site.");
+        $this->setDescription('Settings for header of you site.');
 
-        $this->addElement('RemoteFile', 'logo', ['label' => 'Logo image (url)']);
-        $this->addElement('check', 'show_title', ['label' => 'Show site title', 'options' => 1]);
-        $this->addElement(
-            'check',
-            'show_auth',
-            [
-                'label' => 'Show authentication links (logo, register, logout, etc)',
-                'options' => 1
-            ]
-        );
+        $this->addContentFieldSet()
+            ->addRemoteFile('logo', 'Logo image (url)')
+            ->addCheckbox('show_title', 'Show site title', null, 1)
+            ->addCheckbox('show_auth', 'Show authentication links (logo, register, logout, etc)', null, 1);
     }
 }

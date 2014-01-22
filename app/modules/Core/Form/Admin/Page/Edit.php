@@ -35,15 +35,17 @@ class Edit extends Create
      *
      * @return void
      */
-    public function init()
+    public function initialize()
     {
-        parent::init();
-        $this
-            ->setOption('title', "Edit Page")
-            ->setOption('description', "Edit this page.");
+        parent::initialize();
 
-        $this->clearButtons();
-        $this->addButton('Save', true);
-        $this->addButtonLink('Cancel', ['for' => 'admin-pages']);
+        $this
+            ->setTitle('Edit Page')
+            ->setDescription('Edit this page.');
+
+        $this->getFieldSet(self::FIELDSET_FOOTER)
+            ->clearElements()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-pages']);
     }
 }

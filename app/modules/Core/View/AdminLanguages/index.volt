@@ -9,6 +9,8 @@
    If you did not receive a copy of the license and are unable to
    obtain it through the world-wide-web, please send an email
    to phalconeye@gmail.com so we can send you a copy immediately.
+
+   Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
 #}
 
 {% extends "layouts/admin.volt" %}
@@ -72,7 +74,7 @@
                             {% if item.icon is empty %}
                                 No flag image.
                             {% else %}
-                            <img alt='' src='{{ url(item.icon) }}'/>
+                            <img alt='' src='{{ item.getIcon() }}'/>
                             {% endif %}
                         </td>
                         <td>

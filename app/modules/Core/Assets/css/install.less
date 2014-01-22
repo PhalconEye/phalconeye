@@ -201,6 +201,39 @@ form .form_elements .form_element textarea {
   height: 100px;
 }
 
+form fieldset {
+  clear: both;
+  border: none;
+}
+
+form .form_elements > div,
+form fieldset > div {
+  min-height: 30px;
+  clear: both;
+  padding-top: 10px;
+}
+
+form .form_element_file_image {
+  text-align: center;
+  width: 220px;
+}
+
+form .form_element_file_image img{
+  max-width: 220px;
+  max-height: 220px;
+  margin: 0 10px 10px 10px;
+}
+
+form .form_elements .validation_failed label {
+  color: red;
+}
+
+form .form_elements .validation_failed input,
+form .form_elements .validation_failed textarea,
+form .form_elements .validation_failed select, {
+  border: 1px solid red;
+}
+
 .form_errors,
 .form_notices {
   list-style: none;

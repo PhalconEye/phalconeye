@@ -32,6 +32,8 @@ use Phalcon\Mvc\Model as PhalconModel;
  * @link      http://phalconeye.com/
  *
  * @method static findFirstById($id)
+ *
+ * @method \Engine\DependencyInjection|\Phalcon\DI getDI()
  */
 abstract class AbstractModel extends PhalconModel
 {

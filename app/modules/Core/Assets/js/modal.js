@@ -8,7 +8,6 @@
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-
 (function (window, $, root, undefined) {
     $(function () {
         root.modal = {
@@ -128,4 +127,4 @@
 
         root.modal.init('[data-toggle="modal"]');
     });
-}(window, jQuery, PE));
+}(window, jQuery, PhalconEye));

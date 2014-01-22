@@ -122,14 +122,14 @@ class AdminAccessController extends AbstractAdminController
         }
 
         $objectAcl = $this->core->acl()->getObjectAcl($id);
-        $form = $this->_getForm($objectAcl, $changeRole);
+        $form = $this->_getForm($objectAcl, $currentRole);
 
         $this->view->currentObject = $id;
         $this->view->form = $form;
         $this->view->roles = $roles;
         $this->view->currentRole = $currentRole;
 
-        if (!$this->request->isPost() || !$form->isValid($_POST)) {
+        if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
 
@@ -207,59 +207,40 @@ class AdminAccessController extends AbstractAdminController
         $form = new Form();
 
         if (!empty($objectAcl->actions)) {
-            $form->addElement(
-                'html',
-                'header_actions',
-                [
-                    'ignore' => true,
-                    'html' => '<h4>' . $this->di->get('trans')->_('Actions') . '</h4>'
-                ]
-            );
+            $form->addHtml('header_actions', '<h4>' . $this->di->get('trans')->_('Actions') . '</h4>');
 
             foreach ($objectAcl->actions as $action) {
-                $form->addElement(
-                    'check',
+                $form->addCheckbox(
                     $action,
-                    [
-                        'label' => ucfirst($action),
-                        'description' => sprintf(
-                            'ACCESS_OBJECT_%s_ACTION_%s',
-                            strtoupper($objectAcl->name),
-                            strtoupper($action)
-                        ),
-                        'options' => 1,
-                        'value' => $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action)
-                    ]
+                    ucfirst($action),
+                    sprintf(
+                        'ACCESS_OBJECT_%s_ACTION_%s',
+                        strtoupper($objectAcl->name),
+                        strtoupper($action)
+                    ),
+                    1,
+                    $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action)
                 );
             }
         }
 
         if (!empty($objectAcl->options)) {
-            $form->addElement(
-                'html',
-                'header_options',
-                [
-                    'ignore' => true,
-                    'html' => '<br/><br/><h4>' . $this->di->get('trans')->_('Options') . '</h4>'
-                ]
-            );
+            $form->addHtml('header_options', '<br/><br/><h4>' . $this->di->get('trans')->_('Options') . '</h4>');
 
             foreach ($objectAcl->options as $option) {
-                $form->addElement(
-                    'text',
+                $form->addText(
                     $option,
-                    [
-                        'label' => ucfirst($option),
-                        'description' => sprintf(
-                            'ACCESS_OBJECT_%s_OPTION_%s',
-                            strtoupper($objectAcl->name),
-                            strtoupper($option)
-                        ),
-                        'value' => $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
-                    ]
+                    ucfirst($option),
+                    sprintf(
+                        'ACCESS_OBJECT_%s_OPTION_%s',
+                        strtoupper($objectAcl->name),
+                        strtoupper($option)
+                    ),
+                    $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
                 );
             }
         }
-        $form->addButton('Save', true);
+        $form->addButton('save');
+        return $form;
     }
 }

@@ -18,9 +18,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\Element\Traits\Description;
 use Engine\Form\ElementInterface;
-use Phalcon\Forms\Element\Password as PhalconPassword;
 
 /**
  * Form element - Password.
@@ -32,17 +30,15 @@ use Phalcon\Forms\Element\Password as PhalconPassword;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Password extends PhalconPassword implements ElementInterface
+class Password extends Text implements ElementInterface
 {
-    use Description;
-
     /**
-     * If element is need to be rendered in default layout
+     * Get this input element type.
      *
-     * @return bool
+     * @return string
      */
-    public function useDefaultLayout()
+    public function getInputType()
     {
-        return true;
+        return 'password';
     }
 }

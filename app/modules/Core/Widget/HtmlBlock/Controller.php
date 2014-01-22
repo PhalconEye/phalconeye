@@ -71,14 +71,7 @@ class Controller extends WidgetController
     public function adminAction()
     {
         $form = new Form();
-
-        $form->addElement(
-            'text',
-            'title',
-            [
-                'label' => 'Title'
-            ]
-        );
+        $form->addText('title');
 
         // Adding additional html for language selector support.
         $languageSelectorHtml = '
@@ -93,27 +86,28 @@ class Controller extends WidgetController
                     }
                 </style>
                 <script type="text/javascript">
-                     var defaultLocale = "%s";
+                     var defaultLanguage = "%s";
                      $(document).ready(function(){
                         $("#html_block_language").change(function(){
-                            $("#cke_html_"+$(this).val()).show();
-                            $(".cke").not("#cke_html_"+$(this).val()).hide();
+                            $("#cke_html_"+$(this).val()).closest(".form_element_container").show();
+                            $(".cke").not("#cke_html_"+$(this).val()).closest(".form_element_container").hide();
                         });
 
-                        // hide inactive
-                        $("textarea").not("#html_"+defaultLocale).hide();
-
-                        setTimeout(function(){
-                            %s
-                            setTimeout(function(){$(".cke").not("#cke_html_"+defaultLocale).hide();}, 200);
-                        }, 200);
+                        // Hide inactive.
+                        $("textarea").not("#html_"+defaultLanguage).closest(".form_element_container").hide();
+                        setTimeout(
+                            function(){
+                                $(".cke").not("#cke_html_"+defaultLanguage).closest(".form_element_container").hide();
+                            }, 200);
                     });
                 </script>
-                <div style="margin-bottom: -65px;float: left;">
+                <div class="form_element_container" style="float: left;">
                     <div class="form_label">
                         <label for="title">%s</label>
+                    </div>
+                    <div class="form_element">
                         <select id="html_block_language" style="width: 120px;">
-                        %s
+                            %s
                         </select>
                     </div>
                 </div>
@@ -122,40 +116,40 @@ class Controller extends WidgetController
         // Creating languages boxes.
         $languages = Language::find();
         $languageHtmlItems = '';
-        $languageTextCode = '';
-        $defaultLocale = Settings::getSetting('system_default_language', 'en');
+        $defaultLanguage = Settings::getSetting('system_default_language', 'en');
+        $elements = [];
 
-        $order = 3; // All textarea's must be ordered together.
         foreach ($languages as $language) {
             $selectedLanguage = '';
-            if ($language->locale == $defaultLocale) {
+            if ($language->language == $defaultLanguage) {
                 $selectedLanguage = 'selected="selected"';
             }
 
-            $form->addElement('textArea', 'html_' . $language->locale, [], $order++);
-            $languageTextCode .= 'CKEDITOR.replace("html_' . $language->locale . '");';
+            $elementName = 'html_' . $language->language;
+            $elements[$elementName] = 'HTML (' . strtoupper($language->language) . ')';
             $languageHtmlItems .=
-                '<option ' . $selectedLanguage . ' value=' . $language->locale . '>' . $language->name . '</option>';
+                '<option ' . $selectedLanguage . ' value=' . $language->language . '>' . $language->name . '</option>';
         }
 
         $languageSelectorHtml =
             sprintf(
                 $languageSelectorHtml,
-                $defaultLocale,
-                $languageTextCode,
+                $defaultLanguage,
                 $this->di->get('trans')->_('HTML block, for:'),
                 $languageHtmlItems
             );
 
         // Adding created html to form.
-        $form->addElement(
-            'html',
-            'html',
-            [
-                'ignore' => true,
-                'html' => $languageSelectorHtml
-            ]
+        $form->addHtml(
+            'html_language',
+            $languageSelectorHtml
         );
+
+        foreach ($elements as $elementName => $elementTitle) {
+            $form->addCkEditor($elementName, $elementTitle);
+        }
+
+        $form->addHtml('separator');
 
         return $form;
     }
