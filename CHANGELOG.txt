@@ -7,7 +7,19 @@ Version 0.4.0
  - Implemented external Widgets.
  - Implemented console commands.
  - Implemented migrations system for engine and modules.
- - Added Phalcon 1.2.4 support.
+ - Implemented form partials: added 'default' and 'text'.
+ - Implemented form conditions.
+ - Implemented form fieldsets.
+ - Implemented form multiple entities support.
+ - Added CkEditor element.
+ - Added Button element.
+ - Added ButtonLink element.
+ - Added Heading element.
+ - Added FileForm.
+ - Added EntityForm (this will allow to created forms from entity on the fly).
+ - Added Image validator (size validation).
+ - Added File MimeType validation.
+ - Added Phalcon 1.3.0 support (Required version).
  - Added Less compiler.
  - Added Phalcon assets manager.
  - Added Profiler.
@@ -15,9 +27,11 @@ Version 0.4.0
  - Fixed widgets saving with empty parameters.
  - Fixed #11.
  - Fixed Exception trace logging.
+ - JS refactored.
  - New default theme.
  - Code styling via phpcs and phpmd.
  - Most system code has been refactored.
+ - Form class rewritten from scratch.
 
 Version 0.3.0
  - Some menu improvements: onclick action, icon, tooltip, language selector.
