@@ -21,19 +21,21 @@
             <div class="form_element_container{% if form.hasErrors(element.getName()) %} validation_failed{% endif %}">
         {% endif %}
 
-        <div class="form_label">
-            {% if element.getOption('label') %}
-                <label for="{{ element.getName() }}">
-                    {{ element.getOption('label') |trans }}
-                    {% if element.getOption('required') %}
-                        *
-                    {% endif %}
-                </label>
-            {% endif %}
-            {% if element.getOption('description') %}
-                <p>{{ element.getOption('description') |trans }}</p>
-            {% endif %}
-        </div>
+        {% if element.getOption('label') or element.getOption('description') %}
+            <div class="form_label">
+                {% if element.getOption('label') %}
+                    <label for="{{ element.getName() }}">
+                        {{ element.getOption('label') |trans }}
+                        {% if element.getOption('required') %}
+                            *
+                        {% endif %}
+                    </label>
+                {% endif %}
+                {% if element.getOption('description') %}
+                    <p>{{ element.getOption('description') |trans }}</p>
+                {% endif %}
+            </div>
+        {% endif %}
         <div class="form_element">
             {% if instanceof(element, 'Engine\Form\Element\File') and element.getOption('isImage') %}
                 <div class="form_element_file_image">

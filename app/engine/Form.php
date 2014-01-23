@@ -340,7 +340,11 @@ class Form implements ElementContainerInterface
     {
         /** @var View $view */
         $view = $this->getDI()->get('view');
-        return $view->partial($viewPath, ['form' => $this]);
+        ob_start();
+        $view->partial($viewPath, ['form' => $this]);
+        $html = ob_get_contents();
+        ob_end_clean();
+        return $html;
     }
 
     /**

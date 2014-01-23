@@ -21,6 +21,8 @@ namespace Engine\Form\Behaviour;
 use Engine\Form\AbstractElement;
 use Engine\Form;
 use Engine\Form\Element\File as FileElement;
+use Phalcon\DI;
+use Phalcon\Mvc\View;
 
 /**
  * Elements behaviour.
@@ -49,15 +51,30 @@ trait ElementsBehaviour
     /**
      * Html element.
      *
-     * @param string     $name  Element name.
-     * @param mixed|null $value Element value.
+     * @param string     $name    Element name.
+     * @param mixed|null $value   Element value.
+     * @param bool|array $partial Value is partial path? This also used as partial variables.
      *
      * @return $this
      */
-    public function addHtml($name, $value = null)
+    public function addHtml($name, $value = null, $partial = false)
     {
         $element = new Form\Element\Html($name);
-        $element->setValue($value);
+        if ($partial !== false) {
+            if (!is_array($partial)) {
+                $partial = ['form' => $this];
+            } else {
+                $partial = array_merge(['form' => $this], $partial);
+            }
+
+            ob_start();
+            DI::getDefault()->get('view')->partial($value, $partial);
+            $html = ob_get_contents();
+            ob_end_clean();
+            $element->setValue($html);
+        } else {
+            $element->setValue($value);
+        }
         $this->add($element);
 
         return $this;

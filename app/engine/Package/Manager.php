@@ -349,7 +349,7 @@ class Manager
             $path = $this->getPackageLocation($package->type) . $fullName;
         }
 
-        // Check package metadata
+        // Check package metadata.
         $metadataFile = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES . '/' .
             $this->_getPackageFullName($package) . '.json';
         if (file_exists($metadataFile)) {
@@ -486,10 +486,11 @@ class Manager
      * Events and modules files.
      *
      * @param AbstractPackage[] $packages Packages array.
+     * @param bool              $force    Force metadata creation.
      *
      * @return void
      */
-    public function generateMetadata($packages = null)
+    public function generateMetadata($packages = null, $force = false)
     {
         if (empty($packages)) {
             $packages = $this->_installedPackages;
@@ -525,7 +526,7 @@ class Manager
 
             $packageMetadataFile = $packagesMetadataDirectory . '/' .
                 $this->_getPackageFullName($package) . '.json';
-            if (!file_exists($packageMetadataFile)) {
+            if (!file_exists($packageMetadataFile) || $force) {
                 $this->_createManifest($packageMetadataFile, $package->toJson());
             }
         }

@@ -162,8 +162,8 @@ class Application extends PhalconApplication
         }
 
         // Set default services to the DI.
-        // @TODO do not miss this line.
-//        $this->_attachEngineEvents($eventsManager, $config);
+        // @TODO do not miss this line. Also them must be before 'init' events.
+        $this->_attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
     }
 
@@ -750,37 +750,46 @@ class Application extends PhalconApplication
     protected function _attachEngineEvents($eventsManager, $config)
     {
         // Attach modules plugins events.
-        $modules = $config->get('events')->toArray();
+        $events = $config->get('events')->toArray();
 
-        $loadedModules = $config->modules->toArray();
-        if (!empty($modules)) {
-            foreach ($modules as $module => $events) {
-                if (!in_array($module, $loadedModules)) {
-                    continue;
-                }
-                foreach ($events as $event) {
-                    $pluginClass = $event['namespace'] . '\\' . $event['class'];
-                    $eventsManager->attach($event['type'], new $pluginClass());
-                }
+        try {
+            foreach ($events as $class => $event) {
+                $eventsManager->attach($event, new $class());
             }
+        } catch (\Exception $e) {
+            $this->getDI()->getLogger()->error('There is a problem attaching engine event:');
+            Exception::exception($e);
         }
-
-        // Attach plugins events.
-        $plugins = $config->get('plugins');
-        if (!empty($plugins)) {
-            foreach ($plugins as $pluginName => $plugin) {
-
-                if (!$plugin['enabled'] || empty($plugin['events'])) {
-                    continue;
-                }
-
-                $pluginClass = '\Plugin\\' . ucfirst($pluginName) . '\\' . ucfirst($pluginName);
-                $pluginObject = new $pluginClass();
-                foreach ($plugin['events'] as $event) {
-                    $eventsManager->attach($event, $pluginObject);
-                }
-            }
-        }
+//
+//        $loadedModules = $config->modules->toArray();
+//        if (!empty($modules)) {
+//            foreach ($modules as $module => $events) {
+//                if (!in_array($module, $loadedModules)) {
+//                    continue;
+//                }
+//                foreach ($events as $event) {
+//                    $pluginClass = $event['namespace'] . '\\' . $event['class'];
+//                    $eventsManager->attach($event['type'], new $pluginClass());
+//                }
+//            }
+//        }
+//
+//        // Attach plugins events.
+//        $plugins = $config->get('plugins');
+//        if (!empty($plugins)) {
+//            foreach ($plugins as $pluginName => $plugin) {
+//
+//                if (!$plugin['enabled'] || empty($plugin['events'])) {
+//                    continue;
+//                }
+//
+//                $pluginClass = '\Plugin\\' . ucfirst($pluginName) . '\\' . ucfirst($pluginName);
+//                $pluginObject = new $pluginClass();
+//                foreach ($plugin['events'] as $event) {
+//                    $eventsManager->attach($event, $pluginObject);
+//                }
+//            }
+//        }
     }
 
     /**

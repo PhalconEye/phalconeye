@@ -89,11 +89,9 @@ class Package extends AbstractPackage
 
         // Get events
         if ($this->type == Manager::PACKAGE_TYPE_MODULE || $this->type == Manager::PACKAGE_TYPE_PLUGIN) {
-            $events = $this->getDI()->get('config')->get('events');
-            if (!empty($events[$this->type]) && !empty($events[$this->type][$this->name])) {
-                foreach ($events[$this->type][$this->name] as $event) {
-                    $data['events'][] = $event;
-                }
+            $packageData = $this->getData();
+            if (!empty($packageData) && !empty($packageData['events'])) {
+                $data['events'] = $packageData['events'];
             }
         }
 

@@ -20,6 +20,7 @@ namespace Core\Controller;
 
 use Core\Form\Admin\Package\Create as CreateForm;
 use Core\Form\Admin\Package\Edit as EditForm;
+use Core\Form\Admin\Package\Events as EventsForm;
 use Core\Form\Admin\Package\Export as ExportForm;
 use Core\Form\Admin\Package\Upload as UploadForm;
 use Core\Model\Package;
@@ -194,13 +195,13 @@ class AdminPackagesController extends AbstractAdminController
                     ];
                     $package->save($manifest->toArray());
                     $this->_enablePackageConfig($package);
-                    $packageManager->generateMetadata(Package::find());
+                    $packageManager->generateMetadata([$package], true);
 
                     // install package dependencies
                     if ($manifest->get('dependencies')) {
                         $dependencies = $manifest->get('dependencies');
-                        foreach ($dependencies as $dependecy) {
-                            $needPackage = $this->_getPackage($dependecy['type'], $dependecy['name']);
+                        foreach ($dependencies as $dependency) {
+                            $needPackage = $this->_getPackage($dependency['type'], $dependency['name']);
                             if ($needPackage) {
                                 $packageDependency = new PackageDependency();
                                 $packageDependency->package_id = $package->id;
@@ -248,6 +249,7 @@ class AdminPackagesController extends AbstractAdminController
         /** @var Package $package */
         $package = $form->getEntity();
         $this->_setWidgetData($form, $package, $data);
+        $package->save();
 
         if (!empty($data['header'])) {
             $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
@@ -256,7 +258,7 @@ class AdminPackagesController extends AbstractAdminController
         $packageManager = new Manager();
         $packageManager->createPackage($data);
         $this->_enablePackageConfig($package);
-        $packageManager->generateMetadata(Package::find());
+        $packageManager->generateMetadata([$package], true);
 
         switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
@@ -315,11 +317,78 @@ class AdminPackagesController extends AbstractAdminController
         $data = $form->getValues();
         $package = $form->getEntity();
         $this->_setWidgetData($form, $package, $data);
+        $package->save();
+
+        $packageManager = new Manager();
+        $packageManager->generateMetadata([$package], true);
 
         $this->flashSession->success('Package saved!');
 
         return $this->response->redirect(['for' => $return]);
     }
+
+    /**
+     * Events package.
+     * Only for modules and plugins.
+     *
+     * @param string $type   Package type.
+     * @param string $name   Package name.
+     * @param string $return Return to.
+     *
+     * @return mixed
+     *
+     * @Route(
+     * "/events/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
+     * methods={"GET", "POST"},
+     * name="admin-packages-events"
+     * )
+     */
+    public function eventsAction($type, $name, $return)
+    {
+        $package = $this->_getPackage($type, $name);
+        if (!$package) {
+            return $this->response->redirect(['for' => $return]);
+        }
+
+        if (!$package->enabled) {
+            $this->flashSession->notice('Package must be enabled!');
+            return $this->response->redirect(['for' => $return]);
+        }
+
+        $data = $package->getData();
+        $postData = $this->request->getPost();
+        if (!empty($postData)) {
+            $data = ['events' => $postData];
+        } elseif (!empty($data) && !empty($data['events'])) {
+            $preparedData = [];
+            $i = 0;
+            foreach ($data['events'] as $key => $value) {
+                $preparedData['event'][$i] = $value;
+                $preparedData['class'][$i] = $key;
+                $i++;
+            }
+            $data = ['events' => $preparedData];
+        }
+
+        $this->view->form = $form = new EventsForm($data, $package, $return);
+
+        if (!$this->request->isPost() || !$form->isEventsDataValid()) {
+            return;
+        }
+
+        if (!is_array($package->data)) {
+            $package->data = [];
+        }
+        $package->data['events'] = $form->getEventsData();
+        $package->save();
+
+        $packageManager = new Manager();
+        $packageManager->generateMetadata([$package], true);
+
+        $this->flashSession->success('Package events saved!');
+        return $this->response->redirect(['for' => $return]);
+    }
+
 
     /**
      * Export package.
@@ -503,8 +572,8 @@ class AdminPackagesController extends AbstractAdminController
             $package->save();
 
             $this->_disablePackageConfig($package);
-            $packageManager = new Manager(Package::find());
-            $packageManager->generateMetadata();
+            $packageManager = new Manager();
+            $packageManager->generateMetadata([$package], true);
             $this->app->clearCache();
         }
 
@@ -691,8 +760,6 @@ class AdminPackagesController extends AbstractAdminController
                 'widget_id' => $widget->id
             ];
         }
-
-        $package->save();
     }
 }
 
