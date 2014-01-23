@@ -362,7 +362,8 @@ class AdminPackagesController extends AbstractAdminController
         } elseif (!empty($data) && !empty($data['events'])) {
             $preparedData = [];
             $i = 0;
-            foreach ($data['events'] as $key => $value) {
+            foreach ($data['events'] as $event) {
+                list ($key, $value) = explode('=', $event);
                 $preparedData['event'][$i] = $value;
                 $preparedData['class'][$i] = $key;
                 $i++;

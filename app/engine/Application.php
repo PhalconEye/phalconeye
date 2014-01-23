@@ -84,8 +84,6 @@ class Application extends PhalconApplication
     private $_loaders =
         [
             'normal' => [
-                'logger',
-                'loader',
                 'environment',
                 'cache',
                 'annotations',
@@ -96,15 +94,11 @@ class Application extends PhalconApplication
                 'engine'
             ],
             'console' => [
-                'logger',
-                'loader',
                 'database',
                 'cache',
                 'engine'
             ],
             'session' => [
-                'logger',
-                'loader',
                 'cache',
                 'database',
                 'session'
@@ -153,6 +147,12 @@ class Application extends PhalconApplication
         $eventsManager = new EventsManager();
         $this->setEventsManager($eventsManager);
 
+        // Init base systems first.
+        $this->initLogger($di, $config);
+        $this->initLoader($di, $config, $eventsManager);
+
+        $this->_attachEngineEvents($eventsManager, $config);
+
         // Init services and engine system.
         foreach ($this->_loaders[$mode] as $service) {
             $serviceName = ucfirst($service);
@@ -161,9 +161,6 @@ class Application extends PhalconApplication
             $eventsManager->fire('init:after' . $serviceName, $result);
         }
 
-        // Set default services to the DI.
-        // @TODO do not miss this line. Also them must be before 'init' events.
-        $this->_attachEngineEvents($eventsManager, $config);
         $di->setShared('eventsManager', $eventsManager);
     }
 
@@ -750,46 +747,18 @@ class Application extends PhalconApplication
     protected function _attachEngineEvents($eventsManager, $config)
     {
         // Attach modules plugins events.
-        $events = $config->get('events')->toArray();
-
-        try {
-            foreach ($events as $class => $event) {
-                $eventsManager->attach($event, new $class());
+        $events = $config->events->toArray();
+        $cache = [];
+        foreach ($events as $item) {
+            list ($class, $event) = explode('=', $item);
+            if (isset($cache[$class])) {
+                $object = $cache[$class];
+            } else {
+                $object = new $class();
+                $cache[$class] = $object;
             }
-        } catch (\Exception $e) {
-            $this->getDI()->getLogger()->error('There is a problem attaching engine event:');
-            Exception::exception($e);
+            $eventsManager->attach($event, $object);
         }
-//
-//        $loadedModules = $config->modules->toArray();
-//        if (!empty($modules)) {
-//            foreach ($modules as $module => $events) {
-//                if (!in_array($module, $loadedModules)) {
-//                    continue;
-//                }
-//                foreach ($events as $event) {
-//                    $pluginClass = $event['namespace'] . '\\' . $event['class'];
-//                    $eventsManager->attach($event['type'], new $pluginClass());
-//                }
-//            }
-//        }
-//
-//        // Attach plugins events.
-//        $plugins = $config->get('plugins');
-//        if (!empty($plugins)) {
-//            foreach ($plugins as $pluginName => $plugin) {
-//
-//                if (!$plugin['enabled'] || empty($plugin['events'])) {
-//                    continue;
-//                }
-//
-//                $pluginClass = '\Plugin\\' . ucfirst($pluginName) . '\\' . ucfirst($pluginName);
-//                $pluginObject = new $pluginClass();
-//                foreach ($plugin['events'] as $event) {
-//                    $eventsManager->attach($event, $pluginObject);
-//                }
-//            }
-//        }
     }
 
     /**

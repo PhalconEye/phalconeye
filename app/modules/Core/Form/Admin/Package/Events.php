@@ -115,7 +115,7 @@ class Events extends Form
                 $this->addError('Class "' . $data['class'][$i] . '" not found.');
                 return false;
             }
-            $this->_eventsData[$data['class'][$i]] = $data['event'][$i];
+            $this->_eventsData[] = $data['class'][$i] . '=' . $data['event'][$i];
         }
 
         return true;
