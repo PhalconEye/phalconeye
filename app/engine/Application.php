@@ -201,7 +201,7 @@ class Application extends PhalconApplication
         );
 
         // Add all required namespaces and modules.
-        $modulesNamespaces = [];
+        $namespaces = [];
         $bootstraps = [];
         foreach ($modules as $module => $enabled) {
             if (!$enabled) {
@@ -209,17 +209,17 @@ class Application extends PhalconApplication
             }
             $moduleName = ucfirst($module);
 
-            $modulesNamespaces[$moduleName] = $this->_config->directories->modules . $moduleName;
+            $namespaces[$moduleName] = $this->_config->directories->modules . $moduleName;
             $bootstraps[$module] = $moduleName . '\Bootstrap';
         }
 
-        $modulesNamespaces['Engine'] = $config->directories->engine;
-        $modulesNamespaces['Plugin'] = $config->directories->plugins;
-        $modulesNamespaces['Widget'] = $config->directories->widgets;
-        $modulesNamespaces['Library'] = $config->directories->libraries;
+        $namespaces['Engine'] = $config->directories->engine;
+        $namespaces['Plugin'] = $config->directories->plugins;
+        $namespaces['Widget'] = $config->directories->widgets;
+        $namespaces['Library'] = $config->directories->libraries;
 
         $loader = new Loader();
-        $loader->registerNamespaces($modulesNamespaces);
+        $loader->registerNamespaces($namespaces);
 
         if ($config->application->debug && $config->application->installed) {
             $eventsManager->attach(

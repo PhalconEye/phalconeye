@@ -19,6 +19,8 @@
 namespace Engine;
 
 use Phalcon\DI;
+use Phalcon\DiInterface;
+use Phalcon\Events\Manager;
 
 /**
  * Bootstrap interface.
@@ -32,6 +34,14 @@ use Phalcon\DI;
  */
 interface BootstrapInterface
 {
+    /**
+     * Create Bootstrap.
+     *
+     * @param DiInterface $di Dependency injection.
+     * @param Manager     $em Events manager.
+     */
+    public function __construct($di, $em);
+
     /**
      * Register module services.
      *
