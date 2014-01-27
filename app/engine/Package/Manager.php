@@ -511,7 +511,7 @@ class Manager
             }
 
             if ($package->type == self::PACKAGE_TYPE_MODULE && !$package->is_system) {
-                $config['modules'][$package->name] = true;
+                $config['modules'][] = $package->name;
             }
 
             if (

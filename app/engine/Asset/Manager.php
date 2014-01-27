@@ -113,11 +113,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Collect css/js/img from modules.
         ///////////////////////////////////
-        foreach ($this->getDI()->get('modules') as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-
+        foreach ($this->getDI()->get('modules') as $module) {
             // CSS
             $assetsPath = $this->_config->directories->modules . ucfirst($module) . '/Assets/';
             $path = $location . 'css/' . $module . '/';

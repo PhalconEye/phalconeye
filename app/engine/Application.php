@@ -187,10 +187,7 @@ class Application extends PhalconApplication
     {
         // Add default module and engine modules.
         $modules = array_merge(
-            [
-                self::SYSTEM_DEFAULT_MODULE => true,
-                'user' => true,
-            ],
+            [self::SYSTEM_DEFAULT_MODULE, 'user'],
             $this->_config->modules->toArray()
         );
         $di->set(
@@ -203,12 +200,8 @@ class Application extends PhalconApplication
         // Add all required namespaces and modules.
         $namespaces = [];
         $bootstraps = [];
-        foreach ($modules as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
+        foreach ($modules as $module) {
             $moduleName = ucfirst($module);
-
             $namespaces[$moduleName] = $this->_config->directories->modules . $moduleName;
             $bootstraps[$module] = $moduleName . '\Bootstrap';
         }
@@ -361,10 +354,7 @@ class Application extends PhalconApplication
             );
 
             //Read the annotations from controllers
-            foreach ($modules as $module => $enabled) {
-                if (!$enabled) {
-                    continue;
-                }
+            foreach ($modules as $module) {
                 $moduleName = ucfirst($module);
 
                 // Get all file names.
@@ -622,11 +612,7 @@ class Application extends PhalconApplication
      */
     protected function initEngine($di)
     {
-        foreach ($di->get('modules') as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-
+        foreach ($di->get('modules') as $module) {
             // Initialize module api.
             $di->setShared(
                 strtolower($module),

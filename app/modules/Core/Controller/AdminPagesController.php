@@ -207,10 +207,7 @@ class AdminPagesController extends AbstractAdminController
 
         $modulesDefinition = $this->getDI()->get('modules');
         $modules = [];
-        foreach ($modulesDefinition as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
+        foreach ($modulesDefinition as $module) {
             $modules[$module] = ucfirst($module);
         }
         $bundlesWidgetsMetadata = [];

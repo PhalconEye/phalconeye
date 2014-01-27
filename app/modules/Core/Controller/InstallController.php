@@ -188,11 +188,7 @@ class InstallController extends AbstractController
 
                 // Run modules installation scripts.
                 $packageManager = new PackageManager([], $this->di);
-                foreach ($this->di->get('modules') as $moduleName => $enabled) {
-                    if (!$enabled) {
-                        continue;
-                    }
-
+                foreach ($this->di->get('modules') as $moduleName) {
                     $packageManager->runInstallScript(
                         new Config(
                             [

@@ -210,14 +210,12 @@ class Metadata
     public function getAllModelsMetadata(DiInterface $di)
     {
         $models = [];
-        foreach ($di->get('modules') as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-            $modelsDirectory = $di->get('config')->directories->modules . ucfirst($module) . '/Model';
+        foreach ($di->get('modules') as $module) {
+            $module = ucfirst($module);
+            $modelsDirectory = $di->get('config')->directories->modules . $module . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelInfo = [];
-                $modelClass = '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath));
+                $modelClass = '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath));
                 $reflector = $di->get('annotations')->get($modelClass);
 
                 // Get table name.

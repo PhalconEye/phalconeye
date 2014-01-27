@@ -254,20 +254,16 @@ class Acl extends AbstractApi
     protected function _addResources($acl, $objects)
     {
         $config = $this->getDI()->get('config');
-        foreach ($this->getDI()->get('modules') as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-            $moduleName = ucfirst($module);
-
-            $modelsPath = $config->directories->modules . $moduleName . '/Model';
+        foreach ($this->getDI()->get('modules') as $module) {
+            $module = ucfirst($module);
+            $modelsPath = $config->directories->modules . $module . '/Model';
             if (file_exists($modelsPath)) {
                 $files = scandir($modelsPath);
                 foreach ($files as $file) {
                     if ($file == "." || $file == "..") {
                         continue;
                     }
-                    $class = sprintf('\%s\Model\%s', $moduleName, ucfirst(str_replace('.php', '', $file)));
+                    $class = sprintf('\%s\Model\%s', $module, ucfirst(str_replace('.php', '', $file)));
                     $object = $this->getObjectAcl($class);
                     if ($object == null) {
                         continue;

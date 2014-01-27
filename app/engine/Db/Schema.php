@@ -164,14 +164,12 @@ class Schema
     public function getAllModels()
     {
         $modelsInfo = [];
-        foreach ($this->getDI()->get('modules') as $module => $enabled) {
-            if (!$enabled) {
-                continue;
-            }
-            $modelsDirectory = $this->getDI()->get('config')->directories->modules . ucfirst($module) . '/Model';
+        foreach ($this->getDI()->get('modules') as $module) {
+            $module = ucfirst($module);
+            $modelsDirectory = $this->getDI()->get('config')->directories->modules . $module . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelsInfo[] = [
-                    'class' => '\\' . ucfirst($module) . '\Model\\' . basename(str_replace('.php', '', $modelPath)),
+                    'class' => '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath)),
                     'path' => $modelPath,
                     'module' => $module
                 ];
