@@ -72,10 +72,10 @@ class Cli extends Application
         );
 
         // Get modules commands.
-        foreach ($this->_modules as $module) {
-            $moduleName = ucfirst($module);
-            $path = $this->_config->directories->modules . $moduleName . '/Command';
-            $namespace = $moduleName . '\Command\\';
+        foreach ($this->getDI()->get('modules') as $module) {
+            $module = ucfirst($module);
+            $path = $this->_config->directories->modules . $module . '/Command';
+            $namespace = $module . '\Command\\';
             $this->_getCommandsFrom($path, $namespace);
         }
     }

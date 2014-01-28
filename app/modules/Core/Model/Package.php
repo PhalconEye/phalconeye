@@ -106,6 +106,21 @@ class Package extends AbstractPackage
     }
 
     /**
+     * Get data from json.
+     *
+     * @param string $content Package data in json format.
+     *
+     * @return void
+     */
+    public function fromJson($content)
+    {
+        $data = json_decode($content, true);
+        $this->assign($data);
+        $this->data['events'] = isset($data['events']) ? $data['events'] : [];
+        $this->data['widgets'] = isset($data['widgets']) ? $data['widgets'] : [];
+    }
+
+    /**
      * Get widget object.
      *
      * @return Widget||null

@@ -490,7 +490,7 @@ class Manager
      *
      * @return void
      */
-    public function generateMetadata($packages = null, $force = false)
+    public function generateMetadata($packages = null, $force = true)
     {
         if (empty($packages)) {
             $packages = $this->_installedPackages;
@@ -509,23 +509,37 @@ class Manager
             if (!$package->enabled) {
                 continue;
             }
+            $data = $package->getData();
 
             if ($package->type == self::PACKAGE_TYPE_MODULE && !$package->is_system) {
                 $config['modules'][] = $package->name;
             }
 
+            // Get package events.
             if (
-                ($package->type == self::PACKAGE_TYPE_PLUGIN || $package->type == self::PACKAGE_TYPE_MODULE) &&
+                (
+                    $package->type == self::PACKAGE_TYPE_PLUGIN ||
+                    $package->type == self::PACKAGE_TYPE_MODULE
+                ) &&
                 !$package->is_system
             ) {
-                $data = $package->getData();
-                if (!empty($data) && $data['events']) {
+                if (!empty($data) && !empty($data['events'])) {
                     $config['events'] = array_merge($config['events'], $data['events']);
                 }
             }
 
+            // If widget is related to module - it has no manifest file.
+            if (
+                $package->type == self::PACKAGE_TYPE_WIDGET &&
+                !empty($data) &&
+                !empty($data['module'])
+            ){
+                continue;
+            }
+
             $packageMetadataFile = $packagesMetadataDirectory . '/' .
                 $this->_getPackageFullName($package) . '.json';
+
             if (!file_exists($packageMetadataFile) || $force) {
                 $this->_createManifest($packageMetadataFile, $package->toJson());
             }

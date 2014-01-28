@@ -50,4 +50,53 @@ abstract class AbstractModel extends PhalconModel
 
         return $annotations->get('Source')->getArgument(0);
     }
+
+    /**
+     * Find method overload.
+     * Get entities according to some condition.
+     *
+     * @param string      $condition Condition string.
+     * @param array       $params    Condition params.
+     * @param string|null $order     Order by field name.
+     * @param string|null $limit     Selection limit.
+     *
+     * @return PhalconModel\ResultsetInterface
+     */
+    public static function get($condition, $params, $order = null, $limit = null)
+    {
+        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $parameters = [$condition];
+
+        if ($order) {
+            $parameters['order'] = $order;
+        }
+
+        if ($limit) {
+            $parameters['limit'] = $limit;
+        }
+
+        return self::find($parameters);
+    }
+
+    /**
+     * FindFirst method overload.
+     * Get entity according to some condition.
+     *
+     * @param string      $condition Condition string.
+     * @param array       $params    Condition params.
+     * @param string|null $order     Order by field name.
+     *
+     * @return AbstractModel
+     */
+    public static function getFirst($condition, $params, $order = null)
+    {
+        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $parameters = [$condition];
+
+        if ($order) {
+            $parameters['order'] = $order;
+        }
+
+        return self::findFirst($parameters);
+    }
 }

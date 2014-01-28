@@ -199,6 +199,15 @@ abstract class AbstractPackage extends AbstractModel
     abstract public function toJson();
 
     /**
+     * Create package from json string.
+     *
+     * @param string $content Content data.
+     *
+     * @return void
+     */
+    abstract public function fromJson($content);
+
+    /**
      * Logic before save.
      *
      * @return void

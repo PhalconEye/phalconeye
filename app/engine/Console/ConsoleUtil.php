@@ -316,17 +316,18 @@ final class ConsoleUtil
      * @param string $msg             Message text.
      * @param bool   $lineBefore      Print empty line before msg.
      * @param int    $afterLinesCount Print empty lines after msg.
+     * @param int    $color           Info color.
      *
      * @return string
      */
-    public static function infoLine($msg, $lineBefore = true, $afterLinesCount = 2)
+    public static function infoLine($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtil::FG_GREEN)
     {
         $out = '';
         if ($lineBefore) {
             $out .= PHP_EOL;
         }
 
-        $out .= self::colorize($msg, ConsoleUtil::FG_GREEN, ConsoleUtil::AT_BOLD);
+        $out .= self::colorize($msg, $color, ConsoleUtil::AT_BOLD);
 
         if ($afterLinesCount) {
             for ($i = 0; $i < $afterLinesCount; $i++) {

@@ -94,6 +94,7 @@ class Application extends PhalconApplication
                 'engine'
             ],
             'console' => [
+                'environment',
                 'database',
                 'cache',
                 'engine'

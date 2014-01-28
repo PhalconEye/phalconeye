@@ -34,6 +34,7 @@
 
 namespace Engine\Console;
 
+use Engine\DependencyInjection;
 use Phalcon\Config;
 use Phalcon\Filter;
 
@@ -49,6 +50,10 @@ use Phalcon\Filter;
  */
 abstract class AbstractCommand implements CommandInterface
 {
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
+
     /**
      * Parameters received by the script.
      *
@@ -76,7 +81,7 @@ abstract class AbstractCommand implements CommandInterface
      */
     final public function __construct()
     {
-
+        $this->__DIConstruct();
     }
 
     /**

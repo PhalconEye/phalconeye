@@ -45,17 +45,17 @@ class Widget extends AbstractModel
     public $id;
 
     /**
-     * @Column(type="string", nullable=true, column="module", size="64")
-     */
-    public $module = null;
-
-    /**
      * @Column(type="string", nullable=false, column="name", size="150")
      */
     public $name;
 
     /**
-     * @Column(type="string", nullable=false, column="description", size="255")
+     * @Column(type="string", nullable=true, column="module", size="64")
+     */
+    public $module = null;
+
+    /**
+     * @Column(type="string", nullable=true, column="description", size="255")
      */
     public $description;
 
