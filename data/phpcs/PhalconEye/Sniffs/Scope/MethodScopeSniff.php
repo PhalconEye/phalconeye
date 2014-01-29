@@ -18,7 +18,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |

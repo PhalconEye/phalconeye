@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -60,22 +60,28 @@ abstract class AbstractController extends PhalconController
         $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
         $this->view->setPartialsDir('../../Core/View/partials/');
 
-        $this->assets->get('css')
-            ->addCss('external/jquery/jquery-ui.css')
-            ->addCss('assets/css/constants.css')
-            ->addCss('assets/css/theme.css');
+        $this->assets->set(
+            'css',
+            $this->assets->getEmptyCssCollection()
+                ->addCss('external/jquery/jquery-ui.css')
+                ->addCss('assets/css/constants.css')
+                ->addCss('assets/css/theme.css')
+        );
 
-        $this->assets->get('js')
-            ->addJs('external/jquery/jquery-2.1.0.js')
-            ->addJs('external/jquery/jquery-ui-1.10.4.js')
-            ->addJs('assets/js/core/core.js')
-            ->addJs('assets/js/core/i18n.js')
-            ->addJs('assets/js/core/menu.js')
-            ->addJs('assets/js/core/form.js')
-            ->addJs('assets/js/core/form/remote-file.js')
-            ->addJs('assets/js/core/widgets/autocomplete.js')
-            ->addJs('assets/js/core/widgets/modal.js')
-            ->addJs('assets/js/core/widgets/ckeditor.js');
+        $this->assets->set(
+            'js',
+            $this->assets->getEmptyJsCollection()
+                ->addJs('external/jquery/jquery-2.1.0.js')
+                ->addJs('external/jquery/jquery-ui-1.10.4.js')
+                ->addJs('assets/js/core/core.js')
+                ->addJs('assets/js/core/i18n.js')
+                ->addJs('assets/js/core/menu.js')
+                ->addJs('assets/js/core/form.js')
+                ->addJs('assets/js/core/form/remote-file.js')
+                ->addJs('assets/js/core/widgets/autocomplete.js')
+                ->addJs('assets/js/core/widgets/modal.js')
+                ->addJs('assets/js/core/widgets/ckeditor.js')
+        );
 
         if ($this->config->application->debug && $this->di->has('profiler')) {
             $this->di->get('assets')

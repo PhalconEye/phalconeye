@@ -1,0 +1,222 @@
+
+/*
+  +------------------------------------------------------------------------+
+  | Phalcon Framework                                                      |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2011-2013 Phalcon Team (http://www.phalconphp.com)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file docs/LICENSE.txt.                        |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconphp.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Authors: Andres Gutierrez <andres@phalconphp.com>                      |
+  |          Eduar Carvajal <eduar@phalconphp.com>                         |
+  +------------------------------------------------------------------------+
+*/
+
+body
+{
+	font-family: Consolas,Lucida Console,Monaco,Andale Mono,"MS Gothic",monospace;
+	background: #EFEFEF;
+}
+
+.str
+{
+	color: #B1E2F0;
+}
+
+.kwd
+{
+	color: #D0885E;
+}
+
+.com
+{
+	color: #66747B;
+}
+
+.typ
+{
+	color: #678CB1;
+}
+
+.lit
+{
+	color: #5AB889;
+}
+
+.pun
+{
+	color: #F1F2F3;
+}
+
+.pln
+{
+	color: #F1F2F3;
+}
+
+.tag
+{
+	color: #8AC763;
+}
+
+.atn
+{
+	color: #E0E2E4;
+}
+
+.atv
+{
+	color: #EC7600;
+}
+
+.dec
+{
+	color: purple;
+}
+
+pre.prettyprint
+{
+	font-family: Monaco,Andale Mono,"MS Gothic",monospace;
+	border: 0px solid #888;
+	margin-left: 5px;
+	width: 99%;
+	font-size: 13px;
+	letter-spacing: 1px;
+	font-weight: normal;
+}
+
+ol.linenums
+{
+	margin-top: 0;
+	margin-bottom: 0;
+}
+
+.prettyprint
+{
+	background-color: #2f2f2f;
+}
+
+.prettyprint li {
+	font-size: 12px;
+}
+
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+	color: #555;
+	list-style-type: decimal;
+}
+
+li.L1, li.L3, li.L5, li.L7, li.L9
+{
+	background: #2a2a2a;
+}
+
+li.highlight {
+	background: #222222;
+}
+
+.error-main
+{
+	background: #C23A66;
+	color: #FBC8DC;
+	padding: 10px;
+	padding-top: 14px;
+	border-radius: 5px;
+	font-size: 14px;
+}
+
+.error-scroll
+{
+	height: 250px;
+	overflow-y: scroll;
+}
+
+.error-backtrace
+{
+	text-align: center;
+}
+
+.error-backtrace table
+{
+	background-color: #E2E5E8;
+	border-radius: 5px;
+	margin-top: 5px;
+	width: 99%;
+}
+
+.error-backtrace td
+{
+	color: #373536;
+	font-size: 12px;
+	padding: 3px;
+}
+
+.error-backtrace a
+{
+	color: #373536;
+	text-decoration: none;
+}
+
+.error-backtrace a:hover
+{
+	text-decoration: underline;
+}
+
+.error-backtrace td.error-number
+{
+	/*background: #1D1F22;*/
+	color: #807B70;
+	width: 20px;
+}
+
+.error-backtrace .error-file,
+.error-main .error-file
+{
+	font-size: 11px;
+	margin-top: 3px;
+}
+
+.error-main .error-file
+{
+	color: #FBC8DC;
+}
+
+.error-backtrace .error-class
+{
+	color: #2A2A2A;
+}
+
+.error-backtrace .error-parameter
+{
+	color: #3B3130;
+	background: #DCDEE4;
+}
+
+.error-backtrace .error-function
+{
+	color: #6383A9;
+}
+
+.error-backtrace pre
+{
+	text-align: left;
+}
+
+.version
+{
+	font-family: sans-serif;
+	text-align: right;
+	color: #797878;
+	background: #F7F7F7;
+	padding: 10px;
+	font-size: 12px;
+}
+
+.version a
+{
+	color: #797878;
+}

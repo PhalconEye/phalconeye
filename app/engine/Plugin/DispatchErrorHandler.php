@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -22,6 +22,7 @@ use Engine\Application as EngineApplication;
 use Phalcon\Dispatcher;
 use Phalcon\Events\Event;
 use Phalcon\Exception as PhalconException;
+use Phalcon\Mvc\Dispatcher\Exception as DispatchException;
 use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 
 /**
@@ -34,7 +35,7 @@ use Phalcon\Mvc\User\Plugin as PhalconPlugin;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class NotFound extends PhalconPlugin
+class DispatchErrorHandler extends PhalconPlugin
 {
     /**
      * Before exception is happening.
@@ -47,22 +48,33 @@ class NotFound extends PhalconPlugin
      */
     public function beforeException($event, $dispatcher, $exception)
     {
-        switch ($exception->getCode()) {
-            case Dispatcher::EXCEPTION_HANDLER_NOT_FOUND:
-            case Dispatcher::EXCEPTION_ACTION_NOT_FOUND:
-                $dispatcher->forward(
-                    [
-                        'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
-                        'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
-                        'controller' => 'Error',
-                        'action' => 'show404'
-                    ]
-                );
+        // Handle 404 exceptions.
+        if ($exception instanceof DispatchException) {
+            $dispatcher->forward(
+                [
+                    'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
+                    'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
+                    'controller' => 'Error',
+                    'action' => 'show404'
+                ]
+            );
 
-                return false;
+            return false;
         }
 
-        return !$event->isStopped();
-    }
+        // Handle other exceptions.
+        $dispatcher->forward(
+            [
+                'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
+                'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
+                'controller' => 'Error',
+                'action' => 'show500'
+            ]
+        );
 
+        // There is bug in dispatcher (ph 1.2.5 Alpha), if do not set there controller name,
+        // it will substr it to 'rror' string after forwarding.
+        $dispatcher->setControllerName('Error');
+        return $event->isStopped();
+    }
 }

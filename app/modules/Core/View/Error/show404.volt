@@ -2,7 +2,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -22,11 +22,13 @@
 {% endblock %}
 
 {% block content %}
-<div class="error_page_title">
-    404
-</div>
-<div class="error_page_description">
-    Page Not Found - The requested page could not be found
-</div>
+    <div class="error_page">
+        <div class="error_page_title">
+            404
+        </div>
+        <div class="error_page_description">
+            Page Not Found - The requested page could not be found
+        </div>
+    </div>
 {% endblock %}
 

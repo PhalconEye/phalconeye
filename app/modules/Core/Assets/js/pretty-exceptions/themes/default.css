@@ -1,0 +1,222 @@
+/*
+  +------------------------------------------------------------------------+
+  | Phalcon Framework                                                      |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2011-2013 Phalcon Team (http://www.phalconphp.com)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file docs/LICENSE.txt.                        |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconphp.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Authors: Andres Gutierrez <andres@phalconphp.com>                      |
+  |          Eduar Carvajal <eduar@phalconphp.com>                         |
+  +------------------------------------------------------------------------+
+*/
+
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
+*/
+
+body
+{
+  font-family: Consolas,Lucida Console,Monaco,Andale Mono,"MS Gothic",monospace;
+  background: #FBF6EF;
+}
+
+.str,
+.atv
+{
+  color: #dcc175;
+}
+
+.kwd
+{
+  color: #4D8DFF;
+}
+
+.com
+{
+  color: #66747B;
+}
+
+.typ,
+.tag
+{
+  color: #FFE000;
+}
+
+.lit
+{
+  color: #5AB889;
+}
+
+.pun
+{
+  color: #dadada;
+}
+
+.pln
+{
+  color: #F1F2F3;
+}
+
+.atn
+{
+  color: #E0E2E4;
+}
+
+.dec
+{
+  color: purple;
+}
+
+pre.prettyprint
+{
+  font-family: Consolas,Lucida Console,Monaco,Andale Mono,"MS Gothic",monospace;
+  border: 0px solid #888;
+  margin-left: 5px;
+  width: 99%;
+  font-size: 13px;
+  letter-spacing: 1px;
+  font-weight: normal;
+}
+
+ol.linenums
+{
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.prettyprint {
+  background-color: #2f2f2f;
+}
+
+li.L0, li.L1, li.L2, li.L3, li.L4, li.L5, li.L6, li.L7, li.L8, li.L9
+{
+  color: #555;
+  list-style-type: decimal;
+}
+
+li.L1, li.L3, li.L5, li.L7, li.L9
+{
+  background: #2a2a2a;
+}
+
+li.highlight {
+  background: #1a1a1a;
+}
+
+.error-main
+{
+  background: #888;
+  color: #ffffff;
+  padding: 10px;
+  padding-top: 14px;
+  font-size: 14px;
+}
+
+.error-scroll
+{
+  height: 250px;
+  overflow-y: scroll;
+}
+
+.error-backtrace
+{
+  text-align: center;
+}
+
+.error-backtrace table
+{
+  background-color: #FBF6EF;
+  margin-top: 5px;
+  width: 99%;
+}
+
+.error-backtrace td
+{
+  color: #373536;
+  font-size: 12px;
+  padding: 3px;
+}
+
+.error-backtrace a
+{
+  color: #373536;
+  text-decoration: none;
+}
+
+.error-backtrace a:hover
+{
+  text-decoration: underline;
+}
+
+.error-backtrace td.error-number
+{
+  /*background: #1D1F22;*/
+  color: #807B70;
+  width: 20px;
+}
+
+.error-backtrace .error-file,
+.error-main .error-file
+{
+  font-size: 11px;
+  margin-top: 3px;
+}
+
+.error-main .error-file
+{
+  color: #fafafa;
+}
+
+.error-backtrace .error-class
+{
+  color: #2A2A2A;
+}
+
+.error-backtrace .error-parameter
+{
+  color: #807B70;
+}
+
+.error-backtrace .error-function
+{
+  color: #FA1111;
+}
+
+.error-backtrace pre
+{
+  text-align: left;
+}
+
+.version
+{
+  font-family: sans-serif;
+  text-align: right;
+  color: #807B70;
+  background: #EDE9DF;
+  padding: 10px;
+  font-size: 12px;
+}
+
+.version a
+{
+  color: #807B70;
+}

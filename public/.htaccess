@@ -6,4 +6,4 @@ AddDefaultCharset UTF-8
     RewriteRule ^(.*)$ index.php?_url=/$1 [QSA,L]
 </IfModule>
 
-SetEnv PHALCONEYE_STAGE development
+#SetEnv PHALCONEYE_STAGE development

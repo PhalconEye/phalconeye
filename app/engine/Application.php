@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -22,30 +22,31 @@ use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
+use Engine\Exception\PrettyExceptions;
 use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
-use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Adapter;
+use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
-use Phalcon\Logger\Formatter\Line as FormatterLine;
-use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File;
+use Phalcon\Logger;
+use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
-use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
+use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
-use Phalcon\Session\Adapter\Files as SessionFiles;
 use Phalcon\Session\Adapter as SessionAdapter;
+use Phalcon\Session\Adapter\Files as SessionFiles;
 
 /**
  * Application class.
@@ -67,7 +68,6 @@ class Application extends PhalconApplication
          * Default module.
          */
         SYSTEM_DEFAULT_MODULE = 'core';
-
 
     /**
      * Application configuration.
@@ -166,13 +166,28 @@ class Application extends PhalconApplication
     }
 
     /**
-     * Get application output.
+     * Init logger.
      *
-     * @return string
+     * @param DI     $di     Dependency Injection.
+     * @param Config $config Config object.
+     *
+     * @return void
      */
-    public function getOutput()
+    protected function initLogger($di, $config)
     {
-        return $this->handle()->getContent();
+        if ($config->application->logger->enabled) {
+            $di->set(
+                'logger',
+                function ($file = 'main', $format = null) use ($config) {
+                    $logger = new File($config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log');
+                    $formatter = new FormatterLine(($format ? $format : $config->application->logger->format));
+                    $logger->setFormatter($formatter);
+
+                    return $logger;
+                },
+                false
+            );
+        }
     }
 
     /**
@@ -216,14 +231,6 @@ class Application extends PhalconApplication
         $loader->registerNamespaces($namespaces);
 
         if ($config->application->debug && $config->application->installed) {
-            $eventsManager->attach(
-                'loader',
-                function ($event, $loader, $className) use ($di) {
-                    if ($event->getType() == 'afterCheckClass') {
-                        $di->get('logger')->error("Can't load class '" . $className . "'");
-                    }
-                }
-            );
             $loader->setEventsManager($eventsManager);
         }
 
@@ -232,6 +239,141 @@ class Application extends PhalconApplication
         $di->set('loader', $loader);
 
         return $loader;
+    }
+
+    /**
+     * Init modules and register them.
+     *
+     * @param array $modules Modules bootstrap classes.
+     * @param null  $merge   Merge with existing.
+     *
+     * @return $this
+     */
+    public function registerModules($modules, $merge = null)
+    {
+        $bootstraps = [];
+        $di = $this->getDI();
+        foreach ($modules as $moduleName => $moduleClass) {
+            if (isset($this->_modules[$moduleName])) {
+                continue;
+            }
+
+            $bootstrap = new $moduleClass($di, $this->getEventsManager());
+            $bootstraps[$moduleName] = function () use ($bootstrap, $di) {
+                $bootstrap->registerServices();
+
+                return $bootstrap;
+            };
+        }
+
+        return parent::registerModules($bootstraps, $merge);
+    }
+
+    /**
+     * Attach required events.
+     *
+     * @param EventsManager $eventsManager Events manager object.
+     * @param Config        $config        Application configuration.
+     *
+     * @return void
+     */
+    protected function _attachEngineEvents($eventsManager, $config)
+    {
+        // Attach modules plugins events.
+        $events = $config->events->toArray();
+        $cache = [];
+        foreach ($events as $item) {
+            list ($class, $event) = explode('=', $item);
+            if (isset($cache[$class])) {
+                $object = $cache[$class];
+            } else {
+                $object = new $class();
+                $cache[$class] = $object;
+            }
+            $eventsManager->attach($event, $object);
+        }
+    }
+
+    /**
+     * Get application output.
+     *
+     * @return string
+     */
+    public function getOutput()
+    {
+        return $this->handle()->getContent();
+    }
+
+    /**
+     * Clear application cache.
+     *
+     * @return void
+     */
+    public function clearCache()
+    {
+        $viewCache = $this->_dependencyInjector->get('viewCache');
+        $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
+        $cacheData = $this->_dependencyInjector->get('cacheData');
+        $modelsCache = $this->_dependencyInjector->get('modelsCache');
+        $config = $this->_dependencyInjector->get('config');
+
+        $keys = $viewCache->queryKeys();
+        foreach ($keys as $key) {
+            $viewCache->delete($key);
+        }
+
+        $keys = $cacheOutput->queryKeys();
+        foreach ($keys as $key) {
+            $cacheOutput->delete($key);
+        }
+
+        $keys = $cacheData->queryKeys();
+        foreach ($keys as $key) {
+            $cacheData->delete($key);
+        }
+
+        $keys = $modelsCache->queryKeys();
+        foreach ($keys as $key) {
+            $modelsCache->delete($key);
+        }
+
+        // Files deleter helper.
+        $deleteFiles = function ($files) {
+            foreach ($files as $file) {
+                if (is_file($file)) {
+                    @unlink($file);
+                }
+            }
+        };
+
+        // Clear files cache.
+        $deleteFiles(glob($config->application->cache->path . '*'));
+
+        // Clear view cache.
+        $deleteFiles(glob($config->application->view->compiledPath . '*'));
+
+        // Clear metadata cache.
+        if ($config->application->metadata && $config->application->metadata->path) {
+            $deleteFiles(glob($config->application->metadata->path . '*'));
+        }
+
+        // Clear annotations cache.
+        if ($config->application->annotations && $config->application->annotations->path) {
+            $deleteFiles(glob($config->application->annotations->path . '*'));
+        }
+
+        // Clear assets.
+        $this->_dependencyInjector->getShared('assets')->clear();
+    }
+
+    /**
+     * Check if application is used from console.
+     *
+     * @return bool
+     */
+    public function isConsole()
+    {
+        return (php_sapi_name() == 'cli');
     }
 
     /**
@@ -244,9 +386,21 @@ class Application extends PhalconApplication
      */
     protected function initEnvironment($di, $config)
     {
-        set_error_handler(['\Engine\Exception', 'normal']);
-        register_shutdown_function(['\Engine\Exception', 'shutdown']);
-        set_exception_handler(['\Engine\Exception', 'exception']);
+        set_error_handler(function ($errorCode, $errorMessage, $errorFile, $errorLine) {
+            throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
+        });
+
+        set_exception_handler(function ($e) {
+            Exception::logError('Exception', $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+
+            if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
+                $p = new PrettyExceptions();
+                $p->setBaseUri('/assets/js/core/pretty-exceptions/');
+                return $p->handleException($e);
+            }
+
+            return true;
+        });
 
         if ($config->application->debug && $config->application->profiler && $config->application->installed) {
             $profiler = new Profiler();
@@ -305,7 +459,6 @@ class Application extends PhalconApplication
         // Check installation.
         if (!$config->application->installed) {
             $router = new RouterAnnotations(false);
-
             $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
             $router->setDefaultNamespace($defaultModuleName . '\Controller');
             $router->setDefaultController("Install");
@@ -318,41 +471,21 @@ class Application extends PhalconApplication
         }
 
         $routerCacheKey = 'router_data.cache';
-
         $cacheData = $di->get('cacheData');
         $router = $cacheData->get($routerCacheKey);
 
         if ($config->application->debug || $router === null) {
-
             $saveToCache = ($router === null);
 
-            // load all controllers of all modules for routing system
+            // Load all controllers of all modules for routing system.
             $modules = $di->get('modules');
 
-            //Use the annotations router
-            $router = new \Phalcon\Mvc\Router\Annotations(false);
+            // Use the annotations router.
+            $router = new \Phalcon\Mvc\Router\Annotations(true);
             $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
             $router->setDefaultNamespace(ucfirst(self::SYSTEM_DEFAULT_MODULE) . '\Controller');
             $router->setDefaultController("Index");
             $router->setDefaultAction("index");
-
-            $router->add(
-                '/:module/:controller/:action',
-                [
-                    'module' => 1,
-                    'controller' => 2,
-                    'action' => 3,
-                ]
-            );
-
-            $router->notFound(
-                [
-                    'module' => self::SYSTEM_DEFAULT_MODULE,
-                    'namespace' => ucfirst(self::SYSTEM_DEFAULT_MODULE) . '\Controller',
-                    'controller' => 'Error',
-                    'action' => 'show404'
-                ]
-            );
 
             //Read the annotations from controllers
             foreach ($modules as $module) {
@@ -379,31 +512,6 @@ class Application extends PhalconApplication
         $di->set('router', $router);
 
         return $router;
-    }
-
-    /**
-     * Init logger.
-     *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
-     *
-     * @return void
-     */
-    protected function initLogger($di, $config)
-    {
-        if ($config->application->logger->enabled) {
-            $di->set(
-                'logger',
-                function ($file = 'main', $format = null) use ($config) {
-                    $logger = new File($config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log');
-                    $formatter = new FormatterLine(($format ? $format : $config->application->logger->format));
-                    $logger->setFormatter($formatter);
-
-                    return $logger;
-                },
-                false
-            );
-        }
     }
 
     /**
@@ -631,130 +739,5 @@ class Application extends PhalconApplication
         );
         $di->setShared('assets', new AssetsManager($di));
         $di->setShared('widgets', new Catalog());
-    }
-
-    /**
-     * Clear application cache.
-     *
-     * @return void
-     */
-    public function clearCache()
-    {
-        $viewCache = $this->_dependencyInjector->get('viewCache');
-        $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
-        $cacheData = $this->_dependencyInjector->get('cacheData');
-        $modelsCache = $this->_dependencyInjector->get('modelsCache');
-        $config = $this->_dependencyInjector->get('config');
-
-        $keys = $viewCache->queryKeys();
-        foreach ($keys as $key) {
-            $viewCache->delete($key);
-        }
-
-        $keys = $cacheOutput->queryKeys();
-        foreach ($keys as $key) {
-            $cacheOutput->delete($key);
-        }
-
-        $keys = $cacheData->queryKeys();
-        foreach ($keys as $key) {
-            $cacheData->delete($key);
-        }
-
-        $keys = $modelsCache->queryKeys();
-        foreach ($keys as $key) {
-            $modelsCache->delete($key);
-        }
-
-        // Files deleter helper.
-        $deleteFiles = function ($files) {
-            foreach ($files as $file) {
-                if (is_file($file)) {
-                    @unlink($file);
-                }
-            }
-        };
-
-        // Clear files cache.
-        $deleteFiles(glob($config->application->cache->path . '*'));
-
-        // Clear view cache.
-        $deleteFiles(glob($config->application->view->compiledPath . '*'));
-
-        // Clear metadata cache.
-        if ($config->application->metadata && $config->application->metadata->path) {
-            $deleteFiles(glob($config->application->metadata->path . '*'));
-        }
-
-        // Clear annotations cache.
-        if ($config->application->annotations && $config->application->annotations->path) {
-            $deleteFiles(glob($config->application->annotations->path . '*'));
-        }
-
-        // Clear assets.
-        $this->_dependencyInjector->getShared('assets')->clear();
-    }
-
-    /**
-     * Init modules and register them.
-     *
-     * @param array $modules Modules bootstrap classes.
-     * @param null  $merge   Merge with existing.
-     *
-     * @return $this
-     */
-    public function registerModules($modules, $merge = null)
-    {
-        $bootstraps = [];
-        $di = $this->getDI();
-        foreach ($modules as $moduleName => $moduleClass) {
-            if (isset($this->_modules[$moduleName])) {
-                continue;
-            }
-
-            $bootstrap = new $moduleClass($di, $this->getEventsManager());
-            $bootstraps[$moduleName] = function () use ($bootstrap, $di) {
-                $bootstrap->registerServices();
-
-                return $bootstrap;
-            };
-        }
-
-        return parent::registerModules($bootstraps, $merge);
-    }
-
-    /**
-     * Attach required events.
-     *
-     * @param EventsManager $eventsManager Events manager object.
-     * @param Config        $config        Application configuration.
-     *
-     * @return void
-     */
-    protected function _attachEngineEvents($eventsManager, $config)
-    {
-        // Attach modules plugins events.
-        $events = $config->events->toArray();
-        $cache = [];
-        foreach ($events as $item) {
-            list ($class, $event) = explode('=', $item);
-            if (isset($cache[$class])) {
-                $object = $cache[$class];
-            } else {
-                $object = new $class();
-                $cache[$class] = $object;
-            }
-            $eventsManager->attach($event, $object);
-        }
-    }
-
-    /**
-     * Check if application is used from console.
-     *
-     * @return bool
-     */
-    public function isConsole()
-    {
-        return (php_sapi_name() == 'cli');
     }
 }

@@ -4,7 +4,7 @@
  * @category  PhalconEye
  * @package   PhalconEye Core Module
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright Copyright (c) 2013 PhalconEye Team
+ * @copyright Copyright (c) 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */

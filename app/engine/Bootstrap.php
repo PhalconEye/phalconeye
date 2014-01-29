@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -19,13 +19,13 @@
 namespace Engine;
 
 use Engine\Plugin\CacheAnnotation;
-use Engine\Plugin\NotFound;
+use Engine\Plugin\DispatchErrorHandler;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 
 /**
  * Bootstrap class.
@@ -96,7 +96,7 @@ abstract class Bootstrap implements BootstrapInterface
         $eventsManager = $this->getEventsManager();
 
         /*************************************************/
-        //  Initialize view
+        //  Initialize view.
         /*************************************************/
         $di->set(
             'view',
@@ -172,46 +172,33 @@ abstract class Bootstrap implements BootstrapInterface
                 );
 
                 // Attach a listener for type "view".
-                if (!$config->application->debug) {
-                    $eventsManager->attach(
-                        "view",
-                        function ($event, $view) use ($di) {
-                            if ($event->getType() == 'notFoundView') {
-                                $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                $eventsManager->attach(
+                    "view",
+                    function ($event, $view) use ($di, $config) {
+                        if ($config->application->profiler && $di->has('profiler')) {
+                            if ($event->getType() == 'beforeRender') {
+                                $di->get('profiler')->start();
+                            }
+                            if ($event->getType() == 'afterRender') {
+                                $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
                             }
                         }
-                    );
-
-                    $view->setEventsManager($eventsManager);
-                } elseif ($config->application->profiler) {
-                    $eventsManager->attach(
-                        "view",
-                        function ($event, $view) use ($di) {
-                            if ($di->has('profiler')) {
-                                if ($event->getType() == 'beforeRender') {
-                                    $di->get('profiler')->start();
-                                }
-                                if ($event->getType() == 'afterRender') {
-                                    $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
-                                }
-                            }
-                            if ($event->getType() == 'notFoundView') {
-                                $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
-                            }
+                        if ($event->getType() == 'notFoundView') {
+                            $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
                         }
-                    );
-                    $view->setEventsManager($eventsManager);
-                }
+                    }
+                );
+                $view->setEventsManager($eventsManager);
 
                 return $view;
             }
         );
 
         /*************************************************/
-        //  Initialize dispatcher
+        //  Initialize dispatcher.
         /*************************************************/
+        $eventsManager->attach("dispatch:beforeException", new DispatchErrorHandler());
         if (!$config->application->debug) {
-            $eventsManager->attach("dispatch:beforeException", new NotFound());
             $eventsManager->attach('dispatch:beforeExecuteRoute', new CacheAnnotation());
         }
 
@@ -220,16 +207,6 @@ abstract class Bootstrap implements BootstrapInterface
         $dispatcher->setEventsManager($eventsManager);
         $di->set('dispatcher', $dispatcher);
 
-    }
-
-    /**
-     * Get current module name.
-     *
-     * @return string
-     */
-    public function getModuleName()
-    {
-        return $this->_moduleName;
     }
 
     /**
@@ -243,16 +220,6 @@ abstract class Bootstrap implements BootstrapInterface
     }
 
     /**
-     * Get events manager.
-     *
-     * @return EventsManager
-     */
-    public function getEventsManager()
-    {
-        return $this->_em;
-    }
-
-    /**
      * Get config object.
      *
      * @return mixed|PhalconConfig
@@ -260,5 +227,25 @@ abstract class Bootstrap implements BootstrapInterface
     public function getConfig()
     {
         return $this->_config;
+    }
+
+    /**
+     * Get events manager.
+     *
+     * @return Manager
+     */
+    public function getEventsManager()
+    {
+        return $this->_em;
+    }
+
+    /**
+     * Get current module name.
+     *
+     * @return string
+     */
+    public function getModuleName()
+    {
+        return $this->_moduleName;
     }
 }
