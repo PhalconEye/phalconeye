@@ -1,14 +1,18 @@
 {#
-   PhalconEye
-
-   LICENSE
-
-   This source file is subject to the new BSD license that is bundled
-   with this package in the file LICENSE.txt.
-
-   If you did not receive a copy of the license and are unable to
-   obtain it through the world-wide-web, please send an email
-   to phalconeye@gmail.com so we can send you a copy immediately.
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
 #}
 
 {% extends "layouts/admin.volt" %}
@@ -16,8 +20,6 @@
 {% block title %}{{ 'Pages' | trans }}{% endblock %}
 
 {% block head %}
-    {{ helper('assets').addJs('assets/js/core/admin/files.js') }}
-
     <script type="text/javascript">
     //var currentLayoutType =  'top,right,middle,left,bottom';
     var currentLayoutType = '{{currentPage.layout}}';
@@ -53,7 +55,7 @@
         setWidgetsList({{currentPageWidgets}}, true);
 
         $(".widget_tooltip").tooltip({
-            position: "center left"
+            placement: "left"
         });
 
         $("#form_page").change(function () {
@@ -62,7 +64,7 @@
     };
 
     var defaultWidgetControl = function (widget) {
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index+ '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
+        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
     };
 
     var buildWidgetsList = function () {
@@ -161,7 +163,7 @@
             $(this).find(".widget").each(function () {
                 items.push({
                     "content": (!$no_content ? $(this).html().trim() : ''),
-                    "widget_index":  parseInt($(this).attr("widget_index")),
+                    "widget_index": parseInt($(this).attr("widget_index")),
                     "widget_id": $(this).attr('widget_id'),
                     "layout": $(this).parent().attr("layout")
                 });
@@ -303,112 +305,119 @@
 {% block content %}
     <div class="span12 row-page-manager">
 
-                <div class="manage_page_header">
-                    <div class="manage_page_header_label">
-                        <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
-                            > {{ "Manage page" | trans }}</h3>
-                        <a {% if currentPage.type is null and currentPage.url is not null %}href="/page/{{ currentPage.url }}" target="_blank" {% else %} href="javascript:;"{% endif %}
-                           >{{ currentPage.title }}</a>
-                    </div>
+        <div class="manage_page_header">
+            <div class="manage_page_header_label">
+                <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
+                    > {{ "Manage page" | trans }}</h3>
+                <a {% if currentPage.type is null and currentPage.url is not null %}href="/page/{{ currentPage.url }}"
+                   target="_blank" {% else %} href="javascript:;"{% endif %}
+                        >{{ currentPage.title }}</a>
+            </div>
 
-                    <div class="widget_options_panel">
+            <div class="widget_options_panel">
 
-                        <div class="btn-group">
-                            <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-                                {{ "Change layout" | trans }}
-                                <span class="caret"></span>
-                            </a>
-                            <ul class="dropdown-menu">
-                                <li>
-                                    <div id="layout_select_block">
-                                        <div class="admin_layoutbox_menu_columnchoices_instructions">
-                                            {{ "Select layout type for current page" | trans }}
-                                        </div>
-                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols1_3.png') }}" alt="3 columns"
-                                                     onclick="changeCurrentLayoutType('right,middle,left');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols1_2left.png') }}"
-                                                     alt="2 columns - Left"
-                                                     onclick="changeCurrentLayoutType('middle,left');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols1_2right.png') }}"
-                                                     alt="2 columns - Right"
-                                                     onclick="changeCurrentLayoutType('right,middle');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols1_1.png') }}" alt="1 columns"
-                                                     onclick="changeCurrentLayoutType('middle');">
-                                            </li>
-                                        </ul>
-                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols2_3.png') }}" alt="3 columns"
-                                                     onclick="changeCurrentLayoutType('top,right,middle,left');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols2_2left.png') }}"
-                                                     alt="2 columns - Left"
-                                                     onclick="changeCurrentLayoutType('top,middle,left');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols2_2right.png') }}"
-                                                     alt="2 columns - Right"
-                                                     onclick="changeCurrentLayoutType('top,right,middle');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols2_1.png') }}" alt="1 columns"
-                                                     onclick="changeCurrentLayoutType('top,middle');">
-                                            </li>
-                                        </ul>
-                                        <ul class="admin_layoutbox_menu_columnchoices_thumbs">
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols3_3.png') }}" alt="3 columns"
-                                                     onclick="changeCurrentLayoutType('right,middle,left,bottom');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols3_2left.png') }}"
-                                                     alt="2 columns - Left"
-                                                     onclick="changeCurrentLayoutType('middle,left,bottom');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols3_2right.png') }}"
-                                                     alt="2 columns - Right"
-                                                     onclick="changeCurrentLayoutType('right,middle,bottom');">
-                                            </li>
-                                            <li>
-                                                <img src="{{ url('assets/img/core/admin/content/cols3_1.png') }}" alt="1 columns"
-                                                     onclick="changeCurrentLayoutType('middle,bottom');">
-                                            </li>
-                                        </ul>
+                <div class="btn-group">
+                    <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
+                        {{ "Change layout" | trans }}
+                        <span class="caret"></span>
+                    </a>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <div id="layout_select_block">
+                                <div class="admin_layoutbox_menu_columnchoices_instructions">
+                                    {{ "Select layout type for current page" | trans }}
+                                </div>
+                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols1_3.png') }}"
+                                             alt="3 columns"
+                                             onclick="changeCurrentLayoutType('right,middle,left');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols1_2left.png') }}"
+                                             alt="2 columns - Left"
+                                             onclick="changeCurrentLayoutType('middle,left');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols1_2right.png') }}"
+                                             alt="2 columns - Right"
+                                             onclick="changeCurrentLayoutType('right,middle');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols1_1.png') }}"
+                                             alt="1 columns"
+                                             onclick="changeCurrentLayoutType('middle');">
+                                    </li>
+                                </ul>
+                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols2_3.png') }}"
+                                             alt="3 columns"
+                                             onclick="changeCurrentLayoutType('top,right,middle,left');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols2_2left.png') }}"
+                                             alt="2 columns - Left"
+                                             onclick="changeCurrentLayoutType('top,middle,left');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols2_2right.png') }}"
+                                             alt="2 columns - Right"
+                                             onclick="changeCurrentLayoutType('top,right,middle');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols2_1.png') }}"
+                                             alt="1 columns"
+                                             onclick="changeCurrentLayoutType('top,middle');">
+                                    </li>
+                                </ul>
+                                <ul class="admin_layoutbox_menu_columnchoices_thumbs">
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols3_3.png') }}"
+                                             alt="3 columns"
+                                             onclick="changeCurrentLayoutType('right,middle,left,bottom');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols3_2left.png') }}"
+                                             alt="2 columns - Left"
+                                             onclick="changeCurrentLayoutType('middle,left,bottom');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols3_2right.png') }}"
+                                             alt="2 columns - Right"
+                                             onclick="changeCurrentLayoutType('right,middle,bottom');">
+                                    </li>
+                                    <li>
+                                        <img src="{{ url('assets/img/core/admin/content/cols3_1.png') }}"
+                                             alt="1 columns"
+                                             onclick="changeCurrentLayoutType('middle,bottom');">
+                                    </li>
+                                </ul>
 
 
-                                    </div>
-                                </li>
-                            </ul>
-                        </div>
-                        <button id="save_button" disabled="disabled" onclick="savePage();" type="button"
-                                class="btn btn-primary button-loading"
-                                data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
-                    </div>
-                </div>
-                <div class="clearfix"></div>
-
-                <div id="widget_list" class="admin_pages_widgets">
-                    <ul class="widgets">
-
+                            </div>
+                        </li>
                     </ul>
-
                 </div>
+                <button id="save_button" disabled="disabled" onclick="savePage();" type="button"
+                        class="btn btn-primary button-loading"
+                        data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
+            </div>
+        </div>
+        <div class="clearfix"></div>
 
-                <div id="global_placer" class="admin_pages_layout">
+        <div id="widget_list" class="admin_pages_widgets">
+            <ul class="widgets">
+
+            </ul>
+
+        </div>
+
+        <div id="global_placer" class="admin_pages_layout">
 
 
-                </div>
-                <div class="clear"></div>
+        </div>
+        <div class="clear"></div>
 
     </div>
 {% endblock %}

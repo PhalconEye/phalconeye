@@ -86,8 +86,8 @@ class CreateItem extends Form
                 [
                     'data-link' => $this->getDI()->getUrl()->get('admin/pages/suggest'),
                     'data-target' => '#page_id',
-                    'autocomplete' => 'off',
-                    'data-autocomplete' => 'true',
+                    'data-widget' => 'autocomplete',
+                    'autocomplete' => 'off'
                 ]
             )
             ->addTextArea(

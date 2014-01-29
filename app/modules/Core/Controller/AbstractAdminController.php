@@ -154,6 +154,8 @@ abstract class AbstractAdminController extends AbstractController
             'css',
             $this->assets->getEmptyCssCollection()
                 ->addCss('external/bootstrap/bootstrap.min.css')
+                ->addCss('external/bootstrap/bootstrap.min.css')
+                ->addCss('external/jquery/jquery-ui.css')
                 ->addCss('assets/css/core/admin/main.css')
                 ->join(false)
         );

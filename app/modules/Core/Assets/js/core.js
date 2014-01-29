@@ -15,19 +15,26 @@
     /**
      * Create namespace for path.
      *
-     * @param path
-     * @param root
+     * @param path Namespace path.
+     * @param object Namespace object. (optional, default: {})
+     * @param root Namespace root. (optional, default: window)
+     *
      * @returns {*}
      */
-    var ns = function (path, root) {
+    var ns = function (path, object, root) {
         var parts = path.split('.')
             , len = parts.length
-            , i = 0;
+            , i = 0
+            , def = {};
 
+        object || (object = {});
         root || (root = window);
 
         for (; i < len; i++) {
-            root = root[parts[i]] || (root[parts[i]] = {})
+            if (i == len - 1) {
+                def = object;
+            }
+            root = root[parts[i]] || (root[parts[i]] = def)
         }
 
         return root;
@@ -35,11 +42,17 @@
 
     var PhalconEye = ns('PhalconEye');
     PhalconEye.ns = ns;
+    PhalconEye.debug = $('body').data('debug');
     PhalconEye.baseUrl = function (path) {
         return $('body').data('baseUrl') + path;
     };
+    CKEDITOR_BASEPATH = PhalconEye.baseUrl('external/ckeditor/');
 
-    initHelpers();
+    _initHelpers();
+    _initWidgets();
+    $(function () {
+        _initSystem()
+    });
 
     //////////////////////////
     // Private methods.
@@ -49,8 +62,8 @@
      *
      * @private
      */
-    function initHelpers() {
-        var helper = ns('PhalconEye.Helper');
+    function _initHelpers() {
+        var helper = ns('PhalconEye.helper');
 
         /**
          * template
@@ -79,6 +92,10 @@
          * @param params
          */
         helper.log = function (msg, params) {
+            if (!PhalconEye.debug) {
+                return;
+            }
+
             console.error(this.template(msg, params));
         };
 
@@ -93,5 +110,68 @@
         };
     }
 
+    /**
+     * Init widgets system.
+     *
+     * @private
+     */
+    function _initWidgets() {
+        var widget = ns('PhalconEye.widget');
+
+        /**
+         * Init widgets.
+         *
+         * @param context
+         */
+        widget.init = function (context) {
+            /**
+             * Look for all widgets.
+             */
+            $('[data-widget]', context).each(function () {
+                var widgets = this.getAttribute('data-widget').split(/\s?,\s?/)
+                    , len = widgets.length
+                    , widget
+                    , data;
+
+                for (; len--;) {
+                    widget = widgets[len];
+                    if (widget.indexOf('invoked') != -1) {
+                        continue;
+                    }
+
+                    if (!(widget in PhalconEye.widget)) {
+                        PhalconEye.helper.log('Widget with name "{name}" not found.', {name: widget});
+                        continue;
+                    }
+
+                    widget = PhalconEye.widget[widget];
+                    if (widget.init) {
+                        widget.init($(this));
+                        widgets[len] = '(' + widgets[len] + '):invoked';
+                    }
+                }
+
+                this.setAttribute('data-widget', widgets.join(', '))
+            });
+        }
+    }
+
+    /**
+     * Init all related systems.
+     *
+     * @private
+     */
+    function _initSystem() {
+        PhalconEye.widget.init();
+        PhalconEye.form.init();
+
+        /**
+         * Init on update.
+         */
+        $(document).bind("DOMNodeInserted", function (event) {
+            PhalconEye.widget.init(event.target);
+            PhalconEye.form.init(event.target);
+        });
+    }
 }(window, jQuery));
 

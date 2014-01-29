@@ -1,16 +1,18 @@
 {#
- +------------------------------------------------------------------------+
- | PhalconEye CMS                                                         |
- +------------------------------------------------------------------------+
- | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
- +------------------------------------------------------------------------+
- | This source file is subject to the New BSD License that is bundled     |
- | with this package in the file LICENSE.txt.                             |
- |                                                                        |
- | If you did not receive a copy of the license and are unable to         |
- | obtain it through the world-wide-web, please send an email             |
- | to license@phalconeye.com so we can send you a copy immediately.       |
- +------------------------------------------------------------------------+
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013 PhalconEye Team (http://phalconeye.com/)            |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  +------------------------------------------------------------------------+
 #}
 
 {% extends "layouts/admin.volt" %}
@@ -19,7 +21,8 @@
 
 {% block head %}
     {{ helper('assets').addJs('assets/js/core/admin/menu.js') }}
-    {{ helper('assets').addJs('assets/js/core/admin/files.js') }}
+    {{ helper('assets').addJs('assets/js/core/widgets/modal.js') }}
+    {{ helper('assets').addJs('assets/js/core/widgets/ckeditor.js') }}
 
     <script type="text/javascript">
         var menuItemsData = {
@@ -49,7 +52,8 @@
 
     <div class="span12">
         <div class="menu_manage_header">
-            <h3><a href="{{ url("admin/menus") }}">{{ "Menus" | trans }}</a> >
+            <h3>
+                <a href="{{ url("admin/menus") }}">{{ "Menus" | trans }}</a> >
                 {% if parent is defined %}
                     {% for p in parents %}
                         <a href="{{ url(['for':'admin-menus-manage']) }}{{ menu.id }}{% if p.parent_id is not null %}?parent_id={{ p.parent_id }}{% endif %}"
@@ -58,7 +62,8 @@
                     {% endfor %}
                 {% endif %}
                 {{ "Manage menu" | trans }}
-                "{{ menu.name }}"</h3>
+                "{{ menu.name }}"
+            </h3>
             <button id="add-new-item" class="btn btn-primary">{{ 'Add new item'|trans }}</button>
             <div id="label-saved" class="label label-success">{{ 'Saved...'|trans }}</div>
         </div>

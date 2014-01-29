@@ -316,13 +316,13 @@ class Form implements ElementContainerInterface
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
                 $value = $this->getValue($name, $element);
-                $found = ($value || $found ? $value : $found);
+                $found = (($value !== false) || $found ? $value : $found);
             } elseif (!$element->isIgnored() && $element->getName() == $name) {
                 return $element->getValue();
             }
         }
 
-        if ($isRoot && !$found) {
+        if ($isRoot && $found === false) {
             throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
         }
 

@@ -22,11 +22,11 @@ var menuItemsData = menuItemsData || [];
             if ($(this).parents('li').length && $(this).parents('li').data('item-id')) {
                 id = $(this).parents('li').data('item-id');
             }
-            root.modal.open(data.link_edit + id, data);
+            root.widget.modal.open(data.link_edit + id, data);
         };
 
         var addAction = function () {
-            root.modal.open(data.link_create, data);
+            root.widget.modal.open(data.link_create, data);
         };
 
         var deleteAction = function () {

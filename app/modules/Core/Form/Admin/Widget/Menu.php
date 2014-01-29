@@ -53,7 +53,7 @@ class Menu extends Form
                 [
                     'data-link' => $this->getDI()->getUrl()->get('admin/menus/suggest'),
                     'data-target' => '#menu_id',
-                    'data-autocomplete' => 'true',
+                    'data-widget' => 'autocomplete',
                     'autocomplete' => 'off'
                 ]
             )

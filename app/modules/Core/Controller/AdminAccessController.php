@@ -219,9 +219,8 @@ class AdminAccessController extends AbstractAdminController
                         strtoupper($action)
                     ),
                     1,
-                    false,
-                    0,
-                    $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action)
+                    $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action),
+                    0
                 );
             }
         }

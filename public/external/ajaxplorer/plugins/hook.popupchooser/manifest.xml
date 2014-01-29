@@ -49,13 +49,13 @@
 										}
 										
 										if(match){
-											window.opener.PE.ajaxplorer.ajaxplorerPopupCallback(filePath);
+											window.opener.PhalconEye.ajaxplorer.ajaxplorerPopupCallback(filePath);
 											window.close();
 										} else {
 											modal.displayMessage('ERROR', 'You did not select a valid file type');
 										}
 									} else {
-										window.opener.PE.ajaxplorer.ajaxplorerPopupCallback(filePath);
+										window.opener.PhalconEye.ajaxplorer.ajaxplorerPopupCallback(filePath);
 										window.close();
 									}
 								}
@@ -90,7 +90,7 @@
 										}
 									}
 									if(paths.length > 0){
-										window.opener.PE.ajaxplorer.ajaxplorerPopupCallback(paths);
+										window.opener.PhalconEye.ajaxplorer.ajaxplorerPopupCallback(paths);
 										window.close();
 									} else {
 										modal.displayMessage('ERROR', 'No valid files selected.');
