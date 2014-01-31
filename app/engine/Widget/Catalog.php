@@ -40,6 +40,20 @@ class Catalog
     protected $_widgets = [];
 
     /**
+     * Widgets identities.
+     *
+     * @var array
+     */
+    protected $_ids = [];
+
+    /**
+     * Widgets keys.
+     *
+     * @var array
+     */
+    protected $_keys = [];
+
+    /**
      * Get widgets in storage.
      *
      * @return array
@@ -52,19 +66,27 @@ class Catalog
     /**
      * Add one widget to catalog.
      *
-     * @param mixed $id     Widget identity.
-     * @param mixed $widget Widget model.
+     * @param int    $id     Widget identity.
+     * @param string $key    Widget unique key.
+     * @param mixed  $widget Widget model.
      *
      * @return void
      * @throws EngineException
      */
-    public function addWidget($id, $widget)
+    public function addWidget($id, $key, $widget)
     {
-        if (isset($this->_widgets[$id])) {
+        if (isset($this->_ids[$id])) {
             throw new EngineException(sprintf('Widget storage has already widget with id "%s".', $id));
         }
 
-        $this->_widgets[$id] = $widget;
+        if (isset($this->_keys[$key])) {
+            throw new EngineException(sprintf('Widget storage has already widget with key "%s".', $key));
+        }
+
+        $index = count($this->_widgets);
+        $this->_widgets[] = $widget;
+        $this->_ids[$id] = $index;
+        $this->_keys[$key] = $index;
     }
 
     /**
@@ -76,7 +98,9 @@ class Catalog
      */
     public function addWidgets($widgets)
     {
-        $this->_widgets += $widgets;
+        foreach ($widgets as $widget) {
+            $this->addWidget($widget[0], $widget[1], $widget[2]);
+        }
     }
 
     /**
@@ -89,10 +113,18 @@ class Catalog
      */
     public function get($id)
     {
-        if (empty($this->_widgets[$id])) {
-            throw new EngineException(sprintf('Widget storage has no widget with id "%s".', $id));
+        if (is_int($id)) {
+            if (!isset($this->_ids[$id])) {
+                throw new EngineException(sprintf('Widget storage has no widget with id "%s".', $id));
+            }
+            $index = $this->_ids[$id];
+        } else {
+            if (!isset($this->_keys[$id])) {
+                throw new EngineException(sprintf('Widget storage has no widget with key "%s".', $id));
+            }
+            $index = $this->_keys[$id];
         }
 
-        return $this->_widgets[$id];
+        return $this->_widgets[$index];
     }
 }

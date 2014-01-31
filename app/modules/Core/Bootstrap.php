@@ -27,8 +27,8 @@ use Engine\Translation\Db as TranslationDb;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\User;
 
@@ -102,34 +102,6 @@ class Bootstrap extends EngineBootstrap
     }
 
     /**
-     * Prepare widgets metadata for Engine.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void
-     */
-    protected function _initWidgets(DI $di)
-    {
-        if ($di->get('app')->isConsole()) {
-            return;
-        }
-
-        $cache = $di->get('cacheData');
-        $cacheKey = "widgets_metadata.cache";
-        $widgets = $cache->get($cacheKey);
-
-        if ($widgets === null) {
-            $widgets = [];
-            foreach (Widget::find() as $object) {
-                $widgets[$object->id] = $object;
-            }
-
-            $cache->save($cacheKey, $widgets, 0); // Unlimited.
-        }
-        $di->get('widgets')->addWidgets($widgets);
-    }
-
-    /**
      * Init locale.
      *
      * @param DI     $di     Dependency injection.
@@ -196,5 +168,33 @@ class Bootstrap extends EngineBootstrap
         }
 
         $di->set('trans', $translate);
+    }
+
+    /**
+     * Prepare widgets metadata for Engine.
+     *
+     * @param DI $di Dependency injection.
+     *
+     * @return void
+     */
+    protected function _initWidgets(DI $di)
+    {
+        if ($di->get('app')->isConsole()) {
+            return;
+        }
+
+        $cache = $di->get('cacheData');
+        $cacheKey = "widgets_metadata.cache";
+        $widgets = $cache->get($cacheKey);
+
+        if ($widgets === null) {
+            $widgets = [];
+            foreach (Widget::find() as $object) {
+                $widgets[] = [$object->id, $object->getKey(), $object];
+            }
+
+            $cache->save($cacheKey, $widgets, 0); // Unlimited.
+        }
+        $di->get('widgets')->addWidgets($widgets);
     }
 }

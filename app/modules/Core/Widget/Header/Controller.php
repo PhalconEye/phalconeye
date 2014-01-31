@@ -45,5 +45,4 @@ class Controller extends WidgetController
         $this->view->show_title = $this->getParam('show_title');
         $this->view->show_auth = $this->getParam('show_auth');
     }
-
 }

@@ -28,7 +28,9 @@
         </div>
         <div class="error_page_description">
             Sorry, there is an error.
+            {% if this.currentErrorCode is defined %}
             Error code: <b>{{ this.currentErrorCode }}</b>.
+            {% endif %}
         </div>
     </div>
 {% endblock %}

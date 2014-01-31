@@ -57,7 +57,7 @@ class Renderer extends Helper
 
         $widgets = $page->getWidgets();
         foreach ($widgets as $widget) {
-            $content .= $this->_renderWidget($widget->widget_id, $widget->getParams());
+            $content .= $this->_renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
         return $content;
@@ -79,6 +79,19 @@ class Renderer extends Helper
         $widget = new Element($id, $params, $this->getDI());
 
         return $widget->render();
+    }
+
+    /**
+     * Render widget by identity.
+     *
+     * @param mixed $id     Widget id in widgets table.
+     * @param array $params Widgets params in page.
+     *
+     * @return mixed
+     */
+    protected function _renderWidgetId($id, $params = [])
+    {
+        return $this->_renderWidget((int)$id, $params);
     }
 
     /**

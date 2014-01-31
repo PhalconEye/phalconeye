@@ -33,7 +33,7 @@
                 'language_id': {{ lang.id }}
             };
 
-            PhalconEye.modal.open(url, data);
+            PhalconEye.widget.modal.open(url, data);
         };
 
         var editItem = function (id) {
@@ -43,7 +43,7 @@
                 'language_id': {{ lang.id }}
             };
 
-            PhalconEye.modal.open(url, data);
+            PhalconEye.widget.modal.open(url, data);
         }
     </script>
 {% endblock %}

@@ -116,7 +116,7 @@
             "layout": element.parent().attr("layout")
         };
 
-        PhalconEye.modal.open(url, data);
+        PhalconEye.widget.modal.open(url, data);
     };
 
     var removeAction = function (element) {

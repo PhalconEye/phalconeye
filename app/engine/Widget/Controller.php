@@ -134,8 +134,8 @@ class Controller extends PhalconController
         }
 
         // run init function
-        if (method_exists($this, 'init')) {
-            $this->init();
+        if (method_exists($this, 'initialize')) {
+            $this->initialize();
         }
     }
 
@@ -203,11 +203,19 @@ class Controller extends PhalconController
     /**
      * Get widget cache key.
      *
-     * @return string
+     * @return string|null
      */
     public function cacheKey()
     {
-        return $this->_widgetName . '_' . $this->_params['content_id'];
+        if (isset($this->_params['cache_key'])) {
+            return $this->_params['cache_key'];
+        }
+
+        if (isset($this->_params['content_id'])) {
+            return $this->_widgetName . '_' . $this->_params['content_id'];
+        }
+
+        return null;
     }
 
     /**

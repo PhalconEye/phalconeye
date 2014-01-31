@@ -80,6 +80,21 @@ class Widget extends AbstractModel
     public $enabled = true;
 
     /**
+     * Get widget key.
+     *
+     * @return string
+     */
+    public function getKey()
+    {
+        $key = $this->name;
+        if (!empty($this->module)) {
+            $key = ucfirst($this->module) . '.' . $key;
+        }
+
+        return $key;
+    }
+
+    /**
      * Return the related "Content" entity.
      *
      * @param array $arguments Entity arguments.
