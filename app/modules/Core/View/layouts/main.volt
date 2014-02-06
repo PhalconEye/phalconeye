@@ -34,9 +34,9 @@
 </head>
 <body data-base-url="{{ url() }}" data-debug="{{ config.application.debug }}">
 <div id="wrapper">
-    <div id="header">
+    <div id="header" class="container">
         {% if disableHeader is not defined %}
-        {{ helper('renderer', 'core').renderContent('header') }}
+        {{ helper('renderer', 'core').renderContent('header', 'partials/layout') }}
         {% endif %}
 
         {%- block header -%}
@@ -52,9 +52,9 @@
         {%- endblock -%}
     </div>
 
-    <div id="footer">
+    <div id="footer" class="container">
         {% if disableFooter is not defined %}
-        {{ helper('renderer', 'core').renderContent('footer') }}
+        {{ helper('renderer', 'core').renderContent('footer', 'partials/layout') }}
         {% endif %}
         {%- block footer -%}
         {%- endblock -%}

@@ -19,6 +19,7 @@
 namespace Core\Helper;
 
 use Core\Model\Page;
+use Engine\Exception;
 use Engine\Helper;
 use Engine\Widget\Element;
 use Phalcon\Db\Column;
@@ -41,10 +42,12 @@ class Renderer extends Helper
      * Render content from database layout.
      *
      * @param string $pageType Page type.
+     * @param string $layout   Use layout to render.
      *
+     * @throws \Engine\Exception
      * @return mixed
      */
-    protected function _renderContent($pageType)
+    protected function _renderContent($pageType, $layout = null)
     {
         $content = '';
         $page = Page::findFirst(
@@ -55,12 +58,35 @@ class Renderer extends Helper
             ]
         );
 
-        $widgets = $page->getWidgets();
-        foreach ($widgets as $widget) {
-            $content .= $this->_renderWidgetId($widget->widget_id, $widget->getParams());
+        if (!$page) {
+            throw new Exception("Page with type '$pageType' not found.");
         }
 
-        return $content;
+        $widgets = $page->getWidgets();
+
+        /**
+         * Plain render widgets.
+         */
+        if (!$layout) {
+            foreach ($widgets as $widget) {
+                $content .= $this->_renderWidgetId($widget->widget_id, $widget->getParams());
+            }
+
+            return $content;
+        }
+
+        // Resort content by sides.
+        $content = [];
+        foreach ($widgets as $widget) {
+            $content[$widget->layout][] = $widget;
+        }
+
+        /** @var \Phalcon\Mvc\View $view */
+        $view = $this->getDI()->get('view');
+        $view->content = $content;
+        $view->page = $page;
+        $view->pick($layout);
+        return $view->getRender(null, null);
     }
 
     /**

@@ -117,6 +117,9 @@ class Controller extends WidgetController
         $languages = Language::find();
         $languageHtmlItems = '';
         $defaultLanguage = Settings::getSetting('system_default_language', 'en');
+        if ($defaultLanguage == 'auto') {
+            $defaultLanguage = 'en';
+        }
         $elements = [];
 
         foreach ($languages as $language) {

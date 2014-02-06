@@ -66,14 +66,14 @@ class Page extends AbstractModel
     public $url;
 
     /**
-     * @Column(type="text", nullable=false, column="description")
+     * @Column(type="text", nullable=true, column="description")
      */
-    public $description;
+    public $description = null;
 
     /**
-     * @Column(type="text", nullable=false, column="keywords")
+     * @Column(type="text", nullable=true, column="keywords")
      */
-    public $keywords;
+    public $keywords = null;
 
     /**
      * @Column(type="string", nullable=false, column="layout", size="50")
