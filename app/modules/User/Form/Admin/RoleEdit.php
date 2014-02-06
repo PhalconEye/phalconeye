@@ -24,7 +24,7 @@ namespace User\Form\Admin;
  * @category  PhalconEye
  * @package   User\Form\Admin
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
+ * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */

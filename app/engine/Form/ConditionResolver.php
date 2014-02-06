@@ -33,7 +33,7 @@ use Phalcon\Translate;
  * @category  PhalconEye
  * @package   Engine\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
+ * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */

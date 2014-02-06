@@ -24,7 +24,7 @@ namespace Core\Form\Admin\Language;
  * @category  PhalconEye
  * @package   Core\Form\Admin\Language
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
+ * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */

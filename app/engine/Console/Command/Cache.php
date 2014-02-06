@@ -29,7 +29,7 @@ use Phalcon\DI;
  * @category  PhalconEye
  * @package   Engine\Console\Commands
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
+ * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  *

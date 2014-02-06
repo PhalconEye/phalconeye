@@ -26,7 +26,7 @@ use Core\Model\Language;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
- * @copyright 2013 PhalconEye Team
+ * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  *
