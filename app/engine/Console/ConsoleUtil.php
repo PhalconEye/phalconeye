@@ -200,7 +200,7 @@ final class ConsoleUtil
         $out .= self::colorize(
             str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
         );
-        $out .= PHP_EOL;
+        $out .= PHP_EOL . PHP_EOL;
 
         return $out;
     }
@@ -252,21 +252,19 @@ final class ConsoleUtil
      */
     public static function isSupportedShell()
     {
-        $flag = false;
-
         if (isset($_ENV['TERM'])) {
             if (isset(self::$_supportedShells[$_ENV['TERM']])) {
-                $flag = true;
+                return true;
             }
-        } else {
-            if (isset($_SERVER['TERM'])) {
-                if (isset(self::$_supportedShells[$_SERVER['TERM']])) {
-                    $flag = true;
-                }
+        } elseif (isset($_SERVER['TERM'])) {
+            if (isset(self::$_supportedShells[$_SERVER['TERM']])) {
+                return true;
             }
+        } elseif (isset($_SERVER['ConEmuANSI']) && $_SERVER['ConEmuANSI'] == 'ON') {
+            return true;
         }
 
-        return $flag;
+        return false;
     }
 
     /**
@@ -353,19 +351,25 @@ final class ConsoleUtil
     /**
      * Get command line message.
      *
-     * @param string $msg          Message text.
+     * @param string $cmd          Message text.
      * @param string $comment      Comment text.
      * @param int    $commentColor Comment text color.
+     * @param int    $cmdColor     Comment text color.
      *
      * @return string
      */
-    public static function commandLine($msg, $comment = '', $commentColor = ConsoleUtil::FG_BROWN)
+    public static function commandLine(
+        $cmd,
+        $comment = '',
+        $commentColor = ConsoleUtil::FG_BROWN,
+        $cmdColor = ConsoleUtil::FG_GREEN
+    )
     {
-        $messageLength = strlen($msg) + 3;
+        $messageLength = strlen($cmd) + 3;
         $startPosition = self::COMMENT_START_POSITION;
 
-        return self::colorize('  ' . $msg, ConsoleUtil::FG_GREEN) .
-        "\033[{$messageLength}D\033[{$startPosition}C" .
+        return self::colorize('  ' . $cmd, $cmdColor) .
+        self::tab($startPosition, $messageLength) .
         self::colorize($comment, $commentColor) .
         PHP_EOL;
     }
@@ -380,5 +384,22 @@ final class ConsoleUtil
     public static function textLine($msg)
     {
         return self::colorize('  ' . $msg) . PHP_EOL . PHP_EOL;
+    }
+
+    /**
+     * Make tab space.
+     *
+     * @param int $start  Starting from.
+     * @param int $length With length.
+     *
+     * @return string
+     */
+    public static function tab($start, $length)
+    {
+        if (!self::isSupportedShell()) {
+            return str_repeat(' ', $length);
+        }
+
+        return "\033[{$length}D\033[{$start}C";
     }
 }

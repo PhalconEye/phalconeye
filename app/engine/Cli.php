@@ -18,6 +18,8 @@
 
 namespace Engine;
 
+use Core\Command\Test;
+use Core\Command\Test2;
 use Engine\Console\AbstractCommand;
 use Engine\Console\Command\Assets;
 use Engine\Console\CommandsListener;
@@ -55,7 +57,6 @@ class Cli extends Application
 
         // Init commands.
         $this->_initCommands();
-        $this->getEventsManager()->attach('command', new CommandsListener());
     }
 
     /**
@@ -104,7 +105,7 @@ class Cli extends Application
             }
 
             $commandClass = $commandsNamespace . str_replace('.php', '', $file);
-            $this->_commands[] = new $commandClass();
+            $this->_commands[] = new $commandClass($this->getDI());
         }
     }
 
@@ -128,26 +129,26 @@ class Cli extends Application
         );
         print ConsoleUtil::infoLine('================================================================', false, 2);
 
+        // Installation is required.
         if (!$this->_config->application->installed) {
             print ConsoleUtil::error('Please, install system first.') . PHP_EOL;
             die();
         }
 
+        // Not arguments?
         if (!isset($_SERVER['argv'][1])) {
             $this->printAvailableCommands();
             die();
         }
 
-        $input = $_SERVER['argv'][1];
+        // Check if 'help' command was used.
+        if ($this->_helpIsRequired()) {
+            return;
+        }
 
-        // Try to dispatch the command
-        foreach ($this->_commands as $command) {
-            $providedCommands = $command->getCommands();
-            if (in_array($input, $providedCommands)) {
-                $command->setConfig($this->_config);
-
-                return $this->dispatch($command);
-            }
+        // Try to dispatch the command.
+        if ($cmd = $this->_getRequiredCommand()) {
+            return $cmd->dispatch();
         }
 
         // Check for alternatives.
@@ -163,15 +164,16 @@ class Cli extends Application
             }
         }
 
-        // Show exception with/without alternatives
-        $soundex = soundex($input);
+        // Show exception with/without alternatives.
+        $soundex = soundex($_SERVER['argv'][1]);
         if (isset($available[$soundex])) {
             print ConsoleUtil::warningLine(
-                'Command "' . $input . '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
+                'Command "' . $_SERVER['argv'][1] .
+                '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
             );
             $this->printAvailableCommands();
         } else {
-            print ConsoleUtil::warningLine('Command "' . $input . '" not found.');
+            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][1] . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -184,36 +186,58 @@ class Cli extends Application
     public function printAvailableCommands()
     {
         print ConsoleUtil::headLine('Available commands:');
-        foreach ($this->_commands as $commands) {
-            $providedCommands = $commands->getCommands();
-            $alias = '';
-            if (count($providedCommands) > 1) {
-                $alias = 'Aliases: ' . ConsoleUtil::colorize(join(', ', $providedCommands)) . '';
-            }
-            print ConsoleUtil::commandLine($providedCommands[0], $alias);
+        foreach ($this->_commands as $command) {
+            print ConsoleUtil::commandLine(join(', ', $command->getCommands()), $command->getDescription());
         }
         print PHP_EOL;
     }
 
     /**
-     * Dispatch commands.
+     * Get required command.
      *
-     * @param AbstractCommand $command Command object.
+     * @param string|null $input Input from console.
+     *
+     * @return AbstractCommand|null
+     */
+    protected function _getRequiredCommand($input = null)
+    {
+        if (!$input) {
+            $input = $_SERVER['argv'][1];
+        }
+
+        foreach ($this->_commands as $command) {
+            $providedCommands = $command->getCommands();
+            if (in_array($input, $providedCommands)) {
+                return $command;
+            }
+        }
+
+        return null;
+    }
+
+    /**
+     * Check help system.
      *
      * @return bool
      */
-    public function dispatch(AbstractCommand $command)
+    protected function _helpIsRequired()
     {
-        //If beforeCommand fails abort
-        if ($this->_eventsManager->fire('command:beforeCommand', $command) === false) {
+        if ($_SERVER['argv'][1] != 'help') {
             return false;
         }
 
-        //If run the commands fails abort too
-        if ($command->run($this->getDI()) === false) {
-            return false;
+        if (empty($_SERVER['argv'][2])) {
+            $this->printAvailableCommands();
+            return true;
         }
 
-        $this->_eventsManager->fire('command:afterCommand', $command);
+        $command = $this->_getRequiredCommand($_SERVER['argv'][2]);
+        if (!$command) {
+            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][2] . '" not found.');
+            return true;
+        }
+
+        $command->getHelp((!empty($_SERVER['argv'][3]) ? $_SERVER['argv'][3] : null));
+        return true;
     }
 }

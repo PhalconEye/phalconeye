@@ -36,6 +36,7 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Url getUrl()
  * @method \Phalcon\Logger\Adapter getLogger($file = 'main', $format = null)
  * @method \Phalcon\Http\Request getRequest()
+ * @method \Phalcon\Annotations\Adapter getAnnotations()
  */
 trait DependencyInjection
 {

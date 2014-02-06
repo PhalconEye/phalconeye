@@ -33,37 +33,39 @@ use Phalcon\DI;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @CommandName(['database', 'db'])
+ * @CommandDescription('Database management.')
  */
 class Database extends AbstractCommand implements CommandInterface
 {
     /**
-     * Executes the command.
+     * Update database schema according to models metadata.
      *
-     * @param DI $di Dependency injection.
+     * @param string|null $model   Model name to update. Example: \Test\Model\Class.
+     * @param bool        $cleanup Cleanup database? Drop not related tables.
      *
-     * @return void|bool
+     * @return void
      */
-    public function run($di)
+    public function updateAction($model = null, $cleanup = false)
     {
-        $schema = new Schema($di);
-
-        if ($this->isReceivedOption('model')) {
-            $modelClass = $this->getOption('model');
-            if (!class_exists($modelClass)) {
-                print ConsoleUtil::error('Model with class "' . $modelClass . '" doesn\'t exists.') . PHP_EOL;
+        $schema = new Schema($this->getDI());
+        if ($model) {
+            if (!class_exists($model)) {
+                print ConsoleUtil::error('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
 
                 return;
             }
-            $count = current($schema->updateTable($modelClass));
+            $count = current($schema->updateTable($model));
             if ($count) {
-                print ConsoleUtil::headLine('Table update for model: ' . $modelClass);
+                print ConsoleUtil::headLine('Table update for model: ' . $model);
                 print ConsoleUtil::commandLine('Executed queries:', $count, ConsoleUtil::FG_CYAN);
             } else {
                 print ConsoleUtil::success('Table is up to date');
             }
             print PHP_EOL;
         } else {
-            $queriesCount = $schema->updateDatabase($this->isReceivedOption('cleanup'));
+            $queriesCount = $schema->updateDatabase($cleanup);
             if (!empty($queriesCount)) {
                 print ConsoleUtil::headLine('Database update:');
                 foreach ($queriesCount as $model => $count) {
@@ -74,55 +76,5 @@ class Database extends AbstractCommand implements CommandInterface
             }
             print PHP_EOL;
         }
-    }
-
-    /**
-     * Returns the command identifier.
-     *
-     * @return string
-     */
-    public function getCommands()
-    {
-        return ['database', 'db'];
-    }
-
-    /**
-     * Prints the help for current command.
-     *
-     * @return void
-     */
-    public function getHelp()
-    {
-        print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Database management');
-
-        print ConsoleUtil::commandLine('database update', 'Update database according to models annotations.');
-        print PHP_EOL;
-
-        $this->printParameters($this->getPossibleParams());
-        print PHP_EOL;
-    }
-
-    /**
-     * Get possible parameters.
-     *
-     * @return array
-     */
-    public function getPossibleParams()
-    {
-        return [
-            'model=s' => "Model to update. Default: all.",
-            'cleanup' => "Drop not related tables."
-        ];
-    }
-
-    /**
-     * Returns number of required parameters for this command.
-     *
-     * @return int
-     */
-    public function getRequiredParams()
-    {
-        return 1;
     }
 }

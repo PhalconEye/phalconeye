@@ -34,58 +34,22 @@ use Phalcon\DI;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @CommandName(['assets'])
+ * @CommandDescription('Assets management.')
  */
 class Assets extends AbstractCommand implements CommandInterface
 {
     /**
-     * Executes the command.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void|bool
-     */
-    public function run($di)
-    {
-        $action = $this->getOption(['action', 1]);
-        if ($action == 'install') {
-            $assetsManager = new Manager($di, false);
-            $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
-
-            print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
-        }
-    }
-
-    /**
-     * Returns the command identifier.
-     *
-     * @return string
-     */
-    public function getCommands()
-    {
-        return ['assets'];
-    }
-
-    /**
-     * Prints the help for current command.
+     * Install assets from modules.
      *
      * @return void
      */
-    public function getHelp()
+    public function installAction()
     {
-        print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Assets management');
+        $assetsManager = new Manager($this->getDI(), false);
+        $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
 
-        print ConsoleUtil::commandLine('assets install', 'Install assets from all modules');
-        print PHP_EOL;
-    }
-
-    /**
-     * Returns number of required parameters for this command.
-     *
-     * @return int
-     */
-    public function getRequiredParams()
-    {
-        return 1;
+        print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
     }
 }

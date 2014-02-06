@@ -37,94 +37,55 @@ use Phalcon\DI;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @CommandName(['application', 'app'])
+ * @CommandDescription('Application management.')
  */
 class Application extends AbstractCommand implements CommandInterface
 {
     /**
-     * Executes the command.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void|bool
-     */
-    public function run($di)
-    {
-        $action = $this->getOption(['action', 1]);
-        if ($action == 'sync') {
-            try {
-                /**
-                 * Add missing packages.
-                 * Read packages files and find packages that is missing in db.
-                 *
-                 * $modulesWidgets - array of widgets that is located in modules [module => [widgets...n]].
-                 * $notFoundWidgets - array of widgets as external packages [widgets...n].
-                 * $packages - all packages names found at metadata files.
-                 * $widgets - all widgets names found at metadata files.
-                 */
-                list ($modulesWidgets, $notFoundWidgets, $packages, $widgets) = $this->_checkMissingPackages();
-
-                /**
-                 * Add missing widgets from modules and from packages.
-                 */
-                $this->_checkMissingWidgets($modulesWidgets, $notFoundWidgets);
-
-                /**
-                 * Remove unused packages.
-                 */
-                $this->_removeUnusedPackages($packages);
-
-                /**
-                 * Remove unused widgets.
-                 */
-                $this->_removeUnusedWidgets($widgets);
-
-                /**
-                 * Generate metadata.
-                 */
-                $manager = new Manager(Package::find(), $di);
-                $manager->generateMetadata();
-                print ConsoleUtil::success('Application successfully synchronized.') . PHP_EOL;
-            } catch (Exception $e) {
-                print ConsoleUtil::error($e->getMessage()) . PHP_EOL;
-            }
-        }
-    }
-
-    /**
-     * Returns the command identifier.
-     *
-     * @return string
-     */
-    public function getCommands()
-    {
-        return ['application', 'app'];
-    }
-
-    /**
-     * Prints the help for current command.
+     * Synchronize application data (packages metadata and database packages rows).
      *
      * @return void
      */
-    public function getHelp()
+    public function syncAction()
     {
-        print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Application commands');
+        try {
+            /**
+             * Add missing packages.
+             * Read packages files and find packages that is missing in db.
+             *
+             * $modulesWidgets - array of widgets that is located in modules [module => [widgets...n]].
+             * $notFoundWidgets - array of widgets as external packages [widgets...n].
+             * $packages - all packages names found at metadata files.
+             * $widgets - all widgets names found at metadata files.
+             */
+            list ($modulesWidgets, $notFoundWidgets, $packages, $widgets) = $this->_checkMissingPackages();
 
-        print ConsoleUtil::commandLine(
-            'application sync',
-            'Generate application metadata files and check packages in database.'
-        );
-        print PHP_EOL;
-    }
+            /**
+             * Add missing widgets from modules and from packages.
+             */
+            $this->_checkMissingWidgets($modulesWidgets, $notFoundWidgets);
 
-    /**
-     * Returns number of required parameters for this command.
-     *
-     * @return int
-     */
-    public function getRequiredParams()
-    {
-        return 1;
+            /**
+             * Remove unused packages.
+             */
+            $this->_removeUnusedPackages($packages);
+
+            /**
+             * Remove unused widgets.
+             */
+            $this->_removeUnusedWidgets($widgets);
+
+            /**
+             * Generate metadata.
+             */
+            $manager = new Manager(Package::find(), $this->getDI());
+            $manager->generateMetadata();
+            print ConsoleUtil::success('Application successfully synchronized.') . PHP_EOL;
+        } catch (Exception $e) {
+            print ConsoleUtil::error($e->getMessage()) . PHP_EOL;
+        }
     }
 
     /**
@@ -182,7 +143,7 @@ class Application extends AbstractCommand implements CommandInterface
                 }
             } else {
                 $packages[] = $packageFromManifest->type . '.' . $packageFromManifest->name;
-                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_WHITE);
+                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
             }
         }
 
@@ -219,7 +180,7 @@ class Application extends AbstractCommand implements CommandInterface
                         );
                     }
                 } else {
-                    print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_WHITE);
+                    print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
                 }
             }
         }
@@ -229,7 +190,7 @@ class Application extends AbstractCommand implements CommandInterface
 
             $widget = Widget::findFirstByName($widgetObject->name);
             if ($widget) {
-                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_WHITE);
+                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
                 continue;
             }
 
@@ -331,6 +292,6 @@ class Application extends AbstractCommand implements CommandInterface
      */
     protected function _info($msg)
     {
-        print ConsoleUtil::infoLine($msg, false, 0, ConsoleUtil::FG_WHITE);
+        print ConsoleUtil::infoLine($msg, false, 0, ConsoleUtil::FG_CYAN);
     }
 }

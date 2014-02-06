@@ -32,57 +32,21 @@ use Phalcon\DI;
  * @copyright 2013 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @CommandName(['cache'])
+ * @CommandDescription('Cache management.')
  */
 class Cache extends AbstractCommand implements CommandInterface
 {
     /**
-     * Executes the command.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void|bool
-     */
-    public function run($di)
-    {
-        $action = $this->getOption(['action', 1]);
-        if ($action == 'cleanup') {
-            $di->get('app')->clearCache();
-
-            print ConsoleUtil::success('Cache successfully removed.') . PHP_EOL;
-        }
-    }
-
-    /**
-     * Returns the command identifier.
-     *
-     * @return string
-     */
-    public function getCommands()
-    {
-        return ['cache'];
-    }
-
-    /**
-     * Prints the help for current command.
+     * Cleanup cache data.
      *
      * @return void
      */
-    public function getHelp()
+    public function cleanupAction()
     {
-        print ConsoleUtil::headLine('Help:');
-        print ConsoleUtil::textLine('Cache management');
+        $this->getDI()->get('app')->clearCache();
 
-        print ConsoleUtil::commandLine('cache cleanup', 'Remove all cache');
-        print PHP_EOL;
-    }
-
-    /**
-     * Returns number of required parameters for this command.
-     *
-     * @return int
-     */
-    public function getRequiredParams()
-    {
-        return 1;
+        print ConsoleUtil::success('Cache successfully removed.') . PHP_EOL;
     }
 }

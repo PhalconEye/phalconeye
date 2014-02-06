@@ -1,22 +1,6 @@
 <?php
 /*
   +------------------------------------------------------------------------+
-  | Phalcon Framework                                                      |
-  +------------------------------------------------------------------------+
-  | Copyright (c) 2011-2013 Phalcon Team (http://www.phalconphp.com)       |
-  +------------------------------------------------------------------------+
-  | This source file is subject to the New BSD License that is bundled     |
-  | with this package in the file docs/LICENSE.txt.                        |
-  |                                                                        |
-  | If you did not receive a copy of the license and are unable to         |
-  | obtain it through the world-wide-web, please send an email             |
-  | to license@phalconphp.com so we can send you a copy immediately.       |
-  +------------------------------------------------------------------------+
-  | Authors: Andres Gutierrez <andres@phalconphp.com>                      |
-  |          Eduar Carvajal <eduar@phalconphp.com>                         |
-  +------------------------------------------------------------------------+
-
-  +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
   | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
@@ -36,6 +20,7 @@ namespace Engine\Console;
 
 use Engine\DependencyInjection;
 use Phalcon\Config;
+use Phalcon\DiInterface;
 use Phalcon\Filter;
 
 /**
@@ -55,6 +40,35 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     * Resolved name of command.
+     * It can be one of available aliases names.
+     *
+     * @var string
+     */
+    protected $_name;
+
+    /**
+     * Command name with aliases.
+     *
+     * @var array
+     */
+    protected $_commands = [];
+
+    /**
+     * Command description.
+     *
+     * @var string
+     */
+    protected $_description;
+
+    /**
+     * Available actions in this command.
+     *
+     * @var string
+     */
+    protected $_actions = [];
+
+    /**
      * Parameters received by the script.
      *
      * @var string
@@ -62,251 +76,275 @@ abstract class AbstractCommand implements CommandInterface
     protected $_parameters = [];
 
     /**
-     * Possible prepared arguments.
-     *
-     * @var array
-     */
-    protected $_preparedArguments = [];
-
-    /**
-     * Engine config.
-     *
-     * @var null
-     */
-    protected $_config = null;
-
-    /**
      * Final constructor.
      *
+     * @param DiInterface $di Dependency injection container.
+     *
+     * @throws CommandsException
      */
-    final public function __construct()
+    final public function __construct($di)
     {
-        $this->__DIConstruct();
+        $this->__DIConstruct($di);
+
+        // Setup command metadata.
+        $reflector = $this->getDI()->getAnnotations()->get($this);
+        $annotations = $reflector->getClassAnnotations();
+        if ($annotations) {
+            foreach ($annotations as $annotation) {
+                switch ($annotation->getName()) {
+                    /**
+                     * Initializes the model's source
+                     */
+                    case 'CommandName':
+                        $arguments = $annotation->getArguments();
+                        if (!isset($arguments[0]) || !is_array($arguments[0])) {
+                            throw new CommandsException('Command name must be an array of available names.');
+                        }
+                        $this->_commands = $arguments[0];
+                        break;
+                    case 'CommandDescription':
+                        $arguments = $annotation->getArguments();
+                        if (!isset($arguments[0]) || !is_string($arguments[0])) {
+                            throw new CommandsException('Command description must be a string.');
+                        }
+                        $this->_description = $arguments[0];
+                        break;
+                }
+            }
+        }
+
+        // Get actions metadata.
+        foreach (get_class_methods($this) as $method) {
+            if (substr($method, -6) != 'Action') {
+                continue;
+            }
+
+            // Method annotations.
+            $reflection = new \ReflectionMethod(get_class($this), $method);
+            $docComment = $reflection->getDocComment();
+
+            // Method name.
+            $method = str_replace('Action', '', $method);
+            $this->_actions[$method] = [];
+
+            // Get action description and params metadata.
+            $paramsMetadata = [];
+            $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
+            $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
+            if (!empty($actionComment)) {
+                foreach ($actionComment as $comment) {
+                    if (strpos($comment, '@') === false) {
+                        if (empty($this->_actions[$method]['description'])) {
+                            $this->_actions[$method]['description'] = $comment;
+                        } else {
+                            $this->_actions[$method]['description'] .= $comment;
+                        }
+                    } elseif (strpos($comment, '@param') !== false) {
+                        $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
+                        $paramOptions = explode(' ', $comment);
+                        if (!empty($paramOptions[2])) {
+                            $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
+                                'type' => $paramOptions[1],
+                                'description' => (!empty($paramOptions[3]) ? $paramOptions[3] : '')
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // Get action params.
+            $this->_actions[$method]['params'] = [];
+            foreach ($reflection->getParameters() as $parameter) {
+                $name = $parameter->getName();
+                $defaultValue = $parameter->isDefaultValueAvailable() ?
+                    gettype($parameter->getDefaultValue()) : '<required>';
+
+                $this->_actions[$method]['params'][] = [
+                    'name' => $name,
+                    'default' => $defaultValue,
+                    'type' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['type'] : ''),
+                    'description' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['description'] : '')
+                ];
+            }
+        }
+    }
+
+    /**
+     * Dispatch command. Find out action and exec it with parameters.
+     *
+     * @throws CommandsException
+     * @return mixed
+     */
+    public function dispatch()
+    {
+        $noActions = empty($this->_actions);
+        if (!$noActions && !$this->_parseParameters()) {
+            return false;
+        }
+
+        // Resolve action naming.
+        $actionName = $this->getParameter('action');
+        $action = $actionName . 'Action';
+
+        // Has actions, but action wasn't selected.
+        if (!$noActions && !$actionName) {
+            $this->getHelp();
+            return false;
+        }
+
+        // Init command if required.
+        if (method_exists($this, 'initialize')) {
+            $this->initialize();
+        }
+
+        // Just has no actions.
+        if ($noActions) {
+            return true;
+        }
+
+        // Run command action.
+        $actionParams = [];
+        if (!empty($this->_actions[$actionName]['params'])) {
+            foreach ($this->_actions[$actionName]['params'] as $param) {
+                if (!$this->hasParameter($param['name'])) {
+                    continue;
+                }
+
+                $actionParams[] = $this->getParameter($param['name']);
+            }
+        }
+        return call_user_func_array([$this, $action], $actionParams);
     }
 
     /**
      * Parse the parameters passed to the script.
      *
-     * @param array $parameters    Parameters to parse.
-     * @param array $possibleAlias Possible command alias.
-     *
      * @throws CommandsException
      * @return array
      */
-    public function parseParameters($parameters = [], $possibleAlias = [])
+    protected function _parseParameters()
     {
-        if (count($parameters) == 0) {
-            $parameters = $this->getPossibleParams();
-        }
-
-        if (!is_array($parameters)) {
-            throw new CommandsException("Cannot load possible parameters for script: " . get_class($this));
-        }
-
-        $arguments = [];
-        foreach (array_keys($parameters) as $parameter) {
-            if (strpos($parameter, "=") !== false) {
-                $parameterParts = explode("=", $parameter);
-                if (count($parameterParts) != 2) {
-                    throw new CommandsException("Invalid definition for the parameter '$parameter'");
-                }
-                if (strlen($parameterParts[0]) == "") {
-                    throw new CommandsException("Invalid definition for the parameter '" . $parameter . "'");
-                }
-                if (!in_array($parameterParts[1], ['s', 'i', 'l'])) {
-                    throw new CommandsException("Incorrect data type on parameter '" . $parameter . "'");
-                }
-                $this->_preparedArguments[$parameterParts[0]] = true;
-                $arguments[$parameterParts[0]] = [
-                    'have-option' => true,
-                    'option-required' => true,
-                    'data-type' => $parameterParts[1]
-                ];
-            } else {
-                if (preg_match('/([a-zA-Z0-9]+)/', $parameter)) {
-                    $this->_preparedArguments[$parameter] = true;
-                    $arguments[$parameter] = [
-                        'have-option' => false,
-                        'option-required' => false
-                    ];
-                } else {
-                    throw new CommandsException("Invalid parameter '$parameter'");
-                }
-            }
-        }
-
-        return $this->_parseArguments($possibleAlias);
-    }
-
-    /**
-     * Get possible parameters.
-     *
-     * @return array
-     */
-    public function getPossibleParams()
-    {
-        return [];
-    }
-
-    /**
-     * Parse arguments from input.
-     *
-     * @param array $possibleAlias Possible command alias.
-     *
-     * @throws CommandsException
-     * @return array
-     */
-    protected function _parseArguments($possibleAlias = [])
-    {
-        $param = '';
-        $paramName = '';
-        $receivedParams = [];
+        $this->_parameters = [];
         $argumentsCount = count($_SERVER['argv']);
+        $withoutValue = [];
 
         for ($i = 1; $i < $argumentsCount; $i++) {
             $argv = $_SERVER['argv'][$i];
+
+            // Set initial data.
+            if (in_array($argv, $this->_commands) && empty($this->_parameters)) {
+                $this->_name = $argv;
+                $this->_parameters = [
+                    'command' => $argv,
+                    'action' => false
+                ];
+                continue;
+            }
+
+            // Set action parameter.
+            if (isset($this->_parameters['action']) && empty($this->_parameters['action'])) {
+                // If action was provided empty - we need to show help info.
+                if (empty($argv)) {
+                    $this->getHelp();
+                    return false;
+                }
+
+                // If wee entered unavailable method wee need to show an error and help info.
+                if (!array_key_exists($argv, $this->_actions)) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Action "%s" not found in command "%s"...',
+                            $argv,
+                            $this->_parameters['command']
+                        )
+                    );
+                    $this->getHelp();
+                    return false;
+                }
+
+                $this->_parameters['action'] = $argv;
+                continue;
+            }
+
             if (preg_match('#^([\-]{1,2})([a-zA-Z0-9][a-zA-Z0-9\-]*)(=(.*)){0,1}$#', $argv, $matches)) {
+                if (empty($matches[2])) {
+                    throw new CommandsException("Invalid script parameter '$argv'.");
+                }
 
-                if (strlen($matches[1]) == 1) {
-                    $param = substr($matches[2], 1);
-                    $paramName = substr($matches[2], 0, 1);
+                if (empty($matches[4])) {
+                    $this->_parameters[$matches[2]] = true;
+                    $withoutValue[] = $matches[2];
                 } else {
-                    if (strlen($matches[2]) < 2) {
-                        throw new CommandsException("Invalid script parameter '$argv'");
-                    }
-                    $paramName = $matches[2];
+                    $this->_parameters[$matches[2]] = $matches[4];
                 }
-
-                if (!isset($this->_preparedArguments[$paramName])) {
-                    if (!isset($possibleAlias[$paramName])) {
-                        throw new CommandsException("Unknown parameter '$paramName'");
-                    } else {
-                        $paramName = $possibleAlias[$paramName];
-                    }
-                }
-
-                if (isset($arguments[$paramName])) {
-                    if ($param != '') {
-                        $receivedParams[$paramName] = $param;
-                        $param = '';
-                        $paramName = '';
-                    }
-                    if ($arguments[$paramName]['have-option'] == false) {
-                        $receivedParams[$paramName] = true;
-                    } else {
-                        if (isset($matches[4])) {
-                            $receivedParams[$paramName] = $matches[4];
-                        }
-                    }
-                }
-
             } else {
-                $param = $argv;
-                if ($paramName != '') {
-                    if (isset($arguments[$paramName])) {
-                        if ($param == '') {
-                            if ($arguments[$paramName]['have-option'] == true) {
-                                throw new CommandsException("The parameter '$paramName' requires an option");
-                            }
-                        }
-                    }
-                    $receivedParams[$paramName] = $param;
-                    $param = '';
-                    $paramName = '';
-                } else {
-                    $receivedParams[$i - 1] = $param;
-                    $param = '';
+                throw new CommandsException("Invalid script parameter '$argv'.");
+            }
+        }
+
+        return $this->_checkParameters($withoutValue);
+    }
+
+    /**
+     * Check passed parameters (required or no value).
+     *
+     * @param array $withoutValue Params without value.
+     *
+     * @return bool
+     */
+    private function _checkParameters($withoutValue)
+    {
+        $action = $this->_parameters['action'];
+        if (!empty($this->_actions[$action]['params'])) {
+            foreach ($this->_actions[$action]['params'] as $actionParams) {
+
+                // Check required param.
+                if ($actionParams['default'] == '<required>' && empty($this->_parameters[$actionParams['name']])) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Parameter "%s" is required!',
+                            $actionParams['name']
+                        )
+                    );
+                    $this->getHelp($action);
+                    return false;
+                }
+
+                // Check required value of param.
+                if (
+                    $actionParams['default'] != 'boolean' &&
+                    in_array($actionParams['name'], $withoutValue)
+                ) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Parameter "%s" must have value!',
+                            $actionParams['name']
+                        )
+                    );
+                    $this->getHelp($action);
+                    return false;
                 }
             }
         }
 
-        $this->_parameters = $receivedParams;
-
-        return $receivedParams;
+        return true;
     }
 
     /**
-     * Returns the value of an option received. If more parameters are taken as filters.
+     * Get command name.
      *
-     * @param string     $option       Option name.
-     * @param null|array $filters      Filters array.
-     * @param null|mixed $defaultValue Default value if option doesn't exists.
-     *
-     * @return mixed
+     * @return string
      */
-    public function getOption($option, $filters = null, $defaultValue = null)
+    public function getName()
     {
-        if (is_array($option)) {
-            foreach ($option as $optionItem) {
-                if (isset($this->_parameters[$optionItem])) {
-                    if ($filters !== null) {
-                        $filter = new Filter();
-
-                        return $filter->sanitize($this->_parameters[$optionItem], $filters);
-                    }
-
-                    return $this->_parameters[$optionItem];
-                }
-            }
-
-            return $defaultValue;
-        } else {
-            if (isset($this->_parameters[$option])) {
-                if ($filters !== null) {
-                    $filter = new Filter();
-
-                    return $filter->sanitize($this->_parameters[$option], $filters);
-                }
-
-                return $this->_parameters[$option];
-            } else {
-                return $defaultValue;
-            }
+        if ($this->_name) {
+            return $this->_name;
         }
+        return array_shift($this->_commands);
     }
 
     /**
-     * Indicates whether the script was a particular option.
-     *
-     * @param string $option Option name.
-     *
-     * @return boolean
-     */
-    public function isReceivedOption($option)
-    {
-        return isset($this->_parameters[$option]);
-    }
-
-    /**
-     * Prints the available options in the script.
-     *
-     * @param array $parameters Parameters array.
-     *
-     * @return void
-     */
-    public function printParameters($parameters)
-    {
-        $length = 0;
-        foreach ($parameters as $parameter => $description) {
-            if ($length == 0) {
-                $length = strlen($parameter);
-            }
-            if (strlen($parameter) > $length) {
-                $length = strlen($parameter);
-            }
-        }
-
-        print ConsoleUtil::headLine('Options:');
-        foreach ($parameters as $parameter => $description) {
-            print ConsoleUtil::colorize(
-                ' --' . $parameter . str_repeat(' ', $length - strlen($parameter)), ConsoleUtil::FG_GREEN
-            );
-            print ConsoleUtil::colorize("    " . $description) . PHP_EOL;
-        }
-    }
-
-    /**
-     * Returns the processed parameters.
+     * Get command actions available parameters.
      *
      * @return array
      */
@@ -316,35 +354,141 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * Return required parameters
+     * Returns the value of an parameter received.
+     *
+     * @param string     $name    Option name.
+     * @param null|array $filter  Filters array.
+     * @param null|mixed $default Default value if option doesn't exists.
      *
      * @return mixed
      */
-    abstract public function getRequiredParams();
-
-    /**
-     * Prints help on the usage of the command
-     */
-    abstract public function getHelp();
-
-    /**
-     * Get engine config.
-     *
-     * @return null|Config
-     */
-    public function getConfig()
+    public function getParameter($name, $filter = null, $default = null)
     {
-        return $this->_config;
+        if (!isset($this->_parameters[$name])) {
+            return $default;
+        }
+
+        if ($filter) {
+            $filterObject = new Filter();
+            return $filterObject->sanitize($this->_parameters[$name], $filter);
+        }
+
+        return $this->_parameters[$name];
     }
 
     /**
-     * Set engine config.
+     * Indicates whether the script was a particular option.
      *
-     * @param Config $config Application config.
+     * @param string $name Option name.
+     *
+     * @return boolean
      */
-    public function setConfig($config)
+    public function hasParameter($name)
     {
-        $this->_config = $config;
+        return isset($this->_parameters[$name]);
+    }
+
+    /**
+     * Get commands.
+     *
+     * @return array
+     */
+    public function getCommands()
+    {
+        return $this->_commands;
+    }
+
+    /**
+     * Get command description.
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->_description;
+    }
+
+    /**
+     * Get command actions.
+     *
+     * @return array
+     */
+    public function getActions()
+    {
+        return $this->_actions;
+    }
+
+    /**
+     * Prints the help for current command.
+     *
+     * @param string|null $action Action name.
+     *
+     * @return void
+     */
+    public function getHelp($action = null)
+    {
+        $commandName = $this->getName();
+        if ($action) {
+            if (empty($this->_actions[$action])) {
+                print ConsoleUtil::warningLine("Action '$action' not found in this command.");
+                return;
+            }
+
+            print ConsoleUtil::headLine('Help for "' . $commandName . ' ' . $action . '":');
+            print ConsoleUtil::textLine($this->getDescription());
+            $this->printParameters($action);
+            return;
+        } else {
+            print ConsoleUtil::headLine('Help:');
+            print ConsoleUtil::textLine($this->getDescription());
+        }
+
+        foreach ($this->getActions() as $actionName => $metadata) {
+            $description = isset($metadata['description']) ? $metadata['description'] : '';
+            print ConsoleUtil::commandLine($commandName . ' ' . $actionName, $description);
+        }
+        print PHP_EOL;
+    }
+
+    /**
+     * Prints the available options in the script.
+     *
+     * @param string $action Action name.
+     *
+     * @throws CommandsException
+     * @return void
+     */
+    public function printParameters($action)
+    {
+        if (!$action) {
+            return;
+        }
+
+        if (empty($this->_actions[$action])) {
+            throw new CommandsException("Action '$action' not found in this command.");
+        }
+
+        if (empty($this->_actions[$action]['params'])) {
+            return;
+        }
+
+        print ConsoleUtil::headLine('Available parameters:');
+        foreach ($this->_actions[$action]['params'] as $parameter) {
+            $cmd = ' --' . $parameter['name'];
+            $type = '';
+
+            if ($parameter['default'] != 'boolean') {
+                $cmd .= '=' . $parameter['default'];
+                $type = ' (' . $parameter['type'] . ')';
+            }
+
+            print '  ';
+            print ConsoleUtil::colorize($cmd, ConsoleUtil::FG_CYAN);
+            print ConsoleUtil::colorize($type, ConsoleUtil::FG_YELLOW);
+            print ConsoleUtil::tab(ConsoleUtil::COMMENT_START_POSITION, strlen($cmd . $type) + 6);
+            print ConsoleUtil::colorize($parameter['description'], ConsoleUtil::FG_BROWN);
+            print PHP_EOL;
+        }
     }
 
     /**
@@ -355,10 +499,9 @@ abstract class AbstractCommand implements CommandInterface
      *
      * @return mixed
      */
-    protected function filter($paramValue, $filters)
+    protected function _filter($paramValue, $filters)
     {
         $filter = new Filter();
-
         return $filter->sanitize($paramValue, $filters);
     }
 }

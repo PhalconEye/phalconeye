@@ -390,8 +390,13 @@ class Application extends PhalconApplication
             throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
         });
 
-        set_exception_handler(function ($e) {
-            Exception::logError('Exception', $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+        set_exception_handler(function ($e) use ($di) {
+            $errorId = Exception::logError('Exception', $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+
+            if ($di->get('app')->isConsole()) {
+                echo 'Error <' . $errorId . '>: ' . $e->getMessage();
+                return true;
+            }
 
             if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
                 $p = new PrettyExceptions();

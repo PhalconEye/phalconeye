@@ -33,6 +33,7 @@
 */
 
 namespace Engine\Console;
+
 use Phalcon\DI;
 
 /**
@@ -48,49 +49,23 @@ use Phalcon\DI;
 interface CommandInterface
 {
     /**
-     * Executes the command.
-     *
-     * @param DI $di Dependency injection.
-     *
-     * @return void|bool
-     */
-    public function run($di);
-
-    /**
-     * Returns the command identifier
+     * Get command name.
      *
      * @return string
      */
-    public function getCommands();
-
-    /**
-     * Get possible parameters.
-     *
-     * @return array
-     */
-    public function getPossibleParams();
+    public function getName();
 
     /**
      * Prints help on the usage of the command.
      *
+     * @return void
      */
     public function getHelp();
 
     /**
-     * Parse the parameters passed to the script.
-     *
-     * @param array $parameters    Parameters to parse.
-     * @param array $possibleAlias Possible command alias.
-     *
-     * @throws CommandsException
-     * @return array
-     */
-    public function parseParameters($parameters = [], $possibleAlias = []);
-
-    /**
-     * Return required parameters
+     * Dispatch command. Find out action and exec it with parameters.
      *
      * @return mixed
      */
-    public function getRequiredParams();
+    public function dispatch();
 }
