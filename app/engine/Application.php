@@ -386,26 +386,36 @@ class Application extends PhalconApplication
      */
     protected function initEnvironment($di, $config)
     {
-        set_error_handler(function ($errorCode, $errorMessage, $errorFile, $errorLine) {
-            throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
-        });
+        set_error_handler(
+            function ($errorCode, $errorMessage, $errorFile, $errorLine) {
+                throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
+            }
+        );
 
-        set_exception_handler(function ($e) use ($di) {
-            $errorId = Exception::logError('Exception', $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
+        set_exception_handler(
+            function ($e) use ($di) {
+                $errorId = Exception::logError(
+                    'Exception',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getTraceAsString()
+                );
 
-            if ($di->get('app')->isConsole()) {
-                echo 'Error <' . $errorId . '>: ' . $e->getMessage();
+                if ($di->get('app')->isConsole()) {
+                    echo 'Error <' . $errorId . '>: ' . $e->getMessage();
+                    return true;
+                }
+
+                if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
+                    $p = new PrettyExceptions();
+                    $p->setBaseUri('/assets/js/core/pretty-exceptions/');
+                    return $p->handleException($e);
+                }
+
                 return true;
             }
-
-            if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
-                $p = new PrettyExceptions();
-                $p->setBaseUri('/assets/js/core/pretty-exceptions/');
-                return $p->handleException($e);
-            }
-
-            return true;
-        });
+        );
 
         if ($config->application->debug && $config->application->profiler && $config->application->installed) {
             $profiler = new Profiler();

@@ -267,15 +267,16 @@ class PrettyExceptions
      */
     protected function _showTraceItem($n, $trace)
     {
-
         echo '<tr><td align="right" valign="top" class="error-number">#', $n, '</td><td>';
         if (isset($trace['class'])) {
             if (preg_match('/^Phalcon/', $trace['class'])) {
-                echo '<span class="error-class"><a target="_new" href="http://docs.phalconphp.com/en/latest/api/', str_replace('\\', '_', $trace['class']), '.html">', $trace['class'], '</a></span>';
+                echo '<span class="error-class"><a target="_new" href="http://docs.phalconphp.com/en/latest/api/',
+                str_replace('\\', '_', $trace['class']), '.html">', $trace['class'], '</a></span>';
             } else {
                 $classReflection = new \ReflectionClass($trace['class']);
                 if ($classReflection->isInternal()) {
-                    echo '<span class="error-class"><a target="_new" href="http://php.net/manual/en/class.', str_replace('_', '-', strtolower($trace['class'])), '.php">', $trace['class'], '</a></span>';
+                    echo '<span class="error-class"><a target="_new" href="http://php.net/manual/en/class.',
+                    str_replace('_', '-', strtolower($trace['class'])), '.php">', $trace['class'], '</a></span>';
                 } else {
                     echo '<span class="error-class">', $trace['class'], '</span>';
                 }
@@ -289,7 +290,8 @@ class PrettyExceptions
             if (function_exists($trace['function'])) {
                 $functionReflection = new \ReflectionFunction($trace['function']);
                 if ($functionReflection->isInternal()) {
-                    echo '<span class="error-function"><a target="_new" href="http://php.net/manual/en/function.', str_replace('_', '-', $trace['function']), '.php">', $trace['function'], '</a></span>';
+                    echo '<span class="error-function"><a target="_new" href="http://php.net/manual/en/function.',
+                    str_replace('_', '-', $trace['function']), '.php">', $trace['function'], '</a></span>';
                 } else {
                     echo '<span class="error-function">', $trace['function'], '</span>';
                 }
@@ -299,44 +301,7 @@ class PrettyExceptions
         }
 
         if (isset($trace['args'])) {
-            $arguments = array();
-            foreach ($trace['args'] as $argument) {
-                if (is_scalar($argument)) {
-
-                    if (is_bool($argument)) {
-                        if ($argument) {
-                            $arguments[] = '<span class="error-parameter">true</span>';
-                        } else {
-                            $arguments[] = '<span class="error-parameter">null</span>';
-                        }
-                        continue;
-                    }
-
-                    if (is_string($argument)) {
-                        $argument = $this->_escapeString($argument);
-                    }
-
-                    $arguments[] = '<span class="error-parameter">' . $argument . '</span>';
-                } else {
-                    if (is_object($argument)) {
-                        if (method_exists($argument, 'dump')) {
-                            $arguments[] = '<span class="error-parameter">Object(' . get_class($argument) . ': ' . $this->_getArrayDump($argument->dump()) . ')</span>';
-                        } else {
-                            $arguments[] = '<span class="error-parameter">Object(' . get_class($argument) . ')</span>';
-                        }
-                    } else {
-                        if (is_array($argument)) {
-                            $arguments[] = '<span class="error-parameter">Array(' . $this->_getArrayDump($argument) . ')</span>';
-                        } else {
-                            if (is_null($argument)) {
-                                $arguments[] = '<span class="error-parameter">null</span>';
-                                continue;
-                            }
-                        }
-                    }
-                }
-            }
-            echo '(' . join(', ', $arguments) . ')';
+            $this->_echoArgs($trace['args']);
         }
 
         if (isset($trace['file'])) {
@@ -347,45 +312,107 @@ class PrettyExceptions
 
         if ($this->_showFiles) {
             if (isset($trace['file'])) {
+                $this->_echoFile($trace['file'], $trace['line']);
 
-                echo '</table>';
-
-                $line = $trace['line'];
-                $lines = file($trace['file']);
-
-                if ($this->_showFileFragment) {
-                    $numberLines = count($lines);
-                    $firstLine = ($line - 7) < 1 ? 1 : $line - 7;
-                    $lastLine = ($line + 5 > $numberLines ? $numberLines : $line + 5);
-                    echo "<pre class='prettyprint highlight:" . $firstLine . ":" . $line . " linenums:" . $firstLine . "'>";
-                } else {
-                    $firstLine = 1;
-                    $lastLine = count($lines) - 1;
-                    echo "<pre class='prettyprint highlight:" . $firstLine . ":" . $line . " linenums error-scroll'>";
-                }
-
-                for ($i = $firstLine; $i <= $lastLine; ++$i) {
-
-                    if ($this->_showFileFragment) {
-                        if ($i == $firstLine) {
-                            if (preg_match('#\*\/$#', rtrim($lines[$i - 1]))) {
-                                $lines[$i - 1] = str_replace("* /", "  ", $lines[$i - 1]);
-                            }
-                        }
-                    }
-
-                    if ($lines[$i - 1] != PHP_EOL) {
-                        $lines[$i - 1] = str_replace("\t", "  ", $lines[$i - 1]);
-                        echo htmlentities($lines[$i - 1], ENT_COMPAT, 'UTF-8');
-                    } else {
-                        echo '&nbsp;' . "\n";
-                    }
-                }
-                echo '</pre>';
-
-                echo '<table cellspacing="0">';
             }
         }
+    }
+
+    /**
+     * Echo error arguments.
+     *
+     * @param array $args Arguments.
+     *
+     * @return void
+     */
+    protected function _echoArgs($args)
+    {
+        $arguments = array();
+        foreach ($args as $argument) {
+            if (is_scalar($argument)) {
+
+                if (is_bool($argument)) {
+                    if ($argument) {
+                        $arguments[] = '<span class="error-parameter">true</span>';
+                    } else {
+                        $arguments[] = '<span class="error-parameter">null</span>';
+                    }
+                    continue;
+                }
+
+                if (is_string($argument)) {
+                    $argument = $this->_escapeString($argument);
+                }
+
+                $arguments[] = '<span class="error-parameter">' . $argument . '</span>';
+            } else {
+                if (is_object($argument)) {
+                    if (method_exists($argument, 'dump')) {
+                        $arguments[] = '<span class="error-parameter">Object(' .
+                            get_class($argument) . ': ' . $this->_getArrayDump($argument->dump()) . ')</span>';
+                    } else {
+                        $arguments[] = '<span class="error-parameter">Object(' . get_class($argument) . ')</span>';
+                    }
+                } else {
+                    if (is_array($argument)) {
+                        $arguments[] = '<span class="error-parameter">Array(' .
+                            $this->_getArrayDump($argument) . ')</span>';
+                    } else {
+                        if (is_null($argument)) {
+                            $arguments[] = '<span class="error-parameter">null</span>';
+                            continue;
+                        }
+                    }
+                }
+            }
+        }
+        echo '(' . join(', ', $arguments) . ')';
+    }
+
+    /**
+     * Show files data.
+     *
+     * @param string $file File name.
+     * @param int    $line Line number.
+     *
+     * @return void
+     */
+    protected function _echoFile($file, $line)
+    {
+        echo '</table>';
+        $lines = file($file);
+
+        if ($this->_showFileFragment) {
+            $numberLines = count($lines);
+            $firstLine = ($line - 7) < 1 ? 1 : $line - 7;
+            $lastLine = ($line + 5 > $numberLines ? $numberLines : $line + 5);
+            echo "<pre class='prettyprint highlight:" . $firstLine . ":" . $line . " linenums:" .
+                $firstLine . "'>";
+        } else {
+            $firstLine = 1;
+            $lastLine = count($lines) - 1;
+            echo "<pre class='prettyprint highlight:" . $firstLine . ":" . $line . " linenums error-scroll'>";
+        }
+
+        for ($i = $firstLine; $i <= $lastLine; ++$i) {
+
+            if ($this->_showFileFragment) {
+                if ($i == $firstLine) {
+                    if (preg_match('#\*\/$#', rtrim($lines[$i - 1]))) {
+                        $lines[$i - 1] = str_replace("* /", "  ", $lines[$i - 1]);
+                    }
+                }
+            }
+
+            if ($lines[$i - 1] != PHP_EOL) {
+                $lines[$i - 1] = str_replace("\t", "  ", $lines[$i - 1]);
+                echo htmlentities($lines[$i - 1], ENT_COMPAT, 'UTF-8');
+            } else {
+                echo '&nbsp;' . "\n";
+            }
+        }
+        echo '</pre>';
+        echo '<table cellspacing="0">';
     }
 
     /**
@@ -408,7 +435,12 @@ class PrettyExceptions
 
         self::$_showActive = true;
 
-        echo '<html><head><title>Exception - ', get_class($e), ': ', $e->getMessage(), '</title>', $this->getCssSources(), '</head><body>';
+        echo '<html><head><title>Exception - ',
+        get_class($e),
+        ': ',
+        $e->getMessage(),
+        '</title>',
+        $this->getCssSources(), '</head><body>';
 
         echo '<div class="error-main">
 			', get_class($e), ': ', $e->getMessage(), '

@@ -57,8 +57,20 @@ class Dispatcher extends PhalconDispatcher
             if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
                 throw $e;
             } else {
-                $id = Exception::logError('Exception', $e->getMessage(), $e->getFile(), $e->getLine(), $e->getTraceAsString());
-                $this->getDI()->setShared('currentErrorCode', function() use($id) {return $id;});
+                $id = Exception::logError(
+                    'Exception',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getTraceAsString()
+                );
+
+                $this->getDI()->setShared(
+                    'currentErrorCode',
+                    function () use ($id) {
+                        return $id;
+                    }
+                );
             }
         }
 

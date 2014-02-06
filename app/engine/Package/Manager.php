@@ -486,11 +486,10 @@ class Manager
      * Events and modules files.
      *
      * @param AbstractPackage[] $packages Packages array.
-     * @param bool              $force    Force metadata creation.
      *
      * @return void
      */
-    public function generateMetadata($packages = null, $force = true)
+    public function generateMetadata($packages = null)
     {
         if (empty($packages)) {
             $packages = $this->_installedPackages;
@@ -517,10 +516,7 @@ class Manager
 
             // Get package events.
             if (
-                (
-                    $package->type == self::PACKAGE_TYPE_PLUGIN ||
-                    $package->type == self::PACKAGE_TYPE_MODULE
-                ) &&
+                (in_array($package->type, [self::PACKAGE_TYPE_PLUGIN, self::PACKAGE_TYPE_MODULE])) &&
                 !$package->is_system
             ) {
                 if (!empty($data) && !empty($data['events'])) {
@@ -533,14 +529,14 @@ class Manager
                 $package->type == self::PACKAGE_TYPE_WIDGET &&
                 !empty($data) &&
                 !empty($data['module'])
-            ){
+            ) {
                 continue;
             }
 
             $packageMetadataFile = $packagesMetadataDirectory . '/' .
                 $this->_getPackageFullName($package) . '.json';
 
-            if (!file_exists($packageMetadataFile) || $force) {
+            if (!file_exists($packageMetadataFile)) {
                 $this->_createManifest($packageMetadataFile, $package->toJson());
             }
         }

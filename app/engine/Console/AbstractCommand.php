@@ -79,94 +79,12 @@ abstract class AbstractCommand implements CommandInterface
      * Final constructor.
      *
      * @param DiInterface $di Dependency injection container.
-     *
-     * @throws CommandsException
      */
     final public function __construct($di)
     {
         $this->__DIConstruct($di);
-
-        // Setup command metadata.
-        $reflector = $this->getDI()->getAnnotations()->get($this);
-        $annotations = $reflector->getClassAnnotations();
-        if ($annotations) {
-            foreach ($annotations as $annotation) {
-                switch ($annotation->getName()) {
-                    /**
-                     * Initializes the model's source
-                     */
-                    case 'CommandName':
-                        $arguments = $annotation->getArguments();
-                        if (!isset($arguments[0]) || !is_array($arguments[0])) {
-                            throw new CommandsException('Command name must be an array of available names.');
-                        }
-                        $this->_commands = $arguments[0];
-                        break;
-                    case 'CommandDescription':
-                        $arguments = $annotation->getArguments();
-                        if (!isset($arguments[0]) || !is_string($arguments[0])) {
-                            throw new CommandsException('Command description must be a string.');
-                        }
-                        $this->_description = $arguments[0];
-                        break;
-                }
-            }
-        }
-
-        // Get actions metadata.
-        foreach (get_class_methods($this) as $method) {
-            if (substr($method, -6) != 'Action') {
-                continue;
-            }
-
-            // Method annotations.
-            $reflection = new \ReflectionMethod(get_class($this), $method);
-            $docComment = $reflection->getDocComment();
-
-            // Method name.
-            $method = str_replace('Action', '', $method);
-            $this->_actions[$method] = [];
-
-            // Get action description and params metadata.
-            $paramsMetadata = [];
-            $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
-            $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
-            if (!empty($actionComment)) {
-                foreach ($actionComment as $comment) {
-                    if (strpos($comment, '@') === false) {
-                        if (empty($this->_actions[$method]['description'])) {
-                            $this->_actions[$method]['description'] = $comment;
-                        } else {
-                            $this->_actions[$method]['description'] .= $comment;
-                        }
-                    } elseif (strpos($comment, '@param') !== false) {
-                        $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
-                        $paramOptions = explode(' ', $comment);
-                        if (!empty($paramOptions[2])) {
-                            $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
-                                'type' => $paramOptions[1],
-                                'description' => (!empty($paramOptions[3]) ? $paramOptions[3] : '')
-                            ];
-                        }
-                    }
-                }
-            }
-
-            // Get action params.
-            $this->_actions[$method]['params'] = [];
-            foreach ($reflection->getParameters() as $parameter) {
-                $name = $parameter->getName();
-                $defaultValue = $parameter->isDefaultValueAvailable() ?
-                    gettype($parameter->getDefaultValue()) : '<required>';
-
-                $this->_actions[$method]['params'][] = [
-                    'name' => $name,
-                    'default' => $defaultValue,
-                    'type' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['type'] : ''),
-                    'description' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['description'] : '')
-                ];
-            }
-        }
+        $this->_setupCommandMetadata();
+        $this->_setupActionsMetadata();
     }
 
     /**
@@ -216,119 +134,6 @@ abstract class AbstractCommand implements CommandInterface
         return call_user_func_array([$this, $action], $actionParams);
     }
 
-    /**
-     * Parse the parameters passed to the script.
-     *
-     * @throws CommandsException
-     * @return array
-     */
-    protected function _parseParameters()
-    {
-        $this->_parameters = [];
-        $argumentsCount = count($_SERVER['argv']);
-        $withoutValue = [];
-
-        for ($i = 1; $i < $argumentsCount; $i++) {
-            $argv = $_SERVER['argv'][$i];
-
-            // Set initial data.
-            if (in_array($argv, $this->_commands) && empty($this->_parameters)) {
-                $this->_name = $argv;
-                $this->_parameters = [
-                    'command' => $argv,
-                    'action' => false
-                ];
-                continue;
-            }
-
-            // Set action parameter.
-            if (isset($this->_parameters['action']) && empty($this->_parameters['action'])) {
-                // If action was provided empty - we need to show help info.
-                if (empty($argv)) {
-                    $this->getHelp();
-                    return false;
-                }
-
-                // If wee entered unavailable method wee need to show an error and help info.
-                if (!array_key_exists($argv, $this->_actions)) {
-                    print ConsoleUtil::error(
-                        sprintf(
-                            'Action "%s" not found in command "%s"...',
-                            $argv,
-                            $this->_parameters['command']
-                        )
-                    );
-                    $this->getHelp();
-                    return false;
-                }
-
-                $this->_parameters['action'] = $argv;
-                continue;
-            }
-
-            if (preg_match('#^([\-]{1,2})([a-zA-Z0-9][a-zA-Z0-9\-]*)(=(.*)){0,1}$#', $argv, $matches)) {
-                if (empty($matches[2])) {
-                    throw new CommandsException("Invalid script parameter '$argv'.");
-                }
-
-                if (empty($matches[4])) {
-                    $this->_parameters[$matches[2]] = true;
-                    $withoutValue[] = $matches[2];
-                } else {
-                    $this->_parameters[$matches[2]] = $matches[4];
-                }
-            } else {
-                throw new CommandsException("Invalid script parameter '$argv'.");
-            }
-        }
-
-        return $this->_checkParameters($withoutValue);
-    }
-
-    /**
-     * Check passed parameters (required or no value).
-     *
-     * @param array $withoutValue Params without value.
-     *
-     * @return bool
-     */
-    private function _checkParameters($withoutValue)
-    {
-        $action = $this->_parameters['action'];
-        if (!empty($this->_actions[$action]['params'])) {
-            foreach ($this->_actions[$action]['params'] as $actionParams) {
-
-                // Check required param.
-                if ($actionParams['default'] == '<required>' && empty($this->_parameters[$actionParams['name']])) {
-                    print ConsoleUtil::error(
-                        sprintf(
-                            'Parameter "%s" is required!',
-                            $actionParams['name']
-                        )
-                    );
-                    $this->getHelp($action);
-                    return false;
-                }
-
-                // Check required value of param.
-                if (
-                    $actionParams['default'] != 'boolean' &&
-                    in_array($actionParams['name'], $withoutValue)
-                ) {
-                    print ConsoleUtil::error(
-                        sprintf(
-                            'Parameter "%s" must have value!',
-                            $actionParams['name']
-                        )
-                    );
-                    $this->getHelp($action);
-                    return false;
-                }
-            }
-        }
-
-        return true;
-    }
 
     /**
      * Get command name.
@@ -492,16 +297,213 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
-     * Filters a value.
+     * Parse the parameters passed to the script.
      *
-     * @param mixed $paramValue Value to filter.
-     * @param mixed $filters    Filter to apply to value.
-     *
-     * @return mixed
+     * @throws CommandsException
+     * @return array
      */
-    protected function _filter($paramValue, $filters)
+    protected function _parseParameters()
     {
-        $filter = new Filter();
-        return $filter->sanitize($paramValue, $filters);
+        $this->_parameters = [];
+        $argumentsCount = count($_SERVER['argv']);
+        $withoutValue = [];
+
+        for ($i = 1; $i < $argumentsCount; $i++) {
+            $argv = $_SERVER['argv'][$i];
+
+            // Set initial data.
+            if (in_array($argv, $this->_commands) && empty($this->_parameters)) {
+                $this->_name = $argv;
+                $this->_parameters = [
+                    'command' => $argv,
+                    'action' => false
+                ];
+                continue;
+            }
+
+            // Set action parameter.
+            if (isset($this->_parameters['action']) && empty($this->_parameters['action'])) {
+                // If action was provided empty - we need to show help info.
+                if (empty($argv)) {
+                    $this->getHelp();
+                    return false;
+                }
+
+                // If wee entered unavailable method wee need to show an error and help info.
+                if (!array_key_exists($argv, $this->_actions)) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Action "%s" not found in command "%s"...',
+                            $argv,
+                            $this->_parameters['command']
+                        )
+                    );
+                    $this->getHelp();
+                    return false;
+                }
+
+                $this->_parameters['action'] = $argv;
+                continue;
+            }
+
+            if (preg_match('#^([\-]{1,2})([a-zA-Z0-9][a-zA-Z0-9\-]*)(=(.*)){0,1}$#', $argv, $matches)) {
+                if (empty($matches[2])) {
+                    throw new CommandsException("Invalid script parameter '$argv'.");
+                }
+
+                if (empty($matches[4])) {
+                    $this->_parameters[$matches[2]] = true;
+                    $withoutValue[] = $matches[2];
+                } else {
+                    $this->_parameters[$matches[2]] = $matches[4];
+                }
+            } else {
+                throw new CommandsException("Invalid script parameter '$argv'.");
+            }
+        }
+
+        return $this->_checkParameters($withoutValue);
+    }
+
+    /**
+     * Check passed parameters (required or no value).
+     *
+     * @param array $withoutValue Params without value.
+     *
+     * @return bool
+     */
+    private function _checkParameters($withoutValue)
+    {
+        $action = $this->_parameters['action'];
+        if (!empty($this->_actions[$action]['params'])) {
+            foreach ($this->_actions[$action]['params'] as $actionParams) {
+
+                // Check required param.
+                if ($actionParams['default'] == '<required>' && empty($this->_parameters[$actionParams['name']])) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Parameter "%s" is required!',
+                            $actionParams['name']
+                        )
+                    );
+                    $this->getHelp($action);
+                    return false;
+                }
+
+                // Check required value of param.
+                if (
+                    $actionParams['default'] != 'boolean' &&
+                    in_array($actionParams['name'], $withoutValue)
+                ) {
+                    print ConsoleUtil::error(
+                        sprintf(
+                            'Parameter "%s" must have value!',
+                            $actionParams['name']
+                        )
+                    );
+                    $this->getHelp($action);
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    /**
+     * Setup command metadata.
+     *
+     * @throws CommandsException
+     * @return void
+     */
+    private function _setupCommandMetadata()
+    {
+        $reflector = $this->getDI()->getAnnotations()->get($this);
+        $annotations = $reflector->getClassAnnotations();
+        if ($annotations) {
+            foreach ($annotations as $annotation) {
+                switch ($annotation->getName()) {
+                    /**
+                     * Initializes the model's source
+                     */
+                    case 'CommandName':
+                        $arguments = $annotation->getArguments();
+                        if (!isset($arguments[0]) || !is_array($arguments[0])) {
+                            throw new CommandsException('Command name must be an array of available names.');
+                        }
+                        $this->_commands = $arguments[0];
+                        break;
+                    case 'CommandDescription':
+                        $arguments = $annotation->getArguments();
+                        if (!isset($arguments[0]) || !is_string($arguments[0])) {
+                            throw new CommandsException('Command description must be a string.');
+                        }
+                        $this->_description = $arguments[0];
+                        break;
+                }
+            }
+        }
+    }
+
+    /**
+     * Setup actions metadata.
+     *
+     * @return void
+     */
+    private function _setupActionsMetadata()
+    {
+        foreach (get_class_methods($this) as $method) {
+            if (substr($method, -6) != 'Action') {
+                continue;
+            }
+
+            // Method annotations.
+            $reflection = new \ReflectionMethod(get_class($this), $method);
+            $docComment = $reflection->getDocComment();
+
+            // Method name.
+            $method = str_replace('Action', '', $method);
+            $this->_actions[$method] = [];
+
+            // Get action description and params metadata.
+            $paramsMetadata = [];
+            $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
+            $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
+            if (!empty($actionComment)) {
+                foreach ($actionComment as $comment) {
+                    if (strpos($comment, '@') === false) {
+                        if (empty($this->_actions[$method]['description'])) {
+                            $this->_actions[$method]['description'] = $comment;
+                        } else {
+                            $this->_actions[$method]['description'] .= $comment;
+                        }
+                    } elseif (strpos($comment, '@param') !== false) {
+                        $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
+                        $paramOptions = explode(' ', $comment);
+                        if (!empty($paramOptions[2])) {
+                            $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
+                                'type' => $paramOptions[1],
+                                'description' => (!empty($paramOptions[3]) ? $paramOptions[3] : '')
+                            ];
+                        }
+                    }
+                }
+            }
+
+            // Get action params.
+            $this->_actions[$method]['params'] = [];
+            foreach ($reflection->getParameters() as $parameter) {
+                $name = $parameter->getName();
+                $defaultValue = $parameter->isDefaultValueAvailable() ?
+                    gettype($parameter->getDefaultValue()) : '<required>';
+
+                $this->_actions[$method]['params'][] = [
+                    'name' => $name,
+                    'default' => $defaultValue,
+                    'type' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['type'] : ''),
+                    'description' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['description'] : '')
+                ];
+            }
+        }
     }
 }
