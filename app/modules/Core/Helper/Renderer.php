@@ -23,6 +23,7 @@ use Engine\Exception;
 use Engine\Helper;
 use Engine\Widget\Element;
 use Phalcon\Db\Column;
+use Phalcon\Mvc\View;
 use Phalcon\Tag;
 use User\Model\User;
 
@@ -83,6 +84,8 @@ class Renderer extends Helper
 
         /** @var \Phalcon\Mvc\View $view */
         $view = $this->getDI()->get('view');
+        $view->disableLevel(View::LEVEL_LAYOUT);
+        $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
         $view->content = $content;
         $view->page = $page;
         $view->pick($layout);
