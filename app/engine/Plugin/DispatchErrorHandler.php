@@ -62,6 +62,10 @@ class DispatchErrorHandler extends PhalconPlugin
             return false;
         }
 
+        if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
+            throw $exception;
+        }
+
         // Handle other exceptions.
         $dispatcher->forward(
             [

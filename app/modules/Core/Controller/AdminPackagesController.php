@@ -26,6 +26,7 @@ use Core\Form\Admin\Package\Upload as UploadForm;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Widget;
+use Engine\Exception;
 use Engine\Form;
 use Engine\Navigation;
 use Engine\Package\Manager;
@@ -247,8 +248,8 @@ class AdminPackagesController extends AbstractAdminController
         $data = $form->getValues();
         /** @var Package $package */
         $package = $form->getEntity();
-        $this->_setWidgetData($form, $package, $data);
         $package->save();
+        $this->_setWidgetData($form, $package, $data);
 
         if (!empty($data['header'])) {
             $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
@@ -747,12 +748,24 @@ class AdminPackagesController extends AbstractAdminController
             (!empty($data['description']) ? $data['description'] : ucfirst($widget->name) . ' widget.');
         $widget->save();
 
+        /**
+         * Setup dependency.
+         */
         if ($widget->module) {
             $package->data = [
                 'module' => $widget->module,
                 'widget_id' => $widget->id
             ];
+
+            $module = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $widget->module);
+
+            $dependency = new PackageDependency();
+            $dependency->package_id = $package->id;
+            $dependency->dependency_id = $module->id;
+            $dependency->save();
         }
+
+        $package->save();
     }
 
     /**
