@@ -47,7 +47,7 @@
         {{ content() }}
     </div>
 
-    <div class="container">
+    <div class="container main_widget_container">
         {%- block content -%}
         {%- endblock -%}
     </div>
