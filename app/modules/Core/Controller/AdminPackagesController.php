@@ -190,11 +190,21 @@ class AdminPackagesController extends AbstractAdminController
                 // create package database object
                 if (!$manifest->isUpdate) {
                     $package = new Package();
-                    $package->data = [
-                        'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
-                        'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
-                    ];
-                    $package->save($manifest->toArray());
+
+                    if (
+                        $manifest->type == Manager::PACKAGE_TYPE_PLUGIN ||
+                        $manifest->type == Manager::PACKAGE_TYPE_MODULE
+                    ) {
+                        $package->data = [
+                            'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
+                            'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
+                        ];
+                    }
+                    $package->assign($manifest->toArray());
+                    if ($manifest->offsetExists('module')) {
+                        $package->addData('module', $manifest->module);
+                    }
+                    $package->save();
                     $this->_enablePackageConfig($package);
                     $packageManager->generateMetadata([$package]);
 
@@ -674,6 +684,19 @@ class AdminPackagesController extends AbstractAdminController
                 if ($widget = $package->getWidget()) {
                     $widget->enabled = 1;
                     $widget->save();
+                } else {
+                    $widget = new Widget();
+                    $widget->assign($package->toArray());
+
+                    // Check widget data.
+                    $data = $package->getData();
+                    if (!empty($data['module'])) {
+                        $widget->module = $data['module'];
+                    }
+
+                    $widget->save();
+                    $package->addData('widget_id', $widget->id);
+                    $package->save();
                 }
                 break;
         }
@@ -763,6 +786,8 @@ class AdminPackagesController extends AbstractAdminController
             $dependency->package_id = $package->id;
             $dependency->dependency_id = $module->id;
             $dependency->save();
+        } else {
+            $package->addData('widget_id', $widget->id);
         }
 
         $package->save();

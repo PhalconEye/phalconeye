@@ -81,7 +81,7 @@ class Application extends AbstractCommand implements CommandInterface
              * Generate metadata.
              */
             $manager = new Manager(Package::find(), $this->getDI());
-            $manager->generateMetadata();
+            $manager->generateMetadata(null, true);
             print ConsoleUtil::success('Application successfully synchronized.') . PHP_EOL;
         } catch (Exception $e) {
             print ConsoleUtil::error($e->getMessage()) . PHP_EOL;

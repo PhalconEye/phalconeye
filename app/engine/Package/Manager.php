@@ -134,13 +134,25 @@ class Manager
     /**
      * Get package location in system.
      *
-     * @param string $type Package type.
+     * @param AbstractPackage|string $package Package.
      *
      * @return string
      */
-    public function getPackageLocation($type)
+    public function getPackageLocation($package)
     {
         $config = $this->getDI()->get('config');
+
+        // Check additionally module option.
+        if ($package instanceof AbstractPackage) {
+            $type = $package->type;
+            $data = $package->getData();
+            if (!empty($data['module'])) {
+                $path = $config->directories->modules . ucfirst($data['module']) . '/Widget/';
+                return str_replace('/', DS, $path);
+            }
+        } else {
+            $type = $package;
+        }
 
         $locations = [
             self::PACKAGE_TYPE_MODULE => $config->directories->modules,
@@ -244,13 +256,13 @@ class Manager
 
         $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . self::PACKAGE_MANIFEST_NAME);
         $manifest->offsetSet('isUpdate', false);
+        $filter = new PhalconFilter();
 
         // check itself
         if (isset($this->_packagesVersions[$manifest->type][$manifest->name])) {
             if ($this->_packagesVersions[$manifest->type][$manifest->name] == $manifest->version) {
                 throw new PackageException('This package already installed.');
             } else {
-                $filter = new PhalconFilter();
                 $installedVersion = $filter->sanitize(
                     $this->_packagesVersions[$manifest->type][$manifest->name],
                     'int'
@@ -268,7 +280,6 @@ class Manager
 
         // check dependencies
         if ($manifest->get('dependencies')) {
-            $filter = new PhalconFilter();
             $missingDependencies = [];
             $wrongVersionDependencies = [];
             $dependencies = $manifest->get('dependencies');
@@ -319,6 +330,9 @@ class Manager
         // copy files
         if ($manifest->type == self::PACKAGE_TYPE_THEME) {
             $destinationDirectory = $this->getPackageLocation($manifest->type) . strtolower($manifest->name);
+        } elseif ($manifest->type == self::PACKAGE_TYPE_WIDGET && $manifest->offsetExists('module')) {
+            $destinationDirectory = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) . ucfirst($manifest->module) .
+                '/Widget/' . ucfirst($manifest->name);
         } else {
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
@@ -375,7 +389,7 @@ class Manager
      */
     public function exportPackage(AbstractPackage $package)
     {
-        $location = $this->getPackageLocation($package->type);
+        $location = $this->getPackageLocation($package);
         $packageName = ucfirst($package->name);
         if ($package->type == self::PACKAGE_TYPE_THEME) {
             $location = $location . $package->name;
@@ -485,11 +499,12 @@ class Manager
      * Generate packages metadata.
      * Events and modules files.
      *
-     * @param AbstractPackage[] $packages Packages array.
+     * @param AbstractPackage[] $packages      Packages array.
+     * @param bool              $checkManifest Check manifest if it can not be just overwritten.
      *
      * @return void
      */
-    public function generateMetadata($packages = null)
+    public function generateMetadata($packages = null, $checkManifest = false)
     {
         if (empty($packages)) {
             $packages = $this->_installedPackages;
@@ -536,7 +551,7 @@ class Manager
             $packageMetadataFile = $packagesMetadataDirectory . '/' .
                 $this->_getPackageFullName($package) . '.json';
 
-            if (!file_exists($packageMetadataFile)) {
+            if (!file_exists($packageMetadataFile) || !$checkManifest) {
                 $this->_createManifest($packageMetadataFile, $package->toJson());
             }
         }

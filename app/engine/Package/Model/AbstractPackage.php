@@ -192,6 +192,25 @@ abstract class AbstractPackage extends AbstractModel
     }
 
     /**
+     * Add additional data to package.
+     *
+     * @param string $name  Data name.
+     * @param mixed  $value Data value.
+     *
+     * @return $this
+     */
+    public function addData($name, $value)
+    {
+        if (!is_array($this->data)) {
+            $this->data = $this->getData();
+        }
+
+        $this->data[$name] = $value;
+
+        return $this;
+    }
+
+    /**
      * Return package as string, package metadata.
      *
      * @return string

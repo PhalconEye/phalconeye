@@ -87,7 +87,13 @@ class Package extends AbstractPackage
             unset($data['widgets']);
         }
 
-        // Get events
+        // Check widget module.
+        $packageData = $this->getData();
+        if (!empty($packageData['module'])) {
+            $data['module'] = $packageData['module'];
+        }
+
+        // Get events.
         if ($this->type == Manager::PACKAGE_TYPE_MODULE || $this->type == Manager::PACKAGE_TYPE_PLUGIN) {
             $packageData = $this->getData();
             if (!empty($packageData) && !empty($packageData['events'])) {
@@ -132,6 +138,9 @@ class Package extends AbstractPackage
         }
 
         $data = $this->getData();
+        if (empty($data['widget_id'])) {
+            return null;
+        }
         return Widget::findFirstById($data['widget_id']);
     }
 }

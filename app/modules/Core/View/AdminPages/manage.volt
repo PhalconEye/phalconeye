@@ -63,8 +63,13 @@
         });
     };
 
-    var defaultWidgetControl = function (widget) {
-        return   '<div style="display: block;" class="delete_widget to_remove"><a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
+    var defaultWidgetControl = function (widget, hideEdit) {
+        var editLink = '<a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|';
+        if (hideEdit) {
+            editLink = '';
+        }
+
+        return '<div style="display: block;" class="delete_widget to_remove">' + editLink + '&nbsp;<a href="javascript:;"  onclick="removeAction($(this));">X</a></div>';
     };
 
     var buildWidgetsList = function () {
@@ -191,12 +196,17 @@
             list = JSON.parse(JSON.stringify(list));
             $.each(list, function (i, l) {
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    // get widget real title
-                    if (widgetsListData[l.widget_id])
+                    var hideLink = false;
+
+                    // Get widget real title.
+                    if (widgetsListData[l.widget_id]) {
                         var title = widgetsListData[l.widget_id].name;
-                    else
+                    }
+                    else {
+                        hideLink = true;
                         var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
-                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_id="' + l.widget_id + '">' + title + defaultWidgetControl(l) + '</div>');
+                    }
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_id="' + l.widget_id + '">' + title + defaultWidgetControl(l, hideLink) + '</div>');
                     elementIdCounter++;
                 }
             });
@@ -307,7 +317,8 @@
 
         <div class="manage_page_header">
             <div class="manage_page_header_label">
-                <h3><a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
+                <h3>
+                    <a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
                     > {{ "Manage page" | trans }}</h3>
                 <a {% if currentPage.type is null and currentPage.url is not null %}href="/page/{{ currentPage.url }}"
                    target="_blank" {% else %} href="javascript:;"{% endif %}

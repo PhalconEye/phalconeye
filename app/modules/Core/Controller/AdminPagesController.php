@@ -220,7 +220,7 @@ class AdminPagesController extends AbstractAdminController
             }
             $bundlesWidgetsMetadata[$moduleName][$widget->id] = [
                 'widget_id' => $widget->id,
-                'description' => $widget->description,
+                'description' => $widget->description ? $widget->description : '',
                 'name' => $widget->name
             ];
         }
