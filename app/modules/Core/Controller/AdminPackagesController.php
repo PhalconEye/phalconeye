@@ -184,27 +184,15 @@ class AdminPackagesController extends AbstractAdminController
             $filename = $packageManager->getTempDirectory() . 'uploaded.zip';
             $packageFile[0]->moveTo($filename);
             try {
-                // install package - check dep, copy files, get manifest, etc
+                // Install package - check dep, copy files, get manifest, etc.
                 $manifest = $packageManager->installPackage($filename);
 
-                // create package database object
+                // Create package database object.
                 if (!$manifest->isUpdate) {
                     $package = new Package();
-
-                    if (
-                        $manifest->type == Manager::PACKAGE_TYPE_PLUGIN ||
-                        $manifest->type == Manager::PACKAGE_TYPE_MODULE
-                    ) {
-                        $package->data = [
-                            'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
-                            'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
-                        ];
-                    }
                     $package->assign($manifest->toArray());
-                    if ($manifest->offsetExists('module')) {
-                        $package->addData('module', $manifest->module);
-                    }
                     $package->save();
+
                     $this->_enablePackageConfig($package);
                     $packageManager->generateMetadata([$package]);
 

@@ -211,6 +211,34 @@ abstract class AbstractPackage extends AbstractModel
     }
 
     /**
+     * Assign package data.
+     *
+     * @param array      $data      Package data.
+     * @param array|null $columnMap Column map.
+     *
+     * @return $this
+     */
+    public function assign($data, $columnMap = null)
+    {
+        parent::assign($data, $columnMap);
+
+        if (
+            $data['type'] == Manager::PACKAGE_TYPE_PLUGIN ||
+            $data['type'] == Manager::PACKAGE_TYPE_MODULE
+        ) {
+            $this->data = [
+                'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
+                'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
+            ];
+        }
+        if (!empty($data['module'])) {
+            $this->addData('module', $data['module']);
+        }
+
+        return $this;
+    }
+
+    /**
      * Return package as string, package metadata.
      *
      * @return string

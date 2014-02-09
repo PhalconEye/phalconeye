@@ -278,54 +278,7 @@ class Manager
             }
         }
 
-        // check dependencies
-        if ($manifest->get('dependencies')) {
-            $missingDependencies = [];
-            $wrongVersionDependencies = [];
-            $dependencies = $manifest->get('dependencies');
-            foreach ($dependencies as $dependency) {
-                if (!isset($this->_packagesVersions[$dependency['type']][$dependency['name']])) {
-                    $missingDependencies[] = $dependency;
-                    continue;
-                }
-
-                $installedVersion = $filter->sanitize(
-                    $this->_packagesVersions[$dependency['type']][$dependency['name']],
-                    'int'
-                );
-                $packageDependecyVersion = $filter->sanitize($dependency['version'], 'int');
-                if ($installedVersion < $packageDependecyVersion) {
-                    $wrongVersionDependencies[] = $dependency;
-                }
-            }
-
-            if (!empty($missingDependencies)) {
-                $msg = 'This package requires the presence of the following modules:<br/>';
-                foreach ($missingDependencies as $dependency) {
-                    $msg .= sprintf(
-                        '- %s "%s" (v.%s)<br/>',
-                        $dependency['type'],
-                        $dependency['name'],
-                        $dependency['version']
-                    );
-                }
-                throw new PackageException($msg);
-            }
-
-            if (!empty($wrongVersionDependencies)) {
-                $msg = 'To install this package you need update:<br/>';
-                foreach ($wrongVersionDependencies as $dependency) {
-                    $msg .= sprintf(
-                        '- %s "%s" up to: v.%s. Current version: v.%s <br/>',
-                        $dependency['type'],
-                        $dependency['name'],
-                        $dependency['version'],
-                        $this->_packagesVersions[$dependency['type']][$dependency['name']]
-                    );
-                }
-                throw new PackageException($msg);
-            }
-        }
+        $this->_checkDependencies($manifest);
 
         // copy files
         if ($manifest->type == self::PACKAGE_TYPE_THEME) {
@@ -550,10 +503,7 @@ class Manager
 
             $packageMetadataFile = $packagesMetadataDirectory . '/' .
                 $this->_getPackageFullName($package) . '.json';
-
-            if (!file_exists($packageMetadataFile) || !$checkManifest) {
-                $this->_createManifest($packageMetadataFile, $package->toJson());
-            }
+            $this->_createManifest($packageMetadataFile, $package->toJson(), $checkManifest);
         }
 
         file_put_contents(
@@ -584,14 +534,17 @@ class Manager
     /**
      * Create manifest file for package.
      *
-     * @param string $filepath Manifest path.
-     * @param string $content  Manifest content.
+     * @param string $filepath  Manifest path.
+     * @param string $content   Manifest content.
+     * @param bool   $checkFile Check file existence.
      *
      * @return void
      */
-    private function _createManifest($filepath, $content)
+    private function _createManifest($filepath, $content, $checkFile = false)
     {
-        file_put_contents($filepath, $content);
+        if (!$checkFile || !file_exists($filepath)) {
+            file_put_contents($filepath, $content);
+        }
     }
 
     /**
@@ -686,5 +639,68 @@ class Manager
         }
 
         return $zip->close();
+    }
+
+    /**
+     * Check package dependencies.
+     *
+     * @param Config $manifest Package manifest.
+     *
+     * @throws PackageException
+     * @return void
+     */
+    private function _checkDependencies($manifest)
+    {
+        // Check dependencies.
+        if (!$manifest->get('dependencies')) {
+            return;
+        }
+
+        $filter = new PhalconFilter();
+        $missingDependencies = [];
+        $wrongVersionDependencies = [];
+        $dependencies = $manifest->get('dependencies');
+        foreach ($dependencies as $dependency) {
+            if (!isset($this->_packagesVersions[$dependency['type']][$dependency['name']])) {
+                $missingDependencies[] = $dependency;
+                continue;
+            }
+
+            $installedVersion = $filter->sanitize(
+                $this->_packagesVersions[$dependency['type']][$dependency['name']],
+                'int'
+            );
+            $packageDependecyVersion = $filter->sanitize($dependency['version'], 'int');
+            if ($installedVersion < $packageDependecyVersion) {
+                $wrongVersionDependencies[] = $dependency;
+            }
+        }
+
+        if (!empty($missingDependencies)) {
+            $msg = 'This package requires the presence of the following modules:<br/>';
+            foreach ($missingDependencies as $dependency) {
+                $msg .= sprintf(
+                    '- %s "%s" (v.%s)<br/>',
+                    $dependency['type'],
+                    $dependency['name'],
+                    $dependency['version']
+                );
+            }
+            throw new PackageException($msg);
+        }
+
+        if (!empty($wrongVersionDependencies)) {
+            $msg = 'To install this package you need update:<br/>';
+            foreach ($wrongVersionDependencies as $dependency) {
+                $msg .= sprintf(
+                    '- %s "%s" up to: v.%s. Current version: v.%s <br/>',
+                    $dependency['type'],
+                    $dependency['name'],
+                    $dependency['version'],
+                    $this->_packagesVersions[$dependency['type']][$dependency['name']]
+                );
+            }
+            throw new PackageException($msg);
+        }
     }
 }
