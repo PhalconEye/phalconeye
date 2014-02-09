@@ -769,6 +769,19 @@ class AdminPackagesController extends AbstractAdminController
             ];
 
             $module = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $widget->module);
+            $module->addData(
+                'widgets', [
+                    'name' => $widget->name,
+                    'module' => $module->name,
+                    'description' => $widget->description,
+                    'is_paginated' => $widget->is_paginated,
+                    'is_acl_controlled' => $widget->is_acl_controlled,
+                    'admin_form' => $widget->admin_form,
+                    'enabled' => (bool)$widget->enabled
+                ],
+                true
+            );
+            $module->save();
 
             $dependency = new PackageDependency();
             $dependency->package_id = $package->id;

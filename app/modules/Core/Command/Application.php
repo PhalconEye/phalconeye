@@ -223,6 +223,13 @@ class Application extends AbstractCommand implements CommandInterface
         print ConsoleUtil::headLine('Checking unused packages...');
         foreach (Package::find() as $package) {
             if (!in_array($package->type . '.' . $package->name, $packages)) {
+                // Check that this is not a widget that is related to module.
+                if ($package->type == Manager::PACKAGE_TYPE_WIDGET && ($widget = $package->getWidget())) {
+                    if (!empty($widget->module)) {
+                        continue;
+                    }
+                }
+
                 $this->_info('Removing unused package: ' . $package->name . PHP_EOL);
                 $package->delete();
             }

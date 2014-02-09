@@ -172,6 +172,23 @@ abstract class AbstractPackage extends AbstractModel
     }
 
     /**
+     * Check if there is some related data.
+     *
+     * @param string $name Data name.
+     *
+     * @return bool
+     */
+    public function hasData($name)
+    {
+        $data = $this->getData();
+        if ($data && isset($data[$name])) {
+            return true;
+        }
+
+        return false;
+    }
+
+    /**
      * Get package data, convert json to array.
      *
      * @param bool $assoc Return as associative array.
@@ -194,18 +211,27 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Add additional data to package.
      *
-     * @param string $name  Data name.
-     * @param mixed  $value Data value.
+     * @param string $name    Data name.
+     * @param mixed  $value   Data value.
+     * @param bool   $asArray Add data to array.
      *
      * @return $this
      */
-    public function addData($name, $value)
+    public function addData($name, $value, $asArray = false)
     {
         if (!is_array($this->data)) {
             $this->data = $this->getData();
         }
 
-        $this->data[$name] = $value;
+        if ($asArray) {
+            if (!isset($this->data[$name]) || !is_array($this->data[$name])) {
+                $this->data[$name] = [];
+            }
+
+            $this->data[$name][] = $value;
+        } else {
+            $this->data[$name] = $value;
+        }
 
         return $this;
     }
@@ -226,9 +252,10 @@ abstract class AbstractPackage extends AbstractModel
             $data['type'] == Manager::PACKAGE_TYPE_PLUGIN ||
             $data['type'] == Manager::PACKAGE_TYPE_MODULE
         ) {
+
             $this->data = [
-                'events' => (!empty($manifest['events']) ? $manifest['events']->toArray() : null),
-                'widgets' => (!empty($manifest['widgets']) ? $manifest['widgets']->toArray() : null)
+                'events' => (!empty($data['events']) ? $data['events'] : []),
+                'widgets' => (!empty($data['widgets']) ? $data['widgets'] : [])
             ];
         }
         if (!empty($data['module'])) {

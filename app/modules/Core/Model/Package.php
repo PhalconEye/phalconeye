@@ -122,8 +122,6 @@ class Package extends AbstractPackage
     {
         $data = json_decode($content, true);
         $this->assign($data);
-        $this->data['events'] = isset($data['events']) ? $data['events'] : [];
-        $this->data['widgets'] = isset($data['widgets']) ? $data['widgets'] : [];
     }
 
     /**

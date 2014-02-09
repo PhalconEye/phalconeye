@@ -46,6 +46,9 @@
                         <div class="package_info">
                             <h3>{{ package.title }} <span>v.{{ package.version }}</span></h3>
 
+                            {% if package.hasData('module') %}
+                                <div>from module "{{ package.getData()['module'] }}"</div>
+                            {% endif %}
                             <div class="author">{{ package.author }}</div>
                             <div class="website"><a href="{{ package.website }}">{{ package.website }}</a>
                             </div>
