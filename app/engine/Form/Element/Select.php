@@ -147,7 +147,7 @@ class Select extends AbstractElement implements ElementInterface
                 $key,
                 ($this->_checkKey($key) ? ' selected="selected"' : ''),
                 (in_array($key, $disabledOptions) ? ' disabled="disabled"' : ''),
-                $this->__($value)
+                $this->_($value)
             );
         }
 

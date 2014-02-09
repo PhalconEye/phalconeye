@@ -82,7 +82,7 @@ class RemoteFile extends AbstractElement implements ElementInterface
     {
         $buttonTitle = $this->getOption('buttonTitle');
         if (!$buttonTitle) {
-            $buttonTitle = $this->__('Select file');
+            $buttonTitle = $this->_('Select file');
         }
 
         return sprintf(

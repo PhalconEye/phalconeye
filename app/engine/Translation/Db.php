@@ -129,7 +129,7 @@ class Db implements AdapterInterface
         // cleanup
         $index = preg_replace('~[\r\n]+~', '', $index);
 
-        $translation = $this->get($index);
+        $translation = $this->_get($index);
 
         if (!$translation) {
             // remember this translation
@@ -168,7 +168,7 @@ class Db implements AdapterInterface
      */
     public function exists($index)
     {
-        return $this->get($index) !== null;
+        return $this->_get($index) !== null;
     }
 
     /**
@@ -178,7 +178,7 @@ class Db implements AdapterInterface
      *
      * @return mixed
      */
-    private function get($index)
+    private function _get($index)
     {
         $translationModel = $this->_translationModel;
 
@@ -200,5 +200,4 @@ class Db implements AdapterInterface
             ]
         )->getFirst();
     }
-
 }

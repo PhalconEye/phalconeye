@@ -41,7 +41,7 @@ trait TranslationBehaviour
      *
      * @return string
      */
-    protected function __($msg, $args = null)
+    protected function _($msg, $args = null)
     {
         return $this->getDI()->get('trans')->_($msg, $args);
     }

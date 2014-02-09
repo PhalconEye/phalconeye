@@ -122,7 +122,7 @@ class Radio extends AbstractElement implements ElementInterface
                 $key,
                 ($key == $this->getValue() ? ' checked="checked"' : ''),
                 (in_array($key, $disabledOptions) ? ' disabled="disabled"' : ''),
-                $this->__($value)
+                $this->_($value)
             );
         }
 

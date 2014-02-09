@@ -538,7 +538,7 @@ class Form implements ElementContainerInterface
             if (!isset($data[$element->getName()])) {
                 $isValid = false;
                 $this->addError(
-                    sprintf($this->__(self::MESSAGE_FIELD_IS_REQUIRED), $this->__($element->getOption('label'))),
+                    sprintf($this->_(self::MESSAGE_FIELD_IS_REQUIRED), $this->_($element->getOption('label'))),
                     $element->getName()
                 );
             }
@@ -547,7 +547,7 @@ class Form implements ElementContainerInterface
             if (!$element->getOption('emptyAllowed') && empty($data[$element->getName()])) {
                 $isValid = false;
                 $this->addError(
-                    sprintf($this->__(self::MESSAGE_FIELD_IS_EMPTY), $this->__($element->getOption('label'))),
+                    sprintf($this->_(self::MESSAGE_FIELD_IS_EMPTY), $this->_($element->getOption('label'))),
                     $element->getName()
                 );
             }

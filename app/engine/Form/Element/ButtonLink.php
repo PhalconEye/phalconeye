@@ -103,7 +103,7 @@ class ButtonLink extends AbstractElement implements ElementInterface
 
         return sprintf(
             $this->getHtmlTemplate(),
-            $this->__($this->getOption('label'))
+            $this->_($this->getOption('label'))
         );
     }
 }

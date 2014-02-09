@@ -106,7 +106,7 @@ class Heading extends AbstractElement implements ElementInterface
         return sprintf(
             $this->getHtmlTemplate(),
             $this->getOption('tag'),
-            $this->__($this->getValue()),
+            $this->_($this->getValue()),
             $this->getOption('tag')
         );
     }

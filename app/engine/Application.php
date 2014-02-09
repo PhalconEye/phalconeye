@@ -158,7 +158,7 @@ class Application extends PhalconApplication
         foreach ($this->_loaders[$mode] as $service) {
             $serviceName = ucfirst($service);
             $eventsManager->fire('init:before' . $serviceName, null);
-            $result = $this->{'init' . $serviceName}($di, $config, $eventsManager);
+            $result = $this->{'_init' . $serviceName}($di, $config, $eventsManager);
             $eventsManager->fire('init:after' . $serviceName, $result);
         }
 
@@ -173,7 +173,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function initLogger($di, $config)
+    protected function _initLogger($di, $config)
     {
         if ($config->application->logger->enabled) {
             $di->set(
@@ -199,7 +199,7 @@ class Application extends PhalconApplication
      *
      * @return Loader
      */
-    protected function initLoader($di, $config, $eventsManager)
+    protected function _initLoader($di, $config, $eventsManager)
     {
         // Add default module and engine modules.
         $modules = array_merge(
@@ -384,7 +384,7 @@ class Application extends PhalconApplication
      *
      * @return Url
      */
-    protected function initEnvironment($di, $config)
+    protected function _initEnvironment($di, $config)
     {
         set_error_handler(
             function ($errorCode, $errorMessage, $errorFile, $errorLine) {
@@ -441,7 +441,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function initAnnotations($di, $config)
+    protected function _initAnnotations($di, $config)
     {
         $di->set(
             'annotations',
@@ -467,7 +467,7 @@ class Application extends PhalconApplication
      *
      * @return Router
      */
-    protected function initRouter($di, $config)
+    protected function _initRouter($di, $config)
     {
         $defaultModuleName = ucfirst(self::SYSTEM_DEFAULT_MODULE);
 
@@ -538,7 +538,7 @@ class Application extends PhalconApplication
      *
      * @return Pdo
      */
-    protected function initDatabase($di, $config, $eventsManager)
+    protected function _initDatabase($di, $config, $eventsManager)
     {
         if (!$config->application->installed) {
             return;
@@ -628,7 +628,7 @@ class Application extends PhalconApplication
      *
      * @return SessionAdapter
      */
-    protected function initSession($di, $config)
+    protected function _initSession($di, $config)
     {
         if (!isset($config->application->session)) {
             $session = new SessionFiles();
@@ -650,7 +650,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function initCache($di, $config)
+    protected function _initCache($di, $config)
     {
         if (!$config->application->debug) {
             // Get the parameters.
@@ -694,7 +694,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function initFlash($di)
+    protected function _initFlash($di)
     {
         $di->set(
             'flash',
@@ -734,7 +734,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function initEngine($di)
+    protected function _initEngine($di)
     {
         foreach ($di->get('modules') as $module) {
             // Initialize module api.
