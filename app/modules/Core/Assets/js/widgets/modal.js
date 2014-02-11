@@ -100,17 +100,18 @@
              * Bind some submit events for modal form.
              */
             bindSubmit: function () {
-                // set submiting
+                // Set submitting.
                 $('#modal .btn-save').click(function () {
                     if ($('#modal form').length == 1) {
-                        // check ckeditor
+                        PhalconEye.widget.modal.showLoadingStage();
+
+                        // Check ckeditor.
                         if (Object.keys(CKEDITOR.instances).length > 0) {
                             for (var instance in CKEDITOR.instances) {
                                 var elementId = '#' + CKEDITOR.instances[instance].name;
                                 $(elementId).val(CKEDITOR.instances[instance].getData());
                             }
                         }
-
 
                         $.post($('#modal form').attr('action'), $('#modal form').serialize())
                             .done(function (postHTML) {
@@ -124,6 +125,7 @@
                 });
 
                 $('#modal form').submit(function () {
+                    PhalconEye.widget.modal.showLoadingStage();
                     $('#modal .btn-save').click();
                     return false;
                 });
