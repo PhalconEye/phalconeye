@@ -163,7 +163,7 @@ trait FormBehaviour
      */
     public function getTitle()
     {
-        return $this->__($this->_title);
+        return $this->_($this->_title);
     }
 
     /**
@@ -186,7 +186,7 @@ trait FormBehaviour
      */
     public function getDescription()
     {
-        return $this->__($this->_description);
+        return $this->_($this->_description);
     }
 
     /**

@@ -22,9 +22,9 @@ use Core\Model\Access;
 use Engine\Api\AbstractApi;
 use Engine\Application;
 use Engine\DependencyInjection;
+use Phalcon\Acl\Adapter\Memory as AclMemory;
 use Phalcon\Acl\Resource as AclResource;
 use Phalcon\Acl as PhalconAcl;
-use Phalcon\Acl\Adapter\Memory as AclMemory;
 use Phalcon\DI;
 use Phalcon\Events\Event as PhalconEvent;
 use Phalcon\Mvc\Dispatcher;
@@ -84,7 +84,7 @@ class Acl extends AbstractApi
      *
      * @return AclMemory
      */
-    public function _()
+    public function getAcl()
     {
         if (!$this->_acl) {
             $cacheData = $this->getDI()->get('cacheData');
@@ -138,6 +138,20 @@ class Acl extends AbstractApi
     }
 
     /**
+     * Forward methods to acl object.
+     *
+     * @param string $name      Method name.
+     * @param array  $arguments Method arguments.
+     *
+     * @return mixed
+     */
+    public function __call($name, $arguments)
+    {
+        $acl = $this->getAcl();
+        return call_user_func_array(array($acl, $name), $arguments);
+    }
+
+    /**
      * Get allowed value.
      *
      * @param string $objectName Object name.
@@ -169,7 +183,7 @@ class Acl extends AbstractApi
      *
      * @return null|\stdClass
      */
-    public function getObjectAcl($objectName)
+    public function getObject($objectName)
     {
         $object = new \stdClass();
         $object->name = $objectName;
@@ -222,7 +236,7 @@ class Acl extends AbstractApi
     public function beforeDispatch(PhalconEvent $event, Dispatcher $dispatcher)
     {
         $viewer = User::getViewer();
-        $acl = $this->_();
+        $acl = $this->getAcl();
 
         $controller = $dispatcher->getControllerName();
 
@@ -264,7 +278,7 @@ class Acl extends AbstractApi
                         continue;
                     }
                     $class = sprintf('\%s\Model\%s', $module, ucfirst(str_replace('.php', '', $file)));
-                    $object = $this->getObjectAcl($class);
+                    $object = $this->getObject($class);
                     if ($object == null) {
                         continue;
                     }

@@ -47,7 +47,7 @@ class AdminAccessController extends AbstractAdminController
      */
     public function indexAction()
     {
-        $resources = $this->core->acl()->_()->getResources();
+        $resources = $this->core->acl()->getResources();
         $objects = [];
 
         $allActions = [];
@@ -55,7 +55,7 @@ class AdminAccessController extends AbstractAdminController
 
         foreach ($resources as $resource) {
 
-            $object = $this->core->acl()->getObjectAcl($resource->getName());
+            $object = $this->core->acl()->getObject($resource->getName());
             if ($object == null) {
                 continue;
             }
@@ -100,7 +100,7 @@ class AdminAccessController extends AbstractAdminController
             return $this->response->redirect('admin/access/edit?id=' . $id);
         }
 
-        $resources = $this->core->acl()->_()->getResources();
+        $resources = $this->core->acl()->getResources();
         $resourceFound = false;
         foreach ($resources as $resource) {
             if ($resource->getName() == $id) {
@@ -121,7 +121,7 @@ class AdminAccessController extends AbstractAdminController
             $currentRole = Role::getRoleByType(Acl::DEFAULT_ROLE_ADMIN);
         }
 
-        $objectAcl = $this->core->acl()->getObjectAcl($id);
+        $objectAcl = $this->core->acl()->getObject($id);
         $form = $this->_getForm($objectAcl, $currentRole);
 
         $this->view->currentObject = $id;
@@ -219,7 +219,7 @@ class AdminAccessController extends AbstractAdminController
                         strtoupper($action)
                     ),
                     1,
-                    $this->core->acl()->_()->isAllowed($currentRole->name, $objectAcl->name, $action),
+                    $this->core->acl()->isAllowed($currentRole->name, $objectAcl->name, $action),
                     0
                 );
             }

@@ -149,8 +149,8 @@ class Application extends PhalconApplication
         $this->setEventsManager($eventsManager);
 
         // Init base systems first.
-        $this->initLogger($di, $config);
-        $this->initLoader($di, $config, $eventsManager);
+        $this->_initLogger($di, $config);
+        $this->_initLoader($di, $config, $eventsManager);
 
         $this->_attachEngineEvents($eventsManager, $config);
 

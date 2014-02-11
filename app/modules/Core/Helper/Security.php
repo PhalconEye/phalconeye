@@ -51,7 +51,6 @@ class Security extends Helper
         return $this->getDI()
             ->get('core')
             ->acl()
-            ->_()
             ->isAllowed($viewer->getRole()->name, $resource, $action) == Acl::ALLOW;
     }
 
@@ -70,7 +69,6 @@ class Security extends Helper
         return $this->getDI()
             ->get('core')
             ->acl()
-            ->_()
             ->getAllowedValue($resource, $viewer->getRole(), $action);
     }
 }
