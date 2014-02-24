@@ -18,6 +18,7 @@
 
 namespace Engine\Form\Behaviour;
 
+use Engine\Form\AbstractForm;
 use Engine\Form;
 use Engine\Form\AbstractElement;
 
@@ -184,7 +185,7 @@ trait ContainerBehaviour
     protected function _checkElement($name)
     {
         if (!$this->has($name)) {
-            throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+            throw new Form\Exception(sprintf(AbstractForm::MESSAGE_ELEMENT_NOT_FOUND, $name));
         }
     }
 

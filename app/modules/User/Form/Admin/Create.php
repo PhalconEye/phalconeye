@@ -18,8 +18,9 @@
 
 namespace User\Form\Admin;
 
+use Core\Form\CoreForm;
 use Engine\Db\AbstractModel;
-use Engine\Form;
+use Engine\Form\FieldSet;
 use Phalcon\Validation\Validator\Email;
 use User\Model\Role;
 use User\Model\User;
@@ -34,7 +35,7 @@ use User\Model\User;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Create extends Form
+class Create extends CoreForm
 {
     /**
      * Create form.
@@ -80,7 +81,7 @@ class Create extends Form
     /**
      * Set form validation.
      *
-     * @param Form\FieldSet $content Content fieldset.
+     * @param FieldSet $content Content fieldset.
      *
      * @return void
      */

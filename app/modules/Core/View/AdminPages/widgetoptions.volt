@@ -32,7 +32,7 @@
         </script>
     {% else %}
 
-    {{ form.render('partials/form/default') }}
+    {{ form.render() }}
 
     {% endif %}
 {% endblock %}

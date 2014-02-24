@@ -16,18 +16,14 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine;
+namespace Engine\Form;
 
 use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
-use Engine\Form\AbstractElement;
+use Engine\DependencyInjection;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FieldSetBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
-use Engine\Form\ConditionResolver;
-use Engine\Form\ElementContainerInterface;
-use Engine\Form\FieldSet;
-use Engine\Form\Validation;
 use Phalcon\Filter;
 use Phalcon\Mvc\View;
 use Phalcon\Tag as Tag;
@@ -38,13 +34,13 @@ use Phalcon\Validation\Message\Group;
  * Form class.
  *
  * @category  PhalconEye
- * @package   Engine
+ * @package   Engine\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Form implements ElementContainerInterface
+abstract class AbstractForm implements ElementContainerInterface
 {
     use DependencyInjection {
         DependencyInjection::__construct as protected __DIConstruct;
@@ -202,10 +198,45 @@ class Form implements ElementContainerInterface
     }
 
     /**
+     * Get layout view path.
+     *
+     * @return string
+     */
+    abstract public function getLayoutView();
+
+    /**
+     * Get element view path.
+     *
+     * @return string
+     */
+    abstract public function getElementView();
+
+    /**
+     * Get errors view path.
+     *
+     * @return string
+     */
+    abstract public function getErrorsView();
+
+    /**
+     * Get notices view path.
+     *
+     * @return string
+     */
+    abstract public function getNoticesView();
+
+    /**
+     * Get fieldset view path.
+     *
+     * @return string
+     */
+    abstract public function getFieldSetView();
+
+    /**
      * Set form values.
      *
-     * @param array              $values    Form values.
-     * @param Form|FieldSet|null $container Elements container.
+     * @param array                      $values    Form values.
+     * @param AbstractForm|FieldSet|null $container Elements container.
      *
      * @return $this
      */
@@ -239,7 +270,7 @@ class Form implements ElementContainerInterface
      * @param string        $value     Element value.
      * @param Form|FieldSet $container Elements container.
      *
-     * @throws Form\Exception
+     * @throws Exception
      * @return $this
      */
     public function setValue($name, $value, $container = null)
@@ -262,7 +293,7 @@ class Form implements ElementContainerInterface
         }
 
         if ($isRoot && !$found) {
-            throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+            throw new Exception(sprintf(self::MESSAGE_ELEMENT_NOT_FOUND, $name));
         }
 
         return $found;
@@ -300,7 +331,7 @@ class Form implements ElementContainerInterface
      * @param string             $name      Element name.
      * @param Form|FieldSet|null $container Elements container.
      *
-     * @throws Form\Exception
+     * @throws Exception
      * @return mixed|null
      */
     public function getValue($name, $container = null)
@@ -323,7 +354,7 @@ class Form implements ElementContainerInterface
         }
 
         if ($isRoot && $found === false) {
-            throw new Form\Exception(sprintf(Form::MESSAGE_ELEMENT_NOT_FOUND, $name));
+            throw new Exception(sprintf(self::MESSAGE_ELEMENT_NOT_FOUND, $name));
         }
 
         return $found;
@@ -332,16 +363,20 @@ class Form implements ElementContainerInterface
     /**
      * Render form.
      *
-     * @param string $viewPath Form view path.
+     * @param string|null $layoutView Form view path.
      *
      * @return string
      */
-    public function render($viewPath)
+    public function render($layoutView = null)
     {
+        if (!$layoutView) {
+            $layoutView = $this->getLayoutView();
+        }
+
         /** @var View $view */
         $view = $this->getDI()->get('view');
         ob_start();
-        $view->partial($viewPath, ['form' => $this]);
+        $view->partial($layoutView, ['form' => $this]);
         $html = ob_get_contents();
         ob_end_clean();
         return $html;
@@ -379,7 +414,7 @@ class Form implements ElementContainerInterface
      */
     public function addContentFieldSet()
     {
-        $fieldSet = new Form\FieldSet(self::FIELDSET_CONTENT);
+        $fieldSet = new FieldSet(self::FIELDSET_CONTENT);
         $this->addFieldSet($fieldSet);
 
         return $fieldSet;
@@ -394,7 +429,7 @@ class Form implements ElementContainerInterface
      */
     public function addFooterFieldSet($combined = true)
     {
-        $fieldSet = new Form\FieldSet(self::FIELDSET_FOOTER, null, ['class' => self::FIELDSET_FOOTER]);
+        $fieldSet = new FieldSet(self::FIELDSET_FOOTER, null, ['class' => self::FIELDSET_FOOTER]);
         $fieldSet->combineElements($combined);
         $this->addFieldSet($fieldSet);
 
@@ -442,6 +477,11 @@ class Form implements ElementContainerInterface
          * Set filtered data again.
          */
         $this->setValues($data);
+
+        /**
+         * Get data from elements, it could change.
+         */
+        $data = $this->getValues();
 
         /**
          * There is something wrong...

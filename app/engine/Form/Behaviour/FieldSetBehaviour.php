@@ -18,9 +18,10 @@
 
 namespace Engine\Form\Behaviour;
 
+use Engine\Form\AbstractForm;
 use Engine\Form;
-use Phalcon\Validation\Message;
 use Phalcon\Validation\Message\Group;
+use Phalcon\Validation\Message;
 
 /**
  * FieldSet behaviour.
@@ -340,7 +341,7 @@ trait FieldSetBehaviour
     protected function _checkFieldSet($name)
     {
         if (!$this->has($name)) {
-            throw new Form\Exception(sprintf(Form::MESSAGE_FIELDSET_NOT_FOUND, $name));
+            throw new Form\Exception(sprintf(AbstractForm::MESSAGE_FIELDSET_NOT_FOUND, $name));
         }
     }
 }

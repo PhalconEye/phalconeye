@@ -16,7 +16,7 @@
 #}
 
 {% if instanceof(element, 'Engine\Form\FieldSet') %}
-    {{ partial(resolveView("partials/form/default/fieldSet", 'core'), ['fieldSet': element]) }}
+    {{ partial(form.getFieldSetView(), ['fieldSet': element]) }}
 {% else %}
     {% if element.useDefaultLayout() %}
 

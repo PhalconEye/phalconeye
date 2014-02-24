@@ -19,7 +19,6 @@
 namespace Engine\Form\Element;
 
 use Engine\Form;
-use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 
 /**
@@ -64,13 +63,14 @@ class CkEditor extends TextArea implements ElementInterface
     /**
      * Sets the element option.
      *
-     * @param string $value Element value.
+     * @param string $value  Element value.
+     * @param bool   $escape Try to escape html in value.
      *
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value, $escape = false)
     {
-        return AbstractElement::setValue($value);
+        return parent::setValue($value, $escape);
     }
 
     /**

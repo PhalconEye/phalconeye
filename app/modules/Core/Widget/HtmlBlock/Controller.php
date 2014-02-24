@@ -18,10 +18,10 @@
 
 namespace Core\Widget\HtmlBlock;
 
+use Core\Form\CoreForm;
 use Core\Model\Language;
 use Core\Model\Settings;
 use Engine\Config;
-use Engine\Form;
 use Engine\Widget\Controller as WidgetController;
 
 /**
@@ -66,11 +66,11 @@ class Controller extends WidgetController
     /**
      * Admin action for editing widget options through admin panel.
      *
-     * @return Form
+     * @return CoreForm
      */
     public function adminAction()
     {
-        $form = new Form();
+        $form = new CoreForm();
         $form->addText('title');
 
         // Adding additional html for language selector support.

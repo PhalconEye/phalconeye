@@ -30,6 +30,6 @@
     {{ partial('/Install/steps') }}
 
     <div>
-        {{ form.render('partials/form/default') }}
+        {{ form.render() }}
     </div>
 {% endblock %}

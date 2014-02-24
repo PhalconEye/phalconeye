@@ -18,6 +18,7 @@
 
 namespace Engine\Form\Behaviour;
 
+use Engine\Form\AbstractForm;
 use Engine\Db\AbstractModel;
 use Engine\Form;
 use Phalcon\Validation\Message;
@@ -74,14 +75,14 @@ trait FormBehaviour
      *
      * @var string
      */
-    protected $_method = Form::METHOD_POST;
+    protected $_method = AbstractForm::METHOD_POST;
 
     /**
      * Form current encryption type.
      *
      * @var string
      */
-    protected $_enctype = Form::ENCTYPE_URLENCODED;
+    protected $_enctype = AbstractForm::ENCTYPE_URLENCODED;
 
     /**
      * Use token?
@@ -236,7 +237,7 @@ trait FormBehaviour
      */
     public function setAsMultipart()
     {
-        $this->_enctype = Form::ENCTYPE_MULTIPART;
+        $this->_enctype = AbstractForm::ENCTYPE_MULTIPART;
         return $this;
     }
 

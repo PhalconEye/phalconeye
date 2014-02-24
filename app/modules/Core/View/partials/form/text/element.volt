@@ -16,7 +16,7 @@
 #}
 
 {% if instanceof(element, 'Engine\Form\FieldSet') %}
-    {{ partial(resolveView("partials/form/default/fieldSet", 'core'), ['fieldSet': element]) }}
+    {{ partial(form.getFieldSetView(), ['fieldSet': element]) }}
 {% else %}
     {% if element.useDefaultLayout() %}
 
@@ -53,6 +53,10 @@
         {% endif %}
 
     {% else %}
-        {{ element.getValue() }}
+        {% if instanceof(element, 'Engine\Form\Element\Button') or instanceof(element, 'Engine\Form\Element\ButtonLink') %}
+            {{ element.render() }}
+        {% else %}
+            {{ element.getValue() }}
+        {% endif %}
     {% endif %}
 {% endif %}

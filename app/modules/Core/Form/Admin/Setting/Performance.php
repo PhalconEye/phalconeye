@@ -18,7 +18,7 @@
 
 namespace Core\Form\Admin\Setting;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 
 /**
  * Performance settings.
@@ -30,7 +30,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Performance extends Form
+class Performance extends CoreForm
 {
     /**
      * Initialize form.

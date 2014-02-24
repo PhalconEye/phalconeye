@@ -18,9 +18,9 @@
 
 namespace Core\Form\Admin\Setting;
 
+use Core\Form\CoreForm;
 use Core\Model\Language;
 use Core\Model\Settings;
-use Engine\Form;
 
 /**
  * System settings.
@@ -32,7 +32,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class System extends Form
+class System extends CoreForm
 {
     const
         /**

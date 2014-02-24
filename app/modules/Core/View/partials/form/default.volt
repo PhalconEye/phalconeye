@@ -24,12 +24,12 @@
             <p>{{ form.getDescription() }}</p>
         </div>
     {% endif %}
-    {{ partial(resolveView("partials/form/default/errors", 'core'), ['form': form]) }}
-    {{ partial(resolveView("partials/form/default/notices", 'core'), ['form': form]) }}
+    {{ partial(form.getErrorsView(), ['form': form]) }}
+    {{ partial(form.getNoticesView(), ['form': form]) }}
 
     <div class="form_elements">
         {% for element in form.getAll() %}
-            {{ partial(resolveView("partials/form/default/element", 'core'), ['element': element]) }}
+            {{ partial(form.getElementView(), ['element': element]) }}
         {% endfor %}
     </div>
     <div class="clear"></div>

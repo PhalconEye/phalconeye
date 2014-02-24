@@ -18,7 +18,8 @@
 
 namespace Core\Form\Install;
 
-use Engine\Form;
+use Core\Form\CoreForm;
+use Engine\Form\FieldSet;
 use Phalcon\Validation\Validator\Email;
 use Phalcon\Validation\Validator\StringLength;
 
@@ -32,7 +33,7 @@ use Phalcon\Validation\Validator\StringLength;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Finish extends Form
+class Finish extends CoreForm
 {
     /**
      * Setup form.
@@ -68,7 +69,7 @@ class Finish extends Form
     /**
      * Set form validation.
      *
-     * @param Form|Form\FieldSet $content Container object.
+     * @param CoreForm|FieldSet $content Container object.
      *
      * @return void
      */

@@ -82,4 +82,21 @@ class Html extends AbstractElement implements ElementInterface
     {
         return $this->getValue();
     }
+
+    /**
+     * Sets the element option.
+     *
+     * @param string $value  Element value.
+     * @param bool   $escape Try to escape html in value.
+     *
+     * @return $this
+     */
+    public function setValue($value, $escape = false)
+    {
+        if ($escape) {
+            $value = htmlentities($value);
+        }
+        $this->_value = $value;
+        return $this;
+    }
 }

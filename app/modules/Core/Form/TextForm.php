@@ -16,42 +16,35 @@
   +------------------------------------------------------------------------+
 */
 
-namespace User\Form\Auth;
-
-use Core\Form\CoreForm;
+namespace Core\Form;
 
 /**
- * Login form.
+ * Main text form.
  *
  * @category  PhalconEye
- * @package   User\Form\Auth
+ * @package   Core\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Login extends CoreForm
+class TextForm extends CoreForm
 {
+    const
+        /**
+         * Default layout path.
+         */
+        LAYOUT_TEXT_PATH = 'partials/form/text';
+
+    use EntityForm;
+
     /**
-     * Add elements to form.
+     * Get layout view path.
      *
-     * @return void
+     * @return string
      */
-    public function initialize()
+    public function getLayoutView()
     {
-        $this
-            ->setTitle('Login')
-            ->setDescription('Use you email or username to login.')
-            ->setAttribute('class', 'form_login');
-
-        $this->addContentFieldSet()
-            ->addText('login')
-            ->addPassword('password')
-            ->setRequired('login')
-            ->setRequired('password');
-
-        $this->addFooterFieldSet()
-            ->addButton('enter')
-            ->addButtonLink('register', 'Register', ['for' => 'register']);
+        return $this->_resolveView(self::LAYOUT_TEXT_PATH);
     }
 }

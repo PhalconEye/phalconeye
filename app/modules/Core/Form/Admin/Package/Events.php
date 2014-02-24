@@ -18,7 +18,7 @@
 
 namespace Core\Form\Admin\Package;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 
 /**
  * Package events form.
@@ -30,7 +30,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Events extends Form
+class Events extends CoreForm
 {
     /**
      * Package type.

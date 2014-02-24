@@ -18,13 +18,11 @@
 
 namespace Engine\Form;
 
-use Engine\Form;
-
 /**
- * Form element interface.
+ * AbstractForm element interface.
  *
  * @category  PhalconEye
- * @package   Engine\Form
+ * @package   Engine\AbstractForm
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
@@ -58,11 +56,12 @@ interface ElementInterface
     /**
      * Sets the element option.
      *
-     * @param string $value Element value.
+     * @param string $value  Element value.
+     * @param bool   $escape Try to escape html in value.
      *
-     * @return Form
+     * @return AbstractForm
      */
-    public function setValue($value);
+    public function setValue($value, $escape = true);
 
     /**
      * Returns the element's value.
@@ -84,7 +83,7 @@ interface ElementInterface
      * @param string $name  Option name.
      * @param string $value Options value.
      *
-     * @return Form
+     * @return AbstractForm
      */
     public function setOption($name, $value);
 
@@ -110,7 +109,7 @@ interface ElementInterface
      * @param string $name  Option name.
      * @param string $value Options value.
      *
-     * @return Form
+     * @return AbstractForm
      */
     public function setAttribute($name, $value);
 
@@ -128,7 +127,7 @@ interface ElementInterface
      *
      * @param string $name Element name.
      *
-     * @return Form
+     * @return AbstractForm
      */
     public function setName($name);
 

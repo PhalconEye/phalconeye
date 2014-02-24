@@ -22,7 +22,7 @@
 {% endblock %}
 
 {% block body %}
-    {{ form.render('partials/form/default') }}
+    {{ form.render() }}
 
 {% endblock %}
 

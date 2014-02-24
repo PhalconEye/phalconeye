@@ -18,7 +18,8 @@
 
 namespace User\Form\Auth;
 
-use Engine\Form;
+use Core\Form\CoreForm;
+use Engine\Form\FieldSet;
 use Phalcon\Validation\Validator\Email;
 use Phalcon\Validation\Validator\StringLength;
 
@@ -32,7 +33,7 @@ use Phalcon\Validation\Validator\StringLength;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Register extends Form
+class Register extends CoreForm
 {
     /**
      * Add elements to form.
@@ -81,7 +82,7 @@ class Register extends Form
     /**
      * Set form validation.
      *
-     * @param Form\FieldSet $content Fieldset object.
+     * @param FieldSet $content Fieldset object.
      *
      * @return void
      */

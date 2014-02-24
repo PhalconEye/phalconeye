@@ -16,13 +16,14 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form;
+namespace Core\Form;
 
-use Engine\Exception;
+use Engine\Form\AbstractForm;
 use Engine\Behaviour\TranslationBehaviour;
-use Engine\Form;
+use Engine\Exception;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
+use Engine\Form;
 use Phalcon\Filter;
 use Phalcon\Http\Request\FileInterface;
 use Phalcon\Tag as Tag;
@@ -33,20 +34,20 @@ use Phalcon\Validation;
  * File form class.
  *
  * @category  PhalconEye
- * @package   Engine\Form
+ * @package   Core\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class FileForm extends Form implements ElementContainerInterface
+class FileForm extends CoreForm
 {
     /**
      * Form current encryption type.
      *
      * @var string
      */
-    protected $_enctype = Form::ENCTYPE_MULTIPART;
+    protected $_enctype = AbstractForm::ENCTYPE_MULTIPART;
 
     /**
      * Image transformations.
@@ -116,6 +117,7 @@ class FileForm extends Form implements ElementContainerInterface
      * @param array|null $data               Form data.
      * @param bool       $skipEntityCreation Skip entity creation.
      *
+     * @throws \Engine\Exception
      * @return bool
      */
     public function isValid($data = null, $skipEntityCreation = false)

@@ -18,9 +18,9 @@
 
 namespace Core\Form\Admin\Language;
 
+use Core\Form\CoreForm;
 use Core\Model\LanguageTranslation;
 use Engine\Db\AbstractModel;
-use Engine\Form;
 
 /**
  * Create language item form.
@@ -32,7 +32,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class CreateItem extends Form
+class CreateItem extends CoreForm
 {
     /**
      * Create form.

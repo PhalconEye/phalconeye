@@ -19,9 +19,9 @@
 namespace User\Controller;
 
 use Core\Controller\AbstractAdminController;
-use Engine\Form;
+use Core\Form\EntityForm;
+use Core\Form\TextForm;
 use Engine\Navigation;
-use Phalcon\Paginator\Adapter\QueryBuilder;
 use User\Controller\Grid\Admin\RoleGrid;
 use User\Controller\Grid\Admin\UserGrid;
 use User\Form\Admin\Create as CreateForm;
@@ -175,7 +175,7 @@ class AdminUsersController extends AbstractAdminController
     public function viewAction($id)
     {
         $user = User::findFirst($id);
-        $this->view->form = $form = Form\EntityForm::factory($user, [], [['password']]);
+        $this->view->form = $form = TextForm::factory($user, [], [['password']]);
 
         $form
             ->setTitle('User details')

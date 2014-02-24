@@ -21,6 +21,6 @@
     {% endif %}
 
     {% for element in fieldSet.getAll() %}
-        {{ partial(resolveView("partials/form/default/element", 'core'), ['element': element, 'combined': fieldSet.isCombined()]) }}
+        {{ partial(form.getElementView(), ['element': element, 'combined': fieldSet.isCombined()]) }}
     {% endfor %}
 </fieldset>

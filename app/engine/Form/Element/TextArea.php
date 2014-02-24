@@ -44,18 +44,6 @@ class TextArea extends AbstractElement implements ElementInterface
     }
 
     /**
-     * Sets the element option.
-     *
-     * @param string $value Element value.
-     *
-     * @return $this
-     */
-    public function setValue($value)
-    {
-        return parent::setValue(htmlentities($value));
-    }
-
-    /**
      * Render element.
      *
      * @return string

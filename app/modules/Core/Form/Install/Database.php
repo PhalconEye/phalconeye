@@ -18,7 +18,7 @@
 
 namespace Core\Form\Install;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 
 /**
  * Installation database form.
@@ -30,7 +30,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Database extends Form
+class Database extends CoreForm
 {
     /**
      * Setup form.

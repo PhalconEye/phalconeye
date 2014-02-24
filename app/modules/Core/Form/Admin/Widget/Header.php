@@ -18,7 +18,7 @@
 
 namespace Core\Form\Admin\Widget;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 
 /**
  * Header widget admin form.
@@ -30,7 +30,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Header extends Form
+class Header extends CoreForm
 {
     /**
      * Initialize form.

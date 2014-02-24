@@ -18,7 +18,7 @@
 
 namespace Core\Form\Admin\Package;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 use Engine\Package\Manager;
 
 /**
@@ -31,7 +31,7 @@ use Engine\Package\Manager;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Export extends Form
+class Export extends CoreForm
 {
     /**
      * Exclude data.

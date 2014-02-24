@@ -18,9 +18,9 @@
 
 namespace Core\Form\Admin\Menu;
 
+use Core\Form\CoreForm;
 use Core\Model\Menu;
 use Engine\Db\AbstractModel;
-use Engine\Form;
 
 /**
  * Edit language item.
@@ -32,7 +32,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Create extends Form
+class Create extends CoreForm
 {
     /**
      * Create form.

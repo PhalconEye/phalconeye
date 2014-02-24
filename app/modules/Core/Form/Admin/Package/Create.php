@@ -19,11 +19,11 @@
 namespace Core\Form\Admin\Package;
 
 use Core\Form\Admin\Package\FieldSet\Widget;
+use Core\Form\CoreForm;
 use Core\Model\Package;
 use Core\Model\Widget as WidgetModel;
 use Engine\Config;
 use Engine\Db\AbstractModel;
-use Engine\Form;
 use Engine\Form\Validator\Regex;
 use Engine\Package\Manager;
 
@@ -37,7 +37,7 @@ use Engine\Package\Manager;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Create extends Form
+class Create extends CoreForm
 {
     const
         /**

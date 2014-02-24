@@ -18,10 +18,10 @@
 
 namespace Core\Form\Admin\Menu;
 
+use Core\Form\CoreForm;
 use Core\Model\Language;
 use Core\Model\MenuItem;
 use Engine\Db\AbstractModel;
-use Engine\Form;
 use User\Model\Role;
 
 /**
@@ -34,7 +34,7 @@ use User\Model\Role;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class CreateItem extends Form
+class CreateItem extends CoreForm
 {
     /**
      * Create form.

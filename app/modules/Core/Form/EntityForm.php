@@ -16,11 +16,12 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form;
+namespace Core\Form;
 
-use Engine\Db\AbstractModel;
 use Engine\Behaviour\TranslationBehaviour;
-use Engine\Form;
+use Engine\Db\AbstractModel;
+use Engine\Form\AbstractElement;
+use Engine\Form\AbstractForm;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
 use Phalcon\DI;
@@ -30,16 +31,16 @@ use Phalcon\Translate;
 use Phalcon\Validation;
 
 /**
- * Entity form class.
+ * Entity form trait.
  *
  * @category  PhalconEye
- * @package   Engine\Form
+ * @package   Core\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class EntityForm extends Form implements ElementContainerInterface
+trait EntityForm
 {
     /**
      * Create form according to entity specifications.
@@ -48,17 +49,16 @@ class EntityForm extends Form implements ElementContainerInterface
      * @param array           $fieldTypes    Field types.
      * @param array           $excludeFields Exclude fields from form.
      *
-     * @return EntityForm
+     * @return AbstractForm
      */
     public static function factory($entities, array $fieldTypes = [], array $excludeFields = [])
     {
-        $form = new Form();
+        $form = new static();
         if (!is_array($entities)) {
             $entities = [$entities];
         }
 
         /** @var AbstractModel $entity */
-
         foreach ($entities as $entityKey => $entity) {
             $types = (isset($fieldTypes[$entityKey]) ? $fieldTypes[$entityKey] : []);
             $exclude = (isset($excludeFields[$entityKey]) ? $excludeFields[$entityKey] : []);

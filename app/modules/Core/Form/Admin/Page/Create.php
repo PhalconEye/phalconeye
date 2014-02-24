@@ -18,9 +18,10 @@
 
 namespace Core\Form\Admin\Page;
 
+use Core\Form\CoreForm;
 use Core\Model\Page;
 use Engine\Db\AbstractModel;
-use Engine\Form;
+use Engine\Form\Validator\Regex;
 use User\Model\Role;
 
 /**
@@ -33,7 +34,7 @@ use User\Model\Role;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Create extends Form
+class Create extends CoreForm
 {
     /**
      * Create form.
@@ -97,14 +98,14 @@ class Create extends Form
     /**
      * Set form validation.
      *
-     * @param Form\FieldSet $content Fieldset object.
+     * @param FieldSet $content Fieldset object.
      */
     protected function _setValidation($content)
     {
         $content->getValidation()
             ->add(
                 'controller',
-                new Form\Validator\Regex(
+                new Regex(
                     [
                         'pattern' => '/$|(.*)Controller->(.*)Action/',
                         'message' => 'Wrong controller name. Example: NameController->someAction'

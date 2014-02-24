@@ -18,8 +18,8 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\AbstractElement;
 use Engine\Behaviour\TranslationBehaviour;
+use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 
 /**
@@ -59,13 +59,14 @@ class Checkbox extends AbstractElement implements ElementInterface
     /**
      * Sets the element option.
      *
-     * @param string $value Element value.
+     * @param string $value  Element value.
+     * @param bool   $escape Try to escape html in value.
      *
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value, $escape = false)
     {
-        $this->_value = ($value == '' ? $this->getOption('defaultValue') : $value);
+        $this->setValue(($value == '' ? $this->getOption('defaultValue') : $value), $escape);
         if ($this->_value == $this->getAttribute('value')) {
             $this->setOption('checked', 'checked');
         } else {

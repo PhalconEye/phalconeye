@@ -20,8 +20,8 @@ namespace Core\Controller;
 
 use Core\Api\Acl;
 use Core\Controller\Grid\Admin\AccessGrid;
+use Core\Form\CoreForm;
 use Core\Model\Access;
-use Engine\Form;
 use Phalcon\Http\ResponseInterface;
 use User\Model\Role;
 
@@ -173,11 +173,11 @@ class AdminAccessController extends AbstractAdminController
      * @param \stdClass $objectAcl   Acl object with data.
      * @param Role      $currentRole Role object.
      *
-     * @return Form
+     * @return CoreForm
      */
     protected function _getForm($objectAcl, $currentRole)
     {
-        $form = new Form();
+        $form = new CoreForm();
 
         if (!empty($objectAcl->actions)) {
             $form->addHtml('header_actions', '<h4>' . $this->di->get('trans')->_('Actions') . '</h4>');

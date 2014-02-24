@@ -18,9 +18,10 @@
 
 namespace Engine\Form\Element;
 
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Form;
 use Engine\Form\AbstractElement;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Form\AbstractForm;
 use Engine\Form\ElementInterface;
 use Engine\Form\Exception;
 
@@ -104,12 +105,17 @@ class Select extends AbstractElement implements ElementInterface
     /**
      * Sets the element option.
      *
-     * @param string $value Element value.
+     * @param string $value  Element value.
+     * @param bool   $escape Try to escape html in value.
      *
      * @return $this
      */
-    public function setValue($value)
+    public function setValue($value, $escape = false)
     {
+        if ($escape) {
+            $value = htmlentities($value);
+        }
+
         if ($value === null) {
             $this->_value = $value;
             return $this;
@@ -124,7 +130,7 @@ class Select extends AbstractElement implements ElementInterface
         foreach ($value as $currentValue) {
             if ($currentValue !== null && !array_key_exists($currentValue, $elementOptions)) {
                 $this->getContainer()->addError(
-                    sprintf(Form::MESSAGE_VALUE_NOT_FOUND, $currentValue), $this->getName()
+                    sprintf(AbstractForm::MESSAGE_VALUE_NOT_FOUND, $currentValue), $this->getName()
                 );
                 return $this;
             }

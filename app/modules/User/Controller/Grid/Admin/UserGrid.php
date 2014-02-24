@@ -19,12 +19,10 @@
 namespace User\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
-use Engine\Db\AbstractModel;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
 use Phalcon\Mvc\Model\Query\Builder;
-use Phalcon\Mvc\Model\Row;
 use Phalcon\Mvc\View;
 use User\Model\Role;
 
@@ -80,7 +78,20 @@ class UserGrid extends CoreGrid
     protected function _initColumns()
     {
         $this
-            ->addTextColumn('u.id', 'ID', [self::COLUMN_PARAM_TYPE => Column::BIND_PARAM_INT])
+            ->addTextColumn(
+                'u.id',
+                'ID',
+                [
+                    self::COLUMN_PARAM_TYPE => Column::BIND_PARAM_INT,
+                    self::COLUMN_PARAM_OUTPUT_LOGIC =>
+                        function (GridItem $item, $di) {
+                            $url = $di->get('url')->get(
+                                ['for' => 'admin-users-view', 'id' => $item['u.id']]
+                            );
+                            return sprintf('<a href="%s">%s</a>', $url, $item['u.id']);
+                        }
+                ]
+            )
             ->addTextColumn('u.username', 'Username')
             ->addTextColumn('u.email', 'Email')
             ->addSelectColumn(

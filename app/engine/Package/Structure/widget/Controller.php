@@ -16,7 +16,8 @@
 %header%
 namespace %moduleNamespace%Widget\%nameUpper%;
 
-use Engine\Form as Form;use Engine\Widget\Controller as WidgetController;
+use Core\Form\CoreForm;
+use Engine\Widget\Controller as WidgetController;
 
 /**
  * Widget %nameUpper%.
@@ -39,11 +40,11 @@ class Controller extends WidgetController
     /**
      * Action for management from admin panel.
      *
-     * @return Form
+     * @return CoreForm
      */
     public function adminAction()
     {
-        $form = new Form();
+        $form = new CoreForm();
 
         return $form;
     }

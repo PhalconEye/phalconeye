@@ -18,7 +18,7 @@
 
 namespace Core\Form\Admin\Widget;
 
-use Engine\Form;
+use Core\Form\CoreForm;
 
 /**
  * Menu widget admin form.
@@ -30,7 +30,7 @@ use Engine\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Menu extends Form
+class Menu extends CoreForm
 {
     /**
      * Initialize form.

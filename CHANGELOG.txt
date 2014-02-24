@@ -32,6 +32,7 @@ Version 0.4.0
  - Code styling via phpcs and phpmd.
  - Most system code has been refactored.
  - Form class rewritten from scratch.
+ - Grid system has been implemented.
 
 Version 0.3.0
  - Some menu improvements: onclick action, icon, tooltip, language selector.

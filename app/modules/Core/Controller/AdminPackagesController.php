@@ -23,11 +23,11 @@ use Core\Form\Admin\Package\Edit as EditForm;
 use Core\Form\Admin\Package\Events as EventsForm;
 use Core\Form\Admin\Package\Export as ExportForm;
 use Core\Form\Admin\Package\Upload as UploadForm;
+use Core\Form\CoreForm;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Widget;
 use Engine\Exception;
-use Engine\Form;
 use Engine\Navigation;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
@@ -741,13 +741,13 @@ class AdminPackagesController extends AbstractAdminController
     /**
      * Set widget data.
      *
-     * @param Form    $form    Form object.
-     * @param Package $package Package object.
-     * @param array   $data    Post data.
+     * @param CoreForm $form    Form object.
+     * @param Package  $package Package object.
+     * @param array    $data    Post data.
      *
      * @return void
      */
-    protected function _setWidgetData(Form $form, Package $package, $data)
+    protected function _setWidgetData(CoreForm $form, Package $package, $data)
     {
         if (!$form->hasEntity('widget')) {
             return;

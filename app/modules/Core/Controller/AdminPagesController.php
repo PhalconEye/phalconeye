@@ -21,9 +21,9 @@ namespace Core\Controller;
 use Core\Controller\Grid\Admin\PageGrid;
 use Core\Form\Admin\Page\Create as CreateForm;
 use Core\Form\Admin\Page\Edit as EditForm;
+use Core\Form\CoreForm;
 use Core\Model\Page;
 use Core\Model\Widget;
-use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
@@ -290,7 +290,7 @@ class AdminPagesController extends AbstractAdminController
         $widgetParams = $widgetData['params'];
         $widget_id = $widgetData['widget_id'];
         $widgetMetadata = Widget::findFirstById($widget_id);
-        $form = new Form();
+        $form = new CoreForm();
 
         // building widget form
         $adminForm = $widgetMetadata->admin_form;

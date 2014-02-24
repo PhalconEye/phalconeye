@@ -16,60 +16,90 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form\Element;
+namespace Core\Form;
 
-use Engine\Form\AbstractElement;
-use Engine\Form\ElementInterface;
+use Engine\Form\AbstractForm;
 
 /**
- * Form element - input.
+ * Main core form.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Element\Abstract
+ * @package   Core\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-abstract class AbstractInput extends AbstractElement implements ElementInterface
+class CoreForm extends AbstractForm
 {
+    const
+        /**
+         * Default layout path.
+         */
+        LAYOUT_DEFAULT_PATH = 'partials/form/default';
+
+    use EntityForm;
+
     /**
-     * Get this input element type.
+     * Get layout view path.
      *
      * @return string
      */
-    abstract public function getInputType();
-
-    /**
-     * Get element default attribute.
-     *
-     * @return array
-     */
-    public function getDefaultAttributes()
+    public function getLayoutView()
     {
-        return array_merge(parent::getDefaultAttributes(), ['type' => $this->getInputType()]);
+        return $this->_resolveView(self::LAYOUT_DEFAULT_PATH);
     }
 
     /**
-     * Get element html template.
+     * Get element view path.
      *
      * @return string
      */
-    public function getHtmlTemplate()
+    public function getElementView()
     {
-        return $this->getOption('htmlTemplate', '<input' . $this->_renderAttributes() . ' value="%s">');
+        return $this->getLayoutView() . '/element';
     }
 
     /**
-     * Render element.
+     * Get errors view path.
      *
      * @return string
      */
-    public function render()
+    public function getErrorsView()
     {
-        return sprintf(
-            $this->getHtmlTemplate(),
-            $this->getValue()
-        );
+        return $this->getLayoutView() . '/errors';
+    }
+
+    /**
+     * Get notices view path.
+     *
+     * @return string
+     */
+    public function getNoticesView()
+    {
+        return $this->getLayoutView() . '/notices';
+    }
+
+    /**
+     * Get fieldset view path.
+     *
+     * @return string
+     */
+    public function getFieldSetView()
+    {
+        return $this->getLayoutView() . '/fieldSet';
+    }
+
+    /**
+     * Resolve view.
+     *
+     * @param string $view   View path.
+     * @param string $module Module name (capitalized).
+     *
+     * @return string
+     */
+    protected function _resolveView($view, $module = 'Core')
+    {
+        return '../../' . $module . '/View/' . $view;
     }
 }
