@@ -37,60 +37,11 @@
     </div>
 {% endblock %}
 
-
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <div class="languages_header">
-                <h2>{{ 'Languages' | trans }} ({{ paginator.items | length }})</h2>
-                <button onclick="window.location.href='{{ url(['for':'admin-languages-compile'])}}'; return false;" class="btn btn-primary button-loading" data-loading-text="{{ "Compiling..." | trans }}">{{ "Compile languages" | trans }}</button>
-                <div class="clear"></div>
-            </div>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Name' | trans }}</th>
-                    <th>{{ 'Language' | trans }}</th>
-                    <th>{{ 'Locale' | trans }}</th>
-                    <th>{{ 'Icon' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ item.id }}
-                        </td>
-                        <td>
-                            {{ item.name }}
-                        </td>
-                        <td>
-                            {{ item.language }}
-                        </td>
-                        <td>
-                            {{ item.locale }}
-                        </td>
-                        <td>
-                            {% if item.icon is empty %}
-                                No flag image.
-                            {% else %}
-                            <img alt='' src='{{ item.getIcon() }}'/>
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ link_to(['for':'admin-languages-manage', 'id':item.id], 'Manage' | trans) }}
-                            {{ link_to(['for':'admin-languages-edit', 'id':item.id], 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            <h2>{{ 'Languages' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <!--/row-->
-    </div><!--/span-->
-
+    </div>
 {% endblock %}

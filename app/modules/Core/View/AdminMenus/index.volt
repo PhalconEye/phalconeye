@@ -19,16 +19,6 @@
 
 {% block title %}{{ "Menus"|trans }}{% endblock %}
 
-{% block head %}
-    <script type="text/javascript">
-        var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this menu?" | trans }}')) {
-                window.location.href = '{{ url(['for':'admin-menus-delete'])}}' + id;
-            }
-        }
-    </script>
-{% endblock %}
-
 {% block header %}
     <div class="navbar navbar-header">
         <div class="navbar-inner">
@@ -40,40 +30,8 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Menus' | trans }} ({{ paginator.items | length }})</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Title' | trans }}</th>
-                    <th>{{ 'Menu items' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ item.id }}
-                        </td>
-                        <td>
-                            {{ item.name }}
-                        </td>
-                        <td>
-                            {{ item.getMenuItems().count() }}
-                        </td>
-                        <td>
-                            {{ link_to(['for':'admin-menus-manage', 'id':item.id], 'Manage' | trans) }}
-                            {{ link_to(['for':'admin-menus-edit', 'id':item.id], 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            <h2>{{ 'Menus' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <!--/row-->
-    </div><!--/span-->
-
+    </div>
 {% endblock %}

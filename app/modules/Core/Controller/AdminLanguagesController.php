@@ -18,6 +18,8 @@
 
 namespace Core\Controller;
 
+use Core\Controller\Grid\Admin\LanguageGrid;
+use Core\Controller\Grid\Admin\LanguageTranslationGrid;
 use Core\Form\Admin\Language\Create;
 use Core\Form\Admin\Language\CreateItem;
 use Core\Form\Admin\Language\Edit;
@@ -84,24 +86,10 @@ class AdminLanguagesController extends AbstractAdminController
      */
     public function indexAction()
     {
-        $currentPage = $this->request->getQuery('page', 'int', 1);
-        if ($currentPage < 1) {
-            $currentPage = 1;
+        $grid = new LanguageGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
         }
-
-        $builder = $this->modelsManager->createBuilder()
-            ->from('\Core\Model\Language');
-
-        $paginator = new QueryBuilder(
-            [
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $currentPage
-            ]
-        );
-
-        // Get the paginated results.
-        $this->view->paginator = $paginator->getPaginate();
     }
 
     /**
@@ -209,36 +197,12 @@ class AdminLanguagesController extends AbstractAdminController
             return $this->response->redirect(['for' => "admin-languages"]);
         }
 
-        $currentPage = $this->request->getQuery('page', 'int', 1);
-        if ($currentPage < 1) {
-            $currentPage = 1;
-        }
-
-        $search = $this->request->get('search');
-        if ($search != null) {
-            $builder = $this->modelsManager->createBuilder()
-                ->from(['t' => '\Core\Model\LanguageTranslation'])
-                ->where("t.original LIKE '%{$search}%'")
-                ->orWhere("t.translated LIKE '%{$search}%'");
-        } else {
-            $builder = $this->modelsManager->createBuilder()
-                ->from('\Core\Model\LanguageTranslation');
-        }
-
-        $paginator = new QueryBuilder(
-            [
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $currentPage
-            ]
-        );
-
-        // Get the paginated results.
-        $page = $paginator->getPaginate();
-
-        $this->view->paginator = $page;
-        $this->view->search = $search;
+        $this->view->search = $this->request->get('search');
         $this->view->lang = $item;
+        $grid = new LanguageTranslationGrid($this->view, $item);
+        if ($response = $grid->getResponse()) {
+            return $response;
+        }
     }
 
     /**

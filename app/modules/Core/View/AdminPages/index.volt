@@ -40,52 +40,8 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Pages' | trans }} ({{ paginator.items | length }})</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Title' | trans }}</th>
-                    <th>{{ 'Url' | trans }}</th>
-                    <th>{{ 'Layout' | trans }}</th>
-                    <th>{{ 'Controller' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ item.id }}
-                        </td>
-                        <td>
-                            {{ item.title }}
-                        </td>
-                        <td>
-                            {{ item.url }}
-                        </td>
-                        <td>
-                            {{ item.layout }}
-                        </td>
-                        <td>
-                            {{ item.controller }}
-                        </td>
-                        <td>
-                            {{ link_to(['for':'admin-pages-manage', 'id':item.id], 'Manage' | trans) }}
-                            {% if item.type is null %}
-                                {{ link_to(['for':'admin-pages-edit', 'id':item.id], 'Edit' | trans) }}
-                                {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                            {% elseif item.type is 'home' %}
-                                {{ link_to(['for':'admin-pages-edit', 'id':item.id], 'Edit' | trans) }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            <h2>{{ 'Menus' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <!--/row-->
-    </div><!--/span-->
-
+    </div>
 {% endblock %}

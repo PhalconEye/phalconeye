@@ -31,7 +31,7 @@ return array (
     'lifetime' => '86400',
     'prefix' => 'pe_',
     'adapter' => 'File',
-    'path' => ROOT_PATH . '/app/var/cache/data/',
+    'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
   ),
   'logger' => 
   array (
@@ -59,12 +59,12 @@ return array (
   'metadata' => 
   array (
     'adapter' => 'Files',
-    'path' => ROOT_PATH . '/app/var/cache/metadata/',
+    'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
   ),
   'annotations' => 
   array (
     'adapter' => 'Files',
-    'path' => ROOT_PATH . '/app/var/cache/annotations/',
+    'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
   ),
   'installed' => '0.4.0',
 );

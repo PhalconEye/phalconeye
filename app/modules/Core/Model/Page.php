@@ -43,6 +43,34 @@ use User\Model\User;
  */
 class Page extends AbstractModel
 {
+    const
+        /**
+         * Layout types.
+         */
+        LAYOUT_RIGHT_MIDDLE_LEFT = 'right_middle_left',
+        LAYOUT_MIDDLE_LEFT = 'middle_left',
+        LAYOUT_RIGHT_MIDDLE = 'right_middle',
+        LAYOUT_MIDDLE = 'middle',
+        LAYOUT_TOP_RIGHT_MIDDLE_LEFT = 'top_right_middle_left',
+        LAYOUT_TOP_MIDDLE_LEFT = 'top_middle_left',
+        LAYOUT_TOP_RIGHT_MIDDLE = 'top_right_middle',
+        LAYOUT_TOP_MIDDLE = 'top_middle',
+        LAYOUT_RIGHT_MIDDLE_LEFT_BOTTOM = 'right_middle_left_bottom',
+        LAYOUT_MIDDLE_LEFT_BOTTOM = 'middle_left_bottom',
+        LAYOUT_RIGHT_MIDDLE_BOTTOM = 'right_middle_bottom',
+        LAYOUT_MIDDLE_BOTTOM = 'middle_bottom';
+
+    const
+        /**
+         * Layout icon path
+         */
+        LAYOUT_ICON_PATH = 'assets/img/core/admin/content/',
+
+        /**
+         * Icon extension name.
+         */
+        LAYOUT_ICON_EXTENSION = '.png';
+
     /**
      * @Primary
      * @Identity
@@ -78,7 +106,7 @@ class Page extends AbstractModel
     /**
      * @Column(type="string", nullable=false, column="layout", size="50")
      */
-    public $layout = 'middle';
+    public $layout = self::LAYOUT_MIDDLE;
 
     /**
      * @Column(type="string", nullable=true, column="controller", size="50")
@@ -246,6 +274,16 @@ class Page extends AbstractModel
         if ($this->validationHasFailed() == true) {
             return false;
         }
+    }
+
+    /**
+     * Get page icon path.
+     *
+     * @return string
+     */
+    public function getLayoutIcon()
+    {
+        return self::LAYOUT_ICON_PATH . $this->layout . self::LAYOUT_ICON_EXTENSION;
     }
 
     /**

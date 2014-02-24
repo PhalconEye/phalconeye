@@ -864,7 +864,7 @@ form .form_elements .validation_failed select, {
   color: #fff;
 }
 
-.modal_loading {
+.loading_stage {
   background: black;
   opacity: 0.7;
   position: fixed;
@@ -875,7 +875,7 @@ form .form_elements .validation_failed select, {
   height: 100%;
 }
 
-.modal_loading span {
+.loading_stage span {
   background: url('/assets/img/core/loader/white.gif') no-repeat center center;
   display: block;
   width: 100%;
@@ -920,4 +920,67 @@ form .form_elements .validation_failed select, {
   position: absolute;
   cursor: default;
   z-index: 1100 !important;
+}
+
+/* GRID CSS */
+.grid-table th + th,
+.grid-table td + td {
+  border-left: 1px solid #ddd;
+}
+
+.grid-table .actions {
+  border-left: 1px solid #ddd;
+}
+
+.grid-filter {
+  display: none;
+}
+
+.grid-filter th {
+  vertical-align: middle;
+}
+
+.grid-filter th {
+  position: relative;
+}
+
+.grid-filter th input,
+.grid-filter th select, {
+  padding: 5px 2px;
+  margin: 0 0 0 -3px;
+  min-width: 10px;
+  max-width: 100%;
+  width: 100%;
+}
+
+.grid-filter input[type="text"] + .clear-filter {
+  background: url('/assets/img/core/grid/filter-clear.png') no-repeat;
+  background-size: 16px 16px;
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  top: 16px;
+  right: 12px;
+  cursor: pointer;
+  display: none;
+}
+
+.grid-table .grid-sortable {
+  display: block;
+}
+
+.grid-table .grid-sortable[data-direction="ASC"] {
+  background: url('/assets/img/core/misc/icon-chevron-up.png') no-repeat right center;
+  background-size: 12px 12px;
+}
+
+.grid-table .grid-sortable[data-direction="DESC"] {
+  background: url('/assets/img/core/misc/icon-chevron-down.png') no-repeat right center;
+  background-size: 12px 12px;
+}
+
+.grid-no-items {
+  text-align: center !important;
+  font-size: 16px;
+  font-style: italic;
 }

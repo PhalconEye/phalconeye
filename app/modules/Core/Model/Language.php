@@ -160,7 +160,7 @@ class Language extends AbstractModel
             $messages[$translation->original] = $translation->translated;
         }
 
-        $file = $config->application->cache->path . '../languages/' . $this->language . '.php';
+        $file = $config->application->cache->cacheDir . '../languages/' . $this->language . '.php';
         file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true) . ';');
     }
 }

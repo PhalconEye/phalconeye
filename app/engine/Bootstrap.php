@@ -20,6 +20,7 @@ namespace Engine;
 
 use Engine\Plugin\CacheAnnotation;
 use Engine\Plugin\DispatchErrorHandler;
+use Engine\View\Extension;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
@@ -101,10 +102,8 @@ abstract class Bootstrap implements BootstrapInterface
         $di->set(
             'view',
             function () use ($di, $moduleDirectory, $eventsManager, $config) {
-
                 $view = new View();
                 $view->setViewsDir($moduleDirectory . '/View/');
-
                 $view->registerEngines(
                     [
                         ".volt" =>
@@ -120,51 +119,7 @@ abstract class Bootstrap implements BootstrapInterface
                                 );
 
                                 $compiler = $volt->getCompiler();
-
-                                // Register helpers.
-                                $compiler->addFunction(
-                                    'helper',
-                                    function ($resolvedArgs) use ($di) {
-                                        return '\Engine\Helper::getInstance(' . $resolvedArgs . ')';
-                                    }
-                                );
-
-                                // Register other functions.
-                                $compiler->addFunction(
-                                    'classof',
-                                    function ($resolvedArgs) {
-                                        return 'get_class(' . $resolvedArgs . ')';
-                                    }
-                                );
-
-                                $compiler->addFunction(
-                                    'instanceof',
-                                    function ($resolvedArgs) {
-                                        $resolvedArgs = explode(',', $resolvedArgs);
-                                        $resolvedArgs[1] = trim(str_replace(["'", '"'], ['', ''], $resolvedArgs[1]));
-                                        return $resolvedArgs[0] . ' instanceof ' . $resolvedArgs[1];
-                                    }
-                                );
-
-                                $compiler->addFunction(
-                                    'resolveView',
-                                    function ($resolvedArgs, $params) {
-                                        $value = $params[0]['expr']['value'];
-                                        if (isset($params[1])) {
-                                            $value = '../../' .
-                                                ucfirst($params[1]['expr']['value']) . '/View/' . $value;
-                                        }
-                                        return "'" . $value . "'";
-                                    }
-                                );
-
-                                // Register other filters.
-                                $compiler->addFilter(
-                                    'trans',
-                                    function ($resolvedArgs) {
-                                        return '$this->trans->query(' . $resolvedArgs . ')';
-                                    }
-                                );
+                                $compiler->addExtension(new Extension());
 
                                 return $volt;
                             }
@@ -184,7 +139,7 @@ abstract class Bootstrap implements BootstrapInterface
                             }
                         }
                         if ($event->getType() == 'notFoundView') {
-                            $di->get('logger')->error('View not found - "' . $view->getActiveRenderPath() . '"');
+                            throw new Exception('View not found - "' . $view->getActiveRenderPath() . '"');
                         }
                     }
                 );

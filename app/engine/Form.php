@@ -18,12 +18,12 @@
 
 namespace Engine;
 
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
 use Engine\Form\AbstractElement;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FieldSetBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
-use Engine\Form\Behaviour\TranslationBehaviour;
 use Engine\Form\ConditionResolver;
 use Engine\Form\ElementContainerInterface;
 use Engine\Form\FieldSet;

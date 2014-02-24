@@ -19,7 +19,7 @@
 namespace Engine\Form;
 
 use Engine\Exception;
-use Engine\Form\Behaviour\TranslationBehaviour;
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Form;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;

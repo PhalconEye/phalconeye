@@ -99,4 +99,14 @@ abstract class AbstractModel extends PhalconModel
 
         return self::findFirst($parameters);
     }
+
+    /**
+     * Get identity.
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
 }

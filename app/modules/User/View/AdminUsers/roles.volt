@@ -40,49 +40,8 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Roles' | trans }} ({{ paginator.items | length }})</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Name' | trans }}</th>
-                    <th>{{ 'Description' | trans }}</th>
-                    <th>{{ 'Is default?' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ item.id }}
-                        </td>
-                        <td>
-                            {{ item.name }}
-                        </td>
-                        <td>
-                            {{ item.description }}
-                        </td>
-                        <td>
-                            {% if item.is_default %}
-                                {{ 'Yes' |trans }}
-                            {% else %}
-                                {{ 'No' |trans }}
-                            {% endif %}
-                        </td>
-                        <td>
-                            {{ link_to(['for':'admin-roles-edit', 'id':item.id], 'Edit' | trans) }}
-                            {% if not item.undeletable %}
-                                {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                            {% endif %}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            <h2>{{ 'Roles' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <!--/ row -->
-    </div><!--/span-->
-
+    </div>
 {% endblock %}

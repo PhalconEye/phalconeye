@@ -34,6 +34,19 @@ use Phalcon\Exception as PhalconException;
 class Exception extends PhalconException
 {
     /**
+     * Create exception.
+     *
+     * @param string     $message  Exception message.
+     * @param array      $args     Message arguments (for placeholders, sprintf).
+     * @param int        $code     Exception code.
+     * @param \Exception $previous Previous exception.
+     */
+    public function __construct($message = "", $args = [], $code = 0, \Exception $previous = null)
+    {
+        parent::__construct(vsprintf($message, $args), $code, $previous);
+    }
+
+    /**
      * Log error.
      *
      * @param string      $type    Type name.

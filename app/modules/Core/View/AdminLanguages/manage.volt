@@ -74,32 +74,7 @@
             </form>
         </div>
         <div class="language_manage_body">
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Original' | trans }}</th>
-                    <th>{{ 'Translated' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ item.original }}
-                        </td>
-                        <td>
-                            {{ item.translated }}
-                        </td>
-                        <td>
-                            {{ link_to(null, 'Edit' | trans, "onclick" : 'editItem(' ~ item.id ~ ');return false;') }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            {{ grid.render() }}
         </div>
     </div>
 

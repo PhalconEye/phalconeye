@@ -209,7 +209,7 @@ class Application extends PhalconApplication
         $di->set(
             'modules',
             function () use ($modules) {
-                return $modules;
+                return new \ArrayObject($modules); // @todo: change this to registry
             }
         );
 
@@ -347,23 +347,23 @@ class Application extends PhalconApplication
         };
 
         // Clear files cache.
-        $deleteFiles(glob($config->application->cache->path . '*'));
+        $deleteFiles(glob($config->application->cache->cacheDir . '*'));
 
         // Clear view cache.
         $deleteFiles(glob($config->application->view->compiledPath . '*'));
 
         // Clear metadata cache.
-        if ($config->application->metadata && $config->application->metadata->path) {
-            $deleteFiles(glob($config->application->metadata->path . '*'));
+        if ($config->application->metadata && $config->application->metadata->metaDataDir) {
+            $deleteFiles(glob($config->application->metadata->metaDataDir . '*'));
         }
 
         // Clear annotations cache.
-        if ($config->application->annotations && $config->application->annotations->path) {
-            $deleteFiles(glob($config->application->annotations->path . '*'));
+        if ($config->application->annotations && $config->application->annotations->annotationsDir) {
+            $deleteFiles(glob($config->application->annotations->annotationsDir . '*'));
         }
 
         // Clear assets.
-        $this->_dependencyInjector->getShared('assets')->clear();
+        $this->_dependencyInjector->getShared('assets')->clear(true);
     }
 
     /**
@@ -446,9 +446,10 @@ class Application extends PhalconApplication
         $di->set(
             'annotations',
             function () use ($config) {
-                if (!$config->application->debug && isset($config->annotations)) {
-                    $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->annotations->adapter;
-                    $adapter = new $annotationsAdapter($config->annotations->toArray());
+                if (!$config->application->debug && isset($config->application->annotations)) {
+                    $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->application->annotations->adapter;
+                    $adapter = new $annotationsAdapter($config->application->annotations->toArray());
+//                    $adapter = new Anot($config->application->annotations->toArray());
                 } else {
                     $adapter = new AnnotationsMemory();
                 }
@@ -496,13 +497,13 @@ class Application extends PhalconApplication
             $modules = $di->get('modules');
 
             // Use the annotations router.
-            $router = new \Phalcon\Mvc\Router\Annotations(true);
+            $router = new RouterAnnotations(true);
             $router->setDefaultModule(self::SYSTEM_DEFAULT_MODULE);
             $router->setDefaultNamespace(ucfirst(self::SYSTEM_DEFAULT_MODULE) . '\Controller');
             $router->setDefaultController("Index");
             $router->setDefaultAction("index");
 
-            //Read the annotations from controllers
+            // Read the annotations from controllers.
             foreach ($modules as $module) {
                 $moduleName = ucfirst($module);
 
@@ -525,7 +526,6 @@ class Application extends PhalconApplication
         }
 
         $di->set('router', $router);
-
         return $router;
     }
 

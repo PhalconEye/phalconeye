@@ -18,6 +18,8 @@
 
 namespace Core\Controller;
 
+use Core\Model\Settings;
+
 /**
  * Admin Index controller.
  *
@@ -27,8 +29,6 @@ namespace Core\Controller;
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
- *
- * @RoutePrefix("/admin")
  */
 class AdminIndexController extends AbstractAdminController
 {
@@ -37,7 +37,7 @@ class AdminIndexController extends AbstractAdminController
      *
      * @return void
      *
-     * @Get("/", name="admin-home")
+     * @Get("/admin", name="admin-home")
      */
     public function indexAction()
     {
@@ -50,7 +50,7 @@ class AdminIndexController extends AbstractAdminController
      *
      * @return void
      *
-     * @Get("/mode", name="admin-mode")
+     * @Get("/admin/mode", name="admin-mode")
      */
     public function modeAction()
     {
@@ -58,6 +58,7 @@ class AdminIndexController extends AbstractAdminController
         $this->config->application->debug = (bool)$this->request->get('debug', null, true);
         $this->config->save();
         $this->app->clearCache();
+        $this->assets->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
     }
 }
 

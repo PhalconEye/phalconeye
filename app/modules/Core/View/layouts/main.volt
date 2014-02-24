@@ -36,7 +36,7 @@
 <div id="wrapper">
     <div id="header" class="container">
         {% if disableHeader is not defined %}
-        {{ helper('renderer', 'core').renderContent('header', 'partials/layout') }}
+        {{ helper('renderer', 'core').renderContent('header', resolveView("partials/layout", 'core')) }}
         {% endif %}
 
         {%- block header -%}
@@ -54,7 +54,7 @@
 
     <div id="footer" class="container">
         {% if disableFooter is not defined %}
-        {{ helper('renderer', 'core').renderContent('footer', 'partials/layout') }}
+        {{ helper('renderer', 'core').renderContent('footer', resolveView("partials/layout", 'core')) }}
         {% endif %}
         {%- block footer -%}
         {%- endblock -%}

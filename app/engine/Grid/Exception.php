@@ -16,33 +16,20 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form\Behaviour;
+namespace Engine\Grid;
 
-use Engine\DependencyInjection;
-use Phalcon\DI;
+use Engine\Exception as EngineException;
 
 /**
- * Form translation trait.
+ * Grid exception class.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Engine
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait TranslationBehaviour
+class Exception extends EngineException
 {
-    /**
-     * Translate message.
-     *
-     * @param string     $msg  Message to translate.
-     * @param array|null $args Message placeholder values.
-     *
-     * @return string
-     */
-    protected function _($msg, $args = null)
-    {
-        return $this->getDI()->get('trans')->_($msg, $args);
-    }
 }

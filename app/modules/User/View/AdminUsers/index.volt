@@ -39,50 +39,10 @@
 {% endblock %}
 
 {% block content %}
-
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Users' | trans }} ({{ paginator.items | length }})</h2>
-            <table class="table">
-                <thead>
-                <tr>
-                    <th>{{ 'Id' | trans }}</th>
-                    <th>{{ 'Username' | trans }}</th>
-                    <th>{{ 'Email' | trans }}</th>
-                    <th>{{ 'Role' | trans }}</th>
-                    <th>{{ 'Creation Date' | trans }}</th>
-                    <th>{{ 'Options' | trans }}</th>
-                </tr>
-                </thead>
-                <tbody>
-                {% for item in paginator.items %}
-                    <tr>
-                        <td>
-                            {{ link_to(['for':'admin-users-view', 'id':item.id], item.id) }}
-                        </td>
-                        <td>
-                            {{ item.username }}
-                        </td>
-                        <td>
-                            {{ item.email }}
-                        </td>
-                        <td>
-                            {{ item.getRole().name }}
-                        </td>
-                        <td>
-                            {{ item.creation_date }}
-                        </td>
-                        <td>
-                            {{ link_to(['for':'admin-users-edit', 'id':item.id], 'Edit' | trans) }}
-                            {{ link_to(null, 'Delete' | trans, "onclick": 'deleteItem('~ item.id ~');return false;') }}
-                        </td>
-                    </tr>
-                {% endfor %}
-                </tbody>
-            </table>
-            {{ partial("paginator") }}
+            <h2>{{ 'Users' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <!--/ row -->
-    </div><!--/span-->
-
+    </div>
 {% endblock %}

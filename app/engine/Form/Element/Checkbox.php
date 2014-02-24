@@ -19,7 +19,7 @@
 namespace Engine\Form\Element;
 
 use Engine\Form\AbstractElement;
-use Engine\Form\Behaviour\TranslationBehaviour;
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Form\ElementInterface;
 
 /**

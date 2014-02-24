@@ -59,7 +59,7 @@ class User extends AbstractModel
     public $role_id;
 
     /**
-     * @Index("USERNAME_INDEX")
+     * @Index("ix_username")
      * @Column(type="string", nullable=false, column="username", size="255")
      */
     public $username;
@@ -70,7 +70,7 @@ class User extends AbstractModel
     public $password;
 
     /**
-     * @Index("EMAIL_INDEX")
+     * @Index("ix_email")
      * @Column(type="string", nullable=false, column="email", size="150")
      */
     public $email;

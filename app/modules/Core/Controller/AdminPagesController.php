@@ -18,6 +18,7 @@
 
 namespace Core\Controller;
 
+use Core\Controller\Grid\Admin\PageGrid;
 use Core\Form\Admin\Page\Create as CreateForm;
 use Core\Form\Admin\Page\Edit as EditForm;
 use Core\Model\Page;
@@ -26,7 +27,6 @@ use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
-use Phalcon\Paginator\Adapter\QueryBuilder;
 use User\Model\Role;
 
 /**
@@ -77,25 +77,16 @@ class AdminPagesController extends AbstractAdminController
     /**
      * Controller index.
      *
-     * @return void
+     * @return void|ResponseInterface
      *
      * @Get("/", name="admin-pages")
      */
     public function indexAction()
     {
-        $builder = $this->modelsManager->createBuilder()
-            ->from('\Core\Model\Page');
-
-        $paginator = new QueryBuilder(
-            array(
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $this->request->getQuery('page', 'int', 1)
-            )
-        );
-
-        // Get the paginated results.
-        $this->view->paginator = $paginator->getPaginate();
+        $grid = new PageGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
+        }
     }
 
     /**

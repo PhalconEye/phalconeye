@@ -30,8 +30,12 @@
     <div class="pagination">
         <ul>
             {% if paginator.current > 1 %}
-                <li><a href="{{ helper('url').paginatorUrl() }}">{{ 'First' |trans }}</a></li>
-                <li><a href="{{ helper('url').paginatorUrl(paginator.before) }}">&laquo;</a></li>
+                <li>
+                    <a href="{{ helper('url').paginatorUrl() }}" data-page="1">{{ 'First' |trans }}</a>
+                </li>
+                <li>
+                    <a href="{{ helper('url').paginatorUrl(paginator.before) }}" data-page="{{ paginator.before }}">&laquo;</a>
+                </li>
             {% endif %}
 
             {% for pageIndex in startIndex..paginator.total_pages %}
@@ -39,13 +43,18 @@
                     {% break %}
                 {% endif %}
 
-                <li {% if pageIndex is paginator.current %}class="active"{% endif %}><a
-                       href="{{ helper('url').paginatorUrl(pageIndex) }}">{{ pageIndex }}</a></li>
+                <li {% if pageIndex is paginator.current %}class="active"{% endif %}>
+                    <a href="{{ helper('url').paginatorUrl(pageIndex) }}" data-page="{{ pageIndex }}">{{ pageIndex }}</a>
+                </li>
             {% endfor %}
 
             {% if paginator.current < paginator.total_pages %}
-                <li><a href="{{ helper('url').paginatorUrl(paginator.current + 1) }}">&raquo;</a></li>
-                <li><a href="{{ helper('url').paginatorUrl(paginator.last ) }}">{{ 'Last' |trans }}</a></li>
+                <li>
+                    <a href="{{ helper('url').paginatorUrl(paginator.current + 1) }}" data-page="{{ paginator.current + 1 }}">&raquo;</a>
+                </li>
+                <li>
+                    <a href="{{ helper('url').paginatorUrl(paginator.last ) }}" data-page="{{ paginator.last }}">{{ 'Last' |trans }}</a>
+                </li>
             {% endif %}
         </ul>
     </div>

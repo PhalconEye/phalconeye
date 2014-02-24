@@ -36,7 +36,11 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Url getUrl()
  * @method \Phalcon\Logger\Adapter getLogger($file = 'main', $format = null)
  * @method \Phalcon\Http\Request getRequest()
+ * @method \Phalcon\Http\Response getResponse()
  * @method \Phalcon\Annotations\Adapter getAnnotations()
+ * @method \Phalcon\Mvc\Router getRouter()
+ * @method \Phalcon\Mvc\View getView()
+ * @method \Phalcon\Db\Adapter\Pdo\Mysql getDb()
  */
 trait DependencyInjection
 {
@@ -50,7 +54,7 @@ trait DependencyInjection
     /**
      * Create object.
      *
-     * @param DiInterface $di Dependency injection container.
+     * @param DiInterface|DependencyInjection $di Dependency injection container.
      */
     public function __construct($di = null)
     {

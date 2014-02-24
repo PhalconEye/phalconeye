@@ -20,7 +20,7 @@ namespace Engine\Form\Element;
 
 use Engine\Form;
 use Engine\Form\AbstractElement;
-use Engine\Form\Behaviour\TranslationBehaviour;
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Form\ElementInterface;
 use Engine\Form\Exception;
 
@@ -85,7 +85,10 @@ class Select extends AbstractElement implements ElementInterface
      */
     public function getAllowedOptions()
     {
-        return array_merge(parent::getAllowedOptions(), ['elementOptions', 'disabledOptions', 'using']);
+        return array_merge(
+            parent::getAllowedOptions(),
+            ['elementOptions', 'disabledOptions', 'using', 'hasEmptyValue']
+        );
     }
 
     /**
@@ -137,10 +140,16 @@ class Select extends AbstractElement implements ElementInterface
      */
     public function render()
     {
-        $elementOptions = $this->getOption('elementOptions');
+        $elementOptions = $this->getOption('elementOptions', []);
         $disabledOptions = $this->getOption('disabledOptions', []);
-
         $content = '';
+
+        if ($this->getOption('hasEmptyValue')) {
+            $content .= sprintf(
+                '<option></option>'
+            );
+        }
+
         foreach ($elementOptions as $key => $value) {
             $content .= sprintf(
                 '<option value="%s"%s%s>%s</option>',

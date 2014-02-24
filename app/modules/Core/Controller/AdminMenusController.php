@@ -18,6 +18,7 @@
 
 namespace Core\Controller;
 
+use Core\Controller\Grid\Admin\MenuGrid;
 use Core\Form\Admin\Menu\Create;
 use Core\Form\Admin\Menu\CreateItem;
 use Core\Form\Admin\Menu\Edit;
@@ -77,31 +78,16 @@ class AdminMenusController extends AbstractAdminController
     /**
      * Init controller.
      *
-     * @return void
+     * @return void|ResponseInterface
      *
      * @Get("/", name="admin-menus")
      */
     public function indexAction()
     {
-        $currentPage = $this->request->getQuery('page', 'int', 1);
-        if ($currentPage < 1) {
-            $currentPage = 1;
+        $grid = new MenuGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
         }
-
-        $builder = $this->modelsManager->createBuilder()
-            ->from('\Core\Model\Menu');
-
-        $paginator = new QueryBuilder(
-            [
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $currentPage
-            ]
-        );
-
-        // Get the paginated results.
-        $page = $paginator->getPaginate();
-        $this->view->paginator = $page;
     }
 
     /**
@@ -121,7 +107,6 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $this->flashSession->success('New object created successfully!');
-
         return $this->response->redirect(['for' => "admin-menus-manage", 'id' => $form->getEntity()->id]);
     }
 
@@ -149,7 +134,6 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $this->flashSession->success('Object saved!');
-
         return $this->response->redirect(['for' => "admin-menus"]);
     }
 

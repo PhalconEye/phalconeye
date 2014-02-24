@@ -31,7 +31,7 @@ return [
             'lifetime' => '86400',
             'prefix' => 'pe_',
             'adapter' => 'File',
-            'path' => ROOT_PATH . '/app/var/cache/data/',
+            'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
         ],
     'logger' =>
         [
@@ -59,11 +59,11 @@ return [
     'metadata' =>
         [
             'adapter' => 'Files',
-            'path' => ROOT_PATH . '/app/var/cache/metadata/',
+            'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
         ],
     'annotations' =>
         [
             'adapter' => 'Files',
-            'path' => ROOT_PATH . '/app/var/cache/annotations/',
+            'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
         ]
 ];

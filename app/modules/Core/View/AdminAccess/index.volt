@@ -19,42 +19,11 @@
 
 {% block title %}{{ "Access Rights"|trans }}{% endblock %}
 {% block content %}
-<div class="span12">
-    <div class="row-fluid">
-        <div class="languages_header">
-            <h2>{{ 'Available resources' | trans }}</h2>
-            <div class="clear"></div>
+    <div class="span12">
+        <div class="row-fluid">
+            <h2>{{ 'Available resources' | trans }} ({{ grid.getTotalCount() }})</h2>
+            {{ grid.render() }}
         </div>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>{{ 'Resource Name' | trans }}</th>
-                <th>{{ 'Actions' | trans }}</th>
-                <th>{{ 'Options' | trans }}</th>
-                <th></th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for item in objects %}
-                <tr>
-                    <td>
-                        {{ item.name }}
-                    </td>
-                    <td>
-                        {{ item.actions }}
-                    </td>
-                    <td>
-                        {{ item.options }}
-                    </td>
-
-                    <td>
-                        {{ link_to('admin/access/edit?id='~item.name, 'Edit' | trans) }}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
     </div>
-</div>
 {% endblock %}
 

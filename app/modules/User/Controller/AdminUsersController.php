@@ -22,6 +22,8 @@ use Core\Controller\AbstractAdminController;
 use Engine\Form;
 use Engine\Navigation;
 use Phalcon\Paginator\Adapter\QueryBuilder;
+use User\Controller\Grid\Admin\RoleGrid;
+use User\Controller\Grid\Admin\UserGrid;
 use User\Form\Admin\Create as CreateForm;
 use User\Form\Admin\Edit as EditForm;
 use User\Form\Admin\RoleCreate as RoleCreateForm;
@@ -94,20 +96,10 @@ class AdminUsersController extends AbstractAdminController
      */
     public function indexAction()
     {
-        $builder = $this->modelsManager->createBuilder()
-            ->from('\User\Model\User');
-
-        $paginator = new QueryBuilder(
-            [
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $this->request->getQuery('page', 'int', 1)
-            ]
-        );
-
-        // Get the paginated results.
-        $page = $paginator->getPaginate();
-        $this->view->paginator = $page;
+        $grid = new UserGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
+        }
     }
 
     /**
@@ -223,20 +215,10 @@ class AdminUsersController extends AbstractAdminController
      */
     public function rolesAction()
     {
-        $builder = $this->modelsManager->createBuilder()
-            ->from('\User\Model\Role');
-
-        $paginator = new QueryBuilder(
-            [
-                "builder" => $builder,
-                "limit" => 25,
-                "page" => $this->request->getQuery('page', 'int', 1)
-            ]
-        );
-
-        // Get the paginated results.
-        $page = $paginator->getPaginate();
-        $this->view->paginator = $page;
+        $grid = new RoleGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
+        }
     }
 
     /**

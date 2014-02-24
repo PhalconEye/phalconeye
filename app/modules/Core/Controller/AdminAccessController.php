@@ -19,6 +19,7 @@
 namespace Core\Controller;
 
 use Core\Api\Acl;
+use Core\Controller\Grid\Admin\AccessGrid;
 use Core\Model\Access;
 use Engine\Form;
 use Phalcon\Http\ResponseInterface;
@@ -47,51 +48,23 @@ class AdminAccessController extends AbstractAdminController
      */
     public function indexAction()
     {
-        $resources = $this->core->acl()->getResources();
-        $objects = [];
-
-        $allActions = [];
-        $allObjects = [];
-
-        foreach ($resources as $resource) {
-
-            $object = $this->core->acl()->getObject($resource->getName());
-            if ($object == null) {
-                continue;
-            }
-
-            $allActions = array_merge($allActions, $object->actions, $object->options);
-            $allObjects[] = $resource->getName();
-
-            $object->actions = implode(', ', $object->actions);
-            $object->options = implode(', ', $object->options);
-
-            $objects[] = $object;
-
+        $grid = new AccessGrid($this->view);
+        if ($response = $grid->getResponse()) {
+            return $response;
         }
-
-        // Cleanup.
-        // Remove unused actions and options.
-        $this->modelsManager->executeQuery(
-            "DELETE FROM Core\\Model\\Access WHERE action NOT IN ('" .
-            implode("', '", $allActions) .
-            "') OR object NOT IN ('" .
-            implode("', '", $allObjects) . "')"
-        );
-
-        $this->view->objects = $objects;
     }
 
     /**
      * Edit access.
      *
+     * @param int $id Identity.
+     *
      * @return ResponseInterface|mixed|void
      *
-     * @Route("/edit", methods={"GET", "POST"}, name="admin-access-edit")
+     * @Route("/edit/{id:[a-zA-Z_-]+}", methods={"GET", "POST"}, name="admin-access-edit")
      */
-    public function editAction()
+    public function editAction($id)
     {
-        $id = $this->request->get('id');
         // Check current role change request.
         $changeRole = $this->request->get('role');
         if ($changeRole !== null) {

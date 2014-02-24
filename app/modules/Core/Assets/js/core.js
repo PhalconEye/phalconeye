@@ -65,6 +65,31 @@
     };
     CKEDITOR_BASEPATH = PhalconEye.baseUrl('external/ckeditor/');
 
+    //////////////////////////
+    // Public methods.
+    //////////////////////////
+    PhalconEye.core = {
+        /**
+         * Show loading image.
+         */
+        showLoadingStage: function () {
+            var bg = $('<div id="loading_stage" class="loading_stage"><span></span></div>');
+            $(window.document.body).append(bg);
+        },
+
+        /**
+         * Hide loading image.
+         */
+        hideLoadingStage: function () {
+            if ($('#loading_stage')) {
+                $('.loading_stage').remove();
+            }
+        }
+    };
+
+    //////////////////////////
+    // Initalization.
+    //////////////////////////
     _initHelpers();
     _initWidgets();
     $(function () {
@@ -125,6 +150,45 @@
             if (!(el instanceof  $))  el = $(el);
             $('html, body').animate({scrollTop: el.offset().top - 50}, 2000);
         };
+
+        /**
+         * Get url params.
+         * If no param provided - window.location.search will be used.
+         *
+         * @param url Get params from url.
+         * @returns {*}
+         */
+        helper.getUrlParams = function (url) {
+            if (!url) {
+                url = window.location.search;
+            }
+
+            var re = /([^&=]+)=?([^&]*)/g,
+                decode = function (str) {
+                    return decodeURIComponent(str.replace(/\+/g, ' '));
+                };
+
+            var params = {}, e;
+            if (url) {
+                if (url.substr(0, 1) == '?') {
+                    url = url.substr(1);
+                }
+
+                while (e = re.exec(url)) {
+                    var k = decode(e[1]);
+                    var v = decode(e[2]);
+                    if (params[k] !== undefined) {
+                        if (!$.isArray(params[k])) {
+                            params[k] = [params[k]];
+                        }
+                        params[k].push(v);
+                    } else {
+                        params[k] = v;
+                    }
+                }
+            }
+            return params;
+        }
     }
 
     /**

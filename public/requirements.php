@@ -36,10 +36,10 @@ if (version_compare(phpversion('phalcon'), PHALCON_VERSION_REQUIRED, '<')) {
 $checkPath = array(
     $this->_config->application->assets->local,
     $this->_config->application->logger->path,
-    $this->_config->application->cache->path,
+    $this->_config->application->cache->cacheDir,
     $this->_config->application->view->compiledPath,
-    $this->_config->application->metadata->path,
-    $this->_config->application->annotations->path,
+    $this->_config->application->metadata->metaDataDir,
+    $this->_config->application->annotations->annotationsDir,
     ROOT_PATH . '/app/var/cache/languages/',
     ROOT_PATH . '/app/var/temp'
 );

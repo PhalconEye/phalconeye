@@ -54,21 +54,8 @@ class Url extends Helper
     protected function _paginatorUrl($pageNumber = null)
     {
         $page = (!empty($pageNumber) ? $pageNumber : 1);
-        $vars = [];
-        $url = '/';
-        foreach ($_GET as $key => $get) {
-            if ($key == '_url') {
-                $url = $get;
-                continue;
-            }
-
-            if ($key == 'page') {
-                continue;
-            }
-
-            $vars[] = $key . '=' . $get;
-        }
-        unset($vars['_url']);
+        list ($url, $vars) = $this->_decomposeParams();
+        $url = '/' . $url;
 
         if (count($vars) == 0) {
             if ($page) {
@@ -83,5 +70,37 @@ class Url extends Helper
         }
 
         return sprintf('%s?%s%s', $url, implode('&', $vars), $page);
+    }
+
+    private function _decomposeParams($params = null)
+    {
+        $vars = [];
+        $url = '';
+
+        if (!$params) {
+            $params = $_GET;
+        }
+
+        foreach ($params as $key => $get) {
+            if (is_array($get)) {
+                list ($url1, $vars1) = $this->_decomposeParams($get);
+                $url .= $url1;
+                $vars += $vars1;
+
+                continue;
+            }
+            if ($key == '_url') {
+                $url = $get;
+                continue;
+            }
+
+            if ($key == 'page') {
+                continue;
+            }
+
+            $vars[] = $key . '=' . $get;
+        }
+
+        return array($url, $vars);
     }
 }

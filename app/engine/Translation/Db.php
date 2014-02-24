@@ -126,16 +126,15 @@ class Db implements AdapterInterface
             return $index;
         }
 
-        // cleanup
+        // Cleanup.
         $index = preg_replace('~[\r\n]+~', '', $index);
-
         $translation = $this->_get($index);
 
         if (!$translation) {
-            // remember this translation
+            // Remember this translation.
             $translationModel = $this->_translationModel;
             $translation = new $translationModel();
-            $translation->languageId = $this->_locale->id;
+            $translation->language_id = $this->_locale->id;
             $translation->original = $index;
             $translation->translated = $index;
             $translation->save();

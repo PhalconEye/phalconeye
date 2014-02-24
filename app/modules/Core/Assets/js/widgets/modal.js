@@ -38,10 +38,10 @@
              * @param data With data.
              */
             open: function (url, data) {
-                this.showLoadingStage();
+                PhalconEye.core.showLoadingStage();
                 $.get(url, data)
                     .done(function (html) {
-                        PhalconEye.widget.modal.hideLoadingStage();
+                        PhalconEye.core.hideLoadingStage();
                         var modalTemplate = $('<div id="modal" class="modal hide fade" tabindex="1" role="dialog" aria-labelledby="modal_label" aria-hidden="true">' + html + '</div>').filter('.modal');
                         modalTemplate.modal({
                             keyboard: false
@@ -80,30 +80,13 @@
             },
 
             /**
-             * Show loading image.
-             */
-            showLoadingStage: function () {
-                var bg = $('<div id="modal_loading" class="modal_loading"><span></span></div>');
-                $(window.document.body).append(bg);
-            },
-
-            /**
-             * Hide loading image.
-             */
-            hideLoadingStage: function () {
-                if ($('#modal_loading')) {
-                    $('#modal_loading').remove();
-                }
-            },
-
-            /**
              * Bind some submit events for modal form.
              */
             bindSubmit: function () {
                 // Set submitting.
                 $('#modal .btn-save').click(function () {
                     if ($('#modal form').length == 1) {
-                        PhalconEye.widget.modal.showLoadingStage();
+                        PhalconEye.core.showLoadingStage();
 
                         // Check ckeditor.
                         if (Object.keys(CKEDITOR.instances).length > 0) {
@@ -125,7 +108,7 @@
                 });
 
                 $('#modal form').submit(function () {
-                    PhalconEye.widget.modal.showLoadingStage();
+                    PhalconEye.core.showLoadingStage();
                     $('#modal .btn-save').click();
                     return false;
                 });
