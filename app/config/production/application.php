@@ -23,7 +23,7 @@
  */
 
 return [
-    'debug' => true,
+    'debug' => false,
     'profiler' => true,
     'baseUri' => '/',
     'cache' =>
@@ -44,7 +44,7 @@ return [
             'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
             'compiledExtension' => '.php',
             'compiledSeparator' => '_',
-            'compileAlways' => true,
+            'compileAlways' => false,
         ],
     'session' =>
         [

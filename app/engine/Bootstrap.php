@@ -108,11 +108,10 @@ abstract class Bootstrap implements BootstrapInterface
             $eventsManager->attach('dispatch:beforeExecuteRoute', new CacheAnnotation());
         }
 
-        // Create dispatcher
+        // Create dispatcher.
         $dispatcher = new Dispatcher();
         $dispatcher->setEventsManager($eventsManager);
         $di->set('dispatcher', $dispatcher);
-
     }
 
     /**
@@ -169,7 +168,7 @@ abstract class Bootstrap implements BootstrapInterface
                 "compiledPath" => $config->application->view->compiledPath,
                 "compiledExtension" => $config->application->view->compiledExtension,
                 'compiledSeparator' => $config->application->view->compiledSeparator,
-                'compileAlways' => $config->application->view->compileAlways
+                'compileAlways' => $config->application->debug && $config->application->view->compileAlways
             ]
         );
 

@@ -636,8 +636,8 @@ class Application extends PhalconApplication
             $adapterClass = 'Phalcon\Session\Adapter\\' . $config->application->session->adapter;
             $session = new $adapterClass($config->application->session->toArray());
         }
-        $session->start();
-        $di->set('session', $session, true);
+
+        $di->setShared('session', $session);
 
         return $session;
     }
@@ -661,8 +661,12 @@ class Application extends PhalconApplication
             $frontDataCache = new CacheData($frontEndOptions);
 
             // Cache:View.
-            $viewCache = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $di->set('viewCache', $viewCache, false);
+            $di->set(
+                'viewCache',
+                function () use ($cacheAdapter, $frontOutputCache, $backEndOptions) {
+                    return new $cacheAdapter($frontOutputCache, $backEndOptions);
+                }
+            );
 
             // Cache:Output.
             $cacheOutput = new $cacheAdapter($frontOutputCache, $backEndOptions);
