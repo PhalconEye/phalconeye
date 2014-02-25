@@ -72,6 +72,13 @@ class Url extends Helper
         return sprintf('%s?%s%s', $url, implode('&', $vars), $page);
     }
 
+    /**
+     * Decompose $_GET params to a url and vars.
+     *
+     * @param array|null $params Params to decompose.
+     *
+     * @return array
+     */
     private function _decomposeParams($params = null)
     {
         $vars = [];
