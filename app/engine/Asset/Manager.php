@@ -113,9 +113,10 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Collect css/js/img from modules.
         ///////////////////////////////////
-        foreach ($this->getDI()->get('modules') as $module) {
+        $registry = $this->getDI()->get('registry');
+        foreach ($registry->modules as $module) {
             // CSS
-            $assetsPath = $this->_config->directories->modules . ucfirst($module) . '/Assets/';
+            $assetsPath = $registry->directories->modules . ucfirst($module) . '/Assets/';
             $path = $location . 'css/' . $module . '/';
             FsUtilities::fsCheckLocation($path);
             $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');

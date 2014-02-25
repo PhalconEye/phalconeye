@@ -217,14 +217,14 @@ class AdminPackagesController extends AbstractAdminController
                 $this->app->clearCache();
 
                 // Register module in system to perform database update.
-                $modules = $this->getDI()->get('modules');
+                $modules = $this->getDI()->get('registry')->modules;
                 $loader = $this->getDI()->get('loader');
                 $modules[] = $manifest->name;
                 $moduleName = ucfirst($manifest->name);
 
                 // Register namespaces.
                 $namespaces = $loader->getNamespaces();
-                $namespaces[$moduleName] = $this->config->directories->modules . $moduleName;
+                $namespaces[$moduleName] = $this->getDI()->get('registry')->directories->modules . $moduleName;
                 $loader->registerNamespaces($namespaces);
                 $loader->register();
 

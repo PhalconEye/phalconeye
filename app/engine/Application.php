@@ -45,6 +45,7 @@ use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
 use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
+use Phalcon\Registry;
 use Phalcon\Session\Adapter as SessionAdapter;
 use Phalcon\Session\Adapter\Files as SessionFiles;
 
@@ -111,10 +112,14 @@ class Application extends PhalconApplication
      */
     public function __construct()
     {
-        // Create default DI.
+        /**
+         * Create default DI.
+         */
         $di = new DI\FactoryDefault();
 
-        // Get config.
+        /**
+         * Get config.
+         */
         $this->_config = Config::factory();
 
         if (!$this->_config->application->installed) {
@@ -122,9 +127,27 @@ class Application extends PhalconApplication
             require_once(PUBLIC_PATH . '/requirements.php');
         }
 
-        // Store config in the Di container.
-        $di->setShared('config', $this->_config);
+        /**
+         * Setup Registry.
+         */
+        $registry = new Registry();
+        $registry->modules = array_merge(
+            [self::SYSTEM_DEFAULT_MODULE, 'user'],
+            $this->_config->modules->toArray()
+        );
 
+        $registry->directories = (object)[
+            'engine' => ROOT_PATH . '/app/engine/',
+            'modules' => ROOT_PATH . '/app/modules/',
+            'plugins' => ROOT_PATH . '/app/plugins/',
+            'widgets' => ROOT_PATH . '/app/widgets/',
+            'libraries' => ROOT_PATH . '/app/libraries/'
+        ];
+
+        $di->set('registry', $registry);
+
+        // Store config in the DI container.
+        $di->setShared('config', $this->_config);
         parent::__construct($di);
     }
 
@@ -201,31 +224,20 @@ class Application extends PhalconApplication
      */
     protected function _initLoader($di, $config, $eventsManager)
     {
-        // Add default module and engine modules.
-        $modules = array_merge(
-            [self::SYSTEM_DEFAULT_MODULE, 'user'],
-            $this->_config->modules->toArray()
-        );
-        $di->set(
-            'modules',
-            function () use ($modules) {
-                return new \ArrayObject($modules); // @todo: change this to registry
-            }
-        );
-
         // Add all required namespaces and modules.
+        $registry = $di->get('registry');
         $namespaces = [];
         $bootstraps = [];
-        foreach ($modules as $module) {
+        foreach ($registry->modules as $module) {
             $moduleName = ucfirst($module);
-            $namespaces[$moduleName] = $this->_config->directories->modules . $moduleName;
+            $namespaces[$moduleName] = $registry->directories->modules . $moduleName;
             $bootstraps[$module] = $moduleName . '\Bootstrap';
         }
 
-        $namespaces['Engine'] = $config->directories->engine;
-        $namespaces['Plugin'] = $config->directories->plugins;
-        $namespaces['Widget'] = $config->directories->widgets;
-        $namespaces['Library'] = $config->directories->libraries;
+        $namespaces['Engine'] = $registry->directories->engine;
+        $namespaces['Plugin'] = $registry->directories->plugins;
+        $namespaces['Widget'] = $registry->directories->widgets;
+        $namespaces['Library'] = $registry->directories->libraries;
 
         $loader = new Loader();
         $loader->registerNamespaces($namespaces);
@@ -239,6 +251,64 @@ class Application extends PhalconApplication
         $di->set('loader', $loader);
 
         return $loader;
+    }
+
+
+    /**
+     * Init environment.
+     *
+     * @param DI     $di     Dependency Injection.
+     * @param Config $config Config object.
+     *
+     * @return Url
+     */
+    protected function _initEnvironment($di, $config)
+    {
+        set_error_handler(
+            function ($errorCode, $errorMessage, $errorFile, $errorLine) {
+                throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
+            }
+        );
+
+        set_exception_handler(
+            function ($e) use ($di) {
+                $errorId = Exception::logError(
+                    'Exception',
+                    $e->getMessage(),
+                    $e->getFile(),
+                    $e->getLine(),
+                    $e->getTraceAsString()
+                );
+
+                if ($di->get('app')->isConsole()) {
+                    echo 'Error <' . $errorId . '>: ' . $e->getMessage();
+                    return true;
+                }
+
+                if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
+                    $p = new PrettyExceptions();
+                    $p->setBaseUri('/assets/js/core/pretty-exceptions/');
+                    return $p->handleException($e);
+                }
+
+                return true;
+            }
+        );
+
+        if ($config->application->debug && $config->application->profiler && $config->application->installed) {
+            $profiler = new Profiler();
+            $di->set('profiler', $profiler);
+        }
+
+        /**
+         * The URL component is used to generate all kind of urls in the
+         * application
+         */
+        $url = new Url();
+        $url->setBaseUri($config->application->baseUri);
+        $di->set('url', $url);
+
+        return $url;
     }
 
     /**
@@ -377,63 +447,6 @@ class Application extends PhalconApplication
     }
 
     /**
-     * Init environment.
-     *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
-     *
-     * @return Url
-     */
-    protected function _initEnvironment($di, $config)
-    {
-        set_error_handler(
-            function ($errorCode, $errorMessage, $errorFile, $errorLine) {
-                throw new \ErrorException($errorMessage, $errorCode, 1, $errorFile, $errorLine);
-            }
-        );
-
-        set_exception_handler(
-            function ($e) use ($di) {
-                $errorId = Exception::logError(
-                    'Exception',
-                    $e->getMessage(),
-                    $e->getFile(),
-                    $e->getLine(),
-                    $e->getTraceAsString()
-                );
-
-                if ($di->get('app')->isConsole()) {
-                    echo 'Error <' . $errorId . '>: ' . $e->getMessage();
-                    return true;
-                }
-
-                if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
-                    $p = new PrettyExceptions();
-                    $p->setBaseUri('/assets/js/core/pretty-exceptions/');
-                    return $p->handleException($e);
-                }
-
-                return true;
-            }
-        );
-
-        if ($config->application->debug && $config->application->profiler && $config->application->installed) {
-            $profiler = new Profiler();
-            $di->set('profiler', $profiler);
-        }
-
-        /**
-         * The URL component is used to generate all kind of urls in the
-         * application
-         */
-        $url = new Url();
-        $url->setBaseUri($config->application->baseUri);
-        $di->set('url', $url);
-
-        return $url;
-    }
-
-    /**
      * Init annotations.
      *
      * @param DI     $di     Dependency Injection.
@@ -494,7 +507,7 @@ class Application extends PhalconApplication
             $saveToCache = ($router === null);
 
             // Load all controllers of all modules for routing system.
-            $modules = $di->get('modules');
+            $modules = $di->get('registry')->modules;
 
             // Use the annotations router.
             $router = new RouterAnnotations(true);
@@ -508,7 +521,7 @@ class Application extends PhalconApplication
                 $moduleName = ucfirst($module);
 
                 // Get all file names.
-                $files = scandir($config->directories->modules . $moduleName . '/Controller');
+                $files = scandir($di->get('registry')->directories->modules . $moduleName . '/Controller');
 
                 // Iterate files.
                 foreach ($files as $file) {
@@ -740,7 +753,7 @@ class Application extends PhalconApplication
      */
     protected function _initEngine($di)
     {
-        foreach ($di->get('modules') as $module) {
+        foreach ($di->get('registry')->modules as $module) {
             // Initialize module api.
             $di->setShared(
                 strtolower($module),

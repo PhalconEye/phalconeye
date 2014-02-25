@@ -140,14 +140,14 @@ class Manager
      */
     public function getPackageLocation($package)
     {
-        $config = $this->getDI()->get('config');
+        $registry = $this->getDI()->get('registry');
 
         // Check additionally module option.
         if ($package instanceof AbstractPackage) {
             $type = $package->type;
             $data = $package->getData();
             if (!empty($data['module'])) {
-                $path = $config->directories->modules . ucfirst($data['module']) . '/Widget/';
+                $path = $registry->directories->modules . ucfirst($data['module']) . '/Widget/';
                 return str_replace('/', DS, $path);
             }
         } else {
@@ -155,11 +155,11 @@ class Manager
         }
 
         $locations = [
-            self::PACKAGE_TYPE_MODULE => $config->directories->modules,
-            self::PACKAGE_TYPE_PLUGIN => $config->directories->plugins,
+            self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
+            self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
             self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
-            self::PACKAGE_TYPE_WIDGET => $config->directories->widgets,
-            self::PACKAGE_TYPE_LIBRARY => $config->directories->libraries
+            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets,
+            self::PACKAGE_TYPE_LIBRARY => $registry->directories->libraries
         ];
         if (isset($locations[$type])) {
             // fix crossplatform issue directories paths that saved in config.

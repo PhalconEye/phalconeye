@@ -121,7 +121,7 @@ abstract class Bootstrap implements BootstrapInterface
      */
     public function getModuleDirectory()
     {
-        return $this->_config->directories->modules . $this->_moduleName;
+        return $this->getDI()->get('registry')->directories->modules . $this->_moduleName;
     }
 
     /**

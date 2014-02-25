@@ -68,14 +68,14 @@ class Cli extends Application
     {
         // Get engine commands.
         $this->_getCommandsFrom(
-            $this->_config->directories->engine . '/Console/Command',
+            $this->getDI()->get('registry')->directories->engine . '/Console/Command',
             'Engine\Console\Command\\'
         );
 
         // Get modules commands.
-        foreach ($this->getDI()->get('modules') as $module) {
+        foreach ($this->getDI()->get('registry')->modules as $module) {
             $module = ucfirst($module);
-            $path = $this->_config->directories->modules . $module . '/Command';
+            $path = $this->getDI()->get('registry')->directories->modules . $module . '/Command';
             $namespace = $module . '\Command\\';
             $this->_getCommandsFrom($path, $namespace);
         }

@@ -164,9 +164,10 @@ class Schema
     public function getAllModels()
     {
         $modelsInfo = [];
-        foreach ($this->getDI()->get('modules') as $module) {
+        $registry = $this->getDI()->get('registry');
+        foreach ($registry->modules as $module) {
             $module = ucfirst($module);
-            $modelsDirectory = $this->getDI()->get('config')->directories->modules . $module . '/Model';
+            $modelsDirectory = $registry->directories->modules . $module . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelsInfo[] = [
                     'class' => '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath)),

@@ -210,9 +210,10 @@ class Metadata
     public function getAllModelsMetadata(DiInterface $di)
     {
         $models = [];
-        foreach ($di->get('modules') as $module) {
+        $registry = $di->get('registry');
+        foreach ($registry->modules as $module) {
             $module = ucfirst($module);
-            $modelsDirectory = $di->get('config')->directories->modules . $module . '/Model';
+            $modelsDirectory = $registry->directories->modules . $module . '/Model';
             foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
                 $modelInfo = [];
                 $modelClass = '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath));

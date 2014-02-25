@@ -196,7 +196,7 @@ class AdminPagesController extends AbstractAdminController
             ->where("t.enabled = :enabled:", ['enabled' => 1]);
         $widgets = $query->getQuery()->execute();
 
-        $modulesDefinition = $this->getDI()->get('modules');
+        $modulesDefinition = $this->getDI()->get('registry')->modules;
         $modules = [];
         foreach ($modulesDefinition as $module) {
             $modules[$module] = ucfirst($module);
