@@ -27,6 +27,7 @@ use Core\Form\CoreForm;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Widget;
+use Engine\Db\Schema;
 use Engine\Exception;
 use Engine\Navigation;
 use Engine\Package\Manager;
@@ -214,6 +215,31 @@ class AdminPackagesController extends AbstractAdminController
                 // Run module install script.
                 $newPackageVersion = $packageManager->runInstallScript($manifest);
                 $this->app->clearCache();
+
+                // Register module in system to perform database update.
+                $modules = $this->getDI()->get('modules');
+                $loader = $this->getDI()->get('loader');
+                $modules[] = $manifest->name;
+                $moduleName = ucfirst($manifest->name);
+
+                // Register namespaces.
+                $namespaces = $loader->getNamespaces();
+                $namespaces[$moduleName] = $this->config->directories->modules . $moduleName;
+                $loader->registerNamespaces($namespaces);
+                $loader->register();
+
+                // Register module in app
+                $this->getDI()->get('app')->registerModules([$manifest->name => $moduleName . '\Bootstrap']);
+                $this->getDI()->set(
+                    'modules',
+                    function () use ($modules) {
+                        return new \ArrayObject($modules); // @todo: change this to registry
+                    }
+                );
+
+                // Update database.
+                $schema = new Schema($this->getDI());
+                $schema->updateDatabase();
 
                 if ($manifest->isUpdate) {
                     $this->flash->success('Package updated to version ' . $newPackageVersion . '!');
@@ -492,6 +518,10 @@ class AdminPackagesController extends AbstractAdminController
                 $this->_removePackageConfig($package);
                 $packageManager->generateMetadata(Package::find());
                 $this->app->clearCache();
+
+                // Update database.
+                $schema = new Schema($this->getDI());
+                $schema->updateDatabase(true);
 
                 $this->flashSession->success('Package "' . $name . '" removed!');
             } catch (PackageException $e) {

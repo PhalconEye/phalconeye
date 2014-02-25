@@ -123,12 +123,13 @@ abstract class AbstractCommand implements CommandInterface
         // Run command action.
         $actionParams = [];
         if (!empty($this->_actions[$actionName]['params'])) {
-            foreach ($this->_actions[$actionName]['params'] as $param) {
+            foreach ($this->_actions[$actionName]['params'] as $key => $param) {
                 if (!$this->hasParameter($param['name'])) {
+                    $actionParams[$key] = null;
                     continue;
                 }
 
-                $actionParams[] = $this->getParameter($param['name']);
+                $actionParams[$key] = $this->getParameter($param['name']);
             }
         }
         return call_user_func_array([$this, $action], $actionParams);

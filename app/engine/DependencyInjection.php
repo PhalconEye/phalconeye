@@ -41,6 +41,7 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Router getRouter()
  * @method \Phalcon\Mvc\View getView()
  * @method \Phalcon\Db\Adapter\Pdo\Mysql getDb()
+ * @method \Phalcon\Config getConfig()
  */
 trait DependencyInjection
 {
