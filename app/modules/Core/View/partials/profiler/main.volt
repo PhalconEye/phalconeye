@@ -15,13 +15,13 @@
   +------------------------------------------------------------------------+
 #}
 
-{{ partial("window", ['name':'config', 'title':'Phalcon Eye Config', 'content':htmlConfig]) }}
-{{ partial("window", ['name':'router', 'title':'Router', 'content':htmlRouter]) }}
-{{ partial("window", ['name':'memory', 'title':'Memory', 'content':htmlMemory]) }}
-{{ partial("window", ['name':'time', 'title':'Time', 'content':htmlTime]) }}
-{{ partial("window", ['name':'files', 'title':'Files', 'content':htmlFiles]) }}
-{{ partial("window", ['name':'sql', 'title':'SQL', 'content':htmlSql]) }}
-{{ partial("window", ['name':'errors', 'title':'Errors', 'content':htmlErrors]) }}
+{{ partial("partials/profiler/window", ['name':'config', 'title':'Phalcon Eye Config', 'content':htmlConfig]) }}
+{{ partial("partials/profiler/window", ['name':'router', 'title':'Router', 'content':htmlRouter]) }}
+{{ partial("partials/profiler/window", ['name':'memory', 'title':'Memory', 'content':htmlMemory]) }}
+{{ partial("partials/profiler/window", ['name':'time', 'title':'Time', 'content':htmlTime]) }}
+{{ partial("partials/profiler/window", ['name':'files', 'title':'Files', 'content':htmlFiles]) }}
+{{ partial("partials/profiler/window", ['name':'sql', 'title':'SQL', 'content':htmlSql]) }}
+{{ partial("partials/profiler/window", ['name':'errors', 'title':'Errors', 'content':htmlErrors]) }}
 
 <div class="profiler">
     <div data-window="config" class="item"><img alt="Phalcon Eye Profiler" src="/favicon.ico"/></div>

@@ -637,8 +637,8 @@ class Application extends PhalconApplication
             $session = new $adapterClass($config->application->session->toArray());
         }
 
+        $session->start();
         $di->setShared('session', $session);
-
         return $session;
     }
 

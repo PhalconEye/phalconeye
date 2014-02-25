@@ -75,6 +75,7 @@ class Extension extends DI\Injectable
 
                 if (isset($params[2])) {
                     $value = $this->_resolveView($params[0]['expr']['value'], $params[2]['expr']['value']);
+                    $arguments = substr($arguments, 0, strripos($arguments, ','));
                 } else {
                     $value = $this->_resolveView(
                         $params[0]['expr']['value'],

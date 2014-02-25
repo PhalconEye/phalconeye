@@ -111,14 +111,13 @@ class Controller extends PhalconController
                 $this->view = $view = $this->di->get('view');
                 $view->pick('../../' . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action);
             } else {
-                //@todo: refactor this, it's not usable.
                 $config = $this->di->get('config');
 
                 /** @var \Phalcon\Mvc\View $view */
-                $this->view = $view = $this->di->get('view');
-                $view->pick($config->directories->widgets . $this->_widgetName . '/' . $action);
+                $this->view = $view = clone $this->di->get('view');
+                $view->setVars([], false);
+                $view->setViewsDir($config->directories->widgets . $this->_widgetName);
                 $view->pick($action);
-                $view->setLayout('widget');
             }
         }
 

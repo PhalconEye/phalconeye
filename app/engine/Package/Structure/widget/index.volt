@@ -10,9 +10,7 @@
    obtain it through the world-wide-web, please send an email
    to phalconeye@gmail.com so we can send you a copy immediately.
 #}
-
-%header%
-{% extends "../../../Core/View/layouts/widget.volt" %}
+{% extends "../../Core/View/layouts/widget.volt" %}
 
 {% block content %}
 

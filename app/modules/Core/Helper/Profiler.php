@@ -66,12 +66,13 @@ class Profiler extends Helper
 
         /** @var View $view */
         $view = $di->get('view');
-        $view->setPartialsDir('profiler/');
-        $view->disableLevel(View::LEVEL_LAYOUT);
-        $view->setMainView('profiler/layout');
-
         $render = function ($template, $params) use ($view) {
-            return $view->getRender('profiler', $template, $params);
+            ob_start();
+            $view->partial('partials/profiler/' . $template, $params);
+            $html = ob_get_contents();
+            ob_end_clean();
+
+            return $html;
         };
         $renderTitle = function ($title) use ($render) {
             return $render('title', ['title' => $title]);
@@ -100,7 +101,7 @@ class Profiler extends Helper
                 $html = '';
                 foreach ($source as $key => $data) {
                     if (is_array($data)) {
-                        $html .= '<br/>'. $renderTitle(ucfirst($key));
+                        $html .= '<br/>' . $renderTitle(ucfirst($key));
                         $html .= $renderConfigSection($data);
                     } else {
                         $html .= $renderElement(ucfirst($key), $data);

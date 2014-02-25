@@ -138,16 +138,15 @@ class Page extends AbstractModel
 
         $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', []);
 
-        // updating
+        // Updating.
         $existing_widgets = $this->getWidgets();
         $widgets_ids_to_remove = []; // widgets that we need to remove
-        // looping all exisitng widgets and looping new widgets
+        // looping all existing widgets and looping new widgets
         // looking for new, changed, and deleted actions
         /** @var Content $ex_widget */
         foreach ($existing_widgets as $ex_widget) {
             $founded = false; // indicates if widgets founded in new array
             $orders = [];
-
             foreach ($widgets as $item) {
                 if (empty($currentPageWidgets[$item['widget_index']])) {
                     continue;
@@ -174,9 +173,15 @@ class Page extends AbstractModel
             }
         }
 
-        // inserting
+        // Inserting.
         $orders = [];
         foreach ($widgets as $item) {
+            if (empty($orders[$item["layout"]])) {
+                $orders[$item["layout"]] = 0; // Inserting must have bigger priority.
+            } else {
+                $orders[$item["layout"]]++;
+            }
+
             if (empty($currentPageWidgets[$item['widget_index']])) {
                 if ($item['widget_index'] == 'NaN') {
                     // Insert with empty parameters.
@@ -191,12 +196,6 @@ class Page extends AbstractModel
                 continue;
             }
             $itemData = $currentPageWidgets[$item['widget_index']];
-
-            if (empty($orders[$item["layout"]])) {
-                $orders[$item["layout"]] = 1;
-            } else {
-                $orders[$item["layout"]]++;
-            }
 
             if ($itemData["id"] == 0) {
                 // Need to be inserted.

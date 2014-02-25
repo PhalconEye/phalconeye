@@ -57,8 +57,6 @@ abstract class AbstractController extends PhalconController
             $this->profiler->start();
         }
 
-        $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-
         $this->assets->set(
             'css',
             $this->assets->getEmptyCssCollection()

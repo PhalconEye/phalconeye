@@ -100,7 +100,13 @@ class UserGrid extends CoreGrid
                 'r.name',
                 'Role',
                 ['hasEmptyValue' => true, 'using' => ['name', 'name'], 'elementOptions' => Role::find()],
-                [self::COLUMN_PARAM_USE_HAVING => true]
+                [
+                    self::COLUMN_PARAM_USE_HAVING => true,
+                    self::COLUMN_PARAM_OUTPUT_LOGIC =>
+                        function (GridItem $item) {
+                            return $item['name'];
+                        }
+                ]
             )
             ->addTextColumn('u.creation_date', 'Creation Date');
     }

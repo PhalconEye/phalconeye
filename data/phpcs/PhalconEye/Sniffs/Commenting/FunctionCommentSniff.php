@@ -54,7 +54,7 @@ class PhalconEye_Sniffs_Commenting_FunctionCommentSniff extends PEAR_Sniffs_Comm
 
         // a comment is not required on protected/private methods
         $method = $phpcsFile->getMethodProperties($stackPtr);
-        $commentRequired = 'public' == $method['scope'];
+        $commentRequired = in_array($method['scope'], array('public', 'protected', 'private'));
 
         if (($code === T_COMMENT && !$commentRequired)
             || ($code !== T_DOC_COMMENT && !$commentRequired)

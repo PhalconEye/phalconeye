@@ -25,8 +25,8 @@ use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Mvc\View;
 
 /**
  * Bootstrap class.
@@ -154,13 +154,20 @@ abstract class Bootstrap implements BootstrapInterface
         return $this->_moduleName;
     }
 
+    /**
+     * Init view.
+     *
+     * @return View
+     */
     protected function _initView()
     {
         $di = $this->getDI();
         $config = $this->_config;
 
         $view = new View();
-        $view->setViewsDir($this->getModuleDirectory() . '/View/');
+        $view
+            ->setRenderLevel(View::LEVEL_ACTION_VIEW)
+            ->setViewsDir($this->getModuleDirectory() . '/View/');
 
         $volt = new Volt($view, $di);
         $volt->setOptions(
