@@ -68,7 +68,7 @@ class Performance extends CoreForm
             /**
              * File options
              */
-            ->addText('path', 'Files location', null, ROOT_PATH . '/app/var/cache/data/')
+            ->addText('cacheDir', 'Files location', null, ROOT_PATH . '/app/var/cache/data/')
 
             /**
              * Memcached options.
@@ -115,7 +115,7 @@ class Performance extends CoreForm
         }
 
         if (isset($data['adapter']) && $data['adapter'] == '0') {
-            if (empty($data['path']) || !is_dir($data['path'])) {
+            if (empty($data['cacheDir']) || !is_dir($data['cacheDir'])) {
                 $this->addError('Files location isn\'t correct!');
 
                 return false;
@@ -137,7 +137,7 @@ class Performance extends CoreForm
         /**
          * Files conditions.
          */
-        $content->setCondition('path', 'adapter', 0);
+        $content->setCondition('cacheDir', 'adapter', 0);
 
         /**
          * Memcached conditions.

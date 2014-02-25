@@ -82,7 +82,7 @@ class AdminPerformanceController extends AbstractAdminController
         switch ($data['adapter']) {
             case 0:
                 $cacheData['adapter'] = 'File';
-                $cacheData['path'] = $data['path'];
+                $cacheData['cacheDir'] = $data['cacheDir'];
                 break;
             case 1:
                 $cacheData['adapter'] = 'Memcache';

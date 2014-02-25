@@ -15,55 +15,56 @@
 */
 
 /**
- * WARNING
- *
- * Manual changes to this file may cause a malfunction of the system.
- * Be careful when changing settings!
- *
- */
+* WARNING
+*
+* Manual changes to this file may cause a malfunction of the system.
+* Be careful when changing settings!
+*
+*/
 
-return [
-    'debug' => false,
-    'profiler' => true,
-    'baseUri' => '/',
-    'cache' =>
-        [
-            'lifetime' => '86400',
-            'prefix' => 'pe_',
-            'adapter' => 'File',
-            'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
-        ],
-    'logger' =>
-        [
-            'enabled' => true,
-            'path' => ROOT_PATH . '/app/var/logs/',
-            'format' => '[%date%][%type%] %message%',
-        ],
-    'view' =>
-        [
-            'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
-            'compiledExtension' => '.php',
-            'compiledSeparator' => '_',
-            'compileAlways' => false,
-        ],
-    'session' =>
-        [
-            'adapter' => 'Files',
-            'uniqueId' => 'PhalconEye'
-        ],
-    'assets' =>
-        [
-            'local' => 'assets/',
-            'remote' => false,
-        ],
-    'metadata' =>
-        [
-            'adapter' => 'Files',
-            'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
-        ],
-    'annotations' =>
-        [
-            'adapter' => 'Files',
-            'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
-        ]
-];
+return array (
+  'debug' => false,
+  'profiler' => false,
+  'baseUri' => '/',
+  'cache' => 
+  array (
+    'lifetime' => '86400',
+    'prefix' => 'pe_',
+    'adapter' => 'File',
+    'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
+  ),
+  'logger' => 
+  array (
+    'enabled' => true,
+    'path' => ROOT_PATH . '/app/var/logs/',
+    'format' => '[%date%][%type%] %message%',
+  ),
+  'view' => 
+  array (
+    'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
+    'compiledExtension' => '.php',
+    'compiledSeparator' => '_',
+    'compileAlways' => false,
+  ),
+  'session' => 
+  array (
+    'adapter' => 'Files',
+    'uniqueId' => 'PhalconEye',
+  ),
+  'assets' => 
+  array (
+    'local' => 'assets/',
+    'remote' => false,
+  ),
+  'metadata' => 
+  array (
+    'adapter' => 'Files',
+    'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
+  ),
+  'annotations' => 
+  array (
+    'adapter' => 'Files',
+    'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
+  ),
+  'installed' => '0.4.0',
+);
