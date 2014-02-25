@@ -90,7 +90,7 @@ class LanguageTranslationGrid extends CoreGrid
             'Edit' => ['attr' => ['onclick' => 'editItem(' . $item['id'] . ');return false;']],
             'Delete' => [
                 'attr' =>
-                    ['onclick' => 'deleteItem(' . $item['id'] . ');return false;', 'attr' => ['class' => 'grid-delete']]
+                    ['onclick' => 'deleteItem(' . $item['id'] . ');return false;', 'class' => 'grid-delete']
             ]
         ];
     }
