@@ -113,6 +113,10 @@
                     return false;
                 });
 
+                $('#modal').on('hidden', function () {
+                    PhalconEye.core.hideLoadingStage();
+                });
+
                 // Ckeditor save button.
                 setTimeout((function () {
                     if (Object.keys(CKEDITOR.instances).length > 0) {

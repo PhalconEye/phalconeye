@@ -62,7 +62,9 @@ class PageGrid extends CoreGrid
         return [
             'Manage' => ['href' => ['for' => 'admin-pages-manage', 'id' => $item['id']]],
             'Edit' => ['href' => ['for' => 'admin-pages-edit', 'id' => $item['id']]],
-            'Delete' => ['Delete', 'href' => ['for' => 'admin-pages-delete', 'id' => $item['id']]]
+            'Delete' => [
+                'href' => ['for' => 'admin-pages-delete', 'id' => $item['id']], 'attr' => ['class' => 'grid-delete']
+            ]
         ];
     }
 

@@ -66,7 +66,7 @@ class Checkbox extends AbstractElement implements ElementInterface
      */
     public function setValue($value, $escape = false)
     {
-        $this->setValue(($value == '' ? $this->getOption('defaultValue') : $value), $escape);
+        parent::setValue(($value == '' ? $this->getOption('defaultValue') : $value), $escape);
         if ($this->_value == $this->getAttribute('value')) {
             $this->setOption('checked', 'checked');
         } else {

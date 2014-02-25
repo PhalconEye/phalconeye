@@ -19,12 +19,10 @@
 namespace Core\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
-use Engine\Db\AbstractModel;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
 use Phalcon\Mvc\Model\Query\Builder;
-use Phalcon\Mvc\Model\Row;
 use Phalcon\Mvc\View;
 
 /**
@@ -66,7 +64,13 @@ class MenuGrid extends CoreGrid
         return [
             'Manage' => ['href' => ['for' => 'admin-menus-manage', 'id' => $item['id']]],
             'Edit' => ['href' => ['for' => 'admin-menus-edit', 'id' => $item['id']]],
-            'Delete' => ['Delete', 'href' => ['for' => 'admin-menus-delete', 'id' => $item['id']]]
+            'Delete' => [
+                'href' =>
+                    [
+                        'for' => 'admin-menus-delete', 'id' => $item['id']
+                    ],
+                'attr' => ['class' => 'grid-delete']
+            ]
         ];
     }
 

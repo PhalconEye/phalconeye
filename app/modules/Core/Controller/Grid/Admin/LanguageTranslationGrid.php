@@ -20,12 +20,10 @@ namespace Core\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
 use Core\Model\Language;
-use Engine\Db\AbstractModel;
 use Engine\DependencyInjection;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Mvc\Model\Query\Builder;
-use Phalcon\Mvc\Model\Row;
 use Phalcon\Mvc\View;
 use Phalcon\Mvc\ViewInterface;
 
@@ -90,7 +88,10 @@ class LanguageTranslationGrid extends CoreGrid
     {
         return [
             'Edit' => ['attr' => ['onclick' => 'editItem(' . $item['id'] . ');return false;']],
-            'Delete' => ['attr' => ['onclick' => 'deleteItem(' . $item['id'] . ');return false;']]
+            'Delete' => [
+                'attr' =>
+                    ['onclick' => 'deleteItem(' . $item['id'] . ');return false;', 'attr' => ['class' => 'grid-delete']]
+            ]
         ];
     }
 

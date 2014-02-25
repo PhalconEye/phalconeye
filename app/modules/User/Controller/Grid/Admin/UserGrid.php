@@ -66,7 +66,9 @@ class UserGrid extends CoreGrid
     {
         return [
             'Edit' => ['href' => ['for' => 'admin-users-edit', 'id' => $item['u.id']]],
-            'Delete' => ['href' => ['for' => 'admin-users-delete', 'id' => $item['u.id']]]
+            'Delete' => [
+                'href' => ['for' => 'admin-users-delete', 'id' => $item['u.id']], 'attr' => ['class' => 'grid-delete']
+            ]
         ];
     }
 

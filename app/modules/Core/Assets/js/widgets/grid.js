@@ -24,6 +24,7 @@
                     paginator: '.pagination',
                     sortable: '.grid-sortable',
                     actionLinks: '.actions a',
+                    actionDelete: '.actions .grid-delete',
 
                     filterForm: '.grid-filter',
                     filterButton: '.btn-filter',
@@ -154,7 +155,7 @@
                         direction = link.data('direction');
 
                     // Clear other direction attributes.
-                    $($this.options.css.sortable, this.element).attr('data-direction', null);
+                    $($this.options.css.sortable, $this.element).attr('data-direction', null);
 
                     // Find out direction.
                     if (!direction || direction == 'ASC') {
@@ -179,6 +180,11 @@
              * This will allow to store data into cookies and load it if user used actions links.
              */
             initSession: function () {
+                // Init some additional actions.
+                $(this.options.css.actionDelete, this.element).click(function (e) {
+                    return confirm(root.i18n._('Are you really want to delete this item?'));
+                });
+
                 if (!this.options.useSession) {
                     return;
                 }

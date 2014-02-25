@@ -19,14 +19,11 @@
 namespace User\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
-use Engine\Db\AbstractModel;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
 use Phalcon\Mvc\Model\Query\Builder;
-use Phalcon\Mvc\Model\Row;
 use Phalcon\Mvc\View;
-use User\Model\Role;
 
 /**
  * Role grid.
@@ -65,7 +62,9 @@ class RoleGrid extends CoreGrid
     {
         $actions = ['Edit' => ['href' => ['for' => 'admin-roles-edit', 'id' => $item['id']]]];
         if (empty($item['undeletable'])) {
-            $actions['Delete'] = ['href' => ['for' => 'admin-roles-delete', 'id' => $item['id']]];
+            $actions['Delete'] = [
+                'href' => ['for' => 'admin-roles-delete', 'id' => $item['id']], 'attr' => ['class' => 'grid-delete']
+            ];
         }
 
         return $actions;

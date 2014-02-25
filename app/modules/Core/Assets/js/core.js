@@ -73,6 +73,9 @@
          * Show loading image.
          */
         showLoadingStage: function () {
+            if ($('#loading_stage').length){
+                return;
+            }
             var bg = $('<div id="loading_stage" class="loading_stage"><span></span></div>');
             $(window.document.body).append(bg);
         },
@@ -81,7 +84,7 @@
          * Hide loading image.
          */
         hideLoadingStage: function () {
-            if ($('#loading_stage')) {
+            if ($('#loading_stage').length) {
                 $('.loading_stage').remove();
             }
         }
