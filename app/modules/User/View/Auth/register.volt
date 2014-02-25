@@ -19,5 +19,5 @@
 
 {% block title %}{{ 'Register you account!'|trans }}{% endblock %}
 {% block content %}
-    {{ form.render(resolveView('partials/form/default', 'core')) }}
+    {{ form.render() }}
 {% endblock %}

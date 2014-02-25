@@ -112,7 +112,7 @@ class Element
                 $this->getDI()->get('profiler')->start();
             }
 
-            $controller->prepare();
+            $controller->prepare($action);
             $controller->{"{$action}Action"}();
 
             // collect profiler info
@@ -123,7 +123,9 @@ class Element
             if ($controller->getNoRender()) {
                 return '';
             }
-            $output = trim($controller->view->getRender('', 'index'));
+
+            $controller->view->getRender('', 'index');
+            $output = trim($controller->view->getContent());
             if ($controller->isCached()) {
                 $cache->save($cacheKey, $output, $cacheLifeTime);
             }

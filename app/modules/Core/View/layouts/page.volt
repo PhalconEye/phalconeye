@@ -30,7 +30,7 @@
 
 {% block content %}
 
-    {{ partial("layout", ['page': page, 'content': content]) }}
+    {{ partial("partials/layout", ['page': page, 'content': content]) }}
 
 
     {#{% if helper('security').isAllowed('\Core\Model\Page', 'show_views') %}#}

@@ -23,7 +23,7 @@
 */
 
 return array (
-  'debug' => true,
+  'debug' => false,
   'profiler' => true,
   'baseUri' => '/',
   'cache' => 

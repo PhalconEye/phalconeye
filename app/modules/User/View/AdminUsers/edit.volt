@@ -29,7 +29,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ form.render(resolveView('partials/form/default', 'core')) }}
+            {{ form.render() }}
         </div>
         <!--/row -->
     </div><!--/span-->

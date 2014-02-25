@@ -92,62 +92,13 @@ abstract class Bootstrap implements BootstrapInterface
         }
 
         $di = $this->getDI();
-        $moduleDirectory = $this->getModuleDirectory();
         $config = $this->getConfig();
         $eventsManager = $this->getEventsManager();
 
         /*************************************************/
         //  Initialize view.
         /*************************************************/
-        $di->set(
-            'view',
-            function () use ($di, $moduleDirectory, $eventsManager, $config) {
-                $view = new View();
-                $view->setViewsDir($moduleDirectory . '/View/');
-                $view->registerEngines(
-                    [
-                        ".volt" =>
-                            function ($view, $di) use ($config) {
-                                $volt = new Volt($view, $di);
-                                $volt->setOptions(
-                                    [
-                                        "compiledPath" => $config->application->view->compiledPath,
-                                        "compiledExtension" => $config->application->view->compiledExtension,
-                                        'compiledSeparator' => $config->application->view->compiledSeparator,
-                                        'compileAlways' => $config->application->view->compileAlways
-                                    ]
-                                );
-
-                                $compiler = $volt->getCompiler();
-                                $compiler->addExtension(new Extension());
-
-                                return $volt;
-                            }
-                    ]
-                );
-
-                // Attach a listener for type "view".
-                $eventsManager->attach(
-                    "view",
-                    function ($event, $view) use ($di, $config) {
-                        if ($config->application->profiler && $di->has('profiler')) {
-                            if ($event->getType() == 'beforeRender') {
-                                $di->get('profiler')->start();
-                            }
-                            if ($event->getType() == 'afterRender') {
-                                $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
-                            }
-                        }
-                        if ($event->getType() == 'notFoundView') {
-                            throw new Exception('View not found - "' . $view->getActiveRenderPath() . '"');
-                        }
-                    }
-                );
-                $view->setEventsManager($eventsManager);
-
-                return $view;
-            }
-        );
+        $di->setShared('view', $this->_initView());
 
         /*************************************************/
         //  Initialize dispatcher.
@@ -202,5 +153,49 @@ abstract class Bootstrap implements BootstrapInterface
     public function getModuleName()
     {
         return $this->_moduleName;
+    }
+
+    protected function _initView()
+    {
+        $di = $this->getDI();
+        $config = $this->_config;
+
+        $view = new View();
+        $view->setViewsDir($this->getModuleDirectory() . '/View/');
+
+        $volt = new Volt($view, $di);
+        $volt->setOptions(
+            [
+                "compiledPath" => $config->application->view->compiledPath,
+                "compiledExtension" => $config->application->view->compiledExtension,
+                'compiledSeparator' => $config->application->view->compiledSeparator,
+                'compileAlways' => $config->application->view->compileAlways
+            ]
+        );
+
+        $compiler = $volt->getCompiler();
+        $compiler->addExtension(new Extension());
+        $view->registerEngines([".volt" => $volt]);
+
+        // Attach a listener for type "view".
+        $this->_em->attach(
+            "view",
+            function ($event, $view) use ($di, $config) {
+                if ($config->application->profiler && $di->has('profiler')) {
+                    if ($event->getType() == 'beforeRender') {
+                        $di->get('profiler')->start();
+                    }
+                    if ($event->getType() == 'afterRender') {
+                        $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
+                    }
+                }
+                if ($event->getType() == 'notFoundView') {
+                    throw new Exception('View not found - "' . $view->getActiveRenderPath() . '"');
+                }
+            }
+        );
+        $view->setEventsManager($this->_em);
+
+        return $view;
     }
 }

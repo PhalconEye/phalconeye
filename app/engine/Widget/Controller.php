@@ -18,7 +18,6 @@
 
 namespace Engine\Widget;
 
-use Engine\Application;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
@@ -96,9 +95,11 @@ class Controller extends PhalconController
     /**
      * Prepare controller.
      *
+     * @param string $action Action name.
+     *
      * @return void
      */
-    public function prepare()
+    public function prepare($action)
     {
         $this->di = DI::getDefault();
         $this->dispatcher = $this->di->get('dispatcher');
@@ -106,29 +107,17 @@ class Controller extends PhalconController
 
         if ($this->_widgetName !== null) {
             if ($this->_widgetModule !== null) {
-                $config = $this->di->get('config');
-                $controllerDir = $config->directories->modules .
-                    $this->_widgetModule .
-                    '/Widget/' .
-                    $this->_widgetName . '/';
-                $defaultModuleName = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
-
                 /** @var \Phalcon\Mvc\View $view */
                 $this->view = $view = $this->di->get('view');
-                $view->setViewsDir($controllerDir);
-                $view->setLayoutsDir('../../../' . $defaultModuleName . '/View/layouts/');
-                $view->setPartialsDir('../../../' . $defaultModuleName . '/View/partials/');
-                $view->setLayout('widget');
+                $view->pick('../../' . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action);
             } else {
+                //@todo: refactor this, it's not usable.
                 $config = $this->di->get('config');
-                $controllerDir = $config->directories->widgets . $this->_widgetName . '/';
-                $defaultModuleName = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
 
                 /** @var \Phalcon\Mvc\View $view */
                 $this->view = $view = $this->di->get('view');
-                $view->setViewsDir($controllerDir);
-                $view->setLayoutsDir('../../modules/' . $defaultModuleName . '/View/layouts/');
-                $view->setPartialsDir('../../modules/' . $defaultModuleName . '/View/partials/');
+                $view->pick($config->directories->widgets . $this->_widgetName . '/' . $action);
+                $view->pick($action);
                 $view->setLayout('widget');
             }
         }

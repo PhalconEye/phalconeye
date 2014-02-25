@@ -58,7 +58,6 @@ abstract class AbstractController extends PhalconController
         }
 
         $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-        $this->view->setPartialsDir('../../Core/View/partials/');
 
         $this->assets->set(
             'css',

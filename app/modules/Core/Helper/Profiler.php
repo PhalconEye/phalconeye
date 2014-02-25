@@ -66,7 +66,6 @@ class Profiler extends Helper
 
         /** @var View $view */
         $view = $di->get('view');
-        $view->setViewsDir(__DIR__ . '/../View/partials/');
         $view->setPartialsDir('profiler/');
         $view->disableLevel(View::LEVEL_LAYOUT);
         $view->setMainView('profiler/layout');

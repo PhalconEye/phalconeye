@@ -19,5 +19,5 @@
 
 {% block title %}{{ 'Login'|trans }}{% endblock %}
 {% block content %}
-    {{ form.render(resolveView('partials/form/default', 'core')) }}
+    {{ form.render() }}
 {% endblock %}
