@@ -70,8 +70,8 @@ class LanguageTranslationGrid extends CoreGrid
 
         if ($search = $this->getDI()->getRequest()->get('search')) {
             $builder
-                ->where("t.original LIKE '%{$search}%'")
-                ->orWhere("t.translated LIKE '%{$search}%'");
+                ->where("original LIKE '%{$search}%'")
+                ->orWhere("translated LIKE '%{$search}%'");
         }
 
         return $builder;
@@ -103,6 +103,7 @@ class LanguageTranslationGrid extends CoreGrid
     protected function _initColumns()
     {
         $this
+            ->addTextColumn('scope', 'Scope')
             ->addTextColumn('original', 'Original')
             ->addTextColumn('translated', 'Translated');
     }

@@ -18,10 +18,11 @@
 
 namespace Engine\Translation;
 
-use Engine\Config;
-use Engine\Db\AbstractModel;
+use Engine\Application;
+use Engine\DependencyInjection;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Column as PhalconColumn;
+use Phalcon\DiInterface;
 use Phalcon\Translate\Adapter;
 use Phalcon\Translate\AdapterInterface;
 use Phalcon\Translate\Exception;
@@ -38,64 +39,38 @@ use Phalcon\Translate\Exception;
  */
 class Db implements AdapterInterface
 {
-    /**
-     * Database connection.
-     *
-     * @var Pdo
-     */
-    protected $_db;
+    use DependencyInjection {
+        DependencyInjection::__construct as protected __DIConstruct;
+    }
 
     /**
-     * Locale model object.
+     * Current language identity.
      *
-     * @var AbstractModel
+     * @var int
      */
-    protected $_locale;
-
-
-    /**
-     * Locale model class.
-     *
-     * @var AbstractModel
-     */
-    protected $_model;
+    protected $_languageId;
 
     /**
      * Translation model object.
      *
-     * @var string
+     * @var TranslationModelInterface
      */
     protected $_translationModel;
 
     /**
      * Translation constructor.
      *
-     * @param array $options Translation options.
+     * @param DiInterface               $di         Dependency injection.
+     * @param int                       $languageId Current language id.
+     * @param TranslationModelInterface $model      Empty model example.
      *
      * @throws Exception
      */
-    public function __construct($options)
+    public function __construct($di, $languageId, TranslationModelInterface $model)
     {
-        $this->_db = $options['db'];
-        /** @var AbstractModel $model */
-        $this->_model = $model = $options['model'];
-        $this->_translationModel = $options['translationModel'];
-
-        $this->_locale = $model::find(
-            [
-                'conditions' => 'language = :language:',
-                'bind' => (
-                    ["language" => $options['language']]
-                    ),
-                'bindTypes' => (
-                    ["language" => PhalconColumn::BIND_PARAM_STR]
-                    )
-            ]
-        )->getFirst();
-
-        if (!$this->_locale) {
-            $this->_locale = $model::findFirst("language = '" . Config::CONFIG_DEFAULT_LANGUAGE . "'");
-        }
+        $this->__DIConstruct($di);
+        $this->_languageId = $languageId;
+        $this->_translationModel = $model;
     }
 
     /**
@@ -111,7 +86,6 @@ class Db implements AdapterInterface
         return $this->query($translateKey, $placeholders);
     }
 
-
     /**
      * Returns the translation related to the given key.
      *
@@ -122,7 +96,7 @@ class Db implements AdapterInterface
      */
     public function query($index, $placeholders = null)
     {
-        if (!$this->_locale || empty($index)) {
+        if (!$this->_languageId || empty($index)) {
             return $index;
         }
 
@@ -132,18 +106,22 @@ class Db implements AdapterInterface
 
         if (!$translation) {
             // Remember this translation.
-            $translationModel = $this->_translationModel;
-            $translation = new $translationModel();
-            $translation->language_id = $this->_locale->id;
-            $translation->original = $index;
-            $translation->translated = $index;
+            $translation = clone $this->_translationModel;
+            $translation->setLanguageId($this->_languageId);
+            $translation->setOriginal($index);
+            $translation->setTranslated($index);
+
+            // Set scope if available.
+            if ($scope = $this->_getCurrentScope()) {
+                $translation->setScope($scope);
+            }
+
             $translation->save();
 
             return $index;
         }
 
-        $translated = $translation->translated;
-
+        $translated = $translation->getTranslated();
         if ($placeholders == null) {
             return $translated;
         }
@@ -175,19 +153,18 @@ class Db implements AdapterInterface
      *
      * @param string $index Key name.
      *
-     * @return mixed
+     * @return TranslationModelInterface
      */
     private function _get($index)
     {
-        $translationModel = $this->_translationModel;
-
-        return $translationModel::find(
+        $translationModel = get_class($this->_translationModel);
+        return $translationModel::findFirst(
             [
                 'conditions' => 'original = :content: AND language_id = :id:',
                 'bind' => (
                     [
                         "content" => $index,
-                        "id" => $this->_locale->id
+                        "id" => $this->_languageId
                     ]
                     ),
                 'bindTypes' => (
@@ -197,6 +174,58 @@ class Db implements AdapterInterface
                     ]
                     )
             ]
-        )->getFirst();
+        );
+    }
+
+    /**
+     * Analyze debug backtrace and check from what application scope it was called.
+     *
+     * @return string|null
+     */
+    private function _getCurrentScope()
+    {
+        $trace = debug_backtrace();
+        $scope = Application::SYSTEM_DEFAULT_MODULE;
+        $skipScopes = ['Engine', 'Phalcon', ucfirst(Application::SYSTEM_DEFAULT_MODULE)];
+        $viewSeparator = $this->getDI()->getConfig()->application->view->compiledSeparator;
+
+        foreach ($trace as $item) {
+            // First try detect by view file.
+            if (isset($item['file']) && strpos($item['file'], '.volt.php') !== false) {
+                $file = basename($item['file']);
+                $appPath = str_replace(DS, $viewSeparator, ROOT_PATH . DS . 'app') . $viewSeparator;
+                $file = str_replace($appPath, '', $file);
+
+                $parts = explode('_', $file);
+                if (isset($parts[1])) {
+                    $result = ucfirst($parts[1]);
+                    if (!in_array($result, $skipScopes)) {
+                        $scope = strtolower($result);
+                        break;
+                    }
+
+                }
+            }
+
+            // Then try detect by file class.
+            if (!isset($item['class'])) {
+                continue;
+            }
+
+            $parts = explode('\\', $item['class']);
+            if (empty($parts)) {
+                continue;
+            }
+
+            $result = $parts[0];
+            if (in_array($result, $skipScopes)) {
+                continue;
+            }
+
+            $scope = strtolower($result);
+            break;
+        }
+
+        return $scope;
     }
 }

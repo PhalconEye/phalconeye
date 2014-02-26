@@ -19,6 +19,7 @@
 namespace Core;
 
 use Core\Model\Language;
+use Core\Model\LanguageTranslation;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
@@ -27,8 +28,8 @@ use Engine\Translation\Db as TranslationDb;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
+use Phalcon\Mvc\View;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\User;
 
@@ -115,9 +116,9 @@ class Bootstrap extends EngineBootstrap
             return;
         }
 
+        $languageObject = null;
         if (!$di->get('session')->has('language')) {
             /** @var Language $languageObject */
-            $languageObject = null;
             if ($config->application->installed) {
                 $language = Settings::getSetting('system_default_language');
                 if ($language == 'auto') {
@@ -157,14 +158,21 @@ class Bootstrap extends EngineBootstrap
                 ]
             );
         } else {
-            $translate = new TranslationDb(
-                [
-                    'db' => $di->get('db'),
-                    'language' => $language,
-                    'model' => 'Core\Model\Language',
-                    'translationModel' => 'Core\Model\LanguageTranslation'
-                ]
-            );
+            if (!$languageObject) {
+                $languageObject = Language::findFirst(
+                    [
+                        'conditions' => 'language = :language: OR language = :default:',
+                        'bind' => (
+                            [
+                                "language" => $language,
+                                "default" => Config::CONFIG_DEFAULT_LANGUAGE
+                            ]
+                            )
+                    ]
+                );
+            }
+
+            $translate = new TranslationDb($di, $languageObject->getId(), new LanguageTranslation());
         }
 
         $di->set('trans', $translate);

@@ -16,51 +16,60 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Form\Admin\Language;
-
-use Core\Form\CoreForm;
-use Core\Model\LanguageTranslation;
-use Engine\Db\AbstractModel;
+namespace Engine\Translation;
 
 /**
- * Create language item form.
+ * Language translation interface.
  *
  * @category  PhalconEye
- * @package   Core\Form\Admin\Language
+ * @package   Engine\Translation
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class CreateItem extends CoreForm
+interface TranslationModelInterface
 {
     /**
-     * Create form.
+     * Set scope.
      *
-     * @param AbstractModel $entity Entity object.
+     * @param string $scope Scope name.
+     *
+     * @return mixed
      */
-    public function __construct(AbstractModel $entity = null)
-    {
-        parent::__construct();
-
-        if (!$entity) {
-            $entity = new LanguageTranslation();
-        }
-
-        $this->addEntity($entity);
-    }
+    public function setScope($scope);
 
     /**
-     * Initialize form.
+     * Set language id.
      *
-     * @return void
+     * @param int $languageId Language id.
+     *
+     * @return mixed
      */
-    public function initialize()
-    {
-        $this
-            ->addText('scope')
-            ->addTextArea('original')
-            ->addTextArea('translated')
-            ->addHidden('language_id');
-    }
+    public function setLanguageId($languageId);
+
+    /**
+     * Set translation original text.
+     *
+     * @param string $text Original text.
+     *
+     * @return mixed
+     */
+    public function setOriginal($text);
+
+    /**
+     * Set translated text.
+     *
+     * @param string $text Translated text.
+     *
+     * @return mixed
+     */
+    public function setTranslated($text);
+
+    /**
+     * Get translated data.
+     *
+     * @return string
+     */
+    public function getTranslated();
 }

@@ -49,7 +49,7 @@ return array (
   'session' => 
   array (
     'adapter' => 'Files',
-    'uniqueId' => 'PhalconEye',
+    'uniqueId' => 'PhalconEye_',
   ),
   'assets' => 
   array (

@@ -19,6 +19,7 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
+use Engine\Translation\TranslationModelInterface;
 
 /**
  * Language translation.
@@ -35,7 +36,7 @@ use Engine\Db\AbstractModel;
  *  "alias": "Language"
  * })
  */
-class LanguageTranslation extends AbstractModel
+class LanguageTranslation extends AbstractModel implements TranslationModelInterface
 {
     /**
      * @Primary
@@ -50,6 +51,11 @@ class LanguageTranslation extends AbstractModel
     public $language_id;
 
     /**
+     * @Column(type="string", nullable=true, column="scope", size="25")
+     */
+    public $scope = null;
+
+    /**
      * @Column(type="text", nullable=false, column="original")
      */
     public $original;
@@ -58,6 +64,64 @@ class LanguageTranslation extends AbstractModel
      * @Column(type="text", nullable=false, column="translated")
      */
     public $translated = null;
+
+    /**
+     * Set scope.
+     *
+     * @param string $scope Scope name.
+     *
+     * @return mixed
+     */
+    public function setScope($scope)
+    {
+        $this->scope = $scope;
+    }
+
+    /**
+     * Set language id.
+     *
+     * @param int $languageId Language id.
+     *
+     * @return mixed
+     */
+    public function setLanguageId($languageId)
+    {
+        $this->language_id = $languageId;
+    }
+
+    /**
+     * Set translation original text.
+     *
+     * @param string $text Original text.
+     *
+     * @return mixed
+     */
+    public function setOriginal($text)
+    {
+        $this->original = $text;
+    }
+
+    /**
+     * Set translated text.
+     *
+     * @param string $text Translated text.
+     *
+     * @return mixed
+     */
+    public function setTranslated($text)
+    {
+        $this->translated = $text;
+    }
+
+    /**
+     * Get translated data.
+     *
+     * @return string
+     */
+    public function getTranslated()
+    {
+        return $this->translated;
+    }
 
     /**
      * Return the related "Language" entity.
