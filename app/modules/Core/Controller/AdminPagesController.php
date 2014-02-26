@@ -304,7 +304,7 @@ class AdminPagesController extends AbstractAdminController
                 $widgetClass = '\Widget\\' . $widgetName . '\Controller';
             }
             $widgetController = new $widgetClass();
-            $widgetController->setDefaults($widgetName);
+            $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module));
             $widgetController->prepare();
             $form = $widgetController->adminAction();
         } else {

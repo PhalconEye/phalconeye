@@ -18,6 +18,7 @@
 
 namespace Engine\Widget;
 
+use Engine\Package\Utilities;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
@@ -95,11 +96,11 @@ class Controller extends PhalconController
     /**
      * Prepare controller.
      *
-     * @param string $action Action name.
+     * @param string|null $action Action name.
      *
      * @return void
      */
-    public function prepare($action)
+    public function prepare($action = null)
     {
         $this->di = DI::getDefault();
         $this->dispatcher = $this->di->get('dispatcher');
@@ -109,13 +110,26 @@ class Controller extends PhalconController
             if ($this->_widgetModule !== null) {
                 /** @var \Phalcon\Mvc\View $view */
                 $this->view = $view = $this->di->get('view');
-                $view->pick('../../' . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action);
+                $view->disableLevel(View::LEVEL_LAYOUT);
+                $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
+
+                if ($action) {
+                    $view->pick('../../' . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action);
+                }
             } else {
                 /** @var \Phalcon\Mvc\View $view */
-                $this->view = $view = clone $this->di->get('view');
+                $this->view = $view = $this->di->get('view');
+                $view->disableLevel(View::LEVEL_LAYOUT);
+                $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
                 $view->setVars([], false);
-                $view->setViewsDir($this->di->get('registry')->directories->widgets . $this->_widgetName);
-                $view->pick($action);
+
+                if ($action) {
+                    $relativePath = Utilities::getRelativePath(
+                        $view->getViewsDir(),
+                        $this->di->get('registry')->directories->widgets
+                    );
+                    $view->pick($relativePath . $this->_widgetName . '/' . $action);
+                }
             }
         }
 

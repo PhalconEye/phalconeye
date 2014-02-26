@@ -94,11 +94,24 @@ abstract class Bootstrap implements BootstrapInterface
         $di = $this->getDI();
         $config = $this->getConfig();
         $eventsManager = $this->getEventsManager();
+        $moduleDirectory = $this->getModuleDirectory();
 
         /*************************************************/
         //  Initialize view.
         /*************************************************/
-        $di->setShared('view', $this->_initView());
+        $view = $this->_initView($di, $config);
+        $di->set(
+            'view',
+            function () use ($view, $moduleDirectory) {
+                $view
+                    ->reset()
+                    ->setVars([], false)
+                    ->setRenderLevel(View::LEVEL_ACTION_VIEW)
+                    ->setViewsDir($moduleDirectory . '/View/');
+
+                return $view;
+            }
+        );
 
         /*************************************************/
         //  Initialize dispatcher.
@@ -157,18 +170,14 @@ abstract class Bootstrap implements BootstrapInterface
     /**
      * Init view.
      *
+     * @param DependencyInjection $di     DI.
+     * @param Config              $config Configuration.
+     *
      * @return View
      */
-    protected function _initView()
+    protected function _initView($di, $config)
     {
-        $di = $this->getDI();
-        $config = $this->_config;
-
         $view = new View();
-        $view
-            ->setRenderLevel(View::LEVEL_ACTION_VIEW)
-            ->setViewsDir($this->getModuleDirectory() . '/View/');
-
         $volt = new Volt($view, $di);
         $volt->setOptions(
             [

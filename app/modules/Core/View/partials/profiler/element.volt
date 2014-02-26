@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-<span class="label">{{ title | trans }}: </span>
+<span class="label">{{ title }}: </span>
 {% if !(tag is empty) %}
     <{{ tag }} class="code">{{ value }}</{{ tag }}>
 {% elseif noCode is true %}

@@ -130,7 +130,7 @@ class Element
                 $output = ob_get_contents();
                 ob_end_clean();
             } else {
-                $controller->view->getRender('', $action);
+                $controller->view->getRender(null, $action);
                 $output = $controller->view->getContent();
             }
 
