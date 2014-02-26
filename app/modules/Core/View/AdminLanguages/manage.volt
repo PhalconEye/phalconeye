@@ -21,12 +21,6 @@
 
 {% block head %}
     <script type="text/javascript">
-        var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this translation?" | trans}}')) {
-                window.location.href = '{{ url(['for':'admin-languages-delete-item'])}}' + id + '?lang={{ lang.id }}{% if search is defined %}&search={{ search }}{% endif %}';
-            }
-        };
-
         var requestAddItem = function () {
             var url = '{{ url(['for':'admin-languages-create-item'])}}';
             var data = {
@@ -39,7 +33,7 @@
         var editItem = function (id) {
             var url = '{{ url(['for':'admin-languages-edit-item'])}}' + id;
             var data = {
-                'id':id,
+                'id': id,
                 'language_id': {{ lang.id }}
             };
 
@@ -64,12 +58,21 @@
             <h3><a href="{{ url(['for': 'admin-languages']) }}">{{ "Languages" | trans }}</a>
                 > {{ "Manage language" | trans }}
                 "{{ lang.name }}"</h3>
+
             <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
-            <form class="navbar-search pull-right" method="GET" action="{{ url(['for': 'admin-languages-manage'])~lang.id }}">
+            {% if (lang.language != constant('\Engine\Config::CONFIG_DEFAULT_LANGUAGE')) %}
+            <a class="btn btn-info"
+                    href='{{ url(['for': 'admin-languages-synchronize', 'id': lang.id]) }}'>{{ 'Synchonize'|trans }}</a>
+            {% endif %}
+            <form class="navbar-search pull-right" method="GET"
+                  action="{{ url(['for': 'admin-languages-manage'])~lang.id }}">
                 {% if search is defined %}
-                <div class="icon-remove" onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.id }}'"></div>
+                    <div class="icon-remove"
+                         onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.id }}'"></div>
                 {% endif %}
-                <input name="search" type="text" class="search-query" placeholder="{{ 'Search' |trans }}" value="{{ search }}"/>
+                <input name="search" type="text" class="search-query" placeholder="{{ 'Search' |trans }}"
+                       value="{{ search }}"/>
+
                 <div class="icon-search" onclick="$(this).parent().submit();"></div>
             </form>
         </div>

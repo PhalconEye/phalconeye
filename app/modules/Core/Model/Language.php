@@ -108,7 +108,7 @@ class Language extends AbstractModel
         $condition = "language = '" . $this->language . "' AND locale = '" . $this->locale . "'";
 
         if (!empty($this->id)) {
-            $condition .=  "AND id != " . $this->id;
+            $condition .= "AND id != " . $this->id;
         }
 
         $isValid = !(bool)Language::findFirst($condition);
@@ -128,8 +128,11 @@ class Language extends AbstractModel
      */
     public function beforeDelete()
     {
-        @unlink($this->getCacheLocation());
-        if (!empty($this->icon)) {
+        if (file_exists($this->getCacheLocation())) {
+            @unlink($this->getCacheLocation());
+        }
+
+        if (!empty($this->icon) && file_exists(PUBLIC_PATH . '/' . $this->icon)) {
             @unlink(PUBLIC_PATH . '/' . $this->icon);
         }
 

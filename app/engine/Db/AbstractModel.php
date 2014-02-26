@@ -32,6 +32,7 @@ use Phalcon\Mvc\Model as PhalconModel;
  * @link      http://phalconeye.com/
  *
  * @method static findFirstById($id)
+ * @method static findFirstByLanguage($name)
  *
  * @method \Engine\DependencyInjection|\Phalcon\DI getDI()
  */

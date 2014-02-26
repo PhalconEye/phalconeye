@@ -27,6 +27,7 @@ use Core\Form\Admin\Language\EditItem;
 use Core\Form\FileForm;
 use Core\Model\Language;
 use Core\Model\LanguageTranslation;
+use Engine\Config;
 use Engine\Exception;
 use Engine\Navigation;
 use Phalcon\Http\ResponseInterface;
@@ -193,6 +194,7 @@ class AdminLanguagesController extends AbstractAdminController
     {
         $item = Language::findFirst($id);
         if (!$item) {
+            $this->flashSession->error($this->trans->_('Language not found!'));
             return $this->response->redirect(['for' => "admin-languages"]);
         }
 
@@ -202,6 +204,43 @@ class AdminLanguagesController extends AbstractAdminController
         if ($response = $grid->getResponse()) {
             return $response;
         }
+    }
+
+    /**
+     * Synchronize language action.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
+     * @Get("/synchronize/{id:[0-9]+}", name="admin-languages-synchronize")
+     */
+    public function synchronizeAction($id)
+    {
+        $item = Language::findFirst($id);
+        if (!$item) {
+            $this->flashSession->error($this->trans->_('Language not found!'));
+            return $this->response->redirect(['for' => "admin-languages"]);
+        }
+
+        $defaultLanguage = Language::findFirstByLanguage(Config::CONFIG_DEFAULT_LANGUAGE);
+
+        $table = LanguageTranslation::getTableName();
+        $defaultLanguageId = $defaultLanguage->getId();
+
+        $result = $this->db->query(
+            "
+            INSERT INTO `{$table}` (language_id, original, translated, scope)
+            SELECT {$id}, original, translated, scope FROM `{$table}`
+            WHERE language_id = {$defaultLanguageId} AND original NOT IN
+              (SELECT original FROM `{$table}` WHERE language_id = {$id});
+            "
+        );
+
+        $this->flashSession->success(
+            $this->trans->_('Synchronization finished! Added translations: %count%', ['count' => $result->numRows()])
+        );
+        return $this->response->redirect(['for' => "admin-languages-manage", 'id' => $id]);
     }
 
     /**

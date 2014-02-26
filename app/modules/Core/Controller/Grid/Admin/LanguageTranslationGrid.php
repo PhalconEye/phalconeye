@@ -66,7 +66,9 @@ class LanguageTranslationGrid extends CoreGrid
     public function getSource()
     {
         $builder = new Builder();
-        $builder->from('Core\Model\LanguageTranslation');
+        $builder
+            ->from('Core\Model\LanguageTranslation')
+            ->where('language_id = ' . $this->_language->getId());
 
         if ($search = $this->getDI()->getRequest()->get('search')) {
             $builder
@@ -88,10 +90,7 @@ class LanguageTranslationGrid extends CoreGrid
     {
         return [
             'Edit' => ['attr' => ['onclick' => 'editItem(' . $item['id'] . ');return false;']],
-            'Delete' => [
-                'attr' =>
-                    ['onclick' => 'deleteItem(' . $item['id'] . ');return false;', 'class' => 'grid-delete']
-            ]
+            'Delete' => ['attr' => ['class' => 'grid-delete']]
         ];
     }
 

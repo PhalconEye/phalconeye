@@ -41,7 +41,6 @@
                 PhalconEye.core.showLoadingStage();
                 $.get(url, data)
                     .done(function (html) {
-                        PhalconEye.core.hideLoadingStage();
                         var modalTemplate = $('<div id="modal" class="modal hide fade" tabindex="1" role="dialog" aria-labelledby="modal_label" aria-hidden="true">' + html + '</div>').filter('.modal');
                         modalTemplate.modal({
                             keyboard: false
@@ -51,7 +50,10 @@
                             e.preventDefault();
                         });
 
+
                         modalTemplate.on('shown', function () {
+                            PhalconEye.core.hideLoadingStage();
+
                             // Set removing.
                             $('#modal').on('hidden', function () {
                                 $(this).remove();
@@ -75,7 +77,6 @@
                                 eval(scriptContent); //Execute the content
                             });
                         })
-
                     });
             },
 
@@ -100,6 +101,7 @@
                             .done(function (postHTML) {
                                 $('#modal').html(postHTML);
                                 PhalconEye.widget.modal.bindSubmit();
+                                PhalconEye.core.hideLoadingStage();
                             });
                     }
                     else {
