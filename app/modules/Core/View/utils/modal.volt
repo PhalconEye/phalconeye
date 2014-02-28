@@ -15,35 +15,48 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/modal.volt" %}
+<script type="text/javascript">
+    var hideModal = function () {
+        PhalconEye.widget.modal.hide();
+        {% if reload is defined %}
+        window.location.reload();
+        {% endif %}
+    };
 
-{% block title %}
-    {{ 'Edit menu item'|i18n }}
-{% endblock %}
+    {% if hide is defined %}
+
+    var hideTimeout = parseInt('{{ hide }}');
+    if (hideTimeout) {
+        setTimeout(hideModal, hideTimeout);
+    }
+    else {
+        hideModal();
+    }
+
+    {% elseif reload is defined %}
+
+    var reloadTimeout = parseInt('{{ reload }}');
+    if (reloadTimeout) {
+        setTimeout(function () {
+            window.location.reload();
+        }, reloadTimeout);
+    }
+    else {
+        window.location.reload();
+    }
+
+    {% endif %}
+
+    {% if customJs is defined %}
+    {{ customJs }}
+    {% endif %}
+</script>
+
 
 {% block body %}
-
-    <script type="text/javascript">
-        var checkUrlType = function () {
-            var value = $('input[name="url_type"]:checked').val();
-            if (value == undefined || value == 0) {
-                $('#url').parent().parent().show();
-                $('#page').parent().parent().hide();
-            }
-            else {
-                $('#url').parent().parent().hide();
-                $('#page').parent().parent().show();
-            }
-        };
-
-        $(document).ready(function () {
-            $('input[name="url_type"]').click(function () {
-                checkUrlType();
-            });
-            checkUrlType();
-        });
-    </script>
-
-    {{ form.render() }}
-
+    {% if message is defined %}
+        <div class="modal-message">
+            {{ message|i18n }}
+        </div>
+    {% endif %}
 {% endblock %}

@@ -310,7 +310,7 @@ class AdminLanguagesController extends AbstractAdminController
 
         $form = new Export($item);
         $this->view->form = $form;
-        $this->view->hideFooter = true;
+        $this->disableFooter();
 
         if (!$this->request->isPost()) {
             return;
@@ -353,8 +353,8 @@ class AdminLanguagesController extends AbstractAdminController
         }
 
         $condition = 'original = translated AND checked = 0 AND language_id = ' . $id;
+        $this->disableFooter();
         $this->view->form = $form = new Wizard($item);
-        $this->view->hideFooter = true;
         $this->view->total = LanguageTranslation::find([$condition])->count();
         $this->view->translation = $translation =
             LanguageTranslation::findFirst([$condition]);
@@ -387,7 +387,7 @@ class AdminLanguagesController extends AbstractAdminController
             return;
         }
 
-        $this->view->created = true;
+        $this->resolveModal();
     }
 
     /**
@@ -414,7 +414,7 @@ class AdminLanguagesController extends AbstractAdminController
             return;
         }
 
-        $this->view->edited = true;
+        $this->resolveModal();
     }
 
     /**

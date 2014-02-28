@@ -438,7 +438,7 @@ class AdminPackagesController extends AbstractAdminController
             return $this->response->redirect(['for' => 'admin-packages']);
         }
 
-        $this->view->hideFooter = true;
+        $this->disableFooter();
         $this->view->form = $form = new ExportForm($package, ['name' => $name, 'type' => $type]);
 
         $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);

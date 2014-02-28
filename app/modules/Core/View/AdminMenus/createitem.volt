@@ -24,36 +24,26 @@
 {% block body %}
 
     <script type="text/javascript">
-        var checkUrlType = function(){
+        var checkUrlType = function () {
             var value = $('input[name="url_type"]:checked').val();
-            if (value == undefined || value == 0 ){
+            if (value == undefined || value == 0) {
                 $('#url').parent().parent().show();
                 $('#page').parent().parent().hide();
             }
-            else{
+            else {
                 $('#url').parent().parent().hide();
                 $('#page').parent().parent().show();
             }
         };
 
-        $(document).ready(function() {
-            $('input[name="url_type"]').click(function(){
+        $(document).ready(function () {
+            $('input[name="url_type"]').click(function () {
                 checkUrlType();
             });
             checkUrlType();
         });
     </script>
 
-    {% if created is defined %}
-        <script type="text/javascript">
+    {{ form.render() }}
 
-            addItem({{ created.id }}, '{{ created.title }}');
-            $('#modal').modal('hide');
-
-        </script>
-    {% else %}
-
-        {{ form.render() }}
-
-    {% endif %}
 {% endblock %}

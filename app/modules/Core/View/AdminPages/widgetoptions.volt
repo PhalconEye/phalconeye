@@ -22,17 +22,5 @@
 {% endblock %}
 
 {% block body %}
-
-    {% if widget_index is defined %}
-        <script type="text/javascript">
-
-            setEditedWidgetIndex({{widget_index}});
-            $('#modal').modal('hide');
-
-        </script>
-    {% else %}
-
     {{ form.render() }}
-
-    {% endif %}
 {% endblock %}

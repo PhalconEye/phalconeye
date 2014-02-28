@@ -204,4 +204,22 @@ abstract class AbstractController extends PhalconController
 
         return $this;
     }
+
+    /**
+     * Resolve modal window result.
+     *
+     * @param array $params Modal params.
+     *
+     * @return void
+     */
+    public function resolveModal(array $params = [])
+    {
+        if (empty($params)) {
+            $params['hide'] = true;
+        }
+
+        $this->view->setVars($params, false);
+        $this->view->hideSave = true;
+        $this->view->pick('utils/modal');
+    }
 }

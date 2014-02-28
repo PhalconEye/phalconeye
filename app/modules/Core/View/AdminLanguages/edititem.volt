@@ -22,18 +22,5 @@
 {% endblock %}
 
 {% block body %}
-
-
-    {% if edited is defined %}
-        <script type="text/javascript">
-
-            $('#modal').modal('hide');
-            window.location.reload();
-
-        </script>
-    {% else %}
-
-        {{ form.render() }}
-
-    {% endif %}
+    {{ form.render() }}
 {% endblock %}

@@ -66,6 +66,12 @@
                     });
             },
 
+            hide: function () {
+                if ($('#modal')) {
+                    $('#modal').modal('hide');
+                }
+            },
+
             /**
              * Bind some submit events for modal form.
              */

@@ -257,7 +257,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
-        $this->view->created = $item;
+        $this->resolveModal();
     }
 
     /**
@@ -305,8 +305,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
-
-        $this->view->edited = true;
+        $this->resolveModal();
     }
 
     /**

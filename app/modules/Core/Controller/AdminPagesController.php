@@ -342,11 +342,13 @@ class AdminPagesController extends AbstractAdminController
         }
 
         $currentPageWidgets[$widgetIndex]['params'] = $form->getValues();
-        $this->view->widget_index = $widgetIndex;
 
-        $this->view->form = $form;
-        $this->view->id = $id;
-        $this->view->name = $widgetMetadata->name;
+        $this->resolveModal(
+            [
+                'hide' => true,
+                'customJs' => 'setEditedWidgetIndex(' . $widgetIndex . ');'
+            ]
+        );
 
         $this->session->set('admin-pages-manage', $currentPageWidgets);
         $this->session->set('admin-pages-widget-index', ++$widgetIndex);
