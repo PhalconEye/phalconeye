@@ -295,7 +295,7 @@ class MenuItem extends AbstractModel
         $roles = $this->getRoles();
 
         if (!empty($roles)) {
-            $valid = in_array($viewer->getRoleId(), $roles);
+            $valid = in_array($viewer->role_id, $roles);
         }
 
         if (!$valid) {
