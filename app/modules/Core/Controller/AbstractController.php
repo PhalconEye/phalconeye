@@ -61,42 +61,9 @@ abstract class AbstractController extends PhalconController
             $this->profiler->start();
         }
 
-        $this->assets->set(
-            'css',
-            $this->assets->getEmptyCssCollection()
-                ->addCss('external/jquery/jquery-ui.css')
-                ->addCss('assets/css/constants.css')
-                ->addCss('assets/css/theme.css')
-        );
-
-        $this->assets->set(
-            'js',
-            $this->assets->getEmptyJsCollection()
-                ->addJs('external/jquery/jquery-2.1.0.js')
-                ->addJs('external/jquery/jquery-ui-1.10.4.js')
-                ->addJs('external/jquery/jquery.cookie.js')
-                ->addJs('assets/js/core/core.js')
-                ->addJs('assets/js/core/i18n.js')
-                ->addJs('assets/js/core/menu.js')
-                ->addJs('assets/js/core/form.js')
-                ->addJs('assets/js/core/form/remote-file.js')
-                ->addJs('assets/js/core/widgets/grid.js')
-                ->addJs('assets/js/core/widgets/autocomplete.js')
-                ->addJs('assets/js/core/widgets/modal.js')
-                ->addJs('assets/js/core/widgets/ckeditor.js')
-        );
-
-        if ($this->config->application->debug && $this->di->has('profiler')) {
-            $this->di->get('assets')
-                ->collection('css')
-                ->addCss('assets/css/core/profiler.css');
-
-            $this->di->get('assets')
-                ->collection('js')
-                ->addCss('assets/js/core/profiler.js');
+        if (!$this->request->isAjax()) {
+            $this->_setupAssets();
         }
-
-        $this->addDefaultJsTranslations();
 
         // run init function
         if (method_exists($this, 'init')) {
@@ -221,5 +188,50 @@ abstract class AbstractController extends PhalconController
         $this->view->setVars($params, false);
         $this->view->hideSave = true;
         $this->view->pick('utils/modal');
+    }
+
+    /**
+     * Setup assets.
+     *
+     * @return void
+     */
+    protected function _setupAssets()
+    {
+        $this->assets->set(
+            'css',
+            $this->assets->getEmptyCssCollection()
+                ->addCss('external/jquery/jquery-ui.css')
+                ->addCss('assets/css/constants.css')
+                ->addCss('assets/css/theme.css')
+        );
+
+        $this->assets->set(
+            'js',
+            $this->assets->getEmptyJsCollection()
+                ->addJs('external/jquery/jquery-2.1.0.js')
+                ->addJs('external/jquery/jquery-ui-1.10.4.js')
+                ->addJs('external/jquery/jquery.cookie.js')
+                ->addJs('assets/js/core/core.js')
+                ->addJs('assets/js/core/i18n.js')
+                ->addJs('assets/js/core/menu.js')
+                ->addJs('assets/js/core/form.js')
+                ->addJs('assets/js/core/form/remote-file.js')
+                ->addJs('assets/js/core/widgets/grid.js')
+                ->addJs('assets/js/core/widgets/autocomplete.js')
+                ->addJs('assets/js/core/widgets/modal.js')
+                ->addJs('assets/js/core/widgets/ckeditor.js')
+        );
+
+        if ($this->config->application->debug && $this->di->has('profiler')) {
+            $this->di->get('assets')
+                ->collection('css')
+                ->addCss('assets/css/core/profiler.css');
+
+            $this->di->get('assets')
+                ->collection('js')
+                ->addCss('assets/js/core/profiler.js');
+        }
+
+        $this->addDefaultJsTranslations();
     }
 }
