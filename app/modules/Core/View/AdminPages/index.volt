@@ -40,7 +40,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Menus' |i18n }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Pages' |i18n }} ({{ grid.getTotalCount() }})</h2>
             {{ grid.render() }}
         </div>
     </div>
