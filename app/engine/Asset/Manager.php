@@ -97,6 +97,7 @@ class Manager extends AssetManager
     {
         $location = $this->_config->application->assets->local;
         $less = Less::factory();
+        $less->setVariables(['baseUrl' => "'" . $this->_config->application->baseUrl . "'"]);
 
         ///////////////////////////////////
         // Compile themes css.

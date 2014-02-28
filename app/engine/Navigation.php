@@ -406,7 +406,7 @@ class Navigation
                 $active = ($name == $this->_activeItem ||
                 $item['href'] == $this->_activeItem ||
                 $this->getDI()->get('url')->get($item['href']) ==
-                $this->getDI()->get('config')->application->baseUri . $this->_activeItem ? ' class="active"' : '');
+                $this->getDI()->get('config')->application->baseUrl . $this->_activeItem ? ' class="active"' : '');
 
                 $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
                 $appendHTML = (!empty($item['append']) ? $item['append'] : '');

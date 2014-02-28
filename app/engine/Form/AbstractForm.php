@@ -181,7 +181,7 @@ abstract class AbstractForm implements ElementContainerInterface
 
         $this->_validation = new Validation($this);
         $this->_translator = $this->getDI()->get('i18n');
-        $this->_action = substr($_SERVER['REQUEST_URI'], 1);
+        $this->_action = $this->getDI()->get('router')->getRewriteUri();
 
         $this->_errors = new Group();
         $this->_notices = new Group();

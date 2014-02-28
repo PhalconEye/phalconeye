@@ -305,7 +305,7 @@ class Application extends PhalconApplication
          * application
          */
         $url = new Url();
-        $url->setBaseUri($config->application->baseUri);
+        $url->setBaseUri($config->application->baseUrl);
         $di->set('url', $url);
 
         return $url;
