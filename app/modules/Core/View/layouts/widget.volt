@@ -18,7 +18,7 @@
 <div class="widget_wrapper">
     {% if title is defined and title is not null %}
     <div class="widget_header">
-        <h3>{{ title|trans }}</h3>
+        <h3>{{ title|i18n }}</h3>
     </div>
     {% endif %}
 

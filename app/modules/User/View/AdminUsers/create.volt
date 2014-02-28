@@ -17,7 +17,7 @@
 
 {% extends "../../Core/View/layouts/admin.volt" %}
 
-{% block title %}{{ "User Creation"|trans }}{% endblock %}
+{% block title %}{{ "User Creation"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">

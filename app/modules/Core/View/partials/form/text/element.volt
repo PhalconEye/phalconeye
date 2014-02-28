@@ -28,14 +28,14 @@
             <div class="form_label">
                 {% if element.getOption('label') %}
                     <label for="{{ element.getName() }}">
-                        {{ element.getOption('label') |trans }}
+                        {{ element.getOption('label') |i18n }}
                         {% if element.getOption('required') %}
                             *
                         {% endif %}
                     </label>
                 {% endif %}
                 {% if element.getOption('description') %}
-                    <p>{{ element.getOption('description') |trans }}</p>
+                    <p>{{ element.getOption('description') |i18n }}</p>
                 {% endif %}
             </div>
         {% endif %}

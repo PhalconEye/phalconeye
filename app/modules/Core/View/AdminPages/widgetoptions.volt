@@ -18,7 +18,7 @@
 {% extends "layouts/modal.volt" %}
 
 {% block title %}
-    {{ name|trans }}
+    {{ name|i18n }}
 {% endblock %}
 
 {% block body %}

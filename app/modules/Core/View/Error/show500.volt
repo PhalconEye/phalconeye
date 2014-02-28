@@ -18,7 +18,7 @@
 {% extends "layouts/main.volt" %}
 
 {% block title %}
-    {{ 'Internal Server Error'|trans }}
+    {{ 'Internal Server Error'|i18n }}
 {% endblock %}
 
 {% block content %}

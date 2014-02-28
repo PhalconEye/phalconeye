@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Pages' | trans }}{% endblock %}
+{% block title %}{{ 'Pages' |i18n }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
@@ -39,7 +39,7 @@
 
         window.onbeforeunload = function () {
             if (notSaved)
-                return "{{ "Page not saved! Dou you want to leave?" | trans}}";
+                return "{{ "Page not saved! Dou you want to leave?" |i18n}}";
         };
 
         buildWidgetsList();
@@ -63,7 +63,7 @@
     };
 
     var defaultWidgetControl = function (widget, hideEdit) {
-        var editLink = '<a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_id="' + widget.widget_id + '">{{ "Edit" | trans}}</a>&nbsp;|';
+        var editLink = '<a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_id="' + widget.widget_id + '">{{ "Edit" |i18n}}</a>&nbsp;|';
         if (hideEdit) {
             editLink = '';
         }
@@ -102,7 +102,7 @@
         })
                 .fail(function () {
                     changePageState(true);
-                    alert("{{ 'Error while saving...' |trans }}");
+                    alert("{{ 'Error while saving...' |i18n }}");
                 });
 
     };
@@ -132,11 +132,11 @@
 
         if (state) {
             $('#save_button').attr("disabled", null);
-            $('#save_button').html("{{"Save (NOT  SAVED)" | trans}}");
+            $('#save_button').html("{{"Save (NOT  SAVED)" |i18n}}");
         }
         else {
             $('#save_button').attr("disabled", "disabled");
-            $('#save_button').html("{{"Save" | trans}}");
+            $('#save_button').html("{{"Save" |i18n}}");
         }
         $('#save_button').button('reset');
         notSaved = state;
@@ -203,7 +203,7 @@
                     }
                     else {
                         hideLink = true;
-                        var title = "<b style='color: red;'>{{ "NOT FOUND" | trans}}</b>";
+                        var title = "<b style='color: red;'>{{ "NOT FOUND" |i18n}}</b>";
                     }
                     $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_id="' + l.widget_id + '">' + title + defaultWidgetControl(l, hideLink) + '</div>');
                     elementIdCounter++;
@@ -252,7 +252,7 @@
         $("#global_placer").html('');
 
         // header
-        $("#global_placer").append('<div class="admin_pages_layout layout_header"><span>{{ "Header" | trans}}</span></div>');
+        $("#global_placer").append('<div class="admin_pages_layout layout_header"><span>{{ "Header" |i18n}}</span></div>');
 
         // adding new placers
         $.each(types, function (i, l) {
@@ -260,7 +260,7 @@
         });
 
         // footer
-        $("#global_placer").append('<div class="admin_pages_layout layout_footer"><span>{{ "Footer" | trans}}</span></div>');
+        $("#global_placer").append('<div class="admin_pages_layout layout_footer"><span>{{ "Footer" |i18n}}</span></div>');
 
 
         // correcting middle placer
@@ -286,7 +286,7 @@
         var hasRemove = setWidgetsList(widgetsList);
 
         if (hasRemove) {
-            if (!confirm("{{ "If you switch to new layout you will lose some widgets, are you shure?" | trans}}")) {
+            if (!confirm("{{ "If you switch to new layout you will lose some widgets, are you shure?" |i18n}}")) {
                 changeCurrentLayoutType(currentLayoutType, widgetsList);
                 return;
             }
@@ -317,8 +317,8 @@
         <div class="manage_page_header">
             <div class="manage_page_header_label">
                 <h3>
-                    <a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" | trans }}</a>
-                    > {{ "Manage page" | trans }}</h3>
+                    <a href="{{ url(['for':'admin-pages']) }}">{{ "Pages" |i18n }}</a>
+                    > {{ "Manage page" |i18n }}</h3>
                 <a {% if currentPage.type is null and currentPage.url is not null %}href="/page/{{ currentPage.url }}"
                    target="_blank" {% else %} href="javascript:;"{% endif %}
                         >{{ currentPage.title }}</a>
@@ -327,15 +327,15 @@
             <div class="widget_options_panel">
 
                 <div class="btn-group">
-                    <a class="btn btn-inverse dropdown-toggle" data-toggle="dropdown" href="#">
-                        {{ "Change layout" | trans }}
+                    <a class="btn btn-default dropdown-toggle" data-toggle="dropdown" href="#">
+                        {{ "Change layout" |i18n }}
                         <span class="caret"></span>
                     </a>
                     <ul class="dropdown-menu">
                         <li>
                             <div id="layout_select_block">
                                 <div class="admin_layoutbox_menu_columnchoices_instructions">
-                                    {{ "Select layout type for current page" | trans }}
+                                    {{ "Select layout type for current page" |i18n }}
                                 </div>
                                 <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                     <li>
@@ -411,7 +411,7 @@
                 </div>
                 <button id="save_button" disabled="disabled" onclick="savePage();" type="button"
                         class="btn btn-primary button-loading"
-                        data-loading-text="{{ "Saving..." | trans }}">{{ "Save" | trans }}</button>
+                        data-loading-text="{{ "Saving..." |i18n }}">{{ "Save" |i18n }}</button>
             </div>
         </div>
         <div class="clearfix"></div>

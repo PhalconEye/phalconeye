@@ -18,7 +18,7 @@
 {% extends "layouts/modal.volt" %}
 
 {% block title %}
-    {{ 'Edit menu item'|trans }}
+    {{ 'Edit menu item'|i18n }}
 {% endblock %}
 
 {% block body %}

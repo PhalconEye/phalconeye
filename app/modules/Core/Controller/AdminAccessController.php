@@ -70,7 +70,7 @@ class AdminAccessController extends AbstractAdminController
         if ($changeRole !== null) {
             $this->session->set('admin-current-role', $changeRole);
 
-            return $this->response->redirect('admin/access/edit?id=' . $id);
+            return $this->response->redirect(['for' => 'admin-access-edit', 'id' => $id]);
         }
 
         $resources = $this->core->acl()->getResources();
@@ -180,7 +180,7 @@ class AdminAccessController extends AbstractAdminController
         $form = new CoreForm();
 
         if (!empty($objectAcl->actions)) {
-            $form->addHtml('header_actions', '<h4>' . $this->di->get('trans')->_('Actions') . '</h4>');
+            $form->addHtml('header_actions', '<h4>' . $this->di->get('i18n')->_('Actions') . '</h4>');
 
             foreach ($objectAcl->actions as $action) {
                 $form->addCheckbox(
@@ -199,7 +199,7 @@ class AdminAccessController extends AbstractAdminController
         }
 
         if (!empty($objectAcl->options)) {
-            $form->addHtml('header_options', '<br/><br/><h4>' . $this->di->get('trans')->_('Options') . '</h4>');
+            $form->addHtml('header_options', '<br/><br/><h4>' . $this->di->get('i18n')->_('Options') . '</h4>');
 
             foreach ($objectAcl->options as $option) {
                 $form->addText(

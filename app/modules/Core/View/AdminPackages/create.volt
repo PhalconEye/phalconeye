@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Create new package"|trans }}{% endblock %}
+{% block title %}{{ "Create new package"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">

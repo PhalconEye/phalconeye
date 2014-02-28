@@ -20,6 +20,7 @@ namespace Core\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
 use Core\Model\Language;
+use Engine\Config;
 use Engine\DependencyInjection;
 use Engine\Form;
 use Engine\Grid\GridItem;
@@ -70,6 +71,12 @@ class LanguageTranslationGrid extends CoreGrid
             ->from('Core\Model\LanguageTranslation')
             ->where('language_id = ' . $this->_language->getId());
 
+        $showUntranslated = (bool)$this->getDI()->getRequest()->get('untranslated', 'int', 0);
+
+        if ($showUntranslated) {
+            $builder->where("original = translated");
+        }
+
         if ($search = $this->getDI()->getRequest()->get('search')) {
             $builder
                 ->where("original LIKE '%{$search}%'")
@@ -90,7 +97,10 @@ class LanguageTranslationGrid extends CoreGrid
     {
         return [
             'Edit' => ['attr' => ['onclick' => 'editItem(' . $item['id'] . ');return false;']],
-            'Delete' => ['attr' => ['class' => 'grid-delete']]
+            'Delete' => [
+                'href' => ['for' => 'admin-languages-delete-item', 'id' => $item['id'], 'lang' => $item['language_id']],
+                'attr' => ['class' => 'grid-action-delete']
+            ]
         ];
     }
 
@@ -101,9 +111,26 @@ class LanguageTranslationGrid extends CoreGrid
      */
     protected function _initColumns()
     {
+        $language = $this->_language;
+
         $this
             ->addTextColumn('scope', 'Scope')
             ->addTextColumn('original', 'Original')
-            ->addTextColumn('translated', 'Translated');
+            ->addTextColumn(
+                'translated',
+                'Translated',
+                [
+                    self::COLUMN_PARAM_OUTPUT_LOGIC =>
+                        function ($item) use ($language) {
+                            if (
+                                $language->language != Config::CONFIG_DEFAULT_LANGUAGE &&
+                                !$item['checked']
+                            ) {
+                                return '<i class="untranslated">' . $item['translated'] . '</i>';
+                            }
+                            return $item['translated'];
+                        }
+                ]
+            );
     }
 }

@@ -18,7 +18,7 @@
 {% extends "layouts/main.volt" %}
 
 {% block title %}
-    {{ 'Not Found'|trans }}
+    {{ 'Not Found'|i18n }}
 {% endblock %}
 
 {% block content %}

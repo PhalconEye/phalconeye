@@ -355,7 +355,7 @@ class Navigation
                     $dditc,
                     $prependHTML,
                     $pc,
-                    $this->getDI()->get('trans')->query($item['title']),
+                    $this->getDI()->get('i18n')->query($item['title']),
                     $ac,
                     $ddmc,
                     $appendHTML
@@ -368,7 +368,7 @@ class Navigation
                             $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
                         } else {
                             $content .= "<{$lit} class='{$ddihc}'>";
-                            $content .= $this->getDI()->get('trans')->query($subitem);
+                            $content .= $this->getDI()->get('i18n')->query($subitem);
                             $content .= "</{$lit}>";
                         }
                     } elseif (is_array($subitem)) {
@@ -392,7 +392,7 @@ class Navigation
                             $linkOnclick,
                             $link,
                             $pc,
-                            $this->getDI()->get('trans')->query($subitem),
+                            $this->getDI()->get('i18n')->query($subitem),
                             $ac
                         );
                         $content .= "</{$lit}>";
@@ -435,7 +435,7 @@ class Navigation
                     $item['href'],
                     $prependHTML,
                     $pc,
-                    $this->getDI()->get('trans')->query($item['title']),
+                    $this->getDI()->get('i18n')->query($item['title']),
                     $ac,
                     $appendHTML
                 );

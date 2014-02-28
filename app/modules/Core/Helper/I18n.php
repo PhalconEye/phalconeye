@@ -34,21 +34,75 @@ use Phalcon\Tag;
 class I18n extends Helper
 {
     /**
+     * Translations.
+     *
+     * @var array
+     */
+    private $_translations = [];
+
+    /**
+     * Add translations to temporary storage.
+     *
+     * @param array|string $translations Translations that must be converted.
+     * @param array        $params       Concatenation params.
+     *
+     * @return $this
+     */
+    protected function _add($translations, $params = [])
+    {
+        if (!is_array($translations)) {
+            $translations = [$translations => $params];
+        }
+
+        $this->_translations += $translations;
+        return $this;
+    }
+
+    /**
      * Output javascript translation scope.
      *
-     * @param array $translations Translations that must be converted.
+     * @param array|string $translations Translations that must be converted.
+     * @param array        $params       Concatenation params.
      *
      * @return string
      */
-    protected function _js($translations)
+    protected function _js($translations, $params = [])
     {
         if (!is_array($translations)) {
-            $translations = [$translations];
+            $translations = [$translations => $params];
         }
+
+        return $this->_render($translations);
+    }
+
+    /**
+     * Clear stored translations.
+     *
+     * @return void
+     */
+    protected function _clear()
+    {
+        $this->_translations = [];
+    }
+
+    /**
+     * Render current translations.
+     *
+     * @param array $translations Translation to render.
+     *
+     * @return string
+     */
+    protected function _render($translations = null)
+    {
+        if (!$translations) {
+            $translations = $this->_translations;
+        }
+
         $content = 'var translatorData = translatorData || [];' . PHP_EOL;
-        foreach ($translations as $text) {
+        foreach ($translations as $text => $params) {
             $content .=
-                'translatorData["' . $text . '"] = "' . $this->getDI()->get('trans')->query($text) . '";' . PHP_EOL;
+                'translatorData["' . $text . '"] = "' .
+                $this->getDI()->get('i18n')->query($text, $params) . '";' . PHP_EOL;
         }
 
         return $content;

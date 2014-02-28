@@ -63,7 +63,7 @@ class System extends CoreForm
             );
 
 
-        $this->addButton('save');
+        $this->addFooterFieldSet()->addButton('save');
     }
 
 

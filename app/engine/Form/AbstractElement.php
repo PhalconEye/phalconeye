@@ -312,7 +312,7 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getDefaultAttributes()
     {
-        $default = ['id' => $this->getName(), 'name' => $this->getName()];
+        $default = ['id' => $this->getName(), 'name' => $this->getName(), 'class' => 'form-control'];
         if ($this->getOption('required')) {
             $default['required'] = 'required';
         }

@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Menu Creation"|trans }}{% endblock %}
+{% block title %}{{ "Menu Creation"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">

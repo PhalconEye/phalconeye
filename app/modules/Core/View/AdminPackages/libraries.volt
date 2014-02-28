@@ -17,12 +17,12 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Packages management - Libraries"|trans }}{% endblock %}
+{% block title %}{{ "Packages management - Libraries"|i18n }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var removePackage = function (type, name) {
-            if (confirm('{{ 'Are you really want to remove this package? Once removed, it can not be restored.' | trans}}')) {
+            if (confirm('{{ 'Are you really want to remove this package? Once removed, it can not be restored.' |i18n}}')) {
                 window.location.href = '{{ url(['for':'admin-packages-uninstall', 'type':'%type%', 'name':'%name%', 'return':'admin-packages-libraries']) }}'.replace('%type%', type).replace('%name%', name);
             }
         }
@@ -53,10 +53,10 @@
                         </div>
                         {% if not package.is_system %}
                             <div class="package_options">
-                                {{ link_to(['for':'admin-packages-edit', 'type':package.type, 'name':package.name, 'return':'admin-packages-libraries'], 'Edit' | trans, 'class': 'btn btn-inverse') }}
-                                {{ link_to(['for':'admin-packages-export', 'type':package.type, 'name':package.name], 'Export' | trans, 'class': 'btn btn-inverse', 'data-widget':'modal') }}
+                                {{ link_to(['for':'admin-packages-edit', 'type':package.type, 'name':package.name, 'return':'admin-packages-libraries'], 'Edit' |i18n, 'class': 'btn btn-default') }}
+                                {{ link_to(['for':'admin-packages-export', 'type':package.type, 'name':package.name], 'Export' |i18n, 'class': 'btn btn-default', 'data-widget':'modal') }}
                                 <a class="btn btn-danger" href="javascript:;"
-                                   onclick="removePackage('{{package.type}}', '{{ package.name }}');">{{ 'Uninstall' | trans }}</a>
+                                   onclick="removePackage('{{package.type}}', '{{ package.name }}');">{{ 'Uninstall' |i18n }}</a>
                             </div>
                         {% endif %}
                         <div class="clear"></div>
@@ -64,7 +64,7 @@
                 {% endfor %}
                 {% if packages.count() is 0 %}
                     <li>
-                        <h2 style="text-align: center;">{{ 'No packages'|trans }}</h2>
+                        <h2 style="text-align: center;">{{ 'No packages'|i18n }}</h2>
                     </li>
                 {% endif %}
             </ul>

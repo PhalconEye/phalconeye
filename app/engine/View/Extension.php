@@ -99,8 +99,8 @@ class Extension extends DI\Injectable
     public function compileFilter($name, $arguments)
     {
         switch ($name) {
-            case 'trans':
-                return '$this->trans->query(' . $arguments . ')';
+            case 'i18n':
+                return '$this->i18n->query(' . $arguments . ')';
         }
     }
 

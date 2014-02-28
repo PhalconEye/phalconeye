@@ -17,7 +17,7 @@
 
 {% extends "../../Core/View/layouts/main.volt" %}
 
-{% block title %}{{ 'Register you account!'|trans }}{% endblock %}
+{% block title %}{{ 'Register you account!'|i18n }}{% endblock %}
 {% block content %}
     {{ form.render() }}
 {% endblock %}

@@ -18,6 +18,7 @@
 
 namespace Core\Controller;
 
+use Core\Controller\Traits\JsTranslations;
 use Core\Model\Page;
 use Engine\DependencyInjection;
 use Phalcon\Db\Column;
@@ -35,17 +36,20 @@ use Phalcon\Mvc\View;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  *
- * @property \Phalcon\Db\Adapter\Pdo $db
- * @property \Phalcon\Cache\Backend  $cacheData
- * @property \Engine\Application     $app
- * @property \Engine\Asset\Manager   $assets
- * @property \Engine\Config          $config
- * @property DependencyInjection|DI  $di
+ * @property \Phalcon\Db\Adapter\Pdo    $db
+ * @property \Phalcon\Cache\Backend     $cacheData
+ * @property \Engine\Application        $app
+ * @property \Engine\Asset\Manager      $assets
+ * @property \Engine\Config             $config
+ * @property DependencyInjection|DI     $di
+ * @property \Phalcon\Translate\Adapter $i18n
  *
  * @method \Engine\DependencyInjection|\Phalcon\DI getDI()
  */
 abstract class AbstractController extends PhalconController
 {
+    use JsTranslations;
+
     /**
      * Initializes the controller.
      *
@@ -91,6 +95,8 @@ abstract class AbstractController extends PhalconController
                 ->collection('js')
                 ->addCss('assets/js/core/profiler.js');
         }
+
+        $this->addDefaultJsTranslations();
 
         // run init function
         if (method_exists($this, 'init')) {

@@ -20,40 +20,20 @@
 {% block title %}Index{% endblock %}
 
 {% block head %}
-    <script type="text/javascript">
-        var setMode = function (debug) {
-            $.ajax({
-                type: "get",
-                url: '{{ url(['for':'admin-mode'])}}',
-                data: {
-                    'debug': debug
-                },
-                dataType: 'json',
-                success: function () {
-                    window.location.reload();
-                }
-            });
-        }
-    </script>
+    {{ helper('assets').addJs('assets/js/core/admin/dashboard.js') }}
 {% endblock %}
 
 {% block content %}
-
     <div class="dashboard">
-        <div class="span6">
-            <h1>{{ 'Dashboard' | trans }}</h1>
-        </div>
-
-        <div class="span2 dashboard-sidebar">
-            <h4><span>{{ 'System mode'|trans }}</span></h4>
-
-            <div class="btn-group" data-toggle="buttons-radio">
-                <button onclick="setMode(0);" type="button" class="btn btn-primary{% if not debug %} active{% endif %}">
-                    Production
-                </button>
-                <button onclick="setMode(1);" type="button" class="btn{% if debug %} active{% endif %}">Debug</button>
+        <div class="row">
+            <div class="col-md-8">
+                <h1>{{ 'Dashboard' |i18n }}</h1>
+                Some activity here... imagine it =)... coming soon...
             </div>
-
+            <div class="col-md-4 debug-mode">
+                <h4>{{ 'Debug mode'|i18n }}</h4>
+                <input name="debug" type="checkbox" data-href="{{ url(['for':'admin-mode'])}}" {% if debug %}checked{% endif %}>
+            </div>
         </div>
     </div>
 {% endblock %}

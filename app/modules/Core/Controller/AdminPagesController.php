@@ -57,7 +57,7 @@ class AdminPagesController extends AbstractAdminController
                     'index' => [
                         'href' => 'admin/pages',
                         'title' => 'Browse',
-                        'prepend' => '<i class="icon-list icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                     ],
                     1 => [
                         'href' => 'javascript:;',
@@ -66,7 +66,7 @@ class AdminPagesController extends AbstractAdminController
                     'create' => [
                         'href' => 'admin/pages/create',
                         'title' => 'Create new page',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ]
                 ]
             );

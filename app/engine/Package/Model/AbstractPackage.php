@@ -143,7 +143,8 @@ abstract class AbstractPackage extends AbstractModel
                 ],
             ],
             'events' => [],
-            'widgets' => []
+            'widgets' => [],
+            'i18n' => []
         ];
     }
 
@@ -268,9 +269,11 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Return package as string, package metadata.
      *
+     * @param array $params Some additional params.
+     *
      * @return string
      */
-    abstract public function toJson();
+    abstract public function toJson(array $params = []);
 
     /**
      * Create package from json string.

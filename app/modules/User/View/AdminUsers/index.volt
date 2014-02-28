@@ -18,12 +18,12 @@
 {% extends "../../Core/View/layouts/admin.volt" %}
 
 
-{% block title %}{{ 'Users'|trans }}{% endblock %}
+{% block title %}{{ 'Users'|i18n }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this user?" | trans}}')) {
+            if (confirm('{{ "Are you really want to delete this user?" |i18n}}')) {
                 window.location.href = '{{ url(['for':'admin-users-delete'])}}' + id;
             }
         }
@@ -41,7 +41,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Users' | trans }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Users' |i18n }} ({{ grid.getTotalCount() }})</h2>
             {{ grid.render() }}
         </div>
     </div>

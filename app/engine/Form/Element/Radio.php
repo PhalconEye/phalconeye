@@ -88,6 +88,16 @@ class Radio extends AbstractElement implements ElementInterface
     }
 
     /**
+     * Get element default attribute.
+     *
+     * @return array
+     */
+    public function getDefaultAttributes()
+    {
+        return array_merge(parent::getDefaultAttributes(), ['class' => '']);
+    }
+
+    /**
      * Get element html template.
      *
      * @return string

@@ -18,7 +18,7 @@
 {% if form.hasErrors() %}
     <ul class="form_errors">
         {% for msg in form.getErrors() %}
-            <li class="alert alert-error">{{ msg }}</li>
+            <li class="alert alert-danger">{{ msg }}</li>
         {% endfor %}
     </ul>
 {% endif %}

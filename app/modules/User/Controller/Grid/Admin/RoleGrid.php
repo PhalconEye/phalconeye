@@ -63,7 +63,8 @@ class RoleGrid extends CoreGrid
         $actions = ['Edit' => ['href' => ['for' => 'admin-roles-edit', 'id' => $item['id']]]];
         if (empty($item['undeletable'])) {
             $actions['Delete'] = [
-                'href' => ['for' => 'admin-roles-delete', 'id' => $item['id']], 'attr' => ['class' => 'grid-delete']
+                'href' => ['for' => 'admin-roles-delete', 'id' => $item['id']],
+                'attr' => ['class' => 'grid-action-delete']
             ];
         }
 

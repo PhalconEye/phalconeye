@@ -28,19 +28,19 @@
             <div class="form_label">
                 {% if element.getOption('label') %}
                     <label for="{{ element.getName() }}">
-                        {{ element.getOption('label') |trans }}
+                        {{ element.getOption('label') |i18n }}
                         {% if element.getOption('required') %}
                             *
                         {% endif %}
                     </label>
                 {% endif %}
                 {% if element.getOption('description') %}
-                    <p>{{ element.getOption('description') |trans }}</p>
+                    <p>{{ element.getOption('description') |i18n }}</p>
                 {% endif %}
             </div>
         {% endif %}
         <div class="form_element">
-            {% if instanceof(element, 'Engine\Form\Element\File') and element.getOption('isImage') %}
+            {% if instanceof(element, 'Engine\Form\Element\File') and element.getOption('isImage') and element.getValue() is not '/' %}
                 <div class="form_element_file_image">
                     <img alt="" src="{{ element.getValue() }}"/>
                 </div>

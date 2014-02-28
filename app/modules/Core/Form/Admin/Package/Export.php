@@ -19,6 +19,7 @@
 namespace Core\Form\Admin\Package;
 
 use Core\Form\CoreForm;
+use Core\Model\Package;
 use Engine\Package\Manager;
 
 /**
@@ -34,6 +35,13 @@ use Engine\Package\Manager;
 class Export extends CoreForm
 {
     /**
+     * Package object.
+     *
+     * @var Package
+     */
+    protected $_package;
+
+    /**
      * Exclude data.
      *
      * @var array|null
@@ -43,10 +51,12 @@ class Export extends CoreForm
     /**
      * Form constructor.
      *
+     * @param Package    $package Package object.
      * @param null|array $exclude Exclude data.
      */
-    public function __construct($exclude = null)
+    public function __construct($package, $exclude = null)
     {
+        $this->_package = $package;
         $this->_exclude = $exclude;
         parent::__construct();
     }
@@ -99,5 +109,9 @@ class Export extends CoreForm
             null,
             ['using' => ['name', 'title']]
         );
+
+        if ($this->_package->type == Manager::PACKAGE_TYPE_MODULE) {
+            $content->addCheckbox('withTranslations', 'Export with translations', null, 1, true);
+        }
     }
 }

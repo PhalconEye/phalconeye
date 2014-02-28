@@ -45,6 +45,7 @@ class CreateItem extends CoreForm
 
         if (!$entity) {
             $entity = new LanguageTranslation();
+            $entity->checked = true;
         }
 
         $this->addEntity($entity);
@@ -61,6 +62,7 @@ class CreateItem extends CoreForm
             ->addText('scope')
             ->addTextArea('original')
             ->addTextArea('translated')
-            ->addHidden('language_id');
+            ->addHidden('language_id')
+            ->addHidden('checked');
     }
 }

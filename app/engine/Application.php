@@ -713,16 +713,16 @@ class Application extends PhalconApplication
      */
     protected function _initFlash($di)
     {
+        $flashData = [
+            'error' => 'alert alert-danger',
+            'success' => 'alert alert-success',
+            'notice' => 'alert alert-info',
+        ];
+
         $di->set(
             'flash',
-            function () {
-                $flash = new FlashDirect(
-                    [
-                        'error' => 'alert alert-error',
-                        'success' => 'alert alert-success',
-                        'notice' => 'alert alert-info',
-                    ]
-                );
+            function () use ($flashData) {
+                $flash = new FlashDirect($flashData);
 
                 return $flash;
             }
@@ -730,14 +730,8 @@ class Application extends PhalconApplication
 
         $di->set(
             'flashSession',
-            function () {
-                $flash = new FlashSession(
-                    [
-                        'error' => 'alert alert-error',
-                        'success' => 'alert alert-success',
-                        'notice' => 'alert alert-info',
-                    ]
-                );
+            function () use ($flashData) {
+                $flash = new FlashSession($flashData);
 
                 return $flash;
             }

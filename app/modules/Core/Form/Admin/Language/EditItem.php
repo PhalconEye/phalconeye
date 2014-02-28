@@ -18,6 +18,10 @@
 
 namespace Core\Form\Admin\Language;
 
+use Engine\Db\AbstractModel;
+use Engine\Form\Behaviour\FieldSetBehaviour;
+use Engine\Form\Form;
+
 /**
  * Edit language item.
  *
@@ -30,4 +34,14 @@ namespace Core\Form\Admin\Language;
  */
 class EditItem extends CreateItem
 {
+    /**
+     * Create form.
+     *
+     * @param AbstractModel $entity Entity object.
+     */
+    public function __construct(AbstractModel $entity = null)
+    {
+        parent::__construct($entity);
+        $this->setValue('checked', 1);
+    }
 }

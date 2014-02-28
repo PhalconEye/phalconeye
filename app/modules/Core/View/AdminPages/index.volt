@@ -17,12 +17,12 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Pages' | trans }}{% endblock %}
+{% block title %}{{ 'Pages' |i18n }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
         var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this page?" | trans }}')) {
+            if (confirm('{{ "Are you really want to delete this page?" |i18n }}')) {
                 window.location.href = '{{ url(['for':'admin-pages-delete'])}}' + id;
             }
         }
@@ -40,7 +40,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Menus' | trans }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Menus' |i18n }} ({{ grid.getTotalCount() }})</h2>
             {{ grid.render() }}
         </div>
     </div>

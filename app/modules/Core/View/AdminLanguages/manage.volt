@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Manage language"|trans }}{% endblock %}
+{% block title %}{{ "Manage language"|i18n }}{% endblock %}
 
 {% block head %}
     <script type="text/javascript">
@@ -38,7 +38,22 @@
             };
 
             PhalconEye.widget.modal.open(url, data);
-        }
+        };
+
+        var showUntranslated = function (element) {
+            var flag = 1;
+
+            if (PhalconEye.widget.grid.getParam('untranslated')) {
+                flag = 0;
+                element.removeClass('btn-success');
+            }
+            else {
+                element.addClass('btn-success');
+            }
+
+            PhalconEye.widget.grid.setParam('untranslated', flag);
+            PhalconEye.widget.grid.load();
+        };
     </script>
 {% endblock %}
 
@@ -52,35 +67,32 @@
 
 
 {% block content %}
-
     <div class="span12">
         <div class="language_manage_header">
-            <h3><a href="{{ url(['for': 'admin-languages']) }}">{{ "Languages" | trans }}</a>
-                > {{ "Manage language" | trans }}
-                "{{ lang.name }}"</h3>
+            <h3>
+                <a href="{{ url(['for': 'admin-languages']) }}">{{ "Languages" |i18n }}</a> > {{ lang.name }}
+            </h3>
 
-            <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|trans }}</button>
+            <button class="btn btn-primary" onclick='requestAddItem();'>{{ 'Add new item'|i18n }}</button>
             {% if (lang.language != constant('\Engine\Config::CONFIG_DEFAULT_LANGUAGE')) %}
-            <a class="btn btn-info"
-                    href='{{ url(['for': 'admin-languages-synchronize', 'id': lang.id]) }}'>{{ 'Synchonize'|trans }}</a>
+                <button class="btn btn-primary" onclick='showUntranslated($(this));'>{{ 'Show untranslated'|i18n }}</button>
+                <a class="btn btn-info"
+                   href='{{ url(['for': 'admin-languages-synchronize', 'id': lang.id]) }}'>{{ 'Synchronize'|i18n }}</a>
             {% endif %}
             <form class="navbar-search pull-right" method="GET"
                   action="{{ url(['for': 'admin-languages-manage'])~lang.id }}">
                 {% if search is defined %}
-                    <div class="icon-remove"
+                    <div class="glyphicon glyphicon-remove"
                          onclick="window.location.href='{{ url(['for': 'admin-languages-manage'])~lang.id }}'"></div>
                 {% endif %}
-                <input name="search" type="text" class="search-query" placeholder="{{ 'Search' |trans }}"
+                <input name="search" type="text" class="search-query form-control" placeholder="{{ 'Search' |i18n }}"
                        value="{{ search }}"/>
 
-                <div class="icon-search" onclick="$(this).parent().submit();"></div>
+                <div class="glyphicon glyphicon-search" onclick="$(this).parent().submit();"></div>
             </form>
         </div>
         <div class="language_manage_body">
             {{ grid.render() }}
         </div>
     </div>
-
-
-
 {% endblock %}

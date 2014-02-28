@@ -30,7 +30,7 @@
 {% else %}
     <tr>
         <td class="grid-no-items" colspan="{{ (grid.getColumns() | length) + 1 }}">
-            {{ 'No items'|trans }}
+            {{ 'No items'|i18n }}
         </td>
     </tr>
 {% endif %}

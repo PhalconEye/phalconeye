@@ -45,14 +45,10 @@ class Upload extends FileForm
             ->setDescription('Select package you want to install (zip extension).');
 
         $this->addContentFieldSet()
-            ->addFile('package')
-            ->getValidation()
-            ->add('package', new MimeType(['type' => 'application/zip']));
+            ->addFile('package');
 
         $this->addFooterFieldSet()
             ->addButton('upload')
             ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-packages']);
-
-
     }
 }

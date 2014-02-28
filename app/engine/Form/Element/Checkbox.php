@@ -53,7 +53,7 @@ class Checkbox extends AbstractElement implements ElementInterface
      */
     public function getDefaultAttributes()
     {
-        return array_merge(parent::getDefaultAttributes(), ['type' => 'checkbox']);
+        return array_merge(parent::getDefaultAttributes(), ['type' => 'checkbox', 'class' => '']);
     }
 
     /**

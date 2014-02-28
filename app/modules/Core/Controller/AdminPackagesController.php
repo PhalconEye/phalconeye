@@ -24,6 +24,7 @@ use Core\Form\Admin\Package\Events as EventsForm;
 use Core\Form\Admin\Package\Export as ExportForm;
 use Core\Form\Admin\Package\Upload as UploadForm;
 use Core\Form\CoreForm;
+use Core\Model\Language;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Widget;
@@ -62,27 +63,27 @@ class AdminPackagesController extends AbstractAdminController
                     'index' => [
                         'href' => 'admin/packages',
                         'title' => 'Modules',
-                        'prepend' => '<i class="icon-th-large icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                     ],
                     'themes' => [
                         'href' => 'admin/packages/themes',
                         'title' => 'Themes',
-                        'prepend' => '<i class="icon-leaf icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
                     ],
                     'widgets' => [
                         'href' => 'admin/packages/widgets',
                         'title' => 'Widgets',
-                        'prepend' => '<i class="icon-tags icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
                     ],
                     'plugins' => [
                         'href' => ['for' => 'admin-packages-plugins'],
                         'title' => 'Plugins',
-                        'prepend' => '<i class="icon-resize-full icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
                     ],
                     'libraries' => [
                         'href' => ['for' => 'admin-packages-libraries'],
                         'title' => 'Libraries',
-                        'prepend' => '<i class="icon-book icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-book"></i>'
                     ],
                     2 => [
                         'href' => 'javascript:;',
@@ -91,12 +92,12 @@ class AdminPackagesController extends AbstractAdminController
                     'upload' => [
                         'href' => 'admin/packages/upload',
                         'title' => 'Upload new package',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ],
                     'create' => [
                         'href' => 'admin/packages/create',
                         'title' => 'Create new package',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ]
                 ]
             );
@@ -216,6 +217,13 @@ class AdminPackagesController extends AbstractAdminController
                 $newPackageVersion = $packageManager->runInstallScript($manifest);
                 $this->app->clearCache();
 
+                // Install translations if possible.
+                if (!empty($manifest->i18n)) {
+                    foreach ($manifest->i18n as $languageData) {
+                        Language::parseImportData($this->getDI(), $languageData->toArray());
+                    }
+                }
+
                 // Register module in system to perform database update.
                 $modules = $this->getDI()->get('registry')->modules;
                 $loader = $this->getDI()->get('loader');
@@ -247,7 +255,7 @@ class AdminPackagesController extends AbstractAdminController
                     $this->flash->success('Package installed!');
                 }
 
-            } catch (PackageException $e) {
+            } catch (Exception $e) {
                 $this->flash->error($e->getMessage());
             }
         } else {
@@ -425,8 +433,13 @@ class AdminPackagesController extends AbstractAdminController
      */
     public function exportAction($type, $name)
     {
+        $package = $this->_getPackage($type, $name);
+        if (!$package) {
+            return $this->response->redirect(['for' => 'admin-packages']);
+        }
+
         $this->view->hideFooter = true;
-        $this->view->form = $form = new ExportForm(['name' => $name, 'type' => $type]);
+        $this->view->form = $form = new ExportForm($package, ['name' => $name, 'type' => $type]);
 
         $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
         if (!$skipForm && (!$this->request->isPost() || !$form->isValid())) {
@@ -434,7 +447,6 @@ class AdminPackagesController extends AbstractAdminController
         }
 
         $this->view->disable();
-        $package = $this->_getPackage($type, $name);
         if ($package) {
             $dependencies = $form->getValues();
             $dependenciesData = [];
@@ -472,7 +484,7 @@ class AdminPackagesController extends AbstractAdminController
             $package->setDependencies($dependenciesData);
 
             $packageManager = new Manager();
-            $packageManager->exportPackage($package);
+            $packageManager->exportPackage($package, ['withTranslations' => $form->getValue('withTranslations')]);
         }
     }
 

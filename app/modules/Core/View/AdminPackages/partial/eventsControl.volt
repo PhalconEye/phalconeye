@@ -27,17 +27,17 @@
     }
 </script>
 <div>
-    <a href="javascript:;" class="btn" onclick="addNewEvent();">{{ 'Add new'|trans }}</a>
+    <a href="javascript:;" class="btn" onclick="addNewEvent();">{{ 'Add new'|i18n }}</a>
 </div>
 <div class="events-container">
     {% if events is not defined or events is empty %}
     <div class="events-row">
         <div class="events-event">
-            {{ 'Event'|trans }}:
+            {{ 'Event'|i18n }}:
             <input type="text" required="required" name="event[]">
         </div>
         <div class="events-class">
-            {{ 'Class'|trans }}:
+            {{ 'Class'|i18n }}:
             <input type="text" required="required" name="class[]">
         </div>
     </div>
@@ -45,11 +45,11 @@
         {% for key, event in events['event'] %}
             <div class="events-row">
                 <div class="events-event">
-                    {{ 'Event'|trans }}:
+                    {{ 'Event'|i18n }}:
                     <input type="text" required="required" name="event[]" value="{{ event }}">
                 </div>
                 <div class="events-class">
-                    {{ 'Class'|trans }}:
+                    {{ 'Class'|i18n }}:
                     <input type="text" required="required" name="class[]" value="{{ events['class'][key] }}">
                 </div>
                 <div class="events-remove" onclick="removeEvent($(this));">x</div>

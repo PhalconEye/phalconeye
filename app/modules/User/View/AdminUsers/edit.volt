@@ -16,7 +16,7 @@
 #}
 
 {% extends "../../Core/View/layouts/admin.volt" %}
-{% block title %}{{ "User Editing"|trans }}{% endblock %}
+{% block title %}{{ "User Editing"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">

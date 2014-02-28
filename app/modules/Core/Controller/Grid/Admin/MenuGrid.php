@@ -69,7 +69,7 @@ class MenuGrid extends CoreGrid
                     [
                         'for' => 'admin-menus-delete', 'id' => $item['id']
                     ],
-                'attr' => ['class' => 'grid-delete']
+                'attr' => ['class' => 'grid-action-delete']
             ]
         ];
     }

@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Language Editing"|trans }}{% endblock %}
+{% block title %}{{ "Language Editing"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">

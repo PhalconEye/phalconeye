@@ -18,7 +18,7 @@
 {% extends "Install/layout.volt" %}
 
 {% block title %}
-    {{ 'Installation'|trans }}
+    {{ 'Installation'|i18n }}
 {% endblock %}
 
 {% block header %}

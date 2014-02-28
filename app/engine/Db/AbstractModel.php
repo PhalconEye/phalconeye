@@ -20,6 +20,7 @@ namespace Engine\Db;
 
 use Phalcon\DI;
 use Phalcon\Mvc\Model as PhalconModel;
+use Phalcon\Mvc\Model\Query\Builder;
 
 /**
  * Abstract Model.
@@ -99,6 +100,26 @@ abstract class AbstractModel extends PhalconModel
         }
 
         return self::findFirst($parameters);
+    }
+
+    /**
+     * Get builder associated with table of this model.
+     *
+     * @param string|null $tableAlias Table alias to use in query.
+     *
+     * @return Builder
+     */
+    public static function getBuilder($tableAlias = null)
+    {
+        $builder = new Builder();
+        $table = get_called_class();
+        if (!$tableAlias) {
+            $builder->from($table);
+        } else {
+            $builder->addFrom($table, $tableAlias);
+        }
+
+        return $builder;
     }
 
     /**

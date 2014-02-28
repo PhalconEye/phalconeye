@@ -18,7 +18,7 @@
 {% extends "layouts/modal.volt" %}
 
 {% block title %}
-    {{ 'Export Package'|trans }}
+    {{ 'Export Package'|i18n }}
 {% endblock %}
 
 {% block body %}
@@ -28,7 +28,7 @@
 
 {% block footer %}
     <div class="modal-footer">
-        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ "Close"|trans }}</button>
-        <button class="btn btn-primary" onclick="$('#modal form')[0].submit();$('#modal').modal('hide');">{{ "Export"|trans }}</button>
+        <button class="btn" data-dismiss="modal" aria-hidden="true">{{ "Close"|i18n }}</button>
+        <button class="btn btn-primary" onclick="$('#modal form')[0].submit();$('#modal').modal('hide');">{{ "Export"|i18n }}</button>
     </div>
 {% endblock %}

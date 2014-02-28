@@ -27,11 +27,11 @@
         {% endif %}
     {% endif %}
 
-    <div class="pagination">
-        <ul>
+    <div class="pagination-container">
+        <ul class="pagination">
             {% if paginator.current > 1 %}
                 <li>
-                    <a href="{{ helper('url').paginatorUrl() }}" data-page="1">{{ 'First' |trans }}</a>
+                    <a href="{{ helper('url').paginatorUrl() }}" data-page="1">{{ 'First' |i18n }}</a>
                 </li>
                 <li>
                     <a href="{{ helper('url').paginatorUrl(paginator.before) }}" data-page="{{ paginator.before }}">&laquo;</a>
@@ -53,7 +53,7 @@
                     <a href="{{ helper('url').paginatorUrl(paginator.current + 1) }}" data-page="{{ paginator.current + 1 }}">&raquo;</a>
                 </li>
                 <li>
-                    <a href="{{ helper('url').paginatorUrl(paginator.last ) }}" data-page="{{ paginator.last }}">{{ 'Last' |trans }}</a>
+                    <a href="{{ helper('url').paginatorUrl(paginator.last ) }}" data-page="{{ paginator.last }}">{{ 'Last' |i18n }}</a>
                 </li>
             {% endif %}
         </ul>

@@ -18,7 +18,7 @@
 {% extends "Install/layout.volt" %}
 
 {% block title %}
-    {{ 'Installation | Database'|trans }}
+    {{ 'Installation | Database'|i18n }}
 {% endblock %}
 
 {% block header %}
@@ -34,13 +34,13 @@
             <thead>
             <tr>
                 <th>
-                    {{ 'Requirement'|trans }}
+                    {{ 'Requirement'|i18n }}
                 </th>
                 <th>
-                    {{ 'Required Version / Installed Version'|trans }}
+                    {{ 'Required Version / Installed Version'|i18n }}
                 </th>
                 <th>
-                    {{ 'Passed'|trans }}
+                    {{ 'Passed'|i18n }}
                 </th>
             </tr>
             </thead>
@@ -69,10 +69,10 @@
             <thead>
             <tr>
                 <th class="table-column-left">
-                    {{ 'Path'|trans }}
+                    {{ 'Path'|i18n }}
                 </th>
                 <th>
-                    {{ 'Writable'|trans }}
+                    {{ 'Writable'|i18n }}
                 </th>
             </tr>
             </thead>
@@ -95,9 +95,9 @@
         </table>
 
         {% if passed %}
-            <a href="/install/database" class="proceed">{{ 'Install'|trans }}</a>
+            <a href="/install/database" class="proceed">{{ 'Install'|i18n }}</a>
         {% else %}
-            <div class="error">{{ 'Please, install all requirements and check pathes.'|trans }}</div>
+            <div class="error">{{ 'Please, install all requirements and check pathes.'|i18n }}</div>
         {% endif %}
     </div>
 {% endblock %}

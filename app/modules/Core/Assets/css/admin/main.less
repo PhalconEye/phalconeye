@@ -24,17 +24,8 @@ h1, h2, h3, h4, h5, h6 {
   color: #555555;
   font-family: inherit;
   font-weight: 700;
-  margin: 0px 0px 0px;
+  margin: 0 0 10px 0;
   text-rendering: optimizeLegibility;
-}
-
-h2 {
-  font-family: "PT Sans", "Calibri", "Lucida Grande", "arial", sans-serif;
-  font-size: 16pt;
-}
-
-h3 {
-  font-family: "PT Sans", "Calibri", "Lucida Grande", "arial", sans-serif;
 }
 
 .clear {
@@ -51,7 +42,7 @@ input, textarea, select {
   bottom: 10px;
   right: 10px;
   font: normal normal 700 12px/18px Arial;
-  color: white;
+  color: black;
 }
 
 .admin-sidenav {
@@ -88,7 +79,7 @@ input, textarea, select {
 }
 
 .content {
-  padding-left: 200px;
+  padding-left: 250px;
 }
 
 .content .row-fluid {
@@ -122,7 +113,7 @@ input, textarea, select {
 }
 
 /*** PAGINATION CONTROL ***/
-.pagination {
+.pagination-container {
   text-align: center;
 }
 
@@ -243,6 +234,10 @@ input, textarea, select {
 
 .row-page-manager {
   min-width: 1050px !important;
+}
+
+.row-page-manager ul {
+  padding: 0;
 }
 
 .manage_page_header {
@@ -372,6 +367,14 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
   border-radius: 0;
 }
 
+.modal .modal-dialog {
+  width: 750px;
+}
+
+.modal-content {
+  border-radius: 0;
+}
+
 .modal-body form .form_label {
   width: 145px !important;
   margin-right: 10px !important;
@@ -386,9 +389,8 @@ ul.admin_layoutbox_menu_columnchoices_thumbs img:hover {
   width: 360px !important;
 }
 
-.modal {
-  width: 750px;
-  margin-left: -375px;
+.modal form .form_elements input {
+  float: right;
 }
 
 /*** FORMS ***/
@@ -473,9 +475,14 @@ form .form_elements .validation_failed select, {
   border: 1px solid red;
 }
 
+form .form_elements select {
+  min-width: 150px;
+}
+
 .form_errors,
 .form_notices {
   margin: 0;
+  padding: 0;
 }
 
 .form_errors li,
@@ -522,28 +529,17 @@ form .form_elements .validation_failed select, {
 
 .menu_manage_body > ul li {
   list-style: none;
-  height: 40px;
+  height: 45px;
   margin: 10px 0;
   cursor: move;
-
-  background: rgb(238, 238, 238); /* Old browsers */
-  /* IE9 SVG, needs conditional override of 'filter' to 'none' */
-  background: url(data:image/svg+xml;base64,PD94bWwgdmVyc2lvbj0iMS4wIiA/Pgo8c3ZnIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgdmlld0JveD0iMCAwIDEgMSIgcHJlc2VydmVBc3BlY3RSYXRpbz0ibm9uZSI+CiAgPGxpbmVhckdyYWRpZW50IGlkPSJncmFkLXVjZ2ctZ2VuZXJhdGVkIiBncmFkaWVudFVuaXRzPSJ1c2VyU3BhY2VPblVzZSIgeDE9IjAlIiB5MT0iMCUiIHgyPSIwJSIgeTI9IjEwMCUiPgogICAgPHN0b3Agb2Zmc2V0PSIwJSIgc3RvcC1jb2xvcj0iI2VlZWVlZSIgc3RvcC1vcGFjaXR5PSIxIi8+CiAgICA8c3RvcCBvZmZzZXQ9IjEwMCUiIHN0b3AtY29sb3I9IiNjY2NjY2MiIHN0b3Atb3BhY2l0eT0iMSIvPgogIDwvbGluZWFyR3JhZGllbnQ+CiAgPHJlY3QgeD0iMCIgeT0iMCIgd2lkdGg9IjEiIGhlaWdodD0iMSIgZmlsbD0idXJsKCNncmFkLXVjZ2ctZ2VuZXJhdGVkKSIgLz4KPC9zdmc+);
-  background: -moz-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* FF3.6+ */
-  background: -webkit-gradient(linear, left top, left bottom, color-stop(0%, rgba(238, 238, 238, 1)), color-stop(100%, rgba(204, 204, 204, 1))); /* Chrome,Safari4+ */
-  background: -webkit-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* Chrome10+,Safari5.1+ */
-  background: -o-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* Opera 11.10+ */
-  background: -ms-linear-gradient(top, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* IE10+ */
-  background: linear-gradient(to bottom, rgba(238, 238, 238, 1) 0%, rgba(204, 204, 204, 1) 100%); /* W3C */
-  filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#eeeeee', endColorstr='#cccccc', GradientType=0); /* IE6-8 */
-
+  background: #2d2d2d;
 }
 
 .menu_manage_body > ul li .item_title {
   margin-top: 10px;
   float: left;
   margin-left: 10px;
-  color: black;
+  color: white;
 }
 
 .menu_manage_body > ul li .item_title .icon-move {
@@ -572,36 +568,17 @@ form .form_elements .validation_failed select, {
   margin-left: 20px;
 }
 
-.dashboard > div {
-  background-color: white;
+.dashboard .row > div {
+  background: white;
   border: 1px solid #cdcdcd;
-  padding: 20px 40px 20px 20px;
+  padding: 20px;
   margin-left: 20px;
   margin-top: 20px;
-  min-width: 240px;
-  background-color: #f4f4f4;
 }
 
-.dashboard-sidebar {
-  width: 200px;
-  border: 1px solid #f3f3f3;
-  padding: 5px;
-  margin-left: 0;
-}
-
-.dashboard-sidebar h4 {
-  border-bottom: 1px solid #08c;
-  height: 10px;
-  margin-bottom: 20px;
-}
-
-.dashboard-sidebar h4 > span {
-  background-color: #f4f4f4;
-  padding-right: 5px;
-}
-
-.dashboard-sidebar .btn {
-  width: 100px;
+.dashboard .debug-mode {
+  width: 185px;
+  text-align: center
 }
 
 .languages_header h2 {
@@ -613,13 +590,16 @@ form .form_elements .validation_failed select, {
   margin-top: 5px;
 }
 
-.language_manage_header .icon-search {
-  margin-left: -30px;
+.language_manage_header .glyphicon-search {
   cursor: pointer;
+  top: -25px;
+  right: -182px;
 }
 
-.language_manage_header .icon-remove {
+.language_manage_header .glyphicon-remove {
   cursor: pointer;
+  top: 30px;
+  left: -20px;
 }
 
 .access_edit_header h2 {
@@ -632,16 +612,14 @@ form .form_elements .validation_failed select, {
 }
 
 .brand {
+  display: block;
   margin-left: 0px !important;
-  padding: 10px 10px 10px !important;
+  padding: 10px 35px !important;
+  margin-bottom: 5px;
 }
 
 .brand img {
   width: 180px;
-}
-
-.navbar_panel * {
-  font: normal normal 700 11px/18px Arial;
 }
 
 .navbar_panel {
@@ -650,15 +628,20 @@ form .form_elements .validation_failed select, {
   margin-bottom: 0px;
   overflow: auto;
   position: fixed;
-  width: 200px;
+  width: 250px;
   z-index: 1000;
+  font-size: 15px;
 }
 
 .navbar_panel .navbar-inner {
   background: #2d2d2d;
   border: none;
   padding: 0px;
-  box-shadow: none;
+}
+
+.navbar_panel,
+.navbar_panel .navbar-inner {
+  box-shadow: inset -13px 0px 13px -13px black;
 }
 
 .navbar_panel .nav {
@@ -674,7 +657,7 @@ form .form_elements .validation_failed select, {
 .navbar_panel .nav > li > a {
   color: #b8b8b8;
   text-shadow: none;
-  padding: 2px 15px;
+  padding: 7px 15px;
 }
 
 .navbar_panel .nav > li:not(.nav-category) > a {
@@ -693,7 +676,7 @@ form .form_elements .validation_failed select, {
 }
 
 .navbar_panel .nav > li > a > i {
-  margin-right: 10px;
+  margin-right: 15px;
   margin-top: 0px;
 }
 
@@ -712,14 +695,25 @@ form .form_elements .validation_failed select, {
 .navbar_panel .nav-category > a:hover,
 .navbar_panel .nav-category > a:focus {
   color: #b8b8b8 !important;
+  background-color: #2d2d2d;
 }
 
 .navbar_panel .navbar-text {
-  position: absolute;
+  position: relative;
   bottom: 10px;
-  width: 180px;
-  padding: 0px 10px;
-  text-align: right;
+  width: 100%;
+  padding: 10px 0 0 0;
+  margin: 10px 0 0 0;
+  text-align: left;
+}
+
+.navbar_panel .navbar-text .btn-primary {
+  width: 120px;
+  margin-left: 3px;
+}
+
+.navbar_panel .navbar-text .btn-danger {
+  width: 120px;
 }
 
 .navbar_panel .navbar-text a:hover {
@@ -728,20 +722,28 @@ form .form_elements .validation_failed select, {
 }
 
 .navbar_panel .nav > .active > a {
-  background: rgb(32, 142, 204) !important;
-  color: white;
+  background: white !important;
+  color: #2d2d2d;
 }
 
 .navbar_panel .nav > .active > a:hover {
-  color: white;
+  color: #2d2d2d;
 }
 
-.navbar-header * {
-  font: normal normal 700 11px/18px Arial;
+.navbar {
+  border: none;
+  border-radius: 0;
+  min-height: 40px;
+}
+
+.navbar-header {
+  float: none;
+  box-shadow: 0px -4px 12px 5px black;
 }
 
 .navbar-header .nav {
   min-width: 780px;
+  font-size: 15px;
 }
 
 .navbar-header {
@@ -749,11 +751,19 @@ form .form_elements .validation_failed select, {
   margin-bottom: 0px;
 }
 
+.navbar-header li {
+  float: left;
+}
+
 .navbar-header .navbar-inner {
   background: #2d2d2d;
   border-radius: 0;
   border: none;
   box-shadow: none;
+}
+
+.navbar-inner .container {
+  padding: 0;
 }
 
 .navbar-header .nav > li > a {
@@ -764,6 +774,7 @@ form .form_elements .validation_failed select, {
 
 .navbar-header .nav > li > a:hover {
   color: white;
+  background-color: #2d2d2d;
 }
 
 .navbar-header .nav > li > a > i {
@@ -774,12 +785,8 @@ form .form_elements .validation_failed select, {
 .navbar-header .nav > .active > a,
 .navbar-header .nav > .active > a:hover {
   box-shadow: none;
-  color: black;
-  background-color: white;
-}
-
-.navbar-header .nav > .active > a i {
-  background-image: url("/external/bootstrap/images/glyphicons-halflings.png") !important;
+  color: white;
+  background-color: #428bca;
 }
 
 .btn {
@@ -794,6 +801,7 @@ form .form_elements .validation_failed select, {
 
 .package_list {
   margin: 0px;
+  padding: 0px;
 }
 
 .package_list li {
@@ -862,6 +870,10 @@ form .form_elements .validation_failed select, {
 .modal-header h3,
 .modal-header .close {
   color: #fff;
+}
+
+.modal-header h3 {
+  margin-bottom: 0;
 }
 
 .loading_stage {
@@ -983,4 +995,21 @@ form .form_elements .validation_failed select, {
   text-align: center !important;
   font-size: 16px;
   font-style: italic;
+}
+
+.list-actions {
+  margin-bottom: 10px;
+}
+
+#languages-import-form {
+  display: none;
+}
+
+.language_manage_body .untranslated {
+  color: red;
+}
+
+.textarea-readonly {
+  border: none;
+  background: #E0E0E0 !important;
 }

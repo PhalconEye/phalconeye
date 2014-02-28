@@ -35,7 +35,7 @@
                 {% endfor %}
             {% endif %}
             >
-            {{ key |trans}}
+            {{ key |i18n}}
             </a>
         {% endfor %}
     </td>

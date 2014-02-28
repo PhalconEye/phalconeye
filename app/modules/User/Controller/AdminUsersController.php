@@ -59,12 +59,12 @@ class AdminUsersController extends AbstractAdminController
                     'index' => [
                         'href' => 'admin/users',
                         'title' => 'Users',
-                        'prepend' => '<i class="icon-user icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-user"></i>'
                     ],
                     'roles' => [
                         'href' => 'admin/users/roles',
                         'title' => 'Roles',
-                        'prepend' => '<i class="icon-share icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-share"></i>'
                     ],
                     2 => [
                         'href' => 'javascript:;',
@@ -73,12 +73,12 @@ class AdminUsersController extends AbstractAdminController
                     'create' => [
                         'href' => 'admin/users/create',
                         'title' => 'Create new user',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ],
                     'rolesCreate' => [
                         'href' => 'admin/users/roles-create',
                         'title' => 'Create new role',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ]
                 ]
             );

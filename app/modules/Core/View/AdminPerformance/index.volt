@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Performance settings"|trans }}{% endblock %}
+{% block title %}{{ "Performance settings"|i18n }}{% endblock %}
 
 {% block content %}
     <div class="span12">

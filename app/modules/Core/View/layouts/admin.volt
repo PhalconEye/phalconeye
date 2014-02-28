@@ -26,6 +26,10 @@
 
     {{ assets.outputInline() }}
 
+    <script type="text/javascript">
+        {{ helper('i18n', 'core').render() }}
+    </script>
+
     {% block head %}
 
     {% endblock %}
@@ -36,20 +40,17 @@
 
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
-        <div class="container">
-            <a class="brand" href="{{ url("admin") }}"><img alt="Phalcon Eye"
-                                                            src="{{ url('assets/img/core/pe_logo_white.png') }}"/></a>
+        <a class="brand" href="{{ url("admin") }}"><img alt="Phalcon Eye"
+                                                        src="{{ url('assets/img/core/pe_logo_white.png') }}"/></a>
 
-            <div class="nav-collapse collapse">
-                {{ headerNavigation.render() }}
-            </div>
-            <!--/.nav-collapse -->
+        <div class="nav-collapse">
+            {{ headerNavigation.render() }}
         </div>
     </div>
 
     <div class="navbar-text">
-        <a href="{{ url() }}" class="btn btn-primary">{{ 'Back to site' | trans }}</a>
-        <a href="{{ url("logout") }}" class="btn btn-danger">{{ 'Logout' | trans }}</a>
+        <a href="{{ url() }}" class="btn btn-primary">{{ 'Back to site' |i18n }}</a>
+        <a href="{{ url("logout") }}" class="btn btn-danger">{{ 'Logout' |i18n }}</a>
     </div>
 </div>
 
@@ -65,7 +66,7 @@
         </div>
     </div>
 
-    <div class="row-fluid">
+    <div class="row-fluid main-content">
         <!--/row-->
         {%- block content -%}
         {%- endblock %}
@@ -74,7 +75,7 @@
 </div>
 
 <div id="footer">
-    Phalcon Eye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
+    PhalconEye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
 
 {{ assets.outputJs() }}

@@ -175,7 +175,7 @@ class Bootstrap extends EngineBootstrap
             $translate = new TranslationDb($di, $languageObject->getId(), new LanguageTranslation());
         }
 
-        $di->set('trans', $translate);
+        $di->set('i18n', $translate);
     }
 
     /**

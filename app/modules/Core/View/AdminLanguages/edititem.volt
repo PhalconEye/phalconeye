@@ -18,7 +18,7 @@
 {% extends "layouts/modal.volt" %}
 
 {% block title %}
-    {{ 'Edit translation'|trans }}
+    {{ 'Edit translation'|i18n }}
 {% endblock %}
 
 {% block body %}

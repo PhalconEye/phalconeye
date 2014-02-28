@@ -41,35 +41,21 @@
                 PhalconEye.core.showLoadingStage();
                 $.get(url, data)
                     .done(function (html) {
-                        var modalTemplate = $('<div id="modal" class="modal hide fade" tabindex="1" role="dialog" aria-labelledby="modal_label" aria-hidden="true">' + html + '</div>').filter('.modal');
-                        modalTemplate.modal({
+                        var modalObject = $('<div id="modal" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="modal_label" aria-hidden="true"> <div class="modal-dialog"><div class="modal-content">' + html + '</div></div></div>').filter('.modal');
+                        modalObject.modal({
+                            backdrop: 'static',
                             keyboard: false
                         });
 
-                        modalTemplate.on('focus', function (e) { // focus bug workaround
-                            e.preventDefault();
-                        });
-
-
-                        modalTemplate.on('shown', function () {
+                        modalObject.on('shown.bs.modal', function () {
                             PhalconEye.core.hideLoadingStage();
 
                             // Set removing.
-                            $('#modal').on('hidden', function () {
+                            modalObject.on('hidden.bs.modal', function () {
                                 $(this).remove();
                             });
 
-                            // prevent background from simple closing
-                            $('.modal-backdrop').unbind('click');
-                            $('.modal-backdrop').click(function (e) {
-                                e.preventDefault();
-                                if (confirm('Close this window?')) {
-                                    $('#modal').modal('hide');
-                                }
-                                return false;
-                            });
-
-                            PhalconEye.widget.modal.bindSubmit();
+                            PhalconEye.widget.modal.bindSubmit(modalObject);
 
                             // Evaluate js
                             $(html).filter("script").each(function () {
@@ -83,10 +69,13 @@
             /**
              * Bind some submit events for modal form.
              */
-            bindSubmit: function () {
+            bindSubmit: function (modalObject) {
+                var form = $('form', modalObject),
+                    saveButton = $('.btn-save', modalObject);
+
                 // Set submitting.
-                $('#modal .btn-save').click(function () {
-                    if ($('#modal form').length == 1) {
+                saveButton.click(function () {
+                    if (form.length == 1) {
                         PhalconEye.core.showLoadingStage();
 
                         // Check ckeditor.
@@ -97,25 +86,25 @@
                             }
                         }
 
-                        $.post($('#modal form').attr('action'), $('#modal form').serialize())
+                        $.post(form.attr('action'), form.serialize())
                             .done(function (postHTML) {
-                                $('#modal').html(postHTML);
-                                PhalconEye.widget.modal.bindSubmit();
+                                $('.modal-content', modalObject).html(postHTML);
+                                PhalconEye.widget.modal.bindSubmit(modalObject);
                                 PhalconEye.core.hideLoadingStage();
                             });
                     }
                     else {
-                        $('#modal').modal('hide');
+                        modalObject.modal('hide');
                     }
                 });
 
-                $('#modal form').submit(function () {
+                form.submit(function () {
                     PhalconEye.core.showLoadingStage();
-                    $('#modal .btn-save').click();
+                    saveButton.click();
                     return false;
                 });
 
-                $('#modal').on('hidden', function () {
+                modalObject.on('hidden.bs.modal', function () {
                     PhalconEye.core.hideLoadingStage();
                 });
 
@@ -125,7 +114,7 @@
                         for (var instance in CKEDITOR.instances) {
                             if (CKEDITOR.instances[instance].commands.save) {
                                 CKEDITOR.instances[instance].commands.save.exec = function () {
-                                    $('#modal .btn-save').click();
+                                    saveButton.click();
                                 }
                             }
                         }

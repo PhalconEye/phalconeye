@@ -19,6 +19,8 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
+use Engine\DependencyInjection;
+use Engine\Exception;
 use Phalcon\Mvc\Model\Message;
 
 /**
@@ -49,6 +51,12 @@ class Language extends AbstractModel
          */
         LANGUAGE_CACHE_LOCATION = '/app/var/cache/languages/';
 
+    const
+        /**
+         * Batch size for importing language data.
+         */
+        LANGUAGE_IMPORT_BATCH_SIZE = 100;
+
     /**
      * @Primary
      * @Identity
@@ -75,6 +83,75 @@ class Language extends AbstractModel
      * @Column(type="string", nullable=true, column="icon", size="255")
      */
     public $icon = null;
+
+    /**
+     * Parse import data.
+     * Import translations and language if needed.
+     *
+     * @param DependencyInjection $di   Dependency injection.
+     * @param array               $data Data to parse.
+     *
+     * @throws Exception
+     * @return Language
+     */
+    public static function parseImportData($di, $data)
+    {
+        if (empty($data['language']) || empty($data['locale']) || empty($data['locale'])) {
+            throw new Exception(
+                $di->getI18n()->_(
+                    'Language translations package must contains fields (not empty): name, language, locale...'
+                )
+            );
+        }
+
+        /**
+         * Get related language.
+         */
+        $language = Language::findFirst(["language = '{$data['language']}' AND locale = '{$data['locale']}'"]);
+        if (!$language) {
+            $language = new Language();
+            $language->assign($data);
+            if (!$language->save()) {
+                throw new Exception(implode(', ', $language->getMessages()));
+            }
+        }
+
+        /**
+         * Import into database.
+         */
+        $table = LanguageTranslation::getTableName();
+        $sql = "INSERT IGNORE INTO `{$table}` (language_id, scope, original, translated) VALUES ";
+        $sqlValues = [];
+        $counter = 0;
+        $totals = [];
+        foreach ($data['content'] as $scope => $translations) {
+            $totals[$scope] = 0;
+            foreach ($translations as $original => $translated) {
+                $sqlValues[] = PHP_EOL .
+                    sprintf(
+                        '(%d, "%s", "%s", "%s")',
+                        $language->getId(),
+                        mysql_real_escape_string($scope),
+                        mysql_real_escape_string($original),
+                        mysql_real_escape_string($translated)
+                    );
+
+                $counter++;
+                $totals[$scope]++;
+                if ($counter == self::LANGUAGE_IMPORT_BATCH_SIZE) {
+                    $counter = 0;
+                    $sqlValues = '';
+                    $di->getModelsManager()->execute($sql . implode(',', $sqlValues));
+                }
+            }
+        }
+
+        if (!empty($sqlValues)) {
+            $di->getDb()->execute($sql . implode(',', $sqlValues));
+        }
+
+        return [$language, $totals];
+    }
 
     /**
      * Get cache file location.
@@ -132,8 +209,9 @@ class Language extends AbstractModel
             @unlink($this->getCacheLocation());
         }
 
-        if (!empty($this->icon) && file_exists(PUBLIC_PATH . '/' . $this->icon)) {
-            @unlink(PUBLIC_PATH . '/' . $this->icon);
+        $iconPath = PUBLIC_PATH . '/' . $this->icon;
+        if (!empty($this->icon) && file_exists($iconPath) && is_file($iconPath)) {
+            @unlink($iconPath);
         }
 
         $this->getLanguageTranslation()->delete();
@@ -154,16 +232,67 @@ class Language extends AbstractModel
      *
      * @return void
      */
-    public function generatePHP()
+    public function toPhp()
     {
         $translations = $this->getLanguageTranslation();
-        $config = $this->getDI()->get('config');
         $messages = [];
         foreach ($translations as $translation) {
             $messages[$translation->original] = $translation->translated;
         }
 
-        $file = $config->application->cache->cacheDir . '../languages/' . $this->language . '.php';
-        file_put_contents($file, '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true) . ';');
+        return '<?php ' . PHP_EOL . PHP_EOL . '$messages = ' . var_export($messages, true) . ';';
+    }
+
+    /**
+     * Generate array with language translations.
+     *
+     * @param array $scope Translations scopes.
+     *
+     * @return string
+     */
+    public function toTranslationsArray(array $scope = [])
+    {
+        $whereCondition = 'language_id = :language_id:';
+
+        if (!empty($scope)) {
+            $whereCondition .= ' AND scope IN ("' . implode('","', $scope) . '")';
+        }
+
+        $result = LanguageTranslation::getBuilder()
+            ->where(
+                $whereCondition,
+                ['language_id' => $this->getId()]
+            )
+            ->getQuery()
+            ->execute();
+
+        $data = [];
+        foreach ($result as $row) {
+            $data[$row->scope][$row->original] = $row->translated;
+        }
+
+        $result = [
+            'info' => 'PhalconEye Language Package',
+            'version' => PE_VERSION,
+            'date' => date('d-M-Y H:i'),
+            'name' => $this->name,
+            'language' => $this->language,
+            'locale' => $this->locale,
+            'content' => $data
+        ];
+
+        return $result;
+    }
+
+    /**
+     * Generate json content with language translations.
+     *
+     * @param array $scope Translations scopes.
+     *
+     * @return string
+     */
+    public function toJson(array $scope = [])
+    {
+        return json_encode($this->toTranslationsArray($scope), JSON_PRETTY_PRINT);
     }
 }

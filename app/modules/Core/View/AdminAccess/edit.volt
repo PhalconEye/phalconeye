@@ -17,13 +17,13 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Edit Access"|trans }}{% endblock %}
+{% block title %}{{ "Edit Access"|i18n }}{% endblock %}
 {% block content %}
 <div class="span12">
     <div class="row-fluid">
         <div class="access_edit_header">
-            <h2><a href="{{ url(['for': 'admin-access']) }}">{{ "Access Rights" | trans }}</a>
-                > {{ 'Editing access rights of "%currentObject%", for:' | trans(['currentObject':currentObject]) }}</h2>
+            <h2><a href="{{ url(['for': 'admin-access']) }}">{{ "Access Rights" |i18n }}</a>
+                > {{ 'Editing access rights of "%currentObject%", for:' |i18n(['currentObject':currentObject]) }}</h2>
             <div class="current_role">
 
                 <div class="btn-group">

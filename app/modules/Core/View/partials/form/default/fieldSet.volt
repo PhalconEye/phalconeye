@@ -17,7 +17,7 @@
 
 <fieldset{{ fieldSet.renderAttributes() }}>
     {% if fieldSet.hasLegend() %}
-        <legend>{{ fieldSet.getLegend()|trans }}</legend>
+        <legend>{{ fieldSet.getLegend()|i18n }}</legend>
     {% endif %}
 
     {% for element in fieldSet.getAll() %}

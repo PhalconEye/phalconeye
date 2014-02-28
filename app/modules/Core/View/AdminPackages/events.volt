@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Edit package events"|trans }}{% endblock %}
+{% block title %}{{ "Edit package events"|i18n }}{% endblock %}
 
 
 {% block header %}

@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Files management"|trans }}{% endblock %}
+{% block title %}{{ "Files management"|i18n }}{% endblock %}
 
 {% block content %}
     <style type="text/css">

@@ -31,11 +31,11 @@
 {% if hideFooter is not defined %}
     <div class="modal-footer">
         {% if hideClose is not defined %}
-            <button class="btn" data-dismiss="modal" aria-hidden="true">{{ "Close"|trans }}</button>
+            <button class="btn" data-dismiss="modal" aria-hidden="true">{{ "Close"|i18n }}</button>
         {% endif %}
 
         {% if hideSave is not defined %}
-            <button class="btn btn-primary btn-save">{{ "Save changes"|trans }}</button>
+            <button class="btn btn-primary btn-save">{{ "Save changes"|i18n }}</button>
         {% endif %}
     </div>
 {% endif %}

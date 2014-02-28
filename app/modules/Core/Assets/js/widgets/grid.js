@@ -18,13 +18,14 @@
                     page: 'page',
                     sort: 'sort',
                     direction: 'direction',
-                    filter: 'filter'
+                    filter: 'filter',
+                    data: 'data'
                 },
                 css: {
                     paginator: '.pagination',
                     sortable: '.grid-sortable',
                     actionLinks: '.actions a',
-                    actionDelete: '.actions .grid-delete',
+                    actionDelete: '.actions .grid-action-delete',
 
                     filterForm: '.grid-filter',
                     filterButton: '.btn-filter',
@@ -229,6 +230,10 @@
              * @param value Data value.
              */
             setParam: function (name, value) {
+                if (!$.contains(this.options.params, name)) {
+                    this.options.params[name] = name;
+                }
+
                 this.element.data(name, value);
             },
 

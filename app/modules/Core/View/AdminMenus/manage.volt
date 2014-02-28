@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Manage menu"|trans }}{% endblock %}
+{% block title %}{{ "Manage menu"|i18n }}{% endblock %}
 
 {% block head %}
     {{ helper('assets').addJs('assets/js/core/admin/menu.js') }}
@@ -34,9 +34,6 @@
             {% if parent is defined %}, 'parent_id': {{ parent.id }}
             {% endif %}
         };
-
-        {{ helper('i18n', 'core').js('Are you really want to delete this menu item?') }}
-
     </script>
 {% endblock %}
 
@@ -53,7 +50,7 @@
     <div class="span12">
         <div class="menu_manage_header">
             <h3>
-                <a href="{{ url("admin/menus") }}">{{ "Menus" | trans }}</a> >
+                <a href="{{ url("admin/menus") }}">{{ "Menus" |i18n }}</a> >
                 {% if parent is defined %}
                     {% for p in parents %}
                         <a href="{{ url(['for':'admin-menus-manage']) }}{{ menu.id }}{% if p.parent_id is not null %}?parent_id={{ p.parent_id }}{% endif %}"
@@ -61,25 +58,25 @@
                         >
                     {% endfor %}
                 {% endif %}
-                {{ "Manage menu" | trans }}
+                {{ "Manage menu" |i18n }}
                 "{{ menu.name }}"
             </h3>
-            <button id="add-new-item" class="btn btn-primary">{{ 'Add new item'|trans }}</button>
-            <div id="label-saved" class="label label-success">{{ 'Saved...'|trans }}</div>
+            <button id="add-new-item" class="btn btn-primary">{{ 'Add new item'|i18n }}</button>
+            <div id="label-saved" class="label label-success">{{ 'Saved...'|i18n }}</div>
         </div>
         <div class="menu_manage_body">
             <ul id="items">
                 {% for item in items %}
                     <li data-item-id="{{ item.id }}">
                         <div class="item_title">
-                            <i class="icon-move"></i>
+                            <i class="glyphicon glyphicon-move"></i>
                             {{ item.title }}
-                            | {{ 'Items: '|trans }}{{ item.getMenuItems() ? item.getMenuItems().count() : 0 }}
+                            | {{ 'Items: '|i18n }}{{ item.getMenuItems() ? item.getMenuItems().count() : 0 }}
                         </div>
                         <div class="item_options">
-                            <a class="btn btn-success item-manage" href="javascript:;">{{ 'Manage'|trans }}</a>
-                            <a class="btn btn-success item-edit" href="javascript:;">{{ 'Edit'|trans }}</a>
-                            <a class="btn btn-success item-delete" href="javascript:;">{{ 'Remove'|trans }}</a>
+                            <a class="btn btn-success item-manage" href="javascript:;">{{ 'Manage'|i18n }}</a>
+                            <a class="btn btn-success item-edit" href="javascript:;">{{ 'Edit'|i18n }}</a>
+                            <a class="btn btn-success item-delete" href="javascript:;">{{ 'Remove'|i18n }}</a>
                         </div>
                     </li>
                 {% endfor %}
@@ -90,11 +87,11 @@
     {#ITEM TEMPLATE#}
     <div id="default_item" style="display:none;">
         <li data-item-id="element-id">
-            <div class="item_title"><i class="icon-move"></i>element-label</div>
+            <div class="item_title"><i class="glyphicon glyphicon-move"></i>element-label</div>
             <div class="item_options">
-                <a class="btn btn-success item-manage" href="javascript:;">{{ 'Manage'|trans }}</a>
-                <a class="btn btn-success item-edit" href="javascript:;">{{ 'Edit'|trans }}</a>
-                <a class="btn btn-success item-delete" href="javascript:;">{{ 'Remove'|trans }}</a>
+                <a class="btn btn-success item-manage" href="javascript:;">{{ 'Manage'|i18n }}</a>
+                <a class="btn btn-success item-edit" href="javascript:;">{{ 'Edit'|i18n }}</a>
+                <a class="btn btn-success item-delete" href="javascript:;">{{ 'Remove'|i18n }}</a>
             </div>
         </li>
     </div>

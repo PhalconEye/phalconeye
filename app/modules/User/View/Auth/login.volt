@@ -17,7 +17,7 @@
 
 {% extends "../../Core/View/layouts/main.volt" %}
 
-{% block title %}{{ 'Login'|trans }}{% endblock %}
+{% block title %}{{ 'Login'|i18n }}{% endblock %}
 {% block content %}
     {{ form.render() }}
 {% endblock %}

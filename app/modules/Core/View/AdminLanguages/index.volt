@@ -17,30 +17,30 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ 'Languages'|trans }}{% endblock %}
+{% block title %}{{ 'Languages'|i18n }}{% endblock %}
 
 {% block head %}
-    <script type="text/javascript">
-        var deleteItem = function (id) {
-            if (confirm('{{ "Are you really want to delete this language?" | trans}}')) {
-                window.location.href = '{{ url(['for':'admin-languages-delete'])}}' + id;
-            }
-        }
-    </script>
+    {{ helper('assets').addJs('assets/js/core/admin/languages.js') }}
 {% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">
-        <div class="navbar-inner">
-            {{ navigation.render() }}
-        </div>
+        {{ navigation.render() }}
     </div>
 {% endblock %}
 
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Languages' | trans }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Languages' |i18n }} ({{ grid.getTotalCount() }})</h2>
+
+            <div class="list-actions">
+                <a href="{{ url(['for':'admin-languages-compile']) }}"
+                   class="btn btn-primary">{{ "Compile languages" |i18n }}</a>
+                <button class="btn btn-primary btn-import">{{ "Import..." |i18n }}</button>
+                {{ form.render() }}
+            </div>
+
             {{ grid.render() }}
         </div>
     </div>

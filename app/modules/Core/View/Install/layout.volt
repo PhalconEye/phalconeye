@@ -46,7 +46,7 @@
     </div>
 
     <div class="system-container">
-        {{ content() | trans }}
+        {{ content() |i18n }}
     </div>
 
     <div class="container">

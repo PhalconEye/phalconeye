@@ -24,12 +24,15 @@ use Core\Form\Admin\Language\Create;
 use Core\Form\Admin\Language\CreateItem;
 use Core\Form\Admin\Language\Edit;
 use Core\Form\Admin\Language\EditItem;
-use Core\Form\FileForm;
+use Core\Form\Admin\Language\Export;
+use Core\Form\Admin\Language\Upload;
+use Core\Form\Admin\Language\Wizard;
 use Core\Model\Language;
 use Core\Model\LanguageTranslation;
 use Engine\Config;
 use Engine\Exception;
 use Engine\Navigation;
+use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 
 /**
@@ -60,7 +63,7 @@ class AdminLanguagesController extends AbstractAdminController
                     'index' => [
                         'href' => 'admin/languages',
                         'title' => 'Browse',
-                        'prepend' => '<i class="icon-list icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                     ],
                     1 => [
                         'href' => 'javascript:;',
@@ -69,7 +72,7 @@ class AdminLanguagesController extends AbstractAdminController
                     'create' => [
                         'href' => 'admin/languages/create',
                         'title' => 'Create new language',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ]
                 ]
             );
@@ -86,6 +89,7 @@ class AdminLanguagesController extends AbstractAdminController
      */
     public function indexAction()
     {
+        $this->view->form = new Upload();
         $grid = new LanguageGrid($this->view);
         if ($response = $grid->getResponse()) {
             return $response;
@@ -194,7 +198,7 @@ class AdminLanguagesController extends AbstractAdminController
     {
         $item = Language::findFirst($id);
         if (!$item) {
-            $this->flashSession->error($this->trans->_('Language not found!'));
+            $this->flashSession->error($this->i18n->_('Language not found!'));
             return $this->response->redirect(['for' => "admin-languages"]);
         }
 
@@ -219,7 +223,7 @@ class AdminLanguagesController extends AbstractAdminController
     {
         $item = Language::findFirst($id);
         if (!$item) {
-            $this->flashSession->error($this->trans->_('Language not found!'));
+            $this->flashSession->error($this->i18n->_('Language not found!'));
             return $this->response->redirect(['for' => "admin-languages"]);
         }
 
@@ -238,9 +242,128 @@ class AdminLanguagesController extends AbstractAdminController
         );
 
         $this->flashSession->success(
-            $this->trans->_('Synchronization finished! Added translations: %count%', ['count' => $result->numRows()])
+            $this->i18n->_('Synchronization finished! Added translations: %count%', ['count' => $result->numRows()])
         );
         return $this->response->redirect(['for' => "admin-languages-manage", 'id' => $id]);
+    }
+
+    /**
+     * Import language translations.
+     *
+     * @return void|ResponseInterface
+     *
+     * @Route("/import", methods={"POST"}, name="admin-languages-import")
+     */
+    public function importAction()
+    {
+        $form = new Upload();
+        if (!$this->request->isPost() || !$form->isValid()) {
+            $messages = [];
+            foreach ($form->getErrors() as $error) {
+                $messages[] = $this->i18n->_($error);
+            }
+            $this->flashSession->error($this->i18n->_('There are errors:') . '<br/>' . implode('<br/>', $messages));
+            return $this->response->redirect(['for' => "admin-languages"]);
+        }
+        $file = $this->request->getUploadedFiles();
+
+        try {
+            /**
+             * Parse file.
+             */
+            $data = json_decode(file_get_contents($file[0]->getTempName()), true);
+            list ($language, $totals) = Language::parseImportData($this->getDI(), $data);
+
+            $message = sprintf(
+                $this->i18n->_('<br/>Language "%s" (%s). Imported totals (scope: count): <br/>'),
+                $language->language,
+                $language->locale
+            );
+            foreach ($totals as $scope => $count) {
+                $message .= '&nbsp;-&nbsp;' . $scope . ': ' . $count . '<br/>';
+            }
+
+            $this->flashSession->success($this->i18n->_('Language translations has been imported!') . $message);
+        } catch (Exception $e) {
+            $this->flashSession->error($this->i18n->_($e->getMessage()));
+        }
+
+        return $this->response->redirect(['for' => "admin-languages"]);
+    }
+
+    /**
+     * Export language translations.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
+     * @Route("/export/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-export")
+     */
+    public function exportAction($id)
+    {
+        $item = Language::findFirst($id);
+        if (!$item) {
+            $this->flashSession->error($this->i18n->_('Language not found!'));
+            return $this->response->redirect(['for' => "admin-languages"]);
+        }
+
+        $form = new Export($item);
+        $this->view->form = $form;
+        $this->view->hideFooter = true;
+
+        if (!$this->request->isPost()) {
+            return;
+        }
+
+        $scope = $this->request->get('scope', null, []);
+        header("Content-disposition: attachment; filename=language-{$item->language}-{$item->locale}.json");
+        header('Content - type: application / json');
+
+        $response = new Response();
+        $response->setContent($item->toJson($scope));
+        return $response;
+    }
+
+    /**
+     * Wizard for language.
+     *
+     * @param int $id Language identity.
+     *
+     * @return void|ResponseInterface
+     *
+     * @Route("/wizard/{id:[0-9]+}", methods={"GET", "POST"}, name="admin-languages-wizard")
+     */
+    public function wizardAction($id)
+    {
+        $item = Language::findFirst($id);
+        if (!$item) {
+            $this->flashSession->error($this->i18n->_('Language not found!'));
+            return $this->response->redirect(['for' => "admin-languages"]);
+        }
+
+        if ($this->request->isPost()) {
+            $translationId = $this->request->getPost('translation_id');
+            $translation = LanguageTranslation::findFirstById($translationId);
+            if ($translation) {
+                $translation->translated = $this->request->getPost('translated');
+                $translation->checked = true;
+                $translation->save();
+            }
+        }
+
+        $condition = 'original = translated AND checked = 0 AND language_id = ' . $id;
+        $this->view->form = $form = new Wizard($item);
+        $this->view->hideFooter = true;
+        $this->view->total = LanguageTranslation::find([$condition])->count();
+        $this->view->translation = $translation =
+            LanguageTranslation::findFirst([$condition]);
+        $this->view->item = $item;
+
+        if ($translation) {
+            $form->setValues($translation->toArray());
+            $form->setValue('translation_id', $translation->getId());
+        }
     }
 
     /**
@@ -297,28 +420,22 @@ class AdminLanguagesController extends AbstractAdminController
     /**
      * Delete translation.
      *
-     * @param int $id Translation identity.
+     * @param int $lang Language identity.
+     * @param int $id   Translation identity.
      *
      * @return void|ResponseInterface
      *
-     * @Get("/delete-item/{id:[0-9]+}", name="admin-languages-delete-item")
+     * @Get("/delete-item/{lang:[0-9]+}/{id:[0-9]+}", name="admin-languages-delete-item")
      */
-    public function deleteItemAction($id)
+    public function deleteItemAction($lang, $id)
     {
         $item = LanguageTranslation::findFirst($id);
         if ($item) {
             $item->delete();
         }
 
-        $languageId = $this->request->get('lang');
-        $search = $this->request->get('search');
-
-        if ($languageId) {
-            if (!empty($search)) {
-                return $this->response->redirect("admin/languages/manage/{$languageId}?search=" . $search);
-            }
-
-            return $this->response->redirect(['for' => "admin-languages-manage", 'id' => $languageId]);
+        if ($lang) {
+            return $this->response->redirect(['for' => "admin-languages-manage", 'id' => $lang]);
         }
 
         return $this->response->redirect(['for' => "admin-languages"]);
@@ -336,15 +453,17 @@ class AdminLanguagesController extends AbstractAdminController
         // Prepare languages.
         // Dump all data from database to files with native php array.
         try {
-
             $languages = Language::find();
+            $directory = $this->config->application->cache->cacheDir;
+
             foreach ($languages as $language) {
-                $language->generatePHP();
+                $file = $directory . '../languages/' . $language->language . '.php';
+                file_put_contents($file, $language->toPhp());
             }
 
-            $this->flashSession->success($this->trans->_('Languages compilation finished!'));
+            $this->flashSession->success($this->i18n->_('Languages compilation finished!'));
         } catch (Exception $e) {
-            $this->flashSession->error($this->trans->_('Compilation failed, error: <br/>' . $e->getMessage()));
+            $this->flashSession->error($this->i18n->_('Compilation failed, error: <br />' . $e->getMessage()));
         }
 
         return $this->response->redirect(['for' => 'admin-languages']);
@@ -372,7 +491,7 @@ class AdminLanguagesController extends AbstractAdminController
         $files = $form->getFiles();
         $iconPath = Language::LANGUAGE_ICON_LOCATION .
             $language->language .
-            '.' . pathinfo($files[0]->getName(), PATHINFO_EXTENSION);
+            ' . ' . pathinfo($files[0]->getName(), PATHINFO_EXTENSION);
         $fullIconPath = PUBLIC_PATH . '/' . $iconPath;
 
         if (file_exists($fullIconPath)) {

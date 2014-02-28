@@ -58,7 +58,7 @@ class AdminMenusController extends AbstractAdminController
                     'index' => [
                         'href' => 'admin/menus',
                         'title' => 'Browse',
-                        'prepend' => '<i class="icon-list icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                     ],
                     1 => [
                         'href' => 'javascript:;',
@@ -67,7 +67,7 @@ class AdminMenusController extends AbstractAdminController
                     'create' => [
                         'href' => 'admin/menus/create',
                         'title' => 'Create new menu',
-                        'prepend' => '<i class="icon-plus-sign icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                     ]
                 ]
             );

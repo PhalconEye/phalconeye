@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Menus"|trans }}{% endblock %}
+{% block title %}{{ "Menus"|i18n }}{% endblock %}
 
 {% block header %}
     <div class="navbar navbar-header">
@@ -30,7 +30,7 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Menus' | trans }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Menus' |i18n }} ({{ grid.getTotalCount() }})</h2>
             {{ grid.render() }}
         </div>
     </div>

@@ -29,16 +29,16 @@
     {% if show_auth is 1 %}
         <div class="header_auth">
         {% if not helper('user', 'user').isUser() %}
-            <a href="{{ url('login') }}">{{ 'Login' | trans }}</a>&nbsp;
+            <a href="{{ url('login') }}">{{ 'Login' |i18n }}</a>&nbsp;
             |
-            <a href="{{ url('register') }}">{{ 'Register' | trans }}</a>
+            <a href="{{ url('register') }}">{{ 'Register' |i18n }}</a>
         {% else %}
-            {{ 'Welcome, ' |trans }}{{ helper('user', 'user').current().username }}&nbsp;
+            {{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}&nbsp;
             |
             {% if helper('security', 'core').isAllowed('AdminArea', 'access') %}
-                <a href="{{ url('admin') }}">{{ 'Admin panel' | trans }}</a>
+                <a href="{{ url('admin') }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
-            <a href="{{ url('logout') }}">{{ 'Logout' | trans }}</a>
+            <a href="{{ url('logout') }}">{{ 'Logout' |i18n }}</a>
         {% endif %}
         </div>
     {% endif %}

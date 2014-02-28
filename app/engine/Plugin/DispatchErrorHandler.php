@@ -44,6 +44,7 @@ class DispatchErrorHandler extends PhalconPlugin
      * @param Dispatcher       $dispatcher Dispatcher object.
      * @param PhalconException $exception  Exception object.
      *
+     * @throws \Phalcon\Exception
      * @return bool
      */
     public function beforeException($event, $dispatcher, $exception)

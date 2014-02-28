@@ -63,14 +63,19 @@ class Package extends AbstractPackage
     /**
      * Return package as string, package metadata.
      *
+     * @param array $params Some additional params.
+     *
      * @return string
      */
-    public function toJson()
+    public function toJson(array $params = [])
     {
         $data = $this->getDefaultMetadata();
 
         // Get widgets data if this package is module.
         if ($this->type == Manager::PACKAGE_TYPE_MODULE) {
+            /**
+             * Widgets data.
+             */
             $widgets = Widget::findByModule($this->name);
             foreach ($widgets as $widget) {
                 $data['widgets'][] = [
@@ -82,6 +87,18 @@ class Package extends AbstractPackage
                     'admin_form' => $widget->admin_form,
                     'enabled' => (bool)$widget->enabled
                 ];
+            }
+
+            /**
+             * Translations data.
+             */
+            if (!empty($params['withTranslations'])) {
+                foreach (Language::find() as $language) {
+                    $translations = $language->toTranslationsArray([$this->name]);
+                    if (!empty($translations['content'])) {
+                        $data['i18n'][] = $translations;
+                    }
+                }
             }
         } else {
             unset($data['widgets']);

@@ -17,14 +17,14 @@
 
 {% extends "layouts/main.volt" %}
 
-{% block title %}{{ page.title |trans }}{% endblock %}
+{% block title %}{{ page.title |i18n }}{% endblock %}
 
 {% block head %}
     {% if page.keywords %}
-        <meta name="keywords" content="{{ page.keywords |trans }}" />
+        <meta name="keywords" content="{{ page.keywords |i18n }}" />
     {% endif %}
     {% if page.description %}
-        <meta name="description" content="{{ page.description |trans }}" />
+        <meta name="description" content="{{ page.description |i18n }}" />
     {% endif %}
 {% endblock %}
 
@@ -34,7 +34,7 @@
 
 
     {#{% if helper('security').isAllowed('\Core\Model\Page', 'show_views') %}#}
-        {#<div class="page_views">{{ 'View count:'|trans }}{{ page.view_count }}</div>#}
+        {#<div class="page_views">{{ 'View count:'|i18n }}{{ page.view_count }}</div>#}
     {#{% endif %}#}
 
     {#{{ helper('security').getAllowed('\Core\Model\Page', 'page_footer') }}#}

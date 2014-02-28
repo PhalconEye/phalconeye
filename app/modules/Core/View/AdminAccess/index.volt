@@ -17,11 +17,11 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "Access Rights"|trans }}{% endblock %}
+{% block title %}{{ "Access Rights"|i18n }}{% endblock %}
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            <h2>{{ 'Available resources' | trans }} ({{ grid.getTotalCount() }})</h2>
+            <h2>{{ 'Available resources' |i18n }} ({{ grid.getTotalCount() }})</h2>
             {{ grid.render() }}
         </div>
     </div>

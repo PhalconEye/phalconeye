@@ -48,7 +48,7 @@ var menuItemsData = menuItemsData || [];
 
         var deleteAction = function () {
             var id = $(this).parents('li').data('item-id');
-            if (confirm(root.i18n._('Are you really want to delete this menu item?'))) {
+            if (confirm(root.i18n._('Are you really want to delete this item?'))) {
                 if (data.parent_id) {
                     window.location.href = data.link_delete + id + '?parent_id=' + data.parent_id;
                 }

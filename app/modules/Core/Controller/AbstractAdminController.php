@@ -55,7 +55,7 @@ abstract class AbstractAdminController extends AbstractController
             'admin' => [
                 'href' => 'admin',
                 'title' => 'Dashboard',
-                'prepend' => '<i class="icon-home icon-white"></i>'
+                'prepend' => '<i class="glyphicon glyphicon-home"></i>'
             ],
             'users' => [
                 'title' => 'Manage',
@@ -63,32 +63,32 @@ abstract class AbstractAdminController extends AbstractController
                     'admin/users' => [
                         'title' => 'Users and Roles',
                         'href' => 'admin/users',
-                        'prepend' => '<i class="icon-user icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-user"></i>'
                     ],
                     'admin/pages' => [
                         'title' => 'Pages',
                         'href' => 'admin/pages',
-                        'prepend' => '<i class="icon-list-alt icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
                     ],
                     'admin/menus' => [
                         'title' => 'Menus',
                         'href' => 'admin/menus',
-                        'prepend' => '<i class="icon-th-list icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
                     ],
                     'admin/languages' => [
                         'title' => 'Languages',
                         'href' => 'admin/languages',
-                        'prepend' => '<i class="icon-globe icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
                     ],
                     'admin/files' => [
                         'title' => 'Files',
                         'href' => 'admin/files',
-                        'prepend' => '<i class="icon-file icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-file"></i>'
                     ],
                     'admin/packages' => [
                         'title' => 'Packages',
                         'href' => 'admin/packages',
-                        'prepend' => '<i class="icon-th icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-th"></i>'
                     ]
                 ]
             ],
@@ -98,17 +98,17 @@ abstract class AbstractAdminController extends AbstractController
                     'admin/settings' => [
                         'title' => 'System',
                         'href' => 'admin/settings',
-                        'prepend' => '<i class="icon-cog icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
                     ],
                     'admin/settings/performance' => [
                         'title' => 'Performance',
                         'href' => 'admin/performance',
-                        'prepend' => '<i class="icon-signal icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
                     ],
                     'admin/access' => [
                         'title' => 'Access Rights',
                         'href' => 'admin/access',
-                        'prepend' => '<i class="icon-lock icon-white"></i>'
+                        'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
                     ]
                 ]
             ]
@@ -125,7 +125,7 @@ abstract class AbstractAdminController extends AbstractController
                 $modulesMenuItems[$href] = [
                     'title' => $module->title,
                     'href' => $href,
-                    'prepend' => '<i class="icon-th-large icon-white"></i>'
+                    'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                 ];
             }
 
@@ -153,15 +153,16 @@ abstract class AbstractAdminController extends AbstractController
         $this->assets->set(
             'css',
             $this->assets->getEmptyCssCollection()
-                ->addCss('external/bootstrap/bootstrap.min.css')
-                ->addCss('external/bootstrap/bootstrap.min.css')
+                ->addCss('external/bootstrap/css/bootstrap.min.css')
+                ->addCss('external/bootstrap/css/bootstrap-switch.min.css')
                 ->addCss('external/jquery/jquery-ui.css')
                 ->addCss('assets/css/core/admin/main.css')
                 ->join(false)
         );
 
         $this->assets->get('js')
-            ->addJs('external/bootstrap/bootstrap.min.js')
+            ->addJs('external/bootstrap/js/bootstrap.min.js')
+            ->addJs('external/bootstrap/js/bootstrap-switch.min.js')
             ->addJs('external/ckeditor/ckeditor.js');
     }
 }

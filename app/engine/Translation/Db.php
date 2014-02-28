@@ -96,7 +96,7 @@ class Db implements AdapterInterface
      */
     public function query($index, $placeholders = null)
     {
-        if (!$this->_languageId || empty($index)) {
+        if (!$this->_languageId || empty($index) || strlen($index) == 1) {
             return $index;
         }
 

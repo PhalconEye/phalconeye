@@ -17,12 +17,12 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}{{ "module settings"|trans }}{% endblock %}
+{% block title %}{{ "Module settings"|i18n }}{% endblock %}
 
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ 'This module has no settings...'|trans }}
+            {{ 'This module has no settings...'|i18n }}
         </div>
         <!--/row-->
     </div><!--/span-->

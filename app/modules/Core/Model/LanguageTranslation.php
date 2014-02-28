@@ -66,6 +66,11 @@ class LanguageTranslation extends AbstractModel implements TranslationModelInter
     public $translated = null;
 
     /**
+     * @Column(type="boolean", nullable=false, column="checked")
+     */
+    public $checked = false;
+
+    /**
      * Set scope.
      *
      * @param string $scope Scope name.

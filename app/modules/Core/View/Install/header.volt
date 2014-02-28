@@ -17,5 +17,5 @@
 
 <div class="header_container">
      <img alt="" src="/assets/img/core/install/pe_logo.png"/><br/>
-     <span>{{ 'Installation...'|trans }}</span>
+     <span>{{ 'Installation...'|i18n }}</span>
  </div>

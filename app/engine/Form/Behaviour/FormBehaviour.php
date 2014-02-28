@@ -18,8 +18,8 @@
 
 namespace Engine\Form\Behaviour;
 
-use Engine\Form\AbstractForm;
 use Engine\Db\AbstractModel;
+use Engine\Form\AbstractForm;
 use Engine\Form;
 use Phalcon\Validation\Message;
 
@@ -113,6 +113,23 @@ trait FormBehaviour
      * @return $this
      */
     abstract public function setValues($values);
+
+    /**
+     * Set form action.
+     *
+     * @param string|array $action Url or router params.
+     *
+     * @return $this
+     */
+    public function setAction($action)
+    {
+        if (is_array($action)) {
+            $action = substr($this->getDi()->get('url')->get($action), 1);
+        }
+
+        $this->_action = $action;
+        return $this;
+    }
 
     /**
      * Get form action attribute.

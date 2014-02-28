@@ -138,7 +138,7 @@ class Controller extends WidgetController
             sprintf(
                 $languageSelectorHtml,
                 $defaultLanguage,
-                $this->di->get('trans')->_('HTML block, for:'),
+                $this->di->get('i18n')->_('HTML block, for:'),
                 $languageHtmlItems
             );
 

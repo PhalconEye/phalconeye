@@ -42,7 +42,7 @@ class Regex extends PhalconRegexValidator implements ValidatorInterface
     public function __construct($params = [])
     {
         if (isset($params['message'])) {
-            $params['message'] = DI::getDefault()->get('trans')->_($params['message']);
+            $params['message'] = DI::getDefault()->get('i18n')->_($params['message']);
         }
 
         parent::__construct($params);

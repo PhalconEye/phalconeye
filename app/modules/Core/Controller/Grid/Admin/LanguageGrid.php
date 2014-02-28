@@ -19,6 +19,7 @@
 namespace Core\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
+use Engine\Config;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
@@ -59,13 +60,30 @@ class LanguageGrid extends CoreGrid
      */
     public function getItemActions(GridItem $item)
     {
-        return [
+        $actions = [
             'Manage' => ['href' => ['for' => 'admin-languages-manage', 'id' => $item['id']]],
+            'Export' => [
+                'href' => ['for' => 'admin-languages-export', 'id' => $item['id']],
+                'attr' => ['data-widget' => 'modal']
+            ],
+            'Wizard' => [
+                'href' => ['for' => 'admin-languages-wizard', 'id' => $item['id']],
+                'attr' => ['data-widget' => 'modal']
+            ],
+            '|' => [],
             'Edit' => ['href' => ['for' => 'admin-languages-edit', 'id' => $item['id']]],
             'Delete' => [
-                'href' => ['for' => 'admin-languages-delete', 'id' => $item['id']], 'attr' => ['class' => 'grid-delete']
+                'href' => [
+                    'for' => 'admin-languages-delete', 'id' => $item['id']
+                ],
+                'attr' => ['class' => 'grid-action-delete']
             ]
         ];
+        if ($item->getObject()->language == Config::CONFIG_DEFAULT_LANGUAGE) {
+            unset($actions['Wizard']);
+        }
+
+        return $actions;
     }
 
     /**
@@ -88,7 +106,7 @@ class LanguageGrid extends CoreGrid
                     self::COLUMN_PARAM_OUTPUT_LOGIC =>
                         function (GridItem $item, $di) {
                             if (empty($item['icon'])) {
-                                return $di->get('trans')->_('No icon');
+                                return $di->get('i18n')->_('No icon');
                             }
 
                             return sprintf('<img alt="" src="%s"/>', $item->getObject()->getIcon());

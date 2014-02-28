@@ -27,6 +27,10 @@
 
     {{ assets.outputInline() }}
 
+    <script type="text/javascript">
+        {{ helper('i18n', 'core').render() }}
+    </script>
+
     {%- block head -%}
 
     {%- endblock -%}

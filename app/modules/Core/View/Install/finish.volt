@@ -18,7 +18,7 @@
 {% extends "Install/layout.volt" %}
 
 {% block title %}
-    {{ 'Installation'|trans }}
+    {{ 'Installation'|i18n }}
 {% endblock %}
 
 {% block header %}
@@ -30,7 +30,7 @@
     {{ partial('/Install/steps') }}
 
     <div class="thanks_message">
-        {{ 'Specify admin account'|trans }}
+        {{ 'Specify admin account'|i18n }}
     </div>
     <div>
         {{ form.render() }}

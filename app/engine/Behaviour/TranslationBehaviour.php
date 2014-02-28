@@ -43,6 +43,6 @@ trait TranslationBehaviour
      */
     protected function _($msg, $args = null)
     {
-        return $this->getDI()->get('trans')->_($msg, $args);
+        return $this->getDI()->get('i18n')->_($msg, $args);
     }
 }

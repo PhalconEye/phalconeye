@@ -337,10 +337,11 @@ class Manager
      * Export package with data.
      *
      * @param AbstractPackage $package Package object.
+     * @param array           $params  Additional params.
      *
      * @return void
      */
-    public function exportPackage(AbstractPackage $package)
+    public function exportPackage(AbstractPackage $package, array $params = [])
     {
         $location = $this->getPackageLocation($package);
         $packageName = ucfirst($package->name);
@@ -369,7 +370,7 @@ class Manager
         $filename = $this->_getPackageFullName($package, true) . '.zip';
         $filepath = $temporaryDir . $filename;
 
-        $this->_createManifest($temporaryPackageDir . self::PACKAGE_MANIFEST_NAME, $package->toJson());
+        $this->_createManifest($temporaryPackageDir . self::PACKAGE_MANIFEST_NAME, $package->toJson($params));
 
         $this->_zip($temporaryPackageDir, $filepath);
 
