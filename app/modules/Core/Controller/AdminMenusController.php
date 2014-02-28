@@ -257,7 +257,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
-        $this->resolveModal();
+        $this->resolveModal(['reload' => true]);
     }
 
     /**
@@ -305,7 +305,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
-        $this->resolveModal();
+        $this->resolveModal(['reload' => true]);
     }
 
     /**

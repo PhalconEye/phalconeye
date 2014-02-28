@@ -213,7 +213,6 @@ abstract class AbstractController extends PhalconController
                 ->addJs('external/jquery/jquery.cookie.js')
                 ->addJs('assets/js/core/core.js')
                 ->addJs('assets/js/core/i18n.js')
-                ->addJs('assets/js/core/menu.js')
                 ->addJs('assets/js/core/form.js')
                 ->addJs('assets/js/core/form/remote-file.js')
                 ->addJs('assets/js/core/widgets/grid.js')
