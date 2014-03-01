@@ -43,8 +43,8 @@ class Upload extends FileForm
         $this
             ->setAction(['for' => 'admin-languages-import'])
             ->setAttribute('id', 'languages-import-form')
-            ->addFile('file');
-//            ->getValidation()
-//            ->add('file', new MimeType(['type' => 'application/json']));
+            ->addFile('file')
+            ->getValidation()
+            ->add('file', new MimeType(['type' => 'application/json']));
     }
 }

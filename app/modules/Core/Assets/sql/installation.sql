@@ -62,8 +62,8 @@ INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_id`, `widget_order`, `lay
 -- Dumping data for table `languages`
 --
 
-INSERT IGNORE INTO `languages` (`id`, `name`, `locale`, `icon`) VALUES
-(1, 'English', 'en', NULL);
+INSERT IGNORE INTO `languages` (`id`, `name`, `language`, `locale`, `icon`) VALUES
+(1, 'English', 'en', 'en_US', NULL);
 
 --
 -- Dumping data for table `menus`

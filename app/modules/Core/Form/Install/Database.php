@@ -55,6 +55,7 @@ class Database extends CoreForm
                 'Mysql'
             )
             ->addText('host', 'Database host', null, 'localhost')
+            ->addText('port', 'Database port', null, '3306')
             ->addText('username', 'Username', null, 'root')
             ->addPassword('password')
             ->addText('dbname', 'Database name', null, 'phalconeye');

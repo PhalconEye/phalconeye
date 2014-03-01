@@ -175,6 +175,7 @@ class InstallController extends AbstractController
                 $connectionSettings = [
                     "adapter" => $data['adapter'],
                     "host" => $data['host'],
+                    "port" => $data['port'],
                     "username" => $data['username'],
                     "password" => $data['password'],
                     "dbname" => $data['dbname'],
@@ -348,11 +349,13 @@ class InstallController extends AbstractController
         $connection = new $adapter(
             [
                 "host" => $config->database->host,
+                "port" => $config->database->port,
                 "username" => $config->database->username,
                 "password" => $config->database->password,
                 "dbname" => $config->database->dbname,
             ]
         );
+
 
         $this->di->set('db', $connection);
         $this->di->set(
