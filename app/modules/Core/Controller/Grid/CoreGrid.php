@@ -23,7 +23,8 @@ use Engine\Grid\AbstractGrid;
 use Phalcon\Mvc\View;
 
 /**
- * Menu grid.
+ * Core grid.
+ * It defines base grid views.
  *
  * @category  PhalconEye
  * @package   Core\Controller\Grid\Admin
