@@ -42,11 +42,27 @@ abstract class AbstractAdminController extends AbstractController
     public function initialize()
     {
         parent::initialize();
+
+        if ($this->request->isAjax()) {
+            return;
+        }
+
+        $this->_setupNavigation();
+        $this->_setupAssets();
+    }
+
+    /**
+     * Setup navigation.
+     *
+     * @return void
+     */
+    protected function _setupNavigation()
+    {
         $path = explode('/', $this->request->get('_url'));
 
         $activeItem = '';
         $limit = (count($path) > 3 ? 1 : 0);
-        for ($i = 1, $count = count($path); $i < $count - $limit; $i++) {
+        for ($i = 1, $count = count($path); $i < $count - $limit && $i < 3; $i++) {
             $activeItem .= $path[$i] . '/';
         }
         $activeItem = substr($activeItem, 0, -1);
@@ -148,6 +164,16 @@ abstract class AbstractAdminController extends AbstractController
             ->setEnabledDropDownHighlight(false);
 
         $this->view->headerNavigation = $navigation;
+    }
+
+    /**
+     * Setup assets files.
+     *
+     * @return void
+     */
+    protected function _setupAssets()
+    {
+        parent::_setupAssets();
 
         // Assets setup.
         $this->assets->set(

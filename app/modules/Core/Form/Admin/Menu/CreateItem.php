@@ -77,7 +77,7 @@ class CreateItem extends CoreForm
                 ]
             )
             ->addRadio('url_type', 'Select url type', null, [0 => 'Url', 1 => 'System page'])
-            ->addText('url')
+            ->addText('url', 'Url', 'Do not start url from starting slash... Example: "somepage/url/to?param=1"')
             ->addText(
                 'page',
                 'Page',

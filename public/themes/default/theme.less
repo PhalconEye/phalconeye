@@ -1,521 +1,531 @@
-  /**
-   * PhalconEye
-   *
-   * LICENSE
-   *
-   * This source file is subject to the new BSD license that is bundled
-   * with this package in the file LICENSE.txt.
-   *
-   * If you did not receive a copy of the license and are unable to
-   * obtain it through the world-wide-web, please send an email
-   * to phalconeye@gmail.com so we can send you a copy immediately.
-   *
-   */
+/**
+ * PhalconEye
+ *
+ * LICENSE
+ *
+ * This source file is subject to the new BSD license that is bundled
+ * with this package in the file LICENSE.txt.
+ *
+ * If you did not receive a copy of the license and are unable to
+ * obtain it through the world-wide-web, please send an email
+ * to phalconeye@gmail.com so we can send you a copy immediately.
+ *
+ */
+@import "constants";
 
-  @import "constants";
+body {
+  background: url('@{baseUrl}themes/default/images/body-bg.png') repeat;
+  font-family: @font;
+}
 
-  body {
-    background: url('/themes/default/images/body-bg.png') repeat;
-    font-family: @font;
+img {
+  border: none;
+}
+
+a {
+  color: @link_color;
+  text-decoration: none;
+  &:hover,
+  &:focus {
+    color: @link_hover_color;
   }
-
-  img{
-    border: none;
+  &:active {
+    color: @link_active_color;
   }
+}
 
+h2, h3, h4 {
+  color: @h_color;
+  font-weight: 400;
+}
+
+input[type=text], input[type=email], input[type=password], input.text, textarea, select {
+  background-color: @container_bg_color;
+  color: @h_color;
+  border: 1px solid @container_border_color;
+  padding: .5em;
+  font-size: 10pt;
+  resize: none;
+  max-width: 90%;
+  font-family: @font;
+  box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
+}
+
+button {
+  padding: 5px 10px;
+  border: none;
+  background-color: @button_bg_color;
+  color: @button_color;
+  text-shadow: 1px 0 0 rgba(0, 0, 0, .3);
+  cursor: pointer;
+  &:hover,
+  &:focus {
+    background-color: @button_bg_hover_color;
+  }
+  &:active {
+    background-color: @button_bg_active_color;
+  }
+}
+
+.clear {
+  clear: both;
+}
+
+/*** CUSTOM PAGE LAYOUT ***/
+#general-content {
+  min-height: @content_min_height;
+  overflow: hidden;
+  margin: 10px;
+}
+
+#general-content-left {
+  width: 250px;
+  min-height: @content_min_height;
+  float: left;
+  margin: 10px;
+}
+
+#general-content-right {
+  width: 250px;
+  min-height: @content_min_height;
+  float: right;
+  margin: 10px;
+}
+
+#general-content-wrapper {
+  width: @content_width;
+  margin: 0px auto 0 auto;
+  background: white;
+  box-shadow: 0 0 10px grey;
+  min-height: @content_min_height;
+}
+
+#general-content-column-left {
+  float: left;
+  width: 820px;
+  min-height: @content_min_height;
+  margin: 10px 0 10px 10px;
+}
+
+#general-content-column-right {
+  float: right;
+  width: 820px;
+  min-height: @content_min_height;
+  margin: 10px 10px 10px 0;
+}
+
+#general-content-full-top {
+  padding-top: 5px;
+}
+
+#general-content-full-top, #general-content-full-bottom {
+  min-height: 10px;
+  clear: both;
+  margin: 0 10px;
+}
+
+#general-content-full-bottom {
+  margin: 10px;
+}
+
+#general-content-full {
+  margin: 10px;
+}
+
+#content-left-left {
+  height: 452px;
+  width: 505px;
+  float: left;
+}
+
+#content-left-right {
+  background-position: 10px 120px;
+  height: 415px;
+  width: 25px;;
+  float: left;
+}
+
+#wrapper {
+  width: @content_width;
+  margin: 0 auto;
+}
+
+.general_container {
+
+}
+
+#header .widget_wrapper {
+  margin: 0 10px;
+}
+
+.container {
+  padding: 10px 0;
+}
+
+.container .widget_container {
+  padding: 10px;
+}
+
+.container .widget_container p {
+  margin: 0;
+}
+
+.main_widget_container .widget_wrapper {
+  .container_block();
+}
+
+.widget_wrapper + .widget_wrapper {
+  margin-top: 5px;
+
+}
+
+.container .widget_header {
+  padding: 5px;
+}
+
+.container .widget_header h3 {
+  font-size: 1.2em;
+  font-weight: 700;
+  margin: 5px;
+}
+
+/*** FORMS ***/
+
+form {
+  .container_block();
+  padding: 10px;
+  margin: 0 10px;
+}
+
+form .form_header > h3 {
+  margin: 0;
+  font-size: 1.2em;
+  font-weight: 700;
+}
+
+form .form_header > p {
+  color: @form_description_color;
+  margin: 0 0 10px 0;
+}
+
+form .form_elements > div {
+  min-height: 30px;
+  clear: both;
+  padding-top: 10px;
+}
+
+form .form_elements .form_label {
+  width: 200px;
+  float: left;
+  margin-right: 50px;
+}
+
+form .form_elements .form_label > label {
+  margin-bottom: 0;
+  color: @label_color;
+  font-weight: bold;
+}
+
+form .form_elements .form_label > p {
+  font-size: 11px;
+  color: @form_description_color;
+}
+
+form .form_elements .form_element {
+  float: left;
+  max-width: 650px;
+}
+
+form .form_elements .form_element textarea {
+  max-width: 650px;
+  width: 400px;
+  height: 100px;
+}
+
+form fieldset {
+  clear: both;
+  border: none;
+}
+
+form .form_elements > div,
+form fieldset > div {
+  min-height: 30px;
+  clear: both;
+  padding-top: 10px;
+}
+
+form .form_footer {
+  margin: 20px 0 20px 250px;
+}
+
+form .form_footer .btn + .btn {
+  margin-left: 10px;
+}
+
+form .form_element_file_image {
+  text-align: center;
+  width: 220px;
+}
+
+form .form_element_file_image img {
+  max-width: 220px;
+  max-height: 220px;
+  margin: 0 10px 10px 10px;
+}
+
+form .form_elements .validation_failed label {
+  color: red;
+}
+
+form .form_elements .validation_failed input,
+form .form_elements .validation_failed textarea,
+form .form_elements .validation_failed select, {
+  border: 1px solid red;
+}
+
+form .form_elements select {
+  min-width: 150px;
+}
+
+.form_errors,
+.form_notices {
+  margin: 0 0 0 20px;
+  padding: 10px;
+}
+
+.form_errors li,
+.form_notices li {
+  color: #ff0000;
+}
+
+.form_element_radio {
+  min-height: 30px;
+  width: 220px;
+}
+
+.form_element_radio label,
+.form_element_radio input {
+  float: left;
+}
+
+.form_element_radio label {
+  margin-left: 5px;
+}
+
+.form_element_remote_file > input[type="text"] {
+  float: left;
+  padding-right: 15px;
+  margin-right: -10px;
+}
+
+/* NAVIGATION */
+
+.navbar {
+
+}
+
+.navbar .nav {
+  height: 35px;
+}
+
+.navbar ul {
+  list-style: none;
+  padding-left: 0px;
+}
+
+.navbar ul li .dropdown-menu {
+  display: none;
+  position: absolute;
+  width: 150px;
+}
+
+.navbar ul li .dropdown-menu li.dropdown-submenu {
+  position: relative;
+}
+
+.navbar .nav > li {
+  float: left;
+  margin-right: 10px;
+  position: relative;
+}
+
+.navbar .nav > li > a {
+  height: 20px;
+}
+
+.navbar .nav li > a {
+  display: block;
+  padding: 5px 10px;
+  background-color: rgba(255, 255, 255, .5);
+  text-decoration: none;
+  color: @h_color;
+  text-shadow: 0px 0px 1px grey;
+}
+
+.navbar .nav li > a:hover {
+  background-color: rgba(207, 207, 207, 0.32);
+}
+
+.navbar .nav > li.dropdown:hover > .dropdown-menu {
+  display: block;
+}
+
+.navbar .nav li.dropdown li.dropdown-submenu:hover > .dropdown-menu {
+  display: block;
+  top: 0px;
+  left: 150px;
+}
+
+/*CONTENT RELATED STYLES*/
+
+.ui-tooltip, .arrow:after {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.ui-tooltip {
+  float: left;
+  padding: 5px;
+  color: white;
+  font: bold 14px "Helvetica Neue", Sans-Serif;
+  box-shadow: 0 0 7px black;
+  max-width: 400px;
+}
+
+.ui-tooltip p {
+  margin: 0;
+}
+
+.arrow {
+  width: 70px;
+  height: 16px;
+  overflow: hidden;
+  position: absolute;
+  left: 50%;
+  margin-left: -35px;
+  bottom: -16px;
+}
+
+.arrow.top {
+  top: -16px;
+  bottom: auto;
+}
+
+.arrow.left {
+  left: 20%;
+}
+
+.arrow:after {
+  content: "";
+  position: absolute;
+  left: 20px;
+  top: -20px;
+  width: 25px;
+  height: 25px;
+  box-shadow: 6px 5px 9px -9px black;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  tranform: rotate(45deg);
+}
+
+.arrow.top:after {
+  bottom: -20px;
+  top: auto;
+}
+
+.form_login {
+  width: 420px;
+  margin: 0 auto;
+  box-shadow: 0px 0px 2px grey;
+}
+
+.header_logo {
+  float: left;
+}
+
+.header_logo img {
+  max-width: 250px;
+  max-height: 150px;
+}
+
+.header_logo a {
+  font-family: comic sans ms, cursive;
+}
+
+.header_widget {
+  padding-bottom: 10px;
+  margin: 5px 10px;
+}
+
+.header_auth {
+  .container_block();
+  float: right;
+  padding: 10px;
+  margin-top: -10px;
   a {
-    color: @link_color;
-    text-decoration: none;
-    &:hover,
-    &:focus {
-      color: @link_hover_color;
-    }
-    &:active {
-      color: @link_active_color;
-    }
-  }
-
-  h2, h3, h4 {
-    color: @h_color;
-    font-weight: 400;
-  }
-
-  input[type=text], input[type=email], input[type=password], input.text, textarea {
-    background-color: @container_bg_color;
-    color: @h_color;
-    border: 1px solid @container_border_color;
-    padding: .5em;
-    font-size: 10pt;
-    resize: none;
-    max-width: 90%;
-    font-family: @font;
-    box-shadow: inset 0 3px 8px rgba(0, 0, 0, 0.125);
-  }
-
-  button {
-    padding: 5px 10px;
-    border: none;
-    background-color: @button_bg_color;
-    color: @button_color;
-    text-shadow: 1px 0 0 rgba(0, 0, 0, .3);
-    cursor: pointer;
-    &:hover,
-    &:focus {
-      background-color: @button_bg_hover_color;
-    }
-    &:active {
-      background-color: @button_bg_active_color;
-    }
-  }
-
-  .clear {
-    clear: both;
-  }
-
-    /*** CUSTOM PAGE LAYOUT ***/
-  #general-content {
-    min-height: @content_min_height;
-    overflow: hidden;
-    margin: 10px;
-  }
-
-  #general-content-left {
-    width: 250px;
-    min-height: @content_min_height;
-    float: left;
-    margin: 10px;
-  }
-
-  #general-content-right {
-    width: 250px;
-    min-height: @content_min_height;
-    float: right;
-    margin: 10px;
-  }
-
-  #general-content-wrapper {
-    width: @content_width;
-    margin: 0px auto 0 auto;
-    background: white;
-    box-shadow: 0 0 10px grey;
-    min-height: @content_min_height;
-  }
-
-  #general-content-column-left {
-    float: left;
-    width: 820px;
-    min-height: @content_min_height;
-    margin: 10px 0 10px 10px;
-  }
-
-  #general-content-column-right {
-    float: right;
-    width: 820px;
-    min-height: @content_min_height;
-    margin: 10px 10px 10px 0;
-  }
-
-  #general-content-full-top {
-    padding-top: 5px;
-  }
-
-  #general-content-full-top, #general-content-full-bottom {
-    min-height: 10px;
-    clear: both;
-    margin: 0 10px;
-  }
-
-  #general-content-full-bottom {
-    margin: 10px;
-  }
-
-  #general-content-full {
-    margin: 10px;
-  }
-
-  #content-left-left {
-    height: 452px;
-    width: 505px;
-    float: left;
-  }
-
-  #content-left-right {
-    background-position: 10px 120px;
-    height: 415px;
-    width: 25px;;
-    float: left;
-  }
-
-  #wrapper {
-    width: @content_width;
-    margin: 0 auto;
-  }
-
-  .general_container {
-
-  }
-
-  #header .widget_wrapper{
-    margin: 0 10px;
-  }
-
-  .container {
-    padding: 10px 0;
-  }
-
-  .container .widget_container {
-    padding: 10px;
-  }
-
-  .container .widget_container p {
-    margin: 0;
-  }
-
-  .main_widget_container .widget_wrapper {
-    .container_block();
-  }
-
-  .widget_wrapper + .widget_wrapper {
-    margin-top: 5px;
-
-  }
-
-  .container .widget_header {
-    padding: 5px;
-  }
-
-  .container .widget_header h3 {
-    font-size: 1.2em;
-    font-weight: 700;
-    margin: 5px;
-  }
-
-    /*** FORMS ***/
-
-  form {
-    .container_block();
-    padding: 10px;
-    margin: 0 10px;
-  }
-
-  form .form_header > h3 {
-    margin: 0;
-    font-size: 1.2em;
-    font-weight: 700;
-  }
-
-  form .form_header > p {
-    color: @form_description_color;
-    margin: 0 0 10px 0;
-  }
-
-  form .form_elements > div {
-    min-height: 30px;
-    clear: both;
-    padding-top: 10px;
-  }
-
-  form .form_elements .form_label {
-    width: 200px;
-    float: left;
-    margin-right: 50px;
-  }
-
-  form .form_elements .form_label > label {
-    margin-bottom: 0;
-    color: @label_color;
-    font-weight: bold;
-  }
-
-  form .form_elements .form_label > p {
-    font-size: 11px;
-    color: @form_description_color;
-  }
-
-  form .form_elements .form_element {
-    float: left;
-    max-width: 650px;
-  }
-
-  form .form_elements .form_element textarea {
-    max-width: 650px;
-    width: 400px;
-    height: 100px;
-  }
-
-  form fieldset {
-    clear: both;
-    border: none;
-  }
-
-  form .form_elements > div,
-  form fieldset > div {
-    min-height: 30px;
-    clear: both;
-    padding-top: 10px;
-  }
-
-  form .form_footer {
-    margin: 20px 0 20px 250px;
-  }
-
-  form .form_footer .btn + .btn {
-    margin-left: 10px;
-  }
-
-  form .form_element_file_image {
-    text-align: center;
-    width: 220px;
-  }
-
-  form .form_element_file_image img{
-    max-width: 220px;
-    max-height: 220px;
-    margin: 0 10px 10px 10px;
-  }
-
-  form .form_elements .validation_failed label {
-    color: red;
-  }
-
-  form .form_elements .validation_failed input,
-  form .form_elements .validation_failed textarea,
-  form .form_elements .validation_failed select, {
-    border: 1px solid red;
-  }
-
-  .form_errors,
-  .form_notices {
-    margin: 0 0 0 20px;
-    padding: 10px;
-  }
-
-  .form_errors li,
-  .form_notices li {
-    color: #ff0000;
-  }
-
-  .form_element_radio {
-    min-height: 30px;
-    width: 220px;
-  }
-
-  .form_element_radio label,
-  .form_element_radio input {
-    float: left;
-  }
-
-  .form_element_radio label {
-    margin-left: 5px;
-  }
-
-  .form_element_remote_file > input[type="text"] {
-    float: left;
-    padding-right: 15px;
-    margin-right: -10px;
-  }
-
-    /* NAVIGATION */
-
-  .navbar {
-
-  }
-
-  .navbar .nav {
-    height: 35px;
-  }
-
-  .navbar ul {
-    list-style: none;
-    padding-left: 0px;
-  }
-
-  .navbar ul li .dropdown-menu {
-    display: none;
-    position: absolute;
-    width: 150px;
-  }
-
-  .navbar ul li .dropdown-menu li.dropdown-submenu {
-    position: relative;
-  }
-
-  .navbar .nav > li {
-    float: left;
-    margin-right: 10px;
-    position: relative;
-  }
-
-  .navbar .nav > li > a{
-    height: 20px;
-  }
-
-  .navbar .nav li > a {
-    display: block;
-    padding: 5px 10px;
-    background-color: rgba(255, 255, 255, .5);
-    text-decoration: none;
-    color: @h_color;
-    text-shadow: 0px 0px 1px grey;
-  }
-
-  .navbar .nav li > a:hover {
-    background-color: rgba(207, 207, 207, 0.32);
-  }
-
-  .navbar .nav > li.dropdown:hover > .dropdown-menu {
-    display: block;
-  }
-
-  .navbar .nav li.dropdown li.dropdown-submenu:hover > .dropdown-menu {
-    display: block;
-    top: 0px;
-    left: 150px;
-  }
-
-    /*CONTENT RELATED STYLES*/
-
-  .ui-tooltip, .arrow:after {
-    background: rgba(0, 0, 0, 0.75);
-  }
-  .ui-tooltip {
-    float: left;
-    padding: 5px;
-    color: white;
-    font: bold 14px "Helvetica Neue", Sans-Serif;
-    box-shadow: 0 0 7px black;
-    max-width: 400px;
-  }
-  .ui-tooltip p{
-    margin: 0;
-  }
-  .arrow {
-    width: 70px;
-    height: 16px;
-    overflow: hidden;
-    position: absolute;
-    left: 50%;
-    margin-left: -35px;
-    bottom: -16px;
-  }
-  .arrow.top {
-    top: -16px;
-    bottom: auto;
-  }
-  .arrow.left {
-    left: 20%;
-  }
-  .arrow:after {
-    content: "";
-    position: absolute;
-    left: 20px;
-    top: -20px;
-    width: 25px;
-    height: 25px;
-    box-shadow: 6px 5px 9px -9px black;
-    -webkit-transform: rotate(45deg);
-    -moz-transform: rotate(45deg);
-    -ms-transform: rotate(45deg);
-    -o-transform: rotate(45deg);
-    tranform: rotate(45deg);
-  }
-  .arrow.top:after {
-    bottom: -20px;
-    top: auto;
-  }
-
-  .form_login {
-    width: 420px;
-    margin: 0 auto;
-    box-shadow: 0px 0px 2px grey;
-  }
-
-  .header_logo {
-    float: left;
-  }
-
-  .header_logo img {
-    max-width: 250px;
-    max-height: 150px;
-  }
-
-  .header_logo a {
-    font-family: comic sans ms, cursive;
-  }
-
-  .header_widget {
-    padding-bottom: 10px;
-    margin: 5px 10px;
-  }
-
-  .header_auth {
-    .container_block();
-    float: right;
-    padding: 10px;
-    margin-top: -10px;
-    a {
-      margin: 0 5px;
-    }
-  }
-
-  .page_views {
-    padding: 10px;
-    text-align: center;
-  }
-
-  .error_container {
-    min-height: 300px;
-  }
-
-  .error_block {
-    position: absolute;
-    left: 50%;
-    margin-left: -200px;
-    top: 50%;
-    margin-top: -80px;
-    width: 400px;
-  }
-
-  .error_page_title {
-    font-size: 128px;
-    font-weight: bold;
-    text-align: center;
-    height: 150px;
-  }
-
-  .error_page_description {
-    text-align: center;
-    width: 400px;
-  }
-
-  .nav .nav-icon {
-    max-width: 20px;
-    max-height: 20px;
-    vertical-align: middle;
-  }
-
-  .nav .nav-icon-left {
-    margin-right: 7px;
-  }
-
-  .nav .nav-icon-right {
-    margin-left: 7px;
-  }
-
-  .loading_stage {
-    background: black;
-    opacity: 0.7;
-    position: fixed;
-    z-index: 9999;
-    top: 0;
-    width: 100%;
-    left: 0;
-    height: 100%;
-  }
-
-  .loading_stage span {
-    background: url('/assets/img/core/loader/white.gif') no-repeat center center;
-    display: block;
-    width: 100%;
-    height: 100%;
-  }
+    margin: 0 5px;
+  }
+}
+
+.page_views {
+  padding: 10px;
+  text-align: center;
+}
+
+.error_container {
+  min-height: 300px;
+}
+
+.error_block {
+  position: absolute;
+  left: 50%;
+  margin-left: -200px;
+  top: 50%;
+  margin-top: -80px;
+  width: 400px;
+}
+
+.error_page_title {
+  font-size: 128px;
+  font-weight: bold;
+  text-align: center;
+  height: 150px;
+}
+
+.error_page_description {
+  text-align: center;
+  width: 400px;
+}
+
+.nav .nav-icon {
+  max-width: 20px;
+  max-height: 20px;
+  vertical-align: middle;
+}
+
+.nav .nav-icon-left {
+  margin-right: 7px;
+}
+
+.nav .nav-icon-right {
+  margin-left: 7px;
+}
+
+.loading_stage {
+  background: black;
+  opacity: 0.7;
+  position: fixed;
+  z-index: 9999;
+  top: 0;
+  width: 100%;
+  left: 0;
+  height: 100%;
+}
+
+.loading_stage span {
+  background: url('@{baseUrl}assets/img/core/loader/white.gif') no-repeat center center;
+  display: block;
+  width: 100%;
+  height: 100%;
+}

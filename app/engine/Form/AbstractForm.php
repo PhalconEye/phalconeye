@@ -181,11 +181,13 @@ abstract class AbstractForm implements ElementContainerInterface
 
         $this->_validation = new Validation($this);
         $this->_translator = $this->getDI()->get('i18n');
-        $this->_action = substr($_SERVER['REQUEST_URI'], 1);
-
         $this->_errors = new Group();
         $this->_notices = new Group();
         $this->_conditionsResolver = new ConditionResolver($this);
+
+        // Set action.
+        $pattern = '/' . str_replace('/', '\/', $this->getDI()->get('url')->getBaseUri()) . '/';
+        $this->_action = preg_replace($pattern, '', $_SERVER['REQUEST_URI'], 1);
 
         if (method_exists($this, 'initialize')) {
             $this->initialize();
