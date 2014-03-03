@@ -167,7 +167,7 @@ trait ApplicationInitialization
             }
         );
 
-        if ($config->application->debug && $config->application->profiler && $config->application->installed) {
+        if ($config->application->profiler && $config->application->installed) {
             $profiler = new Profiler();
             $di->set('profiler', $profiler);
         }
@@ -330,27 +330,42 @@ trait ApplicationInitialization
             ]
         );
 
-        if ($config->application->debug) {
+        $isDebug = $config->application->debug;
+        $isProfiler = $config->application->profiler;
+        if ($isDebug || $isProfiler) {
             // Attach logger & profiler.
-            $logger = new File($config->application->logger->path . "db.log");
-            $profiler = new DatabaseProfiler();
+            $logger = null;
+            $profiler = null;
+
+            if ($isDebug) {
+                $logger = new File($config->application->logger->path . "db.log");
+            }
+            if ($isProfiler) {
+                $profiler = new DatabaseProfiler();
+            }
 
             $eventsManager->attach(
                 'db',
                 function ($event, $connection) use ($logger, $profiler) {
                     if ($event->getType() == 'beforeQuery') {
                         $statement = $connection->getSQLStatement();
-                        $logger->log($statement, Logger::INFO);
-                        $profiler->startProfile($statement);
+                        if ($logger) {
+                            $logger->log($statement, Logger::INFO);
+                        }
+                        if ($profiler) {
+                            $profiler->startProfile($statement);
+                        }
                     }
                     if ($event->getType() == 'afterQuery') {
                         // Stop the active profile.
-                        $profiler->stopProfile();
+                        if ($profiler) {
+                            $profiler->stopProfile();
+                        }
                     }
                 }
             );
 
-            if ($config->application->profiler && $di->has('profiler')) {
+            if ($profiler && $di->has('profiler')) {
                 $di->get('profiler')->setDbProfiler($profiler);
             }
             $connection->setEventsManager($eventsManager);

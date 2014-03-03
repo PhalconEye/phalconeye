@@ -92,8 +92,7 @@ abstract class Helper extends Tag
     {
         // Collect profile info.
         $di = $this->getDI();
-        $config = $di->get('config');
-        $profilerIsActive = $config->application->debug && $di->has('profiler');
+        $profilerIsActive = $di->has('profiler');
         if ($profilerIsActive) {
             $di->get('profiler')->start();
         }

@@ -18,18 +18,10 @@
 
 namespace Engine;
 
-use Phalcon\Db\Adapter;
-use Phalcon\Db\Adapter\Pdo;
-use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
-use Phalcon\Loader;
-use Phalcon\Logger;
 use Phalcon\Mvc\Application as PhalconApplication;
-use Phalcon\Mvc\Router;
-use Phalcon\Mvc\Url;
 use Phalcon\Registry;
-use Phalcon\Session\Adapter as SessionAdapter;
 
 /**
  * Application class.

@@ -106,9 +106,9 @@ class Element
         }
 
         if ($output === null) {
-            // collect profiler info
-            $config = $this->getDI()->get('config');
-            if ($config->application->debug && $this->getDI()->has('profiler')) {
+            // Collect profiler info.
+            $hasProfiler = $this->getDI()->has('profiler');
+            if ($hasProfiler) {
                 $this->getDI()->get('profiler')->start();
             }
 
@@ -116,7 +116,7 @@ class Element
             $controller->{"{$action}Action"}();
 
             // collect profiler info
-            if ($config->application->debug && $this->getDI()->has('profiler')) {
+            if ($hasProfiler) {
                 $this->getDI()->get('profiler')->stop($controllerClass, 'widget');
             }
 

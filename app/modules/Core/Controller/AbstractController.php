@@ -57,7 +57,7 @@ abstract class AbstractController extends PhalconController
      */
     public function initialize()
     {
-        if ($this->config->application->debug && $this->di->has('profiler')) {
+        if ($this->di->has('profiler')) {
             $this->profiler->start();
         }
 
@@ -78,7 +78,7 @@ abstract class AbstractController extends PhalconController
      */
     public function afterExecuteRoute()
     {
-        if ($this->config->application->debug && $this->di->has('profiler')) {
+        if ($this->di->has('profiler')) {
             $this->profiler->stop(get_called_class(), 'controller');
         }
     }
@@ -221,7 +221,7 @@ abstract class AbstractController extends PhalconController
                 ->addJs('assets/js/core/widgets/ckeditor.js')
         );
 
-        if ($this->config->application->debug && $this->di->has('profiler')) {
+        if ($this->di->has('profiler')) {
             $this->di->get('assets')
                 ->collection('css')
                 ->addCss('assets/css/core/profiler.css');

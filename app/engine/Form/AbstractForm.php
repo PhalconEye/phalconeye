@@ -174,8 +174,8 @@ abstract class AbstractForm implements ElementContainerInterface
         $this->__DIConstruct();
 
         // Collect profile info.
-        $config = $this->getDI()->get('config');
-        if ($config->application->debug && $this->getDI()->has('profiler')) {
+        $hasProfiler = $this->getDI()->has('profiler');
+        if ($hasProfiler) {
             $this->getDI()->get('profiler')->start();
         }
 
@@ -194,7 +194,7 @@ abstract class AbstractForm implements ElementContainerInterface
         }
 
         // Collect profile info.
-        if ($config->application->debug && $this->getDI()->has('profiler')) {
+        if ($hasProfiler) {
             $this->getDI()->get('profiler')->stop(get_called_class(), 'form');
         }
     }

@@ -61,9 +61,9 @@ class Profiler extends Helper
     protected function _render()
     {
         $di = $this->getDI();
-        $this->_config = $config = $di->get('config');
+        $this->_config = $di->get('config');
         $this->_view = $di->get('view');
-        if (!$config->application->debug || !$di->has('profiler')) {
+        if (!$di->has('profiler')) {
             return '';
         }
 
