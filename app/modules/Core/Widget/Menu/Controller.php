@@ -89,7 +89,7 @@ class Controller extends WidgetController
         $index = 1;
         foreach ($items as $item) {
             /** @var MenuItem $item */
-            if (!$item->isAllowed()) {
+            if (!$item->isAllowed() || !$item->is_enabled) {
                 continue;
             }
             $subItems = $item->getMenuItems(['order' => 'item_order ASC']);

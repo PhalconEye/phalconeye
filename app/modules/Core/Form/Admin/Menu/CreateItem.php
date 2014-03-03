@@ -22,6 +22,7 @@ use Core\Form\CoreForm;
 use Core\Model\Language;
 use Core\Model\MenuItem;
 use Engine\Db\AbstractModel;
+use Engine\Form\FieldSet;
 use User\Model\Role;
 
 /**
@@ -134,6 +135,7 @@ class CreateItem extends CoreForm
                 null,
                 ['using' => ['id', 'name']]
             )
+            ->addCheckbox('is_enabled', 'Is enabled', null, 1, true, false)
             ->addHidden('page_id')
             ->addHidden('menu_id')
             ->addHidden('parent_id');
@@ -144,7 +146,7 @@ class CreateItem extends CoreForm
     /**
      * Set form validation.
      *
-     * @param Form\FieldSet $content Content object.
+     * @param FieldSet $content Content object.
      *
      * @return void
      */

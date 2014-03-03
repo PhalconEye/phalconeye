@@ -168,6 +168,11 @@ class MenuItem extends AbstractModel
     public $roles = null;
 
     /**
+     * @Column(type="boolean", column="is_enabled")
+     */
+    public $is_enabled = true;
+
+    /**
      * Return the related "Menu" entity.
      *
      * @param array $arguments Entity params.
