@@ -250,6 +250,19 @@
         PhalconEye.form.init();
 
         /**
+         * Tooltips.
+         */
+        $.widget("ui.tooltip", $.ui.tooltip, {
+            options: {
+                content: function () {
+                    return $(this).prop('title');
+                }
+            }
+        });
+
+        $(".tooltip").tooltip();
+
+        /**
          * Init on update.
          */
         $(document).bind("DOMNodeInserted", function (event) {
