@@ -30,6 +30,8 @@ use Phalcon\Tag;
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
+ *
+ * @TODO: try to change this to \Phalcon\Registry and DI...
  */
 abstract class Helper extends Tag
 {

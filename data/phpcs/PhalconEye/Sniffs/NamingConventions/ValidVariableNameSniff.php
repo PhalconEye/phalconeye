@@ -65,6 +65,7 @@ class PhalconEye_Sniffs_NamingConventions_ValidVariableNameSniff extends PHP_Cod
         'isset',
         'unset',
         'sleep',
+        'invoke',
         'wakeup',
         'toString',
         'set_state',

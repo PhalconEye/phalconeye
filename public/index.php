@@ -45,6 +45,7 @@ if (!defined('PUBLIC_PATH')) {
 
 require_once ROOT_PATH . "/app/engine/Config.php";
 require_once ROOT_PATH . "/app/engine/Exception.php";
+require_once ROOT_PATH . "/app/engine/ApplicationInitialization.php";
 
 if (php_sapi_name() !== 'cli') {
     require_once ROOT_PATH . "/app/engine/Application.php";
