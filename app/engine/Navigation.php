@@ -349,7 +349,7 @@ class Navigation
                 $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
                 $appendHTML = (!empty($item['append']) ? $item['append'] : '');
                 $content .= sprintf(
-                    '<a %s %s href="javascript:;" class="%s" data-toggle="dropdown">%s%s%s%s%s%s</a>',
+                    '<a %s %s href="javascript:;" class="%s tooltip" data-toggle="dropdown">%s%s%s%s%s%s</a>',
                     $linkOnclick,
                     $linkTooltip,
                     $dditc,
@@ -386,7 +386,7 @@ class Navigation
                             'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
 
                         $content .= sprintf(
-                            '<a %s %s %s href="%s">%s%s%s</a>',
+                            '<a class="tooltip" %s %s %s href="%s">%s%s%s</a>',
                             $linkTooltip,
                             $linkTarget,
                             $linkOnclick,
@@ -406,7 +406,7 @@ class Navigation
                 $active = ($name == $this->_activeItem ||
                 $item['href'] == $this->_activeItem ||
                 $this->getDI()->get('url')->get($item['href']) ==
-                $this->getDI()->get('config')->application->baseUri . $this->_activeItem ? ' class="active"' : '');
+                $this->getDI()->get('config')->application->baseUrl . $this->_activeItem ? ' class="active"' : '');
 
                 $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
                 $appendHTML = (!empty($item['append']) ? $item['append'] : '');
@@ -428,7 +428,7 @@ class Navigation
 
                 $content .= "<{$lit}{$active}>";
                 $content .= sprintf(
-                    '<a %s %s %s href="%s">%s%s%s%s%s</a>',
+                    '<a class="tooltip" %s %s %s href="%s">%s%s%s%s%s</a>',
                     $linkTooltip,
                     $linkTarget,
                     $linkOnclick,

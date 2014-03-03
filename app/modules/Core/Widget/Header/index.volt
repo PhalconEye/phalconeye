@@ -20,8 +20,8 @@
 {%- block content -%}
     <div class="header_widget">
         <div class="header_logo">
-        <a href="/">
-            <img alt='{{ site_title }}' src="{{ logo }}"/>
+        <a href="{{ url() }}">
+            <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
             {% if show_title is 1 %}{{ site_title }}{% endif %}
         </a>
     </div>

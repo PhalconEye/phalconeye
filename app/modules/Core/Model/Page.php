@@ -253,7 +253,7 @@ class Page extends AbstractModel
             return true;
         }
 
-        return in_array($viewer->getRoleId(), $this->roles);
+        return in_array($viewer->role_id, $this->roles);
     }
 
     /**

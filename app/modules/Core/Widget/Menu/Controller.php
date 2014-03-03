@@ -112,12 +112,14 @@ class Controller extends WidgetController
 
 
             if (!empty($item->icon)) {
+                $iconTemplate = '<img class="nav-icon nav-icon-%s" alt="%s" src="%s"/>';
+                $url = $this->getDI()->getUrl();
                 if ($item->icon_position == 'left') {
                     $navigationItems[$index]['prepend'] =
-                        "<img class='nav-icon nav-icon-left' alt='{$item->title}' src='{$item->icon}'/>";
+                        sprintf($iconTemplate, 'left', $item->title, $url->get($item->icon));
                 } else {
                     $navigationItems[$index]['append'] =
-                        "<img class='nav-icon nav-icon-right' alt='{$item->title}' src='{$item->icon}'/>";
+                        sprintf($iconTemplate, 'right', $item->title, $url->get($item->icon));
                 }
             }
 

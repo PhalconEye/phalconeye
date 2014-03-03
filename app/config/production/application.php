@@ -25,7 +25,7 @@
 return array (
   'debug' => false,
   'profiler' => false,
-  'baseUri' => '/',
+  'baseUrl' => '/',
   'cache' => 
   array (
     'lifetime' => '86400',

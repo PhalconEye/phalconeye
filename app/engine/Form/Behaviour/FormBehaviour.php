@@ -123,10 +123,6 @@ trait FormBehaviour
      */
     public function setAction($action)
     {
-        if (is_array($action)) {
-            $action = substr($this->getDi()->get('url')->get($action), 1);
-        }
-
         $this->_action = $action;
         return $this;
     }
