@@ -113,11 +113,10 @@ class Role extends AbstractModel
      * Some logic before delete.
      *
      * @return void
-     * @todo Refactor this.
      */
     protected function beforeDelete()
     {
-        // cleanup acl
+        // Cleanup acl.
         $this->_modelsManager->executeQuery(
             "DELETE FROM Core\\Model\\Access WHERE role_id = " . $this->id . ""
         );

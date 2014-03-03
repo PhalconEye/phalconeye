@@ -313,15 +313,39 @@ class Navigation
      * @param bool  $isSubMenu Is sub items?
      *
      * @return string
-     *
-     * @TODO: Refactor this.
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _renderItems($items, $isSubMenu = false)
     {
         $content = '';
 
-        // short names
+        foreach ($items as $name => $item) {
+            if (isset($item['items']) && !empty($item['items'])) {
+                $content = $this->_renderDropDown($content, $name, $item, $isSubMenu);
+            } else {
+                $content = $this->_renderNormalItem($content, $name, $item);
+            }
+        }
+
+        return $content;
+    }
+
+    /**
+     * Render dropdown item menu.
+     *
+     * @param string $content   Content before.
+     * @param string $name      Item name.
+     * @param array  $item      Item definition.
+     * @param bool   $isSubMenu Item is in submenu.
+     *
+     * @return string
+     */
+    protected function _renderDropDown($content, $name, $item, $isSubMenu)
+    {
+        /**
+         * Short names.
+         */
+        $i18n = $this->getDI()->getI18n();
+
         $lt = $this->_listTag;
         $lit = $this->_listItemTag;
         $pc = $this->_itemPrependContent;
@@ -330,118 +354,161 @@ class Navigation
         $ddmc = ($isSubMenu ? '' : $this->_dropDownIcon);
         $ddimc = $this->_dropDownItemMenuClass;
         $dditc = $this->_dropDownItemToggleClass;
+
+        $active = ($name == $this->_activeItem ||
+        ($this->_highlightActiveDropDownItem && array_key_exists($this->_activeItem, $item['items'])) ?
+            ' active' :
+            ''
+        );
+        $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
+        $linkTooltip = (!empty($item['tooltip']) ?
+            'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+
+        $content .= "<{$lit} class='{$ddic}{$active}'>";
+        $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
+        $appendHTML = (!empty($item['append']) ? $item['append'] : '');
+        $content .= sprintf(
+            '<a %s %s href="javascript:;" class="%s system-tooltip" data-toggle="dropdown">%s%s%s%s%s%s</a>',
+            $linkOnclick,
+            $linkTooltip,
+            $dditc,
+            $prependHTML,
+            $pc,
+            $i18n->_($item['title']),
+            $ac,
+            $ddmc,
+            $appendHTML
+        );
+
+        $content .= "<{$lt} class='{$ddimc}'>";
+        foreach ($item['items'] as $key => $subitem) {
+            $content = $this->_renderDropDownItem($content, $name, $key, $item, $subitem);
+
+        }
+        $content .= "</{$lt}>";
+        $content .= "</{$lit}>";
+
+        return $content;
+    }
+
+    /**
+     * Render dropdown menu item.
+     *
+     * @param string       $content Content before.
+     * @param string       $name    Item name.
+     * @param string       $key     Subitem href/key.
+     * @param array        $item    Item data.
+     * @param string|array $subitem Subitem data.
+     *
+     * @return string
+     */
+    protected function _renderDropDownItem($content, $name, $key, $item, $subitem)
+    {
+        /**
+         * Short names.
+         */
+        $i18n = $this->getDI()->getI18n();
+        $url = $this->getDI()->getUrl();
+
+        $lit = $this->_listItemTag;
+        $pc = $this->_itemPrependContent;
+        $ac = $this->_itemAppendContent;
         $ddihc = $this->_dropDownItemHeaderClass;
         $ddidc = $this->_dropDownItemDividerClass;
 
-        foreach ($items as $name => $item) {
-            // Dropdown menu item.
-            if (isset($item['items']) && !empty($item['items'])) {
-                $active = ($name == $this->_activeItem ||
-                ($this->_highlightActiveDropDownItem && array_key_exists($this->_activeItem, $item['items'])) ?
-                    ' active' :
-                    ''
-                );
-                $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
-                $linkTooltip = (!empty($item['tooltip']) ?
-                    'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
-
-                $content .= "<{$lit} class='{$ddic}{$active}'>";
-                $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
-                $appendHTML = (!empty($item['append']) ? $item['append'] : '');
-                $content .= sprintf(
-                    '<a %s %s href="javascript:;" class="%s system-tooltip" data-toggle="dropdown">%s%s%s%s%s%s</a>',
-                    $linkOnclick,
-                    $linkTooltip,
-                    $dditc,
-                    $prependHTML,
-                    $pc,
-                    $this->getDI()->get('i18n')->query($item['title']),
-                    $ac,
-                    $ddmc,
-                    $appendHTML
-                );
-
-                $content .= "<{$lt} class='{$ddimc}'>";
-                foreach ($item['items'] as $key => $subitem) {
-                    if (is_numeric($key) && !is_array($subitem)) {
-                        if ($subitem == 'divider') {
-                            $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
-                        } else {
-                            $content .= "<{$lit} class='{$ddihc}'>";
-                            $content .= $this->getDI()->get('i18n')->query($subitem);
-                            $content .= "</{$lit}>";
-                        }
-                    } elseif (is_array($subitem)) {
-                        $content .= $this->_renderItems([1 => $subitem], true);
-                    } else {
-                        $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
-                        $content .= "<{$lit}{$active}>";
-                        $link = '#';
-                        if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/') {
-                            $link = $this->getDI()->get('url')->get($key);
-                        }
-                        $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
-                        $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
-                        $linkTooltip = (!empty($item['tooltip']) ?
-                            'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
-
-                        $content .= sprintf(
-                            '<a class="system-tooltip" %s %s %s href="%s">%s%s%s</a>',
-                            $linkTooltip,
-                            $linkTarget,
-                            $linkOnclick,
-                            $link,
-                            $pc,
-                            $this->getDI()->get('i18n')->query($subitem),
-                            $ac
-                        );
-                        $content .= "</{$lit}>";
-                    }
-
-                }
-                $content .= "</{$lt}>";
-                $content .= "</{$lit}>";
+        if (is_numeric($key) && !is_array($subitem)) {
+            if ($subitem == 'divider') {
+                $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
             } else {
-                // Normal item.
-                $active = ($name == $this->_activeItem ||
-                $item['href'] == $this->_activeItem ||
-                $this->getDI()->get('url')->get($item['href']) ==
-                $this->getDI()->get('config')->application->baseUrl . $this->_activeItem ? ' class="active"' : '');
-
-                $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
-                $appendHTML = (!empty($item['append']) ? $item['append'] : '');
-                $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
-                $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
-                $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' .
-                    $item['tooltip_position'] . '"' : '');
-
-                if (
-                    is_array($item['href']) ||
-                    (
-                        strpos($item['href'], 'http') === false &&
-                        strpos($item['href'], 'javascript:') === false &&
-                        $item['href'] != '/'
-                    )
-                ) {
-                    $item['href'] = $this->getDI()->get('url')->get($item['href']);
-                }
-
-                $content .= "<{$lit}{$active}>";
-                $content .= sprintf(
-                    '<a class="system-tooltip" %s %s %s href="%s">%s%s%s%s%s</a>',
-                    $linkTooltip,
-                    $linkTarget,
-                    $linkOnclick,
-                    $item['href'],
-                    $prependHTML,
-                    $pc,
-                    $this->getDI()->get('i18n')->query($item['title']),
-                    $ac,
-                    $appendHTML
-                );
+                $content .= "<{$lit} class='{$ddihc}'>";
+                $content .= $i18n->_($subitem);
                 $content .= "</{$lit}>";
             }
+        } elseif (is_array($subitem)) {
+            $content .= $this->_renderItems([1 => $subitem], true);
+        } else {
+            $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
+            $content .= "<{$lit}{$active}>";
+            $link = '#';
+            if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/') {
+                $link = $url->get($key);
+            }
+            $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+            $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
+            $linkTooltip = (!empty($item['tooltip']) ?
+                'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+
+            $content .= sprintf(
+                '<a class="system-tooltip" %s %s %s href="%s">%s%s%s</a>',
+                $linkTooltip,
+                $linkTarget,
+                $linkOnclick,
+                $link,
+                $pc,
+                $i18n->_($subitem),
+                $ac
+            );
+            $content .= "</{$lit}>";
         }
+
+        return $content;
+    }
+
+    /**
+     * Render normal item menu.
+     *
+     * @param string $content Content before.
+     * @param string $name    Item name.
+     * @param array  $item    Item definition.
+     *
+     * @return string
+     */
+    protected function _renderNormalItem($content, $name, $item)
+    {
+        /**
+         * Short names.
+         */
+        $lit = $this->_listItemTag;
+        $pc = $this->_itemPrependContent;
+        $ac = $this->_itemAppendContent;
+
+        $active = ($name == $this->_activeItem ||
+        $item['href'] == $this->_activeItem ||
+        $this->getDI()->get('url')->get($item['href']) ==
+        $this->getDI()->get('config')->application->baseUrl . $this->_activeItem ? ' class="active"' : '');
+
+        $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
+        $appendHTML = (!empty($item['append']) ? $item['append'] : '');
+        $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
+        $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
+        $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' .
+            $item['tooltip_position'] . '"' : '');
+
+        if (
+            is_array($item['href']) ||
+            (
+                strpos($item['href'], 'http') === false &&
+                strpos($item['href'], 'javascript:') === false &&
+                $item['href'] != '/'
+            )
+        ) {
+            $item['href'] = $this->getDI()->get('url')->get($item['href']);
+        }
+
+        $content .= "<{$lit}{$active}>";
+        $content .= sprintf(
+            '<a class="system-tooltip" %s %s %s href="%s">%s%s%s%s%s</a>',
+            $linkTooltip,
+            $linkTarget,
+            $linkOnclick,
+            $item['href'],
+            $prependHTML,
+            $pc,
+            $this->getDI()->get('i18n')->query($item['title']),
+            $ac,
+            $appendHTML
+        );
+        $content .= "</{$lit}>";
 
         return $content;
     }
