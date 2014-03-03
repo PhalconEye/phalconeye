@@ -238,12 +238,7 @@ class AdminPackagesController extends AbstractAdminController
 
                 // Register module in app
                 $this->getDI()->get('app')->registerModules([$manifest->name => $moduleName . '\Bootstrap']);
-                $this->getDI()->set(
-                    'modules',
-                    function () use ($modules) {
-                        return new \ArrayObject($modules); // @todo: change this to registry
-                    }
-                );
+                $this->getDI()->get('registry')->modules = $modules;
 
                 // Update database.
                 $schema = new Schema($this->getDI());

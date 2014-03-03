@@ -18,6 +18,7 @@
 
 namespace Core\Helper;
 
+use Engine\Config;
 use Engine\Helper;
 use Engine\Profiler as EngineProfiler;
 use Phalcon\Acl;
@@ -39,17 +40,29 @@ use User\Model\User;
 class Profiler extends Helper
 {
     /**
+     * View object.
+     *
+     * @var View
+     */
+    protected $_view;
+
+    /**
+     * Config object.
+     *
+     * @var Config
+     */
+    protected $_config;
+
+    /**
      * Render profiler.
      *
      * @return string
-     *
-     * @TODO: Refactor this.
-     * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
     protected function _render()
     {
         $di = $this->getDI();
-        $config = $di->get('config');
+        $this->_config = $config = $di->get('config');
+        $this->_view = $di->get('view');
         if (!$config->application->debug || !$di->has('profiler')) {
             return '';
         }
@@ -64,68 +77,11 @@ class Profiler extends Helper
             return '';
         }
 
-        /** @var View $view */
-        $view = $di->get('view');
-        $render = function ($template, $params) use ($view) {
-            ob_start();
-            $view->partial('partials/profiler/' . $template, $params);
-            $html = ob_get_contents();
-            ob_end_clean();
-
-            return $html;
-        };
-        $renderTitle = function ($title) use ($render) {
-            return $render('title', ['title' => $title]);
-        };
-        $renderElement = function ($title, $value = null, $tag = null, $noCode = null) use ($render) {
-            return $render('element', ['title' => $title, 'value' => $value, 'tag' => $tag, 'noCode' => $noCode]);
-        };
-
         $profiler = $di->get('profiler');
         $router = $di->get('router');
         $dbProfiler = $profiler->getDbProfiler();
-        $dbProfiles = $dbProfiler->getProfiles();
         $handlerValues = [];
 
-        //////////////////////////////////////
-        /// Config.
-        //////////////////////////////////////
-        $htmlConfig = '';
-        foreach ($config->toArray() as $key => $data) {
-            if (!is_array($data) || empty($data) || $key == 'database') {
-                continue;
-            }
-
-            $htmlConfig .= $renderTitle(ucfirst($key));
-            $renderConfigSection = function ($source) use ($renderElement, $renderTitle, &$renderConfigSection) {
-                $html = '';
-                foreach ($source as $key => $data) {
-                    if (is_array($data)) {
-                        $html .= '<br/>' . $renderTitle(ucfirst($key));
-                        $html .= $renderConfigSection($data);
-                    } else {
-                        $html .= $renderElement(ucfirst($key), $data);
-                    }
-                }
-
-                return $html;
-            };
-//            foreach ($data as $key2 => $data2) {
-//                if (is_array($data2)) {
-//                    foreach ($data2 as $key3 => $data3) {
-//                        if (!is_array($data2)) {
-//                            $htmlConfig .= $renderElement(ucfirst($key3), $data3);
-//                        }
-//                    }
-//                } else {
-//                    $htmlConfig .= $renderElement(ucfirst($key2), $data2);
-//                }
-//            }
-
-            $htmlConfig .= $renderConfigSection($data);
-
-            $htmlConfig .= '<br/>';
-        }
 
         //////////////////////////////////////
         /// Router.
@@ -133,14 +89,6 @@ class Profiler extends Helper
         $handlerValues['router'] = ucfirst($router->getControllerName()) .
             'Controller::' .
             ucfirst($router->getActionName()) . 'Action';
-        $htmlRouter = $renderElement('POST data', print_r($_POST, true), 'pre');
-        $htmlRouter .= $renderElement('GET data', print_r($_GET, true), 'pre');
-        $htmlRouter .= $renderElement('Module', ucfirst($router->getModuleName()));
-        $htmlRouter .= $renderElement('Controller', ucfirst($router->getControllerName()));
-        $htmlRouter .= $renderElement('Action', ucfirst($router->getActionName()));
-        if ($router->getMatchedRoute()) {
-            $htmlRouter .= $renderElement('Matched Route', ucfirst($router->getMatchedRoute()->getName()));
-        }
 
         //////////////////////////////////////
         /// Memory.
@@ -158,21 +106,6 @@ class Profiler extends Helper
             'value' => round($memoryData / 1024, 2)
         ];
 
-        $htmlMemory = '';
-        foreach (EngineProfiler::$objectTypes as $type) {
-            $data = $profiler->getData('memory', $type);
-            if (empty($data)) {
-                continue;
-            }
-
-            $htmlMemory .= $renderTitle(ucfirst($type));
-            foreach ($data as $class => $memoryValue) {
-                $memory = round($memoryValue / 1024, 2);
-                $htmlMemory .= $renderElement(str_replace(ROOT_PATH, '', $class), $memory . ' kb');
-            }
-
-            $htmlMemory .= '<br/>';
-        }
 
         //////////////////////////////////////
         /// Time.
@@ -184,25 +117,6 @@ class Profiler extends Helper
             'value' => $timeData
         ];
 
-        $htmlTime = '';
-        foreach (EngineProfiler::$objectTypes as $type) {
-            $data = $profiler->getData('time', $type);
-            if (empty($data)) {
-                continue;
-            }
-
-            $htmlTime .= $renderTitle(ucfirst($type));
-            foreach ($data as $class => $timeValue) {
-                $msTime = round($timeValue * 1000, 2);
-                $timeData -= $msTime;
-                $htmlTime .= $renderElement(str_replace(ROOT_PATH, '', $class), $msTime . ' ms');
-            }
-
-            $htmlTime .= '<br/>';
-        }
-        $htmlTime .= $renderTitle('Other');
-        $htmlTime .= $renderElement('Time from request received', $timeData . ' ms');
-        $htmlTime .= '<br/>';
 
         //////////////////////////////////////
         /// Files.
@@ -210,47 +124,12 @@ class Profiler extends Helper
         $filesData = get_included_files();
         $handlerValues['files'] = count($filesData);
 
-        $htmlFiles = '';
-        foreach ($filesData as $file) {
-            $filesize = round(filesize($file) / 1024, 2);
-            $htmlFiles .= $renderElement(str_replace(ROOT_PATH, '', $file), $filesize . ' kb');
-        }
 
         //////////////////////////////////////
         /// SQL.
         //////////////////////////////////////
-        $handlerValues['sql'] = $dbProfiler->getNumberTotalStatements();
+        $handlerValues['sql'] = $totalSqlStatements = $dbProfiler->getNumberTotalStatements();
 
-        $htmlSql = 'No Sql';
-        if (!empty($dbProfiles)) {
-            $longestQuery = '';
-            $longestQueryTime = 0;
-
-            $htmlSql = $renderElement('Total count', $handlerValues['sql'], null, true);
-            $htmlSql .= $renderElement(
-                'Total time',
-                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4),
-                null,
-                true
-            );
-            $htmlSql .= $renderElement('Longest query', '<span class="code">%s</span> (%s ms)<br/>', null, true);
-
-            foreach ($dbProfiles as $profile) {
-                if ($profile->getTotalElapsedSeconds() > $longestQueryTime) {
-                    $longestQueryTime = $profile->getTotalElapsedSeconds();
-                    $longestQuery = $profile->getSQLStatement();
-                }
-                $htmlSql .= $renderElement('SQL', $profile->getSQLStatement());
-                $htmlSql .= $renderElement(
-                    'Time',
-                    round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>',
-                    null,
-                    true
-                );
-            }
-
-            $htmlSql = sprintf($htmlSql, $longestQuery, round($longestQueryTime * 1000, 4));
-        }
 
         //////////////////////////////////////
         /// Errors.
@@ -263,25 +142,279 @@ class Profiler extends Helper
             'value' => $errorsCount
         ];
 
-        $htmlErrors = ($errorsCount == 0 ? 'No Errors' : '');
-        foreach ($errorsData as $data) {
-            $htmlErrors .= $renderElement($data['error'], str_replace('#', '<br/>#', $data['trace']));
-        }
 
-        $output = $render(
+        $output = $this->_viewRender(
             'main',
             [
                 'handlerValues' => $handlerValues,
-                'htmlConfig' => $htmlConfig,
-                'htmlRouter' => $htmlRouter,
-                'htmlMemory' => $htmlMemory,
-                'htmlTime' => $htmlTime,
-                'htmlFiles' => $htmlFiles,
-                'htmlSql' => $htmlSql,
-                'htmlErrors' => $htmlErrors,
+                'htmlConfig' => $this->_getHtmlConfig(),
+                'htmlRouter' => $this->_getHtmlRouter(),
+                'htmlMemory' => $this->_getHtmlMemory(),
+                'htmlTime' => $this->_getHtmlTime($timeData),
+                'htmlFiles' => $this->_getHtmlFiles($filesData),
+                'htmlSql' => $this->_getHtmlSql($dbProfiler, $totalSqlStatements),
+                'htmlErrors' => $this->_getHtmlErrors($errorsData, $errorsCount),
             ]
         );
 
         return trim(preg_replace('/\s\s+/', ' ', $output));
+    }
+
+    /**
+     * Render template.
+     *
+     * @param string $template Template name.
+     * @param array  $params   Template params.
+     *
+     * @return string
+     */
+    private function _viewRender($template, $params)
+    {
+        ob_start();
+        $this->_view->partial('partials/profiler/' . $template, $params);
+        $html = ob_get_contents();
+        ob_end_clean();
+
+        return $html;
+    }
+
+    /**
+     * Render title template.
+     *
+     * @param string $title Title.
+     *
+     * @return string
+     */
+    private function _viewRenderTitle($title)
+    {
+        return $this->_viewRender('title', ['title' => $title]);
+    }
+
+    /**
+     * Render element template.
+     *
+     * @param string      $title  Title.
+     * @param mixed       $value  Template value.
+     * @param string|null $tag    Tag name in template.
+     * @param bool|null   $noCode No code in template.
+     *
+     * @return string
+     */
+    private function _viewRenderElement($title, $value = null, $tag = null, $noCode = null)
+    {
+        return $this->_viewRender(
+            'element',
+            ['title' => $title, 'value' => $value, 'tag' => $tag, 'noCode' => $noCode]
+        );
+    }
+
+    /**
+     * Helper for config section rendering.
+     *
+     * @param array $source Source data.
+     *
+     * @return string
+     */
+    private function _renderConfigSection($source)
+    {
+        $html = '';
+        foreach ($source as $key => $data) {
+            if (is_array($data)) {
+                $html .= '<br/>' . $this->_viewRenderTitle(ucfirst($key));
+                $html .= $this->_renderConfigSection($data);
+            } else {
+                $html .= $this->_viewRenderElement(ucfirst($key), $data);
+            }
+        }
+
+        return $html;
+    }
+
+    /**
+     * Get html for config.
+     *
+     * @return string
+     */
+    private function _getHtmlConfig()
+    {
+        $html = '';
+        foreach ($this->_config->toArray() as $key => $data) {
+            if (!is_array($data) || empty($data) || $key == 'database') {
+                continue;
+            }
+
+            $html .= $this->_viewRenderTitle(ucfirst($key));
+            $html .= $this->_renderConfigSection($data);
+            $html .= '<br/>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Render router section.
+     *
+     * @return string
+     */
+    private function _getHtmlRouter()
+    {
+        $router = $this->getDI()->get('router');
+        $html = $this->_viewRenderElement('POST data', print_r($_POST, true), 'pre');
+        $html .= $this->_viewRenderElement('GET data', print_r($_GET, true), 'pre');
+        $html .= $this->_viewRenderElement('Module', ucfirst($router->getModuleName()));
+        $html .= $this->_viewRenderElement('Controller', ucfirst($router->getControllerName()));
+        $html .= $this->_viewRenderElement('Action', ucfirst($router->getActionName()));
+        if ($router->getMatchedRoute()) {
+            $html .= $this->_viewRenderElement('Matched Route', ucfirst($router->getMatchedRoute()->getName()));
+        }
+
+        return $html;
+    }
+
+    /**
+     * Get html memory.
+     *
+     * @return string
+     */
+    private function _getHtmlMemory()
+    {
+        $html = '';
+        $profiler = $this->getDI()->get('profiler');
+        foreach (EngineProfiler::$objectTypes as $type) {
+            $data = $profiler->getData('memory', $type);
+            if (empty($data)) {
+                continue;
+            }
+
+            $html .= $this->_viewRenderTitle(ucfirst($type));
+            foreach ($data as $class => $memoryValue) {
+                $memory = round($memoryValue / 1024, 2);
+                $html .= $this->_viewRenderElement(str_replace(ROOT_PATH, '', $class), $memory . ' kb');
+            }
+
+            $html .= '<br/>';
+        }
+
+        return $html;
+    }
+
+    /**
+     * Render time section.
+     *
+     * @param float $timeData Time data.
+     *
+     * @return string
+     */
+    private function _getHtmlTime($timeData)
+    {
+        $html = '';
+        $profiler = $this->getDI()->get('profiler');
+        foreach (EngineProfiler::$objectTypes as $type) {
+            $data = $profiler->getData('time', $type);
+            if (empty($data)) {
+                continue;
+            }
+
+            $html .= $this->_viewRenderTitle(ucfirst($type));
+            foreach ($data as $class => $timeValue) {
+                $msTime = round($timeValue * 1000, 2);
+                $timeData -= $msTime;
+                $html .= $this->_viewRenderElement(str_replace(ROOT_PATH, '', $class), $msTime . ' ms');
+            }
+
+            $html .= '<br/>';
+        }
+        $html .= $this->_viewRenderTitle('Other');
+        $html .= $this->_viewRenderElement('Time from request received', $timeData . ' ms');
+        $html .= '<br/>';
+
+        return $html;
+    }
+
+    /**
+     * Render files section.
+     *
+     * @param array $filesData Files data.
+     *
+     * @return string
+     */
+    private function _getHtmlFiles($filesData)
+    {
+        $html = '';
+        foreach ($filesData as $file) {
+            $filesize = round(filesize($file) / 1024, 2);
+            $html .= $this->_viewRenderElement(str_replace(ROOT_PATH, '', $file), $filesize . ' kb');
+        }
+
+        return $html;
+    }
+
+    /**
+     * Get html for sql section.
+     *
+     * @param \Phalcon\Db\Profiler $dbProfiler         Database profiler.
+     * @param int                  $totalSqlStatements Total count.
+     *
+     * @return string
+     */
+    private function _getHtmlSql($dbProfiler, $totalSqlStatements)
+    {
+        $html = 'No Sql';
+        $dbProfiles = $dbProfiler->getProfiles();
+
+        if (!empty($dbProfiles)) {
+            $longestQuery = '';
+            $longestQueryTime = 0;
+
+            $html = $this->_viewRenderElement('Total count', $totalSqlStatements, null, true);
+            $html .= $this->_viewRenderElement(
+                'Total time',
+                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4),
+                null,
+                true
+            );
+            $html .= $this->_viewRenderElement(
+                'Longest query',
+                '<span class="code">%s</span> (%s ms)<br/>',
+                null,
+                true
+            );
+
+            foreach ($dbProfiles as $profile) {
+                if ($profile->getTotalElapsedSeconds() > $longestQueryTime) {
+                    $longestQueryTime = $profile->getTotalElapsedSeconds();
+                    $longestQuery = $profile->getSQLStatement();
+                }
+                $html .= $this->_viewRenderElement('SQL', $profile->getSQLStatement());
+                $html .= $this->_viewRenderElement(
+                    'Time',
+                    round($profile->getTotalElapsedSeconds() * 1000, 4) . ' ms<br/>',
+                    null,
+                    true
+                );
+            }
+
+            $html = sprintf($html, $longestQuery, round($longestQueryTime * 1000, 4));
+        }
+
+        return $html;
+    }
+
+    /**
+     * Get html for errors section.
+     *
+     * @param array $errorsData  Errors data.
+     * @param int   $errorsCount Errors count.
+     *
+     * @return string
+     */
+    private function _getHtmlErrors($errorsData, $errorsCount)
+    {
+        $html = ($errorsCount == 0 ? 'No Errors' : '');
+        foreach ($errorsData as $data) {
+            $html .= $this->_viewRenderElement($data['error'], str_replace('#', '<br/>#', $data['trace']));
+        }
+
+        return $html;
     }
 }
