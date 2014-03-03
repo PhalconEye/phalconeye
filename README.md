@@ -3,7 +3,8 @@ Phalcon Eye CMS
 
 Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cphalcon).
 
-* Version: 0.4.0 (Progress: 90% - Not usable)
+* Version: 0.4.0
+* Status: In Testing...
 * PHP version: >= 5.4.x
 * Website: http://phalconeye.com/
 

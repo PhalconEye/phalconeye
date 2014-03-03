@@ -33,6 +33,7 @@ Version 0.4.0
  - Most system code has been refactored.
  - Form class rewritten from scratch.
  - Grid system has been implemented.
+ - A lot of code refactoring was made...
 
 Version 0.3.0
  - Some menu improvements: onclick action, icon, tooltip, language selector.
