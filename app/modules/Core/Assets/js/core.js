@@ -260,7 +260,7 @@
             }
         });
 
-        $(".tooltip").tooltip();
+        $(".system-tooltip").tooltip();
 
         /**
          * Init on update.
