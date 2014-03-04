@@ -19,6 +19,8 @@
 namespace Engine;
 
 use Phalcon\DI;
+use Phalcon\DiInterface;
+use Phalcon\Registry;
 use Phalcon\Tag;
 
 /**
@@ -30,24 +32,17 @@ use Phalcon\Tag;
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
- *
- * @TODO: try to change this to \Phalcon\Registry and DI...
  */
 abstract class Helper extends Tag
 {
     /**
-     * Helpers cache.
-     *
-     * @var array
-     */
-    protected static $_cache;
-
-    /**
      * Helper constructor is protected.
+     *
+     * @param DiInterface $di Dependency injection.
      */
-    protected function __construct()
+    protected function __construct($di)
     {
-        $this->setDI(Di::getDefault());
+        $this->setDI($di);
     }
 
     /**
@@ -61,10 +56,13 @@ abstract class Helper extends Tag
      */
     public static function getInstance($name, $module = 'engine')
     {
+        /** @var Registry $registry */
+        $di = Di::getDefault();
         $name = ucfirst($name);
         $module = ucfirst($module);
+        $fullName = 'Helper\\' . $module . '\\' . $name;
 
-        if (!isset(self::$_cache[$module . '_' . $name])) {
+        if (!$di->has($fullName)) {
             /** @var Helper $helperClassName */
             $helperClassName = sprintf('\%s\Helper\%s', $module, $name);
             if (!class_exists($helperClassName)) {
@@ -73,10 +71,12 @@ abstract class Helper extends Tag
                 );
             }
 
-            self::$_cache[$module . '_' . $name] = new $helperClassName();
+            $helper = new $helperClassName($di);
+            $di->set($fullName, $helper);
+            return $helper;
         }
 
-        return self::$_cache[$module . '_' . $name];
+        return $di->get($fullName);
     }
 
     /**
