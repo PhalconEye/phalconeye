@@ -159,7 +159,7 @@ class Manager extends AssetManager
      */
     public function clear($refresh = true)
     {
-        $files = FsUtilities::fsRecursiveGlob(PUBLIC_PATH . '/assets/', '*'); // get all file names
+        $files = FsUtilities::fsRecursiveGlob($this->_config->application->assets->local, '*'); // get all file names
         // iterate files
         foreach ($files as $file) {
             if (is_file($file)) {

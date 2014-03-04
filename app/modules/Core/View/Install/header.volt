@@ -16,6 +16,6 @@
 #}
 
 <div class="header_container">
-     <img alt="" src="/assets/img/core/install/pe_logo.png"/><br/>
+     <img alt="" src="{{ url('assets/img/core/install/pe_logo.png') }}"/><br/>
      <span>{{ 'Installation...'|i18n }}</span>
  </div>

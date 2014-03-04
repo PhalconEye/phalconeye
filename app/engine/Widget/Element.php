@@ -94,9 +94,9 @@ class Element
         $controller = new $controllerClass();
         $controller->setDefaults($widgetName, $widgetModule, $this->_widgetParams);
 
-        // check cache
+        // Check cache.
         $output = null;
-        $cacheKey = $controller->cacheKey();
+        $cacheKey = $controller->cacheKey() . '.cache';
         $cacheLifeTime = $controller->cacheLifeTime();
         /** @var \Phalcon\Cache\BackendInterface $cache */
         $cache = $this->getDI()->get('cacheOutput');

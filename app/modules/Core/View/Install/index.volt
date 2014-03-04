@@ -55,9 +55,9 @@
                     </td>
                     <td>
                         {% if req['passed'] %}
-                            <img alt="Passed" src="/assets/img/core/install/good.png"/>
+                            <img alt="Passed" src="{{ url('assets/img/core/install/good.png') }}"/>
                         {% else %}
-                            <img alt="Not Passed" src="/assets/img/core/install/bad.png"/>
+                            <img alt="Not Passed" src="{{ url('assets/img/core/install/bad.png') }}"/>
                         {% endif %}
                     </td>
                 </tr>
@@ -84,9 +84,9 @@
                     </td>
                     <td>
                         {% if path['is_writable'] %}
-                            <img alt="Passed" src="/assets/img/core/install/good.png"/>
+                            <img alt="Passed" src="{{ url('assets/img/core/install/good.png') }}"/>
                         {% else %}
-                            <img alt="Not Passed" src="/assets/img/core/install/bad.png"/>
+                            <img alt="Not Passed" src="{{ url('assets/img/core/install/bad.png') }}"/>
                         {% endif %}
                     </td>
                 </tr>

@@ -4,15 +4,20 @@
 
     <target name="info">
         <echo>
+            =============================
+            Main commands
+            =============================
             info - Shows this help
-            prepare - Prepares the file estructure for the build of the project
-            build - Prepares environment for distribution
-            dist - Generates distributable package
-            clean - Deletes previously generated files under build/ and dist/
-            test - Tests if the code syntax is correct and executes phpunit tests
+            build - Prepares environment for distribution.
+            dist - Generates distributable package.
+            clean - Deletes previously generated files under build/ and dist/.
             doc - Generates the project documentation using PHP Documentor.
-            check - Executes the tasks: phpmd, phpcs
-            analyze - Executes the tasks: phpcpd, pdepend, phpcb, phploc
+            check - Executes the tasks: phpmd, phpcs.
+            analyze - Executes the tasks: phpcpd, pdepend, phpcb, phploc.
+
+            =============================
+            Code tools
+            =============================
             phpcpd - Detects copy/pastes in the code.
             pdepend - Calculates some code metrics using PHP Depend.
             phpmd - Analyzes the code to discover potential problems on it.
@@ -28,17 +33,16 @@
         <delete dir="${dist.dir}"/>
     </target>
 
-    <!-- prepare - Prepares the file estructure for the build of the project -->
-    <target name="prepare">
+    <!-- build - Prepares environment for distribution -->
+    <target name="build">
+        <!-- Prepare structure for the build of the project -->
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.src.dir}"/>
         <mkdir dir="${report.dir}"/>
         <mkdir dir="${report.dir}/code-browser"/>
-    </target>
 
-    <!-- build - Prepares environment for distribution -->
-    <target name="build" depends="prepare">
+        <!-- Copy files -->
         <copy todir="${build.src.dir}/app">
             <fileset dir="${src.dir}"/>
         </copy>
@@ -49,11 +53,15 @@
         <copy file="LICENSE.txt" todir="${build.src.dir}"/>
         <copy file="README.md" todir="${build.src.dir}"/>
 
-        <!--<exec executable="php">-->
-        <!--<arg value="${build.src.dir}/app/console"/>-->
-        <!--<arg value="assets:install"/>-->
-        <!--<arg value="${build.src.dir}/web/"/>-->
-        <!--</exec>-->
+        <!-- Clear temp data -->
+        <delete>
+            <fileset dir="${build.src.dir}/public/assets" includes="**/*" />
+            <dirset dir="${build.src.dir}/public/assets" includes="**/*" />
+            <fileset dir="${build.src.dir}/app/var" includes="**/*.php" />
+            <fileset dir="${build.src.dir}/app/var" includes="**/*.cache" />
+            <fileset dir="${build.src.dir}/app/var" includes="**/*.log" />
+        </delete>
+        <delete dir="${build.src.dir}/app/var/temp/packages" />
     </target>
 
     <!-- dist - Generates distributable package -->
@@ -61,20 +69,6 @@
         <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/${project.name}.tar.gz" basedir="${build.src.dir}" compression="gzip"
              longfile="gnu"/>
-    </target>
-
-    <!-- test - Tests if the code syntax is correct and executes phpunit tests -->
-    <target name="test" depends="build">
-        <!--
-        <exec executable="phpunit" failonerror="true">
-            <arg value="-c"/>
-            <arg path="${build.src.dir}"/>
-            <arg value="-\-log-junit"/>
-            <arg path="${report.dir}/phpunit.xml"/>
-            <arg value="-\-coverage-clover"/>
-            <arg path=" ${report.dir}/clover.xml"/>
-        </exec>
-        -->
     </target>
 
     <!-- doc - Generates the project documentation using PHP Documentor. -->
@@ -87,10 +81,8 @@
         </exec>
     </target>
 
-
-
     <!-- check  -->
-    <target name="check" depends="test,phpmd,phpcs"/>
+    <target name="check" depends="phpmd,phpcs"/>
 
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
     <target name="phpmd" depends="build">

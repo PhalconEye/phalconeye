@@ -53,7 +53,7 @@ return array (
   ),
   'assets' => 
   array (
-    'local' => 'assets/',
+    'local' => PUBLIC_PATH . '/assets/',
     'remote' => false,
   ),
   'metadata' => 
