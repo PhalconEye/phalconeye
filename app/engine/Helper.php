@@ -72,7 +72,7 @@ abstract class Helper extends Tag
             }
 
             $helper = new $helperClassName($di);
-            $di->set($fullName, $helper);
+            $di->set($fullName, $helper, true);
             return $helper;
         }
 
