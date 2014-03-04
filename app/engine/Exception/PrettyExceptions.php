@@ -36,6 +36,8 @@
 
 namespace Engine\Exception;
 
+use Engine\DependencyInjection;
+
 /**
  * Prints exception/errors backtraces using a pretty visualization.
  *
@@ -52,6 +54,8 @@ namespace Engine\Exception;
  */
 class PrettyExceptions
 {
+    use DependencyInjection;
+
     /**
      * Print the backtrace.
      *
@@ -132,6 +136,16 @@ class PrettyExceptions
     }
 
     /**
+     * Get base uri.
+     *
+     * @return string
+     */
+    public function getBaseUri()
+    {
+        return $this->getDI()->get('url')->get($this->_uri);
+    }
+
+    /**
      * Change the CSS theme.
      *
      * @param string $theme Theme name.
@@ -164,7 +178,8 @@ class PrettyExceptions
      */
     public function getCssSources()
     {
-        return '<link href="' . $this->_uri . 'themes/' . $this->_theme . '.css" type="text/css" rel="stylesheet" />';
+        return '<link href="' . $this->getBaseUri() . 'themes/' .
+        $this->_theme . '.css" type="text/css" rel="stylesheet" />';
     }
 
     /**
@@ -176,9 +191,9 @@ class PrettyExceptions
     {
         return '
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script type="text/javascript" src="' . $this->_uri . 'prettify/prettify.js"></script>
-		<script type="text/javascript" src="' . $this->_uri . 'js/pretty.js"></script>
-		<script type="text/javascript" src="' . $this->_uri . 'js/jquery.scrollTo-min.js"></script>';
+		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'prettify/prettify.js"></script>
+		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'js/pretty.js"></script>
+		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'js/jquery.scrollTo-min.js"></script>';
     }
 
     /**

@@ -95,7 +95,7 @@
         </table>
 
         {% if passed %}
-            <a href="/install/database" class="proceed">{{ 'Install'|i18n }}</a>
+            <a href="{{ url('install/database') }} " class="proceed">{{ 'Install'|i18n }}</a>
         {% else %}
             <div class="error">{{ 'Please, install all requirements and check pathes.'|i18n }}</div>
         {% endif %}

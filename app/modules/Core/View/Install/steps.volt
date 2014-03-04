@@ -16,9 +16,9 @@
 #}
 
 <ul class="steps">
-     <li {% if action is 'index' %}class="active"{% endif %}><a href="/install">{{ 'Requirements check'|i18n }}</a></li>
+     <li {% if action is 'index' %}class="active"{% endif %}><a href="{{ url('install') }}">{{ 'Requirements check'|i18n }}</a></li>
      <li class="delimiter">></li>
-     <li {% if action is 'database' %}class="active"{% endif %}><a href="/install/database">{{ 'Database installation'|i18n }}</a></li>
+     <li {% if action is 'database' %}class="active"{% endif %}><a href="{{ url('install/database') }} ">{{ 'Database installation'|i18n }}</a></li>
      <li class="delimiter">></li>
-     <li {% if action is 'finish' %}class="active"{% endif %}><a href="/install/finish">{{ 'Final stage'|i18n }}</a></li>
+     <li {% if action is 'finish' %}class="active"{% endif %}><a href="{{ url('install/finish') }} ">{{ 'Final stage'|i18n }}</a></li>
  </ul>

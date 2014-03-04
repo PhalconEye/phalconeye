@@ -95,7 +95,7 @@ class Manager extends AssetManager
      */
     public function installAssets($themeDirectory = '')
     {
-        $location = $this->_config->application->assets->local;
+        $location = PUBLIC_PATH . '/' . $this->_config->application->assets->local;
         $less = Less::factory();
         $less->setVariables(['baseUrl' => "'" . $this->_config->application->baseUrl . "'"]);
 
@@ -159,7 +159,8 @@ class Manager extends AssetManager
      */
     public function clear($refresh = true)
     {
-        $files = FsUtilities::fsRecursiveGlob($this->_config->application->assets->local, '*'); // get all file names
+        $location = PUBLIC_PATH . '/' . $this->_config->application->assets->local;
+        $files = FsUtilities::fsRecursiveGlob($location, '*'); // get all file names
         // iterate files
         foreach ($files as $file) {
             if (is_file($file)) {

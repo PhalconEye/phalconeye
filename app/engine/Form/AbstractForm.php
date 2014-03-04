@@ -613,6 +613,7 @@ abstract class AbstractForm implements ElementContainerInterface
      * @param array $data               Data to validate.
      * @param bool  $skipEntityCreation Skip entity creation.
      *
+     * @throws \Exception
      * @return bool
      */
     protected function _validateEntity($data, $skipEntityCreation)
@@ -626,6 +627,8 @@ abstract class AbstractForm implements ElementContainerInterface
             // Request a transaction.
             $transaction = $manager->get();
             try {
+                $transaction->begin();
+
                 /** @var AbstractModel $entity */
                 foreach ($this->_entities as $entity) {
                     if ($skipEntityCreation) {
@@ -650,6 +653,8 @@ abstract class AbstractForm implements ElementContainerInterface
                 if ($transaction->isValid()) {
                     $transaction->rollback();
                 }
+
+                throw $e;
             }
         }
 

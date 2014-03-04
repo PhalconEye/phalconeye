@@ -107,6 +107,11 @@ class InstallController extends AbstractController
      */
     public function indexAction()
     {
+        if ($_SERVER['REQUEST_URI'] != $this->config->application->baseUrl){
+            echo "You trying to access via '{$_SERVER['REQUEST_URI']}' path... But config has '{$this->config->application->baseUrl}' as base url.";
+            exit(1);
+        }
+
         // Make sure that all assets installed.
         $this->assets->installAssets();
 

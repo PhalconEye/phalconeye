@@ -223,6 +223,9 @@ class Profiler extends Helper
                 $html .= '<br/>' . $this->_viewRenderTitle(ucfirst($key));
                 $html .= $this->_renderConfigSection($data);
             } else {
+                if (is_bool($data)) {
+                    $data = $data ? 1 : 0;
+                }
                 $html .= $this->_viewRenderElement(ucfirst($key), $data);
             }
         }
@@ -238,7 +241,19 @@ class Profiler extends Helper
     private function _getHtmlConfig()
     {
         $html = '';
-        foreach ($this->_config->toArray() as $key => $data) {
+        $configData = $this->_config->toArray();
+        uasort(
+            $configData['application'],
+            function ($a, $b) {
+                if (is_array($a) && !is_array($b)) {
+                    return 1;
+                }
+
+                return 0;
+            }
+        );
+
+        foreach ($configData as $key => $data) {
             if (!is_array($data) || empty($data) || $key == 'database') {
                 continue;
             }
