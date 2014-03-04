@@ -18,6 +18,7 @@
 
 namespace Core\Controller\Traits;
 
+use Core\Helper\I18n;
 use Engine\Helper;
 
 /**
@@ -39,7 +40,7 @@ trait JsTranslations
      */
     public function addDefaultJsTranslations()
     {
-        Helper::getInstance('i18n', 'core')
+        I18n::getInstance($this->getDI())
             ->add('Are you really want to delete this item?')
             ->add('Close this window?');
     }

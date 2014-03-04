@@ -20,7 +20,6 @@ namespace Engine;
 
 use Phalcon\DI;
 use Phalcon\DiInterface;
-use Phalcon\Registry;
 use Phalcon\Tag;
 
 /**
@@ -48,35 +47,38 @@ abstract class Helper extends Tag
     /**
      * Get helper instance.
      *
-     * @param string $name   Helper name.
-     * @param string $module Module name.
+     * @param DiInterface|string $nameOrDI Helper name.
+     * @param string             $module   Module name.
      *
      * @return mixed
      * @throws Exception
      */
-    public static function getInstance($name, $module = 'engine')
+    public static function getInstance($nameOrDI, $module = 'engine')
     {
-        /** @var Registry $registry */
-        $di = Di::getDefault();
-        $name = ucfirst($name);
-        $module = ucfirst($module);
-        $fullName = 'Helper\\' . $module . '\\' . $name;
+        if ($nameOrDI instanceof DiInterface) {
+            $di = $nameOrDI;
+            $helperClassName = get_called_class();
+        } else {
+            $di = DI::getDefault();
+            $nameOrDI = ucfirst($nameOrDI);
+            $module = ucfirst($module);
+            $helperClassName = sprintf('\%s\Helper\%s', $module, $nameOrDI);
+        }
 
-        if (!$di->has($fullName)) {
+        if (!$di->has($helperClassName)) {
             /** @var Helper $helperClassName */
-            $helperClassName = sprintf('\%s\Helper\%s', $module, $name);
             if (!class_exists($helperClassName)) {
                 throw new Exception(
-                    sprintf('Can not find Helper with name "%s". Searched in module: %s', $name, $module)
+                    sprintf('Can not find Helper with name "%s". Searched in module: %s', $nameOrDI, $module)
                 );
             }
 
             $helper = new $helperClassName($di);
-            $di->set($fullName, $helper, true);
+            $di->set($helperClassName, $helper, true);
             return $helper;
         }
 
-        return $di->get($fullName);
+        return $di->get($helperClassName);
     }
 
     /**
