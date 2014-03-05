@@ -191,9 +191,9 @@ class PrettyExceptions
     {
         return '
 		<script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'prettify/prettify.js"></script>
-		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'js/pretty.js"></script>
-		<script type="text/javascript" src="' . $this->$this->getBaseUri() . 'js/jquery.scrollTo-min.js"></script>';
+		<script type="text/javascript" src="' . $this->getBaseUri() . 'prettify/prettify.js"></script>
+		<script type="text/javascript" src="' . $this->getBaseUri() . 'js/pretty.js"></script>
+		<script type="text/javascript" src="' . $this->getBaseUri() . 'js/jquery.scrollTo-min.js"></script>';
     }
 
     /**
