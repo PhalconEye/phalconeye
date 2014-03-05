@@ -21,7 +21,7 @@ namespace Core\Controller\Grid\Admin;
 use Core\Controller\Grid\CoreGrid;
 use Core\Model\Language;
 use Engine\Config;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Mvc\Model\Query\Builder;

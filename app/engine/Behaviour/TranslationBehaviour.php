@@ -18,7 +18,7 @@
 
 namespace Engine\Behaviour;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\DI;
 
 /**

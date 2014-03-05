@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine;
+namespace Engine\Behaviour;
 
 use Phalcon\DI;
 use Phalcon\DiInterface;
@@ -45,19 +45,19 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Config getConfig()
  * @method \Phalcon\Translate\Adapter getI18n()
  */
-trait DependencyInjection
+trait DIBehaviour
 {
     /**
      * Dependency injection container.
      *
-     * @var DependencyInjection|DI
+     * @var DIBehaviour|DI
      */
     private $_di;
 
     /**
      * Create object.
      *
-     * @param DiInterface|DependencyInjection $di Dependency injection container.
+     * @param DiInterface|DIBehaviour $di Dependency injection container.
      */
     public function __construct($di = null)
     {
@@ -82,7 +82,7 @@ trait DependencyInjection
     /**
      * Get DI.
      *
-     * @return DependencyInjection|DI
+     * @return DIBehaviour|DI
      */
     public function getDI()
     {

@@ -19,7 +19,7 @@
 namespace Engine\Translation;
 
 use Engine\Application;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Column as PhalconColumn;
 use Phalcon\DiInterface;
@@ -39,8 +39,8 @@ use Phalcon\Translate\Exception;
  */
 class Db implements AdapterInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

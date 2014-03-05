@@ -18,7 +18,7 @@
 
 namespace Engine\Console;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\Config;
 use Phalcon\DiInterface;
 use Phalcon\Filter;
@@ -35,8 +35,8 @@ use Phalcon\Filter;
  */
 abstract class AbstractCommand implements CommandInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

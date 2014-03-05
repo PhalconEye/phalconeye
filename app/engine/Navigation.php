@@ -18,6 +18,7 @@
 
 namespace Engine;
 
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 
@@ -33,8 +34,8 @@ use Phalcon\DiInterface;
  */
 class Navigation
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

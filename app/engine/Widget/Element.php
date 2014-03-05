@@ -18,7 +18,7 @@
 
 namespace Engine\Widget;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 
@@ -34,8 +34,8 @@ use Phalcon\DiInterface;
  */
 class Element
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

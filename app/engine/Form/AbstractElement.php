@@ -18,7 +18,7 @@
 
 namespace Engine\Form;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Form;
 use Phalcon\Forms\Element as PhalconElement;
 
@@ -34,8 +34,8 @@ use Phalcon\Forms\Element as PhalconElement;
  */
 abstract class AbstractElement implements ElementInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

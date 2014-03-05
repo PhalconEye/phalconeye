@@ -18,7 +18,7 @@
 
 namespace Engine\Grid\Source;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Grid\AbstractGrid;
 use Engine\Grid\Exception;
 use Phalcon\DI;

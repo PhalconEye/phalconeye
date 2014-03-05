@@ -18,7 +18,7 @@
 
 namespace Engine\Db;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Exception as EngineException;
 use Phalcon\Annotations\Collection;
 use Phalcon\Db\AdapterInterface;
@@ -40,7 +40,7 @@ use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
  */
 class Schema
 {
-    use DependencyInjection;
+    use DIBehaviour;
 
     CONST
         /**

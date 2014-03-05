@@ -20,7 +20,7 @@ namespace Core\Controller;
 
 use Core\Controller\Traits\JsTranslations;
 use Core\Model\Page;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
@@ -41,10 +41,10 @@ use Phalcon\Mvc\View;
  * @property \Engine\Application        $app
  * @property \Engine\Asset\Manager      $assets
  * @property \Engine\Config             $config
- * @property DependencyInjection|DI     $di
+ * @property DIBehaviour|DI     $di
  * @property \Phalcon\Translate\Adapter $i18n
  *
- * @method \Engine\DependencyInjection|\Phalcon\DI getDI()
+ * @method \Engine\DIBehaviour|\Phalcon\DI getDI()
  */
 abstract class AbstractController extends PhalconController
 {

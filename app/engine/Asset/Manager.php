@@ -19,7 +19,7 @@
 namespace Engine\Asset;
 
 use Engine\Asset\Css\Less;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Package\Utilities as FsUtilities;
 use Phalcon\Assets\Collection;
 use Phalcon\Assets\Filters\Cssmin;
@@ -52,8 +52,8 @@ class Manager extends AssetManager
          */
         FILENAME_JAVASCRIPT = 'javascript.js';
 
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

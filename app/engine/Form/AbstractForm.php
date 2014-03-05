@@ -20,7 +20,7 @@ namespace Engine\Form;
 
 use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FieldSetBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
@@ -42,8 +42,8 @@ use Phalcon\Validation\Message\Group;
  */
 abstract class AbstractForm implements ElementContainerInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     use FieldSetBehaviour,

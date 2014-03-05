@@ -18,7 +18,7 @@
 
 namespace Engine\Api;
 
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 
@@ -34,8 +34,8 @@ use Phalcon\DiInterface;
  */
 abstract class AbstractApi implements ApiInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**

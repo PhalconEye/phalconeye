@@ -20,7 +20,7 @@ namespace Engine\Grid;
 
 use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Exception;
 use Engine\Form;
 use Engine\Grid\Behaviour\ColumnBehaviour;
@@ -75,8 +75,8 @@ abstract class AbstractGrid implements GridInterface
         COLUMN_PARAM_OUTPUT_LOGIC = 'output_logic';
 
 
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     use ColumnBehaviour,
@@ -107,7 +107,7 @@ abstract class AbstractGrid implements GridInterface
      * Create grid.
      *
      * @param ViewInterface       $view View object.
-     * @param DependencyInjection $di   DI object.
+     * @param DIBehaviour $di   DI object.
      */
     public function __construct(ViewInterface $view, $di = null)
     {

@@ -20,7 +20,7 @@ namespace Engine\Package;
 
 use Engine\Application;
 use Engine\Config;
-use Engine\DependencyInjection;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Package\Exception\InvalidManifest;
 use Engine\Package\Model\AbstractPackage;
 use Phalcon\DI;
@@ -38,8 +38,8 @@ use Phalcon\Filter as PhalconFilter;
  */
 class Manager
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     const

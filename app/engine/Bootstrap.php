@@ -18,6 +18,7 @@
 
 namespace Engine;
 
+use Engine\Behaviour\DIBehaviour;
 use Engine\Plugin\CacheAnnotation;
 use Engine\Plugin\DispatchErrorHandler;
 use Engine\View\Extension;
@@ -25,8 +26,8 @@ use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View\Engine\Volt;
 use Phalcon\Mvc\View;
+use Phalcon\Mvc\View\Engine\Volt;
 
 /**
  * Bootstrap class.
@@ -40,8 +41,8 @@ use Phalcon\Mvc\View;
  */
 abstract class Bootstrap implements BootstrapInterface
 {
-    use DependencyInjection {
-        DependencyInjection::__construct as protected __DIConstruct;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
     }
 
     /**
@@ -170,8 +171,8 @@ abstract class Bootstrap implements BootstrapInterface
     /**
      * Init view.
      *
-     * @param DependencyInjection $di     DI.
-     * @param Config              $config Configuration.
+     * @param DIBehaviour $di     DI.
+     * @param Config      $config Configuration.
      *
      * @return View
      */
