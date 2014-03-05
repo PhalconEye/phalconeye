@@ -44,6 +44,7 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
 
         require_once ROOT_PATH . "/app/engine/Config.php";
         require_once ROOT_PATH . "/app/engine/Exception.php";
+        require_once ROOT_PATH . "/app/engine/ApplicationInitialization.php";
         require_once ROOT_PATH . "/app/engine/Application.php";
         $application = new \Engine\Application();
         $application->run('session');
