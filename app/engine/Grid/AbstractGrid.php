@@ -18,9 +18,9 @@
 
 namespace Engine\Grid;
 
+use Engine\Behaviour\DIBehaviour;
 use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
-use Engine\Behaviour\DIBehaviour;
 use Engine\Exception;
 use Engine\Form;
 use Engine\Grid\Behaviour\ColumnBehaviour;
@@ -106,8 +106,8 @@ abstract class AbstractGrid implements GridInterface
     /**
      * Create grid.
      *
-     * @param ViewInterface       $view View object.
-     * @param DIBehaviour $di   DI object.
+     * @param ViewInterface $view View object.
+     * @param DIBehaviour   $di   DI object.
      */
     public function __construct(ViewInterface $view, $di = null)
     {

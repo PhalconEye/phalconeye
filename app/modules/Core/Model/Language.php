@@ -18,8 +18,8 @@
 
 namespace Core\Model;
 
-use Engine\Db\AbstractModel;
 use Engine\Behaviour\DIBehaviour;
+use Engine\Db\AbstractModel;
 use Engine\Exception;
 use Phalcon\Mvc\Model\Message;
 
@@ -89,7 +89,7 @@ class Language extends AbstractModel
      * Import translations and language if needed.
      *
      * @param DIBehaviour $di   Dependency injection.
-     * @param array               $data Data to parse.
+     * @param array       $data Data to parse.
      *
      * @throws Exception
      * @return Language
