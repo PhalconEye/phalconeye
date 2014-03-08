@@ -10,7 +10,7 @@ Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cph
 
 Installation
 ------------
-Coming soon... PhalconEye CMS will have ant build file. You will be able to build, check and analyze the project.
+Coming soon...
 
 Coding Style [![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
 ------------
