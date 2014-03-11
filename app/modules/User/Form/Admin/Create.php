@@ -22,6 +22,7 @@ use Core\Form\CoreForm;
 use Engine\Db\AbstractModel;
 use Engine\Form\FieldSet;
 use Phalcon\Validation\Validator\Email;
+use Phalcon\Validation\Validator\PresenceOf;
 use User\Model\Role;
 use User\Model\User;
 
@@ -87,6 +88,9 @@ class Create extends CoreForm
      */
     protected function _setValidation($content)
     {
-        $content->getValidation()->add('email', new Email());
+        $content->getValidation()
+            ->add('email', new Email())
+            ->add('username', new PresenceOf())
+            ->add('password', new PresenceOf());
     }
 }

@@ -92,6 +92,8 @@ class FieldSet implements ElementContainerInterface
      */
     public function __construct($name, $legend = null, array $attributes = [], array $elements = [])
     {
+        $this->__DIConstruct();
+
         $this->setName($name);
         $this->setLegend($legend);
         $this->_attributes = array_merge(

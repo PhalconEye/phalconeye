@@ -161,15 +161,18 @@ class Bootstrap extends EngineBootstrap
             if (!$languageObject) {
                 $languageObject = Language::findFirst(
                     [
-                        'conditions' => 'language = :language: OR language = :default:',
+                        'conditions' => 'language = :language:',
                         'bind' => (
                             [
-                                "language" => $language,
-                                "default" => Config::CONFIG_DEFAULT_LANGUAGE
+                                "language" => $language
                             ]
                             )
                     ]
                 );
+
+                if (!$languageObject) {
+                    $languageObject = Language::findFirst("language = '" . Config::CONFIG_DEFAULT_LANGUAGE . "'");
+                }
             }
 
             $translate = new TranslationDb($di, $languageObject->getId(), new LanguageTranslation());

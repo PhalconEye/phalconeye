@@ -73,7 +73,7 @@
          * Show loading image.
          */
         showLoadingStage: function () {
-            if ($('#loading_stage').length){
+            if ($('#loading_stage').length) {
                 return;
             }
             var bg = $('<div id="loading_stage" class="loading_stage"><span></span></div>');
@@ -260,7 +260,32 @@
             }
         });
 
-        $(".system-tooltip").tooltip();
+        $(".system-tooltip").each(function () {
+            var item = $(this),
+                position = item.data('tooltip-position'),
+                sign = '+',
+                value = '50';
+
+            if (!position) {
+                position = 'top';
+            }
+
+            if (position == 'left' || position == 'top') {
+                sign = '-';
+            }
+
+            if (position == 'top' || position == 'bottom') {
+                value = '20';
+            }
+
+            item.tooltip({
+                position: {
+                    my: "center",
+                    at: position + sign + value,
+                    track: false
+                }
+            });
+        });
 
         /**
          * Init on update.

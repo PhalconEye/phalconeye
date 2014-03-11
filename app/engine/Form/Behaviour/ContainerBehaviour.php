@@ -18,9 +18,11 @@
 
 namespace Engine\Form\Behaviour;
 
-use Engine\Form\AbstractForm;
-use Engine\Form;
+use Engine\Behaviour\DIBehaviour;
+use Engine\Behaviour\TranslationBehaviour;
 use Engine\Form\AbstractElement;
+use Engine\Form;
+use Engine\Form\AbstractForm;
 
 /**
  * Element container trait.
@@ -34,7 +36,12 @@ use Engine\Form\AbstractElement;
  */
 trait ContainerBehaviour
 {
-    use ElementsBehaviour;
+    use DIBehaviour {
+        DIBehaviour::__construct as protected __DIConstruct;
+    }
+
+    use ElementsBehaviour,
+        TranslationBehaviour;
 
     /**
      * Elements catalog.

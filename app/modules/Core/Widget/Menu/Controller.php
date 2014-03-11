@@ -107,7 +107,7 @@ class Controller extends WidgetController
             $tooltip = $item->getTooltip();
             if (!empty($tooltip)) {
                 $navigationItems[$index]['tooltip'] = $item->getTooltip();
-                $navigationItems[$index]['tooltip_position'] = $item->icon_position;
+                $navigationItems[$index]['tooltip_position'] = $item->tooltip_position;
             }
 
 

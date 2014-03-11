@@ -363,7 +363,7 @@ class Navigation
         );
         $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
         $linkTooltip = (!empty($item['tooltip']) ?
-            'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+            'title="' . $item['tooltip'] . '" data-tooltip-position="' . $item['tooltip_position'] . '"' : '');
 
         $content .= "<{$lit} class='{$ddic}{$active}'>";
         $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
@@ -437,7 +437,7 @@ class Navigation
             $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
             $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
             $linkTooltip = (!empty($item['tooltip']) ?
-                'title="' . $item['tooltip'] . '" data-placement="' . $item['tooltip_position'] . '"' : '');
+                'title="' . $item['tooltip'] . '" data-tooltip-position="' . $item['tooltip_position'] . '"' : '');
 
             $content .= sprintf(
                 '<a class="system-tooltip" %s %s %s href="%s">%s%s%s</a>',
@@ -482,7 +482,7 @@ class Navigation
         $appendHTML = (!empty($item['append']) ? $item['append'] : '');
         $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
         $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
-        $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-placement="' .
+        $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-tooltip-position="' .
             $item['tooltip_position'] . '"' : '');
 
         if (

@@ -164,13 +164,15 @@ class User extends AbstractModel
      */
     public function validation()
     {
+        if ($this->_errorMessages === null) {
+            $this->_errorMessages = [];
+        }
+
         $this->validate(new Uniqueness(["field" => "username"]));
         $this->validate(new Uniqueness(["field" => "email"]));
         $this->validate(new Email(["field" => "email", "required" => true]));
         $this->validate(new StringLength(["field" => "password", "min" => 6]));
 
-        if ($this->validationHasFailed() == true) {
-            return false;
-        }
+        return $this->validationHasFailed() !== true;
     }
 }

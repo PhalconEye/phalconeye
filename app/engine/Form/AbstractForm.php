@@ -18,13 +18,14 @@
 
 namespace Engine\Form;
 
+use Engine\Behaviour\DIBehaviour;
 use Engine\Behaviour\TranslationBehaviour;
 use Engine\Db\AbstractModel;
-use Engine\Behaviour\DIBehaviour;
 use Engine\Form\Behaviour\ContainerBehaviour;
 use Engine\Form\Behaviour\FieldSetBehaviour;
 use Engine\Form\Behaviour\FormBehaviour;
 use Phalcon\Filter;
+use Phalcon\Mvc\Model\Transaction\Exception;
 use Phalcon\Mvc\View;
 use Phalcon\Tag as Tag;
 use Phalcon\Translate;
@@ -42,13 +43,8 @@ use Phalcon\Validation\Message\Group;
  */
 abstract class AbstractForm implements ElementContainerInterface
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
-    }
-
     use FieldSetBehaviour,
-        FormBehaviour,
-        TranslationBehaviour;
+        FormBehaviour;
 
     const
         /**
@@ -180,7 +176,6 @@ abstract class AbstractForm implements ElementContainerInterface
         }
 
         $this->_validation = new Validation($this);
-        $this->_translator = $this->getDI()->get('i18n');
         $this->_errors = new Group();
         $this->_notices = new Group();
         $this->_conditionsResolver = new ConditionResolver($this);
@@ -257,8 +252,12 @@ abstract class AbstractForm implements ElementContainerInterface
             $elementName = str_replace('[]', '', $element->getName());
             if ($element instanceof FieldSet) {
                 $this->setValues($values, $element);
-            } elseif (array_key_exists($elementName, $values) && !$element->isIgnored()) {
-                $element->setValue($values[$elementName]);
+            } elseif (!$element->isIgnored()) {
+                if (array_key_exists($elementName, $values)) {
+                    $element->setValue($values[$elementName]);
+                } elseif (array_key_exists($element->getName(), $values)) {
+                    $element->setValue($values[$element->getName()]);
+                }
             }
         }
 
@@ -627,24 +626,27 @@ abstract class AbstractForm implements ElementContainerInterface
             // Request a transaction.
             $transaction = $manager->get();
             try {
-                $transaction->begin();
-
                 /** @var AbstractModel $entity */
                 foreach ($this->_entities as $entity) {
                     if ($skipEntityCreation) {
                         $entity->assign($data);
                         if (method_exists($entity, 'validation')) {
-                            $isValid = ($entity->validation() !== false);
+                            $isValid = $entity->validation();
                         }
                     } else {
                         $isValid = $entity->save($data);
-                        if (!$isValid) {
-                            foreach ($entity->getMessages() as $message) {
-                                $this->addError($message->getMessage(), $message->getField());
-                            }
-                            $transaction->rollback();
-                        }
                     }
+                }
+
+                if (!$isValid) {
+                    foreach ($entity->getMessages() as $message) {
+                        $this->addError(
+                            $this->_($message->getMessage()),
+                            $message->getField()
+                        );
+                    }
+
+                    $transaction->rollback('Failed to save model.');
                 }
 
                 // Everything goes fine, let's commit the transaction.
@@ -653,8 +655,6 @@ abstract class AbstractForm implements ElementContainerInterface
                 if ($transaction->isValid()) {
                     $transaction->rollback();
                 }
-
-                throw $e;
             }
         }
 

@@ -54,8 +54,8 @@ class IndexController extends AbstractController
      */
     protected function _checkLanguage()
     {
-        $language = $this->request->get('lang', 'string');
-        if ($language and $languageObject = Language::findFirst("language = '" . $language . "'")) {
+        $language = preg_replace("/[^A-Za-z0-9?!]/", '', $this->request->get('lang', 'string'));
+        if ($language && $languageObject = Language::findFirst("language = '" . $language . "'")) {
             $this->di->get('session')->set('language', $languageObject->language);
             $this->di->get('session')->set('locale', $languageObject->locale);
         }

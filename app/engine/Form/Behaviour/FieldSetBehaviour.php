@@ -18,10 +18,10 @@
 
 namespace Engine\Form\Behaviour;
 
-use Engine\Form\AbstractForm;
 use Engine\Form;
-use Phalcon\Validation\Message\Group;
+use Engine\Form\AbstractForm;
 use Phalcon\Validation\Message;
+use Phalcon\Validation\Message\Group;
 
 /**
  * FieldSet behaviour.
@@ -220,7 +220,7 @@ trait FieldSetBehaviour
     public function addError($message, $field = null)
     {
         if (!$message instanceof Message) {
-            $message = new Message($message, $field);
+            $message = new Message($this->_($message), $field);
         }
 
         $this->_errors->appendMessage($message);
@@ -237,7 +237,12 @@ trait FieldSetBehaviour
      */
     public function addErrorsGroup(Group $group)
     {
-        $this->_errors->appendMessages(iterator_to_array($group));
+        $messages = iterator_to_array($group);
+        /** @var Message $message */
+        foreach ($messages as $message) {
+            $message->setMessage($this->_($message->getMessage()));
+            $this->_errors->appendMessage($message);
+        }
         return $this;
     }
 
@@ -252,7 +257,7 @@ trait FieldSetBehaviour
     public function addNotice($message, $field = null)
     {
         if (!$message instanceof Message) {
-            $message = new Message($message, $field);
+            $message = new Message($this->_($message), $field);
         }
 
         $this->_notices->appendMessage($message);
