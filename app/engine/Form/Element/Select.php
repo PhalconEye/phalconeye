@@ -128,7 +128,7 @@ class Select extends AbstractElement implements ElementInterface
 
         $elementOptions = $this->getOption('elementOptions', []);
         foreach ($value as $currentValue) {
-            if ($currentValue !== null && !array_key_exists($currentValue, $elementOptions)) {
+            if ($currentValue !== null && !array_key_exists($currentValue, $elementOptions) && $this->getContainer()) {
                 $this->getContainer()->addError(
                     sprintf(AbstractForm::MESSAGE_VALUE_NOT_FOUND, $currentValue), $this->getName()
                 );

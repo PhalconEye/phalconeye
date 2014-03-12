@@ -71,6 +71,17 @@ class Page extends AbstractModel
          */
         LAYOUT_ICON_EXTENSION = '.png';
 
+    const
+        /**
+         * ACL action name for views.
+         */
+        ACTION_SHOW_VIEWS = 'show_views',
+
+        /**
+         * Acl option for page footer.
+         */
+        OPTION_PAGE_FOOTER = 'page_footer';
+
     /**
      * @Primary
      * @Identity

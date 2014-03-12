@@ -39,7 +39,6 @@ use Engine\Db\AbstractModel;
  */
 class Menu extends AbstractModel
 {
-
     /**
      * @Primary
      * @Identity

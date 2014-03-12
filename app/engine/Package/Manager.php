@@ -289,6 +289,7 @@ class Manager
         } else {
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
+        Utilities::fsCheckLocation($destinationDirectory);
         Utilities::fsCopyRecursive($this->getTempDirectory(false) . 'package', $destinationDirectory);
 
         return $manifest;

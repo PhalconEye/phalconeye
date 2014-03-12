@@ -65,12 +65,16 @@ class AdminAccessController extends AbstractAdminController
      */
     public function editAction($id)
     {
+        // Normalize id.
+        $urlId = $id;
+        $id = str_replace('_', '\\', $id);
+
         // Check current role change request.
         $changeRole = $this->request->get('role');
         if ($changeRole !== null) {
             $this->session->set('admin-current-role', $changeRole);
 
-            return $this->response->redirect(['for' => 'admin-access-edit', 'id' => $id]);
+            return $this->response->redirect(['for' => 'admin-access-edit', 'id' => $urlId]);
         }
 
         $resources = $this->core->acl()->getResources();
@@ -181,14 +185,13 @@ class AdminAccessController extends AbstractAdminController
 
         if (!empty($objectAcl->actions)) {
             $form->addHtml('header_actions', '<h4>' . $this->di->get('i18n')->_('Actions') . '</h4>');
-
             foreach ($objectAcl->actions as $action) {
                 $form->addCheckbox(
                     $action,
                     ucfirst($action),
                     sprintf(
-                        'ACCESS_OBJECT_%s_ACTION_%s',
-                        strtoupper($objectAcl->name),
+                        'ACTION_%s_%s_DESCRIPTION',
+                        strtoupper(str_replace('\\', '_', $objectAcl->name)),
                         strtoupper($action)
                     ),
                     1,
@@ -206,15 +209,18 @@ class AdminAccessController extends AbstractAdminController
                     $option,
                     ucfirst($option),
                     sprintf(
-                        'ACCESS_OBJECT_%s_OPTION_%s',
-                        strtoupper($objectAcl->name),
+                        'OPTION_%s_%s_DESCRIPTION',
+                        strtoupper(str_replace('\\', '_', $objectAcl->name)),
                         strtoupper($option)
                     ),
                     $this->core->acl()->getAllowedValue($objectAcl->name, $currentRole, $option)
                 );
             }
         }
-        $form->addButton('save');
+        $form
+            ->addFooterFieldSet()
+            ->addButton('save')
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-access']);
         return $form;
     }
 }

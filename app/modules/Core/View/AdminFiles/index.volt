@@ -26,11 +26,9 @@
             min-height: 500px;
             width: 90%;
             height: 90%;
-            border: 1px solid #3f3f3f;
+            border: 1px solid #cccccc;
             width: 90%;
             height: 90%;
-            border-radius: 5px;
-
         }
 
         .row-fluid{

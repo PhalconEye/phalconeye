@@ -213,36 +213,38 @@ class AdminPackagesController extends AbstractAdminController
                     }
                 }
 
-                // Run module install script.
-                $newPackageVersion = $packageManager->runInstallScript($manifest);
-                $this->app->clearCache();
+                if ($manifest->type == Manager::PACKAGE_TYPE_MODULE) {
+                    // Run module install script.
+                    $newPackageVersion = $packageManager->runInstallScript($manifest);
+                    $this->app->clearCache();
 
-                // Install translations if possible.
-                if (!empty($manifest->i18n)) {
-                    foreach ($manifest->i18n as $languageData) {
-                        Language::parseImportData($this->getDI(), $languageData->toArray());
+                    // Install translations if possible.
+                    if (!empty($manifest->i18n)) {
+                        foreach ($manifest->i18n as $languageData) {
+                            Language::parseImportData($this->getDI(), $languageData->toArray());
+                        }
                     }
+
+                    // Register module in system to perform database update.
+                    $modules = $this->getDI()->get('registry')->modules;
+                    $loader = $this->getDI()->get('loader');
+                    $modules[] = $manifest->name;
+                    $moduleName = ucfirst($manifest->name);
+
+                    // Register namespaces.
+                    $namespaces = $loader->getNamespaces();
+                    $namespaces[$moduleName] = $this->getDI()->get('registry')->directories->modules . $moduleName;
+                    $loader->registerNamespaces($namespaces);
+                    $loader->register();
+
+                    // Register module in app
+                    $this->getDI()->get('app')->registerModules([$manifest->name => $moduleName . '\Bootstrap']);
+                    $this->getDI()->get('registry')->modules = $modules;
+
+                    // Update database.
+                    $schema = new Schema($this->getDI());
+                    $schema->updateDatabase();
                 }
-
-                // Register module in system to perform database update.
-                $modules = $this->getDI()->get('registry')->modules;
-                $loader = $this->getDI()->get('loader');
-                $modules[] = $manifest->name;
-                $moduleName = ucfirst($manifest->name);
-
-                // Register namespaces.
-                $namespaces = $loader->getNamespaces();
-                $namespaces[$moduleName] = $this->getDI()->get('registry')->directories->modules . $moduleName;
-                $loader->registerNamespaces($namespaces);
-                $loader->register();
-
-                // Register module in app
-                $this->getDI()->get('app')->registerModules([$manifest->name => $moduleName . '\Bootstrap']);
-                $this->getDI()->get('registry')->modules = $modules;
-
-                // Update database.
-                $schema = new Schema($this->getDI());
-                $schema->updateDatabase();
 
                 if ($manifest->isUpdate) {
                     $this->flash->success('Package updated to version ' . $newPackageVersion . '!');

@@ -59,7 +59,7 @@ class AccessGrid extends CoreGrid
             }
 
             $allActions = array_merge($allActions, $object->actions, $object->options);
-            $allObjects[] = $resource->getName();
+            $allObjects[] = str_replace('\\', '\\\\', $resource->getName());
 
             $object->actions = implode(', ', $object->actions);
             $object->options = implode(', ', $object->options);
@@ -100,7 +100,7 @@ class AccessGrid extends CoreGrid
     public function getItemActions(GridItem $item)
     {
         return [
-            'Edit' => ['href' => ['for' => 'admin-access-edit', 'id' => $item['name']]]
+            'Edit' => ['href' => ['for' => 'admin-access-edit', 'id' => str_replace('\\', '_', $item['name'])]]
         ];
     }
 
@@ -113,6 +113,7 @@ class AccessGrid extends CoreGrid
     {
         $this
             ->addTextColumn('name', 'Resource name')
+            ->addTextColumn('module', 'Module')
             ->addTextColumn('actions', 'Actions')
             ->addTextColumn('options', 'Options');
     }

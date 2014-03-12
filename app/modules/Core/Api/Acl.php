@@ -112,13 +112,11 @@ class Acl extends AbstractApi
 
                 // Getting objects that is in acl.
                 // Looking for all models in modelsDir and check @Acl annotation.
-                $objects = [self::ACL_ADMIN_AREA => ['actions' => ['access']]];
-                $this->_addResources($acl, $objects);
+                $objects = $this->_addResources($acl, [self::ACL_ADMIN_AREA => ['actions' => ['access']]]);
 
                 // Load from database.
                 $access = Access::find();
                 foreach ($access as $item) {
-
                     $value = $item->value;
 
                     if (
@@ -187,6 +185,7 @@ class Acl extends AbstractApi
     {
         $object = new \stdClass();
         $object->name = $objectName;
+        $object->module = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
         $object->actions = [];
         $object->options = [];
 
@@ -194,6 +193,11 @@ class Acl extends AbstractApi
             $object->actions = ['access'];
 
             return $object;
+        }
+
+        $objectNameParts = explode('\\', $objectName);
+        if (count($objectNameParts) > 1) {
+            $object->module = $objectNameParts[1];
         }
 
         $reader = new \Phalcon\Annotations\Adapter\Memory();
@@ -264,6 +268,8 @@ class Acl extends AbstractApi
      *
      * @param AclMemory $acl     Acl object.
      * @param array     $objects Related objects collection.
+     *
+     * @return array
      */
     protected function _addResources($acl, $objects)
     {
@@ -296,5 +302,7 @@ class Acl extends AbstractApi
                 }
             }
         }
+
+        return $objects;
     }
 }
