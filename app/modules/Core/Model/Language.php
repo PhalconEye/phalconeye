@@ -273,7 +273,7 @@ class Language extends AbstractModel
 
         $result = [
             'info' => 'PhalconEye Language Package',
-            'version' => PE_VERSION,
+            'version' => PHALCONEYE_VERSION,
             'date' => date('d-M-Y H:i'),
             'name' => $this->name,
             'language' => $this->language,

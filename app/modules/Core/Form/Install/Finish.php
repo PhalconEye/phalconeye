@@ -56,7 +56,7 @@ class Finish extends CoreForm
             )
             ->addPassword(
                 'repeatPassword',
-                null,
+                'Repeat password',
                 'Enter your password again for confirmation.',
                 [],
                 ['autocomplete' => 'off']

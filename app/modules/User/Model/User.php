@@ -43,6 +43,12 @@ use Phalcon\Mvc\Model\Validator\Uniqueness;
  */
 class User extends AbstractModel
 {
+    const
+        /**
+         * Cache prefix.
+         */
+        CACHE_PREFIX = 'role_id_';
+
     // use trait Timestampable for creation_date and modified_date fields.
     use Timestampable;
 
@@ -109,7 +115,7 @@ class User extends AbstractModel
             $arguments,
             [
                 'cache' => [
-                    'key' => 'role_id_' . $this->role_id . '.cache'
+                    'key' => self::CACHE_PREFIX . $this->role_id
                 ]
             ]
         );

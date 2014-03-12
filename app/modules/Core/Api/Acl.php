@@ -48,7 +48,7 @@ class Acl extends AbstractApi
         /**
          * Acl cache key.
          */
-        ACL_CACHE_KEY = "acl_data.cache";
+        CACHE_KEY_ACL = "acl_data";
 
     const
         /**
@@ -88,7 +88,7 @@ class Acl extends AbstractApi
     {
         if (!$this->_acl) {
             $cacheData = $this->getDI()->get('cacheData');
-            $acl = $cacheData->get(self::ACL_CACHE_KEY);
+            $acl = $cacheData->get(self::CACHE_KEY_ACL);
             if ($acl === null) {
                 $acl = new AclMemory();
                 $acl->setDefaultAction(PhalconAcl::DENY);
@@ -127,7 +127,7 @@ class Acl extends AbstractApi
                         $acl->$value($roleNames[$item->role_id], $item->object, $item->action);
                     }
                 }
-                $cacheData->save(self::ACL_CACHE_KEY, $acl, 2592000); // 30 days cache.
+                $cacheData->save(self::CACHE_KEY_ACL, $acl, 2592000); // 30 days cache.
             }
             $this->_acl = $acl;
         }
@@ -226,7 +226,7 @@ class Acl extends AbstractApi
      */
     public function clearAcl()
     {
-        $this->getDI()->get('cacheData')->delete(self::ACL_CACHE_KEY);
+        $this->getDI()->get('cacheData')->delete(self::CACHE_KEY_ACL);
     }
 
     /**

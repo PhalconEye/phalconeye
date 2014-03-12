@@ -19,6 +19,7 @@
 namespace Engine\Plugin;
 
 use Engine\Application as EngineApplication;
+use Engine\Exception as EngineException;
 use Phalcon\Dispatcher;
 use Phalcon\Events\Event;
 use Phalcon\Exception as PhalconException;
@@ -65,6 +66,8 @@ class DispatchErrorHandler extends PhalconPlugin
 
         if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
             throw $exception;
+        } else {
+            EngineException::logException($exception);
         }
 
         // Handle other exceptions.

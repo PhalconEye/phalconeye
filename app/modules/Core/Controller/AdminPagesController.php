@@ -25,6 +25,7 @@ use Core\Form\CoreForm;
 use Core\Model\Page;
 use Core\Model\Widget;
 use Engine\Navigation;
+use Engine\Widget\Controller as WidgetController;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use User\Model\Role;
@@ -272,7 +273,7 @@ class AdminPagesController extends AbstractAdminController
         if ($widgetIndex == -1) {
             $widgetIndex = $this->session->get('admin-pages-widget-index');
             $currentPageWidgets[$widgetIndex] = [
-                'widget_index' => $widgetIndex, // indification for this array
+                'widget_index' => $widgetIndex, // identification for this array.
                 'id' => 0,
                 'layout' => $this->request->get('layout', 'string', 'middle'),
                 'widget_id' => $this->request->get('widget_id', 'int'),
@@ -288,6 +289,7 @@ class AdminPagesController extends AbstractAdminController
 
         $id = $widgetData['id'];
         $widgetParams = $widgetData['params'];
+        $widgetParams['content_id'] = $id;
         $widget_id = $widgetData['widget_id'];
         $widgetMetadata = Widget::findFirstById($widget_id);
         $form = new CoreForm();
@@ -304,7 +306,7 @@ class AdminPagesController extends AbstractAdminController
                 $widgetClass = '\Widget\\' . $widgetName . '\Controller';
             }
             $widgetController = new $widgetClass();
-            $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module));
+            $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module), $widgetParams);
             $widgetController->prepare();
             $form = $widgetController->adminAction();
         } else {
@@ -372,10 +374,20 @@ class AdminPagesController extends AbstractAdminController
         $layout = $this->request->get("layout");
         $items = $this->request->get("items");
 
+        // Save page with widgets and layout.
         $page = Page::findFirstById($id);
         $page->layout = $layout;
         $page->setWidgets($items);
         $page->save();
+
+        // Clear widgets cache.
+        /** @var \Phalcon\Cache\BackendInterface $cache */
+        $cache = $this->getDI()->get('cacheOutput');
+        $prefix = $this->config->application->cache->prefix;
+        $widgetKeys = $cache->queryKeys($prefix . WidgetController::CACHE_PREFIX);
+        foreach ($widgetKeys as $key) {
+            $cache->delete(str_replace($prefix, '', $key));
+        }
 
         $this->flashSession->success('Page saved!');
 

@@ -47,6 +47,24 @@ class Exception extends PhalconException
     }
 
     /**
+     * Log exception.
+     *
+     * @param \Exception $e Exception object.
+     *
+     * @return string
+     */
+    public static function logException(\Exception $e)
+    {
+        return self::logError(
+            'Exception',
+            $e->getMessage(),
+            $e->getFile(),
+            $e->getLine(),
+            $e->getTraceAsString()
+        );
+    }
+
+    /**
      * Log error.
      *
      * @param string      $type    Type name.

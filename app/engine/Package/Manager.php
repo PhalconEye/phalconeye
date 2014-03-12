@@ -473,7 +473,7 @@ class Manager
         $packagesMetadataDirectory = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES;
         Utilities::fsCheckLocation($packagesMetadataDirectory);
 
-        $config = ['application' => ['installed' => PE_VERSION], 'events' => [], 'modules' => []];
+        $config = ['application' => ['installed' => PHALCONEYE_VERSION], 'events' => [], 'modules' => []];
         foreach ($packages as $package) {
             if (!$package->enabled) {
                 continue;

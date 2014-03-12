@@ -21,6 +21,7 @@ namespace Engine;
 use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
+use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception\PrettyExceptions;
 use Engine\Widget\Catalog;
@@ -144,13 +145,7 @@ trait ApplicationInitialization
 
         set_exception_handler(
             function ($e) use ($di) {
-                $errorId = Exception::logError(
-                    'Exception',
-                    $e->getMessage(),
-                    $e->getFile(),
-                    $e->getLine(),
-                    $e->getTraceAsString()
-                );
+                $errorId = Exception::logException($e);
 
                 if ($di->get('app')->isConsole()) {
                     echo 'Error <' . $errorId . '>: ' . $e->getMessage();
@@ -260,9 +255,8 @@ trait ApplicationInitialization
             return;
         }
 
-        $routerCacheKey = 'router_data.cache';
         $cacheData = $di->get('cacheData');
-        $router = $cacheData->get($routerCacheKey);
+        $router = $cacheData->get(System::CACHE_KEY_ROUTER_DATA);
 
         if ($config->application->debug || $router === null) {
             $saveToCache = ($router === null);
@@ -295,7 +289,7 @@ trait ApplicationInitialization
                 }
             }
             if ($saveToCache) {
-                $cacheData->save($routerCacheKey, $router, 2592000); // 30 days cache
+                $cacheData->save(System::CACHE_KEY_ROUTER_DATA, $router, 2592000); // 30 days cache
             }
         }
 

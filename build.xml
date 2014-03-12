@@ -10,6 +10,7 @@
             info - Shows this help
             build - Prepares environment for distribution.
             dist - Generates distributable package.
+            assets - Install modules assets.
             clean - Deletes previously generated files under build/ and dist/.
             doc - Generates the project documentation using PHP Documentor.
             check - Executes the tasks: phpmd, phpcs.
@@ -33,6 +34,21 @@
         <delete dir="${dist.dir}"/>
     </target>
 
+    <target name="assets">
+        <!-- Clear assets -->
+        <delete>
+            <fileset dir="${public.dir}/assets" includes="**/*" />
+            <dirset dir="${public.dir}/assets" includes="**/*" />
+        </delete>
+
+        <exec executable="php">
+            <arg value="${public.dir}/index.php" />
+            <arg value="assets" />
+            <arg value="install" />
+        </exec>
+    </target>
+
+
     <!-- build - Prepares environment for distribution -->
     <target name="build">
         <!-- Prepare structure for the build of the project -->
@@ -55,8 +71,7 @@
 
         <!-- Clear temp data -->
         <delete>
-            <fileset dir="${build.src.dir}/public/assets" includes="**/*" />
-            <dirset dir="${build.src.dir}/public/assets" includes="**/*" />
+            <fileset dir="${build.src.dir}/public/external/ajaxplorer/data/cache" includes="**/*.*" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.php" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.cache" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.log" />
@@ -65,7 +80,7 @@
     </target>
 
     <!-- dist - Generates distributable package -->
-    <target name="dist" depends="build">
+    <target name="dist" depends="build,assets">
         <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/${project.name}.tar.gz" basedir="${build.src.dir}" compression="gzip"
              longfile="gnu"/>

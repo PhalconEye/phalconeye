@@ -31,7 +31,7 @@ INSERT IGNORE INTO `access` (`object`, `action`, `role_id`, `value`) VALUES
 INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywords`, `layout`, `controller`, `roles`, `view_count`) VALUES
 (1, 'Header', 'header', NULL, 'Header content', '', 'middle', NULL, NULL, NULL),
 (2, 'Footer', 'footer', NULL, 'Footer content', '', 'middle', NULL, NULL, NULL),
-(3, 'Home', 'home', '/', 'PhalconEye Home Page', 'PhalconEye', 'top,right,middle,left', NULL, NULL, 0);
+(3, 'Home', 'home', '/', 'PhalconEye Home Page', 'PhalconEye', 'top_right_middle_left', NULL, NULL, 0);
 
 --
 -- Dumping data for table `widgets`

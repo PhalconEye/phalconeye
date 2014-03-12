@@ -24,5 +24,24 @@
 define("AJXP_PACKAGING", "zip");
 define("AJXP_INSTALL_PATH", realpath(dirname(__FILE__)));
 define("AJXP_CONF_PATH", AJXP_INSTALL_PATH."/conf");
+
+/**
+ * Stages.
+ */
+define('APPLICATION_STAGE_DEVELOPMENT', 'development');
+define('APPLICATION_STAGE_PRODUCTION', 'production');
+define('APPLICATION_STAGE', (getenv('PHALCONEYE_STAGE') ? getenv('PHALCONEYE_STAGE') : APPLICATION_STAGE_PRODUCTION));
+
+/**
+ * Pathes.
+ */
+define('DS', DIRECTORY_SEPARATOR);
+if (!defined('ROOT_PATH')) {
+    define('ROOT_PATH', realpath(dirname(__FILE__) . '/../../../'));
+}
+if (!defined('PUBLIC_PATH')) {
+    define('PUBLIC_PATH', realpath(dirname(__FILE__) . '/../../../public/'));
+}
+
 require_once(AJXP_CONF_PATH."/bootstrap_context.php");
 ?>

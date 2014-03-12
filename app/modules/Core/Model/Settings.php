@@ -34,6 +34,12 @@ use Engine\Db\AbstractModel;
  */
 class Settings extends AbstractModel
 {
+    const
+        /**
+         * Cache prefix.
+         */
+        CACHE_PREFIX = 'setting_';
+
     /**
      * @Primary
      * @Identity
@@ -59,7 +65,7 @@ class Settings extends AbstractModel
         $this->save();
 
         // Clear cache.
-        $this->getDI()->get('cacheData')->delete('setting_' . $this->name . '.cache');
+        $this->getDI()->get('cacheData')->delete(self::CACHE_PREFIX . $this->name);
     }
 
     /**
@@ -96,7 +102,7 @@ class Settings extends AbstractModel
                     'name' => $name
                 ],
                 'cache' => [
-                    'key' => 'setting_' . $name . '.cache'
+                    'key' => self::CACHE_PREFIX . $name
                 ]
             ]
         );

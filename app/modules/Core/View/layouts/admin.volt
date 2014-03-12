@@ -75,7 +75,7 @@
 </div>
 
 <div id="footer">
-    PhalconEye v.<?php echo PE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
+    PhalconEye v.<?php echo PHALCONEYE_VERSION ?> <br/>[{{ date('d-m-Y H:i:s') }}]
 </div>
 
 {{ assets.outputJs() }}

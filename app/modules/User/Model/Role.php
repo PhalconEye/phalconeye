@@ -42,6 +42,17 @@ use Phalcon\Mvc\Model\Validator\Uniqueness;
  */
 class Role extends AbstractModel
 {
+    const
+        /**
+         * Cache prefix.
+         */
+        CACHE_PREFIX = 'role_type_',
+
+        /**
+         * Default role cache key.
+         */
+        CACHE_KEY_ROLE_DEFAULT = 'role_default';
+
     /**
      * @Primary
      * @Identity
@@ -136,7 +147,7 @@ class Role extends AbstractModel
             [
                 "type = '{$type}'",
                 'cache' => [
-                    'key' => 'role_type_' . $type . '.cache'
+                    'key' => self::CACHE_PREFIX . $type
                 ]
             ]
         );
@@ -163,7 +174,7 @@ class Role extends AbstractModel
             [
                 "is_default = 1",
                 'cache' => [
-                    'key' => 'role_default.cache'
+                    'key' => self::CACHE_KEY_ROLE_DEFAULT
                 ]
             ]
         );

@@ -37,6 +37,12 @@ use Phalcon\Mvc\View;
  */
 class Controller extends PhalconController
 {
+    const
+        /**
+         * Cache prefix.
+         */
+        CACHE_PREFIX = 'widget_';
+
     /**
      * Dependency injection.
      *
@@ -205,14 +211,14 @@ class Controller extends PhalconController
      *
      * @return string|null
      */
-    public function cacheKey()
+    public function getCacheKey()
     {
         if (isset($this->_params['cache_key'])) {
-            return $this->_params['cache_key'];
+            return self::CACHE_PREFIX . $this->_params['cache_key'];
         }
 
         if (isset($this->_params['content_id'])) {
-            return $this->_widgetName . '_' . $this->_params['content_id'];
+            return self::CACHE_PREFIX . $this->_widgetName . '_' . $this->_params['content_id'];
         }
 
         return null;
@@ -223,8 +229,22 @@ class Controller extends PhalconController
      *
      * @return int
      */
-    public function cacheLifeTime()
+    public function getCacheLifeTime()
     {
         return 300;
+    }
+
+    /**
+     * Clear widget cache.
+     *
+     * @return void
+     */
+    public function clearCache()
+    {
+        $key = $this->getCacheKey();
+        if ($key) {
+            $cache = $this->getDI()->get('cacheOutput');
+            $cache->delete($key);
+        }
     }
 }

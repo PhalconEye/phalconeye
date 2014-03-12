@@ -139,7 +139,7 @@ abstract class AbstractPackage extends AbstractModel
                 [
                     'name' => Application::SYSTEM_DEFAULT_MODULE,
                     'type' => Manager::PACKAGE_TYPE_MODULE,
-                    'version' => PE_VERSION,
+                    'version' => PHALCONEYE_VERSION,
                 ],
             ],
             'events' => [],

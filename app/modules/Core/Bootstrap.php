@@ -23,6 +23,7 @@ use Core\Model\LanguageTranslation;
 use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Bootstrap as EngineBootstrap;
+use Engine\Cache\System;
 use Engine\Config;
 use Engine\Translation\Db as TranslationDb;
 use Phalcon\DI;
@@ -195,8 +196,7 @@ class Bootstrap extends EngineBootstrap
         }
 
         $cache = $di->get('cacheData');
-        $cacheKey = "widgets_metadata.cache";
-        $widgets = $cache->get($cacheKey);
+        $widgets = $cache->get(System::CACHE_KEY_WIDGETS_METADATA);
 
         if ($widgets === null) {
             $widgets = [];
@@ -204,7 +204,7 @@ class Bootstrap extends EngineBootstrap
                 $widgets[] = [$object->id, $object->getKey(), $object];
             }
 
-            $cache->save($cacheKey, $widgets, 0); // Unlimited.
+            $cache->save(System::CACHE_KEY_WIDGETS_METADATA, $widgets, 0); // Unlimited.
         }
         $di->get('widgets')->addWidgets($widgets);
     }

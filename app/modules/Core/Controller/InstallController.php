@@ -109,7 +109,8 @@ class InstallController extends AbstractController
     {
         if ($_SERVER['REQUEST_URI'] != $this->config->application->baseUrl) {
             echo "You trying to access via '{$_SERVER['REQUEST_URI']}' path...
-            But config has '{$this->config->application->baseUrl}' as base url.";
+            But config has '{$this->config->application->baseUrl}' as base url.<br/>
+            Please, edit /app/config/" . APPLICATION_STAGE . "/application.php config.";
             exit(1);
         }
 

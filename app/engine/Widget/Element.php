@@ -96,8 +96,8 @@ class Element
 
         // Check cache.
         $output = null;
-        $cacheKey = $controller->cacheKey() . '.cache';
-        $cacheLifeTime = $controller->cacheLifeTime();
+        $cacheKey = $controller->getCacheKey();
+        $cacheLifeTime = $controller->getCacheLifeTime();
         /** @var \Phalcon\Cache\BackendInterface $cache */
         $cache = $this->getDI()->get('cacheOutput');
 

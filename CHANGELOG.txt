@@ -1,5 +1,5 @@
 Version 0.4.0
- - Implemented isCached, cacheKey, cacheLifeTime methods for widgets caching.
+ - Implemented isCached, getCacheKey, getCacheLifeTime, clearCache methods for widgets caching.
  - Implemented modules system.
  - Implemented filters in forms.
  - Implemented packages system.

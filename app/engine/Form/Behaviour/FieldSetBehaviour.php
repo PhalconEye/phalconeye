@@ -220,6 +220,9 @@ trait FieldSetBehaviour
     public function addError($message, $field = null)
     {
         if (!$message instanceof Message) {
+            if (is_object($message)) {
+                $message = $message->__toString();
+            }
             $message = new Message($this->_($message), $field);
         }
 
@@ -257,6 +260,9 @@ trait FieldSetBehaviour
     public function addNotice($message, $field = null)
     {
         if (!$message instanceof Message) {
+            if (is_object($message)) {
+                $message = $message->__toString();
+            }
             $message = new Message($this->_($message), $field);
         }
 
