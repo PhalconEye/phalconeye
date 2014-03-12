@@ -28,7 +28,7 @@
         <div class="row">
             <div class="col-md-8">
                 <h1>{{ 'Dashboard' |i18n }}</h1>
-                Some activity here... imagine it =)... coming soon...
+                Some activity here... imagine it =)... coming soon (maybe in 0.5.0)...
             </div>
             <div class="col-md-4 debug-mode">
                 <h4>{{ 'Debug mode'|i18n }}</h4>

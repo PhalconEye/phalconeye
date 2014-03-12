@@ -10,7 +10,13 @@ Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cph
 
 Installation
 ------------
-Coming soon...
+* Get source.
+* If you cloned it from github you can run ant task (ant dist) and get package as zip.
+* Unzip (or copy) CMS code to your webserver.
+* 'public' directory must be set as server's web root.
+* Go to http://youhost.com/ and you will see the installation process.
+* Follow the installation process.
+* If you want to reinstall, set option 'installed' to 'false' in /app/var/data/app.php.
 
 Coding Style [![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
 ------------
