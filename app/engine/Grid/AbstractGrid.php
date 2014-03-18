@@ -72,7 +72,7 @@ abstract class AbstractGrid implements GridInterface
         /**
          * Grid column filter condition 'LIKE'
          */
-        COLUMN_CONDITION_LIKE = 'condition_like',
+        COLUMN_PARAM_USE_LIKE = 'condition_like',
 
         /**
          * This can be a closure that will define output logic of value in this column.

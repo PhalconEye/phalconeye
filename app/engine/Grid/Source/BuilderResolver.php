@@ -84,9 +84,9 @@ class BuilderResolver extends AbstractResolver
                 continue;
             }
 
-            $condition_like = !isset($column[AbstractGrid::COLUMN_CONDITION_LIKE]) || $column[AbstractGrid::COLUMN_CONDITION_LIKE];
+            $conditionLike = !isset($column[AbstractGrid::COLUMN_PARAM_USE_LIKE]) || $column[AbstractGrid::COLUMN_PARAM_USE_LIKE];
             if (!empty($column[AbstractGrid::COLUMN_PARAM_USE_HAVING])) {
-                if ($condition_like) {
+                if ($conditionLike) {
                     $value = '%' . $data[$name] . '%';
                 } else {
                     $value = $data[$name];
@@ -97,10 +97,10 @@ class BuilderResolver extends AbstractResolver
                         ->getInternalHandler()
                         ->quote($value, $column[AbstractGrid::COLUMN_PARAM_TYPE]);
                 }
-                if ($condition_like) {
+                if ($conditionLike) {
                     $source->having($name . ' LIKE ' . $value);
                 } else {
-                    $source->where($name . ' = ' . $value);
+                    $source->having($name . ' = ' . $value);
                 }
             } else {
                 $bindType = null;
@@ -108,7 +108,7 @@ class BuilderResolver extends AbstractResolver
                 if (isset($column[AbstractGrid::COLUMN_PARAM_TYPE])) {
                     $bindType = [$alias => $column[AbstractGrid::COLUMN_PARAM_TYPE]];
                 }
-                if ($condition_like) {
+                if ($conditionLike) {
                     $source->where($name . ' LIKE :' . $alias . ':', [$alias => '%' . $data[$name] . '%'], $bindType);
                 } else {
                     $source->where($name . ' = :' . $alias . ':', [$alias => $data[$name]], $bindType);

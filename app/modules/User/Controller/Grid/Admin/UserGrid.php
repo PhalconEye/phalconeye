@@ -103,7 +103,7 @@ class UserGrid extends CoreGrid
                 ['hasEmptyValue' => true, 'using' => ['name', 'name'], 'elementOptions' => Role::find()],
                 [
                     self::COLUMN_PARAM_USE_HAVING => false,
-                    self::COLUMN_CONDITION_LIKE => false,
+                    self::COLUMN_PARAM_USE_LIKE => false,
                     self::COLUMN_PARAM_OUTPUT_LOGIC =>
                         function (GridItem $item) {
                             return $item['name'];
