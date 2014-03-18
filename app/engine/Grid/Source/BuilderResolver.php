@@ -84,22 +84,35 @@ class BuilderResolver extends AbstractResolver
                 continue;
             }
 
+            $condition_like = !isset($column[AbstractGrid::COLUMN_CONDITION_LIKE]) || $column[AbstractGrid::COLUMN_CONDITION_LIKE];
             if (!empty($column[AbstractGrid::COLUMN_PARAM_USE_HAVING])) {
-                $value = '%' . $data[$name] . '%';
+                if ($condition_like) {
+                    $value = '%' . $data[$name] . '%';
+                } else {
+                    $value = $data[$name];
+                }
                 if (isset($column[AbstractGrid::COLUMN_PARAM_TYPE])) {
                     $value = $this->_grid->getDI()
                         ->getDb()
                         ->getInternalHandler()
                         ->quote($value, $column[AbstractGrid::COLUMN_PARAM_TYPE]);
                 }
-                $source->having($name . ' LIKE ' . $value);
+                if ($condition_like) {
+                    $source->having($name . ' LIKE ' . $value);
+                } else {
+                    $source->where($name . ' = ' . $value);
+                }
             } else {
                 $bindType = null;
                 $alias = str_replace('.', '_', $name);
                 if (isset($column[AbstractGrid::COLUMN_PARAM_TYPE])) {
                     $bindType = [$alias => $column[AbstractGrid::COLUMN_PARAM_TYPE]];
                 }
-                $source->where($name . ' LIKE :' . $alias . ':', [$alias => '%' . $data[$name] . '%'], $bindType);
+                if ($condition_like) {
+                    $source->where($name . ' LIKE :' . $alias . ':', [$alias => '%' . $data[$name] . '%'], $bindType);
+                } else {
+                    $source->where($name . ' = :' . $alias . ':', [$alias => $data[$name]], $bindType);
+                }
             }
         }
     }
