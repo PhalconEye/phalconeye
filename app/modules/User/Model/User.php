@@ -97,7 +97,7 @@ class User extends AbstractModel
      */
     public function setPassword($password)
     {
-        if (!empty($password) && $this->password != $password) {
+        if ($this->getId() === NULL OR !empty($password) && $this->password != $password) {
             $this->password = $this->getDI()->get('security')->hash($password);
         }
     }
