@@ -56,6 +56,9 @@
                  */
                 ajaxplorerPopupCallback: function (data) {
                     if (typeof(data) === "string" && this._currentElement) {
+                        if (data.charAt(0) == '/'){
+                            data = data.substr(1);
+                        }
                         this._currentElement.find('input[type="text"]').val(data);
                     }
                     this._currentElement = null;

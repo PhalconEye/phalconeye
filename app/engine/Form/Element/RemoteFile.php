@@ -90,7 +90,7 @@ class RemoteFile extends AbstractElement implements ElementInterface
             $this->getName(),
             $this->getName(),
             $this->getValue(),
-            self::EDITOR_URL,
+            $this->getDI()->getUrl()->get(self::EDITOR_URL),
             $buttonTitle,
             $buttonTitle
         );

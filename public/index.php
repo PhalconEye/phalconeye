@@ -33,6 +33,14 @@ define('PHALCON_VERSION_REQUIRED', '1.3.0');
 define('PHP_VERSION_REQUIRED', '5.4.0');
 
 /**
+ * Check phalcon framework installation.
+ */
+if (!extension_loaded('phalcon')) {
+    printf('Install Phalcon framework %s', PHALCON_VERSION_REQUIRED);
+    exit(1);
+}
+
+/**
  * Pathes.
  */
 define('DS', DIRECTORY_SEPARATOR);

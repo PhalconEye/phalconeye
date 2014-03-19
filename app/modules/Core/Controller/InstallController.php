@@ -108,9 +108,14 @@ class InstallController extends AbstractController
     public function indexAction()
     {
         if ($_SERVER['REQUEST_URI'] != $this->config->application->baseUrl) {
-            echo "You trying to access via '{$_SERVER['REQUEST_URI']}' path...
-            But config has '{$this->config->application->baseUrl}' as base url.<br/>
-            Please, edit /app/config/" . APPLICATION_STAGE . "/application.php config.";
+            echo "
+            System must be installed.<br/>
+            If requested url ('{$_SERVER['REQUEST_URI']}') is root of your application please set it in config.<br/>
+            Current configuration base path is '{$this->config->application->baseUrl}'.<br/>
+            Please, edit /app/config/" . APPLICATION_STAGE . "/application.php config.
+
+            <br/><br/><br/><br/>
+            If you want just to install the system and base url is correct, visit <a href='/'>home</a> page.";
             exit(1);
         }
 

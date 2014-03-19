@@ -5,7 +5,7 @@ Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cph
 
 * Version: 0.4.0
 * Status: In Testing...
-* Requirements: PHP >= 5.4.x, Phalcon = 1.3.0, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
+* Requirements: PHP >= 5.4, Phalcon = 1.3.0, mod_rewrite, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
 * Website: http://phalconeye.com/
 
 Installation
