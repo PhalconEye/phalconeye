@@ -70,6 +70,11 @@ abstract class AbstractGrid implements GridInterface
         COLUMN_PARAM_USE_HAVING = 'use_having',
 
         /**
+         * Grid column filter condition 'LIKE'
+         */
+        COLUMN_PARAM_USE_LIKE = 'condition_like',
+
+        /**
          * This can be a closure that will define output logic of value in this column.
          */
         COLUMN_PARAM_OUTPUT_LOGIC = 'output_logic';
