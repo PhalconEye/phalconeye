@@ -18,8 +18,8 @@
 
 namespace Engine\Form\Behaviour;
 
-use Engine\Form\AbstractElement;
 use Engine\Form;
+use Engine\Form\AbstractElement;
 use Engine\Form\Element\File as FileElement;
 use Phalcon\DI;
 use Phalcon\Mvc\View;
@@ -67,8 +67,10 @@ trait ElementsBehaviour
                 $partial = array_merge(['form' => $this], $partial);
             }
 
+            /** @var View $view */
+            $view = $this->getDI()->get('view', [false]);
             ob_start();
-            DI::getDefault()->get('view')->partial($value, $partial);
+            $view->partial($value, $partial);
             $html = ob_get_contents();
             ob_end_clean();
             $element->setValue($html);

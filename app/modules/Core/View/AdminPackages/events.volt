@@ -19,7 +19,6 @@
 
 {% block title %}{{ "Edit package events"|i18n }}{% endblock %}
 
-
 {% block header %}
     <div class="navbar navbar-header">
         <div class="navbar-inner">

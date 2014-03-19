@@ -27,7 +27,7 @@
     }
 </script>
 <div>
-    <a href="javascript:;" class="btn" onclick="addNewEvent();">{{ 'Add new'|i18n }}</a>
+    <a href="javascript:;" class="btn btn-info" onclick="addNewEvent();">{{ 'Add new'|i18n }}</a>
 </div>
 <div class="events-container">
     {% if events is not defined or events is empty %}

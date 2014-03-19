@@ -76,6 +76,7 @@ class Events extends CoreForm
     public function initialize()
     {
         $this
+            ->setAttribute('id', 'package_events_form')
             ->setTitle('Edit Package Events')
             ->setDescription(
                 '

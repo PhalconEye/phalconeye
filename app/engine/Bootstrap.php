@@ -103,7 +103,11 @@ abstract class Bootstrap implements BootstrapInterface
         $view = $this->_initView($di, $config);
         $di->set(
             'view',
-            function () use ($view, $moduleDirectory) {
+            function ($reset = true) use ($view, $moduleDirectory) {
+                if (!$reset) {
+                    return $view;
+                }
+
                 $view
                     ->reset()
                     ->setVars([], false)
