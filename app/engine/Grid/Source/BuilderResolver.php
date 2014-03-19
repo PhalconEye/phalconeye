@@ -84,7 +84,8 @@ class BuilderResolver extends AbstractResolver
                 continue;
             }
 
-            $conditionLike = !isset($column[AbstractGrid::COLUMN_PARAM_USE_LIKE]) || $column[AbstractGrid::COLUMN_PARAM_USE_LIKE];
+            $conditionLike = !isset($column[AbstractGrid::COLUMN_PARAM_USE_LIKE]) ||
+                $column[AbstractGrid::COLUMN_PARAM_USE_LIKE];
             if (!empty($column[AbstractGrid::COLUMN_PARAM_USE_HAVING])) {
                 if ($conditionLike) {
                     $value = '%' . $data[$name] . '%';
