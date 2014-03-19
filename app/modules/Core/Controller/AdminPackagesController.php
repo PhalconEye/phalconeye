@@ -196,7 +196,7 @@ class AdminPackagesController extends AbstractAdminController
                     $package->save();
 
                     $this->_enablePackageConfig($package);
-                    $packageManager->generateMetadata([$package]);
+                    $this->_updateMetadata();
 
                     // install package dependencies
                     if ($manifest->get('dependencies')) {
@@ -232,9 +232,10 @@ class AdminPackagesController extends AbstractAdminController
                     $moduleName = ucfirst($manifest->name);
 
                     // Register namespaces.
-                    $namespaces = $loader->getNamespaces();
-                    $namespaces[$moduleName] = $this->getDI()->get('registry')->directories->modules . $moduleName;
-                    $loader->registerNamespaces($namespaces);
+                    $loader->registerNamespaces(
+                        [$moduleName => $this->getDI()->get('registry')->directories->modules . $moduleName],
+                        true
+                    );
                     $loader->register();
 
                     // Register module in app
@@ -287,7 +288,7 @@ class AdminPackagesController extends AbstractAdminController
         $packageManager = new Manager();
         $packageManager->createPackage($data);
         $this->_enablePackageConfig($package);
-        $this->_updateMetadata($package);
+        $this->_updateMetadata();
 
         switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
@@ -346,7 +347,7 @@ class AdminPackagesController extends AbstractAdminController
         $package = $form->getEntity();
         $this->_setWidgetData($form, $package, $data);
         $package->save();
-        $this->_updateMetadata($package);
+        $this->_updateMetadata();
 
         $this->flashSession->success('Package saved!');
         return $this->response->redirect(['for' => $return]);
@@ -407,7 +408,7 @@ class AdminPackagesController extends AbstractAdminController
         }
         $package->data['events'] = $form->getEventsData();
         $package->save();
-        $this->_updateMetadata($package);
+        $this->_updateMetadata();
 
         $this->flashSession->success('Package events saved!');
         return $this->response->redirect(['for' => $return]);
@@ -525,7 +526,7 @@ class AdminPackagesController extends AbstractAdminController
                 $package->delete();
 
                 $this->_removePackageConfig($package);
-                $packageManager->generateMetadata(Package::find());
+                $this->_updateMetadata();
                 $this->app->clearCache();
 
                 // Update database.
@@ -569,7 +570,7 @@ class AdminPackagesController extends AbstractAdminController
             $package->save();
 
             $this->_enablePackageConfig($package);
-            $this->_updateMetadata($package);
+            $this->_updateMetadata();
             $this->app->clearCache();
         }
 
@@ -605,7 +606,7 @@ class AdminPackagesController extends AbstractAdminController
             $package->save();
 
             $this->_disablePackageConfig($package);
-            $this->_updateMetadata($package);
+            $this->_updateMetadata();
             $this->app->clearCache();
         }
 
@@ -834,26 +835,13 @@ class AdminPackagesController extends AbstractAdminController
     }
 
     /**
-     * Update package metadata.
-     *
-     * @param Package $package Package object.
+     * Update packages metadata.
      *
      * @return void
      */
-    protected function _updateMetadata(Package $package)
+    protected function _updateMetadata()
     {
         $packageManager = new Manager();
-        $data = $package->getData();
-
-        if (
-            $package->type == Manager::PACKAGE_TYPE_WIDGET &&
-            !empty($data) &&
-            !empty($data['module'])
-        ) {
-            $modulePackage = $this->_getPackage('module', $data['module']);
-            $packageManager->generateMetadata([$modulePackage]);
-        } else {
-            $packageManager->generateMetadata([$package]);
-        }
+        $packageManager->generateMetadata(Package::find());
     }
 }
