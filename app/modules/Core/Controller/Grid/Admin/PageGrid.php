@@ -19,6 +19,7 @@
 namespace Core\Controller\Grid\Admin;
 
 use Core\Controller\Grid\CoreGrid;
+use Core\Model\Page;
 use Engine\Form;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
@@ -59,14 +60,21 @@ class PageGrid extends CoreGrid
      */
     public function getItemActions(GridItem $item)
     {
-        return [
-            'Manage' => ['href' => ['for' => 'admin-pages-manage', 'id' => $item['id']]],
-            'Edit' => ['href' => ['for' => 'admin-pages-edit', 'id' => $item['id']]],
-            'Delete' => [
+        $actions = [
+            'Manage' => ['href' => ['for' => 'admin-pages-manage', 'id' => $item['id']]]
+        ];
+
+        if (empty($item['type'])) {
+            $actions['Edit'] = ['href' => ['for' => 'admin-pages-edit', 'id' => $item['id']]];
+
+            $actions['Delete'] = [
                 'href' => ['for' => 'admin-pages-delete', 'id' => $item['id']],
                 'attr' => ['class' => 'grid-action-delete']
-            ]
-        ];
+            ];
+        } elseif ($item['type'] == Page::PAGE_TYPE_HOME) {
+            $actions['Edit'] = ['href' => ['for' => 'admin-pages-edit', 'id' => $item['id']]];
+        }
+        return $actions;
     }
 
     /**

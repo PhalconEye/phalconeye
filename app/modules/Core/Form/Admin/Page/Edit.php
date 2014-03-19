@@ -18,6 +18,8 @@
 
 namespace Core\Form\Admin\Page;
 
+use Core\Model\Page;
+
 /**
  * Edit page.
  *
@@ -47,5 +49,12 @@ class Edit extends Create
             ->clearElements()
             ->addButton('save')
             ->addButtonLink('cancel', 'Cancel', ['for' => 'admin-pages']);
+
+        if ($this->_currentPageObject->type == Page::PAGE_TYPE_HOME) {
+            $this->getFieldSet(self::FIELDSET_CONTENT)
+                ->remove('url')
+                ->remove('controller')
+                ->remove('roles[]');
+        }
     }
 }

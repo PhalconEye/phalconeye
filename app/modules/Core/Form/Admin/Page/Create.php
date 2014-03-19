@@ -37,12 +37,18 @@ use User\Model\Role;
 class Create extends CoreForm
 {
     /**
+     * @var Page
+     */
+    protected $_currentPageObject;
+
+    /**
      * Create form.
      *
      * @param AbstractModel $entity Entity object.
      */
     public function __construct(AbstractModel $entity = null)
     {
+        $this->_currentPageObject = $entity;
         parent::__construct();
 
         if (!$entity) {

@@ -82,6 +82,12 @@ class Page extends AbstractModel
          */
         OPTION_PAGE_FOOTER = 'page_footer';
 
+    const
+        /**
+         * Home page type.
+         */
+        PAGE_TYPE_HOME = 'home';
+
     /**
      * @Primary
      * @Identity

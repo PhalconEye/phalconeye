@@ -130,7 +130,8 @@ class AdminPagesController extends AbstractAdminController
     {
         $page = Page::findFirstById($id);
 
-        if (!$page) {
+        if (!$page || (!empty($page->type) && $page->type != Page::PAGE_TYPE_HOME)) {
+            $this->flashSession->notice('Nothing to edit!');
             return $this->response->redirect(['for' => "admin-pages"]);
         }
 
