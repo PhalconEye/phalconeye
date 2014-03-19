@@ -89,7 +89,8 @@ class Renderer extends Helper
         $view->content = $content;
         $view->page = $page;
         $view->pick($layout);
-        return $view->getRender(null, null);
+        $view->getRender(null, null);
+        return $view->getContent();
     }
 
     /**

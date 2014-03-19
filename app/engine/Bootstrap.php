@@ -22,6 +22,7 @@ use Engine\Behaviour\DIBehaviour;
 use Engine\Plugin\CacheAnnotation;
 use Engine\Plugin\DispatchErrorHandler;
 use Engine\View\Extension;
+use Engine\View\ViewFactory;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
@@ -100,21 +101,10 @@ abstract class Bootstrap implements BootstrapInterface
         /*************************************************/
         //  Initialize view.
         /*************************************************/
-        $view = $this->_initView($di, $config);
         $di->set(
             'view',
-            function ($reset = true) use ($view, $moduleDirectory) {
-                if (!$reset) {
-                    return $view;
-                }
-
-                $view
-                    ->reset()
-                    ->setVars([], false)
-                    ->setRenderLevel(View::LEVEL_ACTION_VIEW)
-                    ->setViewsDir($moduleDirectory . '/View/');
-
-                return $view;
+            function () use ($di, $config, $moduleDirectory, $eventsManager) {
+                return ViewFactory::create($di, $config, $moduleDirectory . '/View/', $eventsManager);
             }
         );
 
@@ -170,52 +160,5 @@ abstract class Bootstrap implements BootstrapInterface
     public function getModuleName()
     {
         return $this->_moduleName;
-    }
-
-    /**
-     * Init view.
-     *
-     * @param DIBehaviour $di     DI.
-     * @param Config      $config Configuration.
-     *
-     * @return View
-     */
-    protected function _initView($di, $config)
-    {
-        $view = new View();
-        $volt = new Volt($view, $di);
-        $volt->setOptions(
-            [
-                "compiledPath" => $config->application->view->compiledPath,
-                "compiledExtension" => $config->application->view->compiledExtension,
-                'compiledSeparator' => $config->application->view->compiledSeparator,
-                'compileAlways' => $config->application->debug && $config->application->view->compileAlways
-            ]
-        );
-
-        $compiler = $volt->getCompiler();
-        $compiler->addExtension(new Extension());
-        $view->registerEngines([".volt" => $volt]);
-
-        // Attach a listener for type "view".
-        $this->_em->attach(
-            "view",
-            function ($event, $view) use ($di, $config) {
-                if ($config->application->profiler && $di->has('profiler')) {
-                    if ($event->getType() == 'beforeRender') {
-                        $di->get('profiler')->start();
-                    }
-                    if ($event->getType() == 'afterRender') {
-                        $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
-                    }
-                }
-                if ($event->getType() == 'notFoundView') {
-                    throw new Exception('View not found - "' . $view->getActiveRenderPath() . '"');
-                }
-            }
-        );
-        $view->setEventsManager($this->_em);
-
-        return $view;
     }
 }

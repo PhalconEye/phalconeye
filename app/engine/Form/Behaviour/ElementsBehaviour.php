@@ -68,7 +68,7 @@ trait ElementsBehaviour
             }
 
             /** @var View $view */
-            $view = $this->getDI()->get('view', [false]);
+            $view = $this->getDI()->get('view');
             ob_start();
             $view->partial($value, $partial);
             $html = ob_get_contents();
