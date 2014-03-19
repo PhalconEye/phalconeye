@@ -224,6 +224,9 @@ class Language extends AbstractModel
      */
     public function getIcon()
     {
+        if (empty($this->icon)) {
+            return '';
+        }
         return $this->getDI()->getUrl()->get($this->icon);
     }
 

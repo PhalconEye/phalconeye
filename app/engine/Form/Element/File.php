@@ -59,9 +59,10 @@ class File extends AbstractInput implements ElementInterface
      */
     public function getValue()
     {
-        if ($this->getOption('isImage')) {
-            return $this->getDI()->getUrl()->get(parent::getValue());
+        $value = parent::getValue();
+        if ($this->getOption('isImage') && !empty($value)) {
+            return $this->getDI()->getUrl()->get($value);
         }
-        return parent::getValue();
+        return $value;
     }
 }
