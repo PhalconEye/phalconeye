@@ -767,7 +767,7 @@ class AdminPackagesController extends AbstractAdminController
         if ($dependencies->count()) {
             $message = 'You can\'t uninstall or disable this package, because it\'s related to:<br/>';
             foreach ($dependencies as $dependency) {
-                $dependencyPackage = $dependency->getDependencyPackage();
+                $dependencyPackage = $dependency->getPackage();
                 $message .= " - {$dependencyPackage->type} '{$dependencyPackage->name}'";
             }
             $this->flashSession->error($message);

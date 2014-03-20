@@ -60,4 +60,16 @@ abstract class AbstractPackageDependency extends AbstractModel
     {
         return $this->getRelated('Dependency', $arguments);
     }
+
+    /**
+     * Get package.
+     *
+     * @param array $arguments Arguments.
+     *
+     * @return AbstractPackage
+     */
+    public function getPackage($arguments = [])
+    {
+        return $this->getRelated('Core\Model\Package', $arguments);
+    }
 }
