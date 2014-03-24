@@ -80,10 +80,6 @@ class DispatchErrorHandler extends PhalconPlugin
             ]
         );
 
-        // There is bug in dispatcher (ph 1.2.5 Alpha-1.3.0), if do not set there controller name,
-        // it will substr it to 'rror' string after forwarding.
-        $dispatcher->setControllerName('Error');
-
         return $event->isStopped();
     }
 }
