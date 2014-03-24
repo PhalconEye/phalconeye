@@ -39,13 +39,6 @@ class Injector
     }
 
     /**
-     * Api instances.
-     *
-     * @var array
-     */
-    protected $_instances = [];
-
-    /**
      * Current module name.
      *
      * @var string
@@ -75,15 +68,19 @@ class Injector
      */
     public function __call($name, $arguments)
     {
-        if (!isset($this->_instances[$name])) {
-            $apiClassName = sprintf('\%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
+        $apiClassName = sprintf('%s\Api\%s', ucfirst($this->_moduleName), ucfirst($name));
+        $di = $this->getDI();
+
+        if (!$di->has($apiClassName)) {
             if (!class_exists($apiClassName)) {
                 throw new Exception(sprintf('Can not find Api with name "%s".', $name));
             }
 
-            $this->_instances[$name] = new $apiClassName($this->getDI(), $arguments);
+            $api = new $apiClassName($this->getDI(), $arguments);
+            $di->set($apiClassName, $api, true);
+            return $api;
         }
 
-        return $this->_instances[$name];
+        return $di->get($apiClassName);
     }
 }

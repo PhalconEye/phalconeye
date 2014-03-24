@@ -62,7 +62,7 @@ abstract class Helper extends Tag
             $di = DI::getDefault();
             $nameOrDI = ucfirst($nameOrDI);
             $module = ucfirst($module);
-            $helperClassName = sprintf('\%s\Helper\%s', $module, $nameOrDI);
+            $helperClassName = sprintf('%s\Helper\%s', $module, $nameOrDI);
         }
 
         if (!$di->has($helperClassName)) {
