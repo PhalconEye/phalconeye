@@ -142,6 +142,7 @@ abstract class AbstractElement implements ElementInterface
     public function setValue($value, $escape = true)
     {
         $value = $this->_xssClean($value);
+        $escape = ($this->getOption('escape') !== null ? $this->getOption('escape') : $escape);
         if ($escape && (is_string($value) && !empty($value))) {
             $value = htmlentities($value);
         }

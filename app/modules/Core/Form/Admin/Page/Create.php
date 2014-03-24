@@ -83,7 +83,7 @@ class Create extends CoreForm
                 'Controller',
                 'Controller and action name that will handle this page. Example: NameController->someAction',
                 null,
-                ['emptyAllowed' => true]
+                ['emptyAllowed' => true, 'escape' => false]
             )
             ->addMultiSelect(
                 'roles',
