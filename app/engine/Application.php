@@ -95,7 +95,7 @@ class Application extends PhalconApplication
          */
         $this->_config = Config::factory();
 
-        if (!$this->_config->application->installed) {
+        if (!$this->_config->installed) {
             define('CHECK_REQUIREMENTS', true);
             require_once(PUBLIC_PATH . '/requirements.php');
         }

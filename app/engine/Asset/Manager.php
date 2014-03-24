@@ -102,7 +102,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Compile themes css.
         ///////////////////////////////////
-        if ($this->_config->application->installed && !empty($themeDirectory)) {
+        if ($this->_config->installed && !empty($themeDirectory)) {
             $themeFiles = glob($themeDirectory . '/*.less');
             FsUtilities::fsCheckLocation($location . 'css/');
             foreach ($themeFiles as $file) {

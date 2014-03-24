@@ -175,7 +175,7 @@ class Config extends PhalconConfig
         $appPath = ROOT_PATH . self::CONFIG_METADATA_APP;
 
         if (!file_exists($appPath)) {
-            $config->application->offsetSet('installed', false);
+            $config->offsetSet('installed', false);
             $config->offsetSet('events', array());
             $config->offsetSet('modules', array());
             return $config;

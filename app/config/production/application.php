@@ -66,5 +66,4 @@ return array (
     'adapter' => 'Files',
     'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
   ),
-  'installed' => '0.4.0',
 );

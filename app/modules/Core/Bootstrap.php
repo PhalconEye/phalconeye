@@ -78,7 +78,7 @@ class Bootstrap extends EngineBootstrap
         $config = $this->getConfig();
 
         $this->_initI18n($di, $config);
-        if (!$config->application->installed) {
+        if (!$config->installed) {
             return;
         }
 
@@ -93,7 +93,7 @@ class Bootstrap extends EngineBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        if ($config->application->installed) {
+        if ($config->installed) {
             $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
         }
 
@@ -120,7 +120,7 @@ class Bootstrap extends EngineBootstrap
         $languageObject = null;
         if (!$di->get('session')->has('language')) {
             /** @var Language $languageObject */
-            if ($config->application->installed) {
+            if ($config->installed) {
                 $language = Settings::getSetting('system_default_language');
                 if ($language == 'auto') {
                     $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
@@ -142,7 +142,7 @@ class Bootstrap extends EngineBootstrap
         $language = $di->get('session')->get('language');
         $translate = null;
 
-        if (!$config->application->debug || !$config->application->installed) {
+        if (!$config->application->debug || !$config->installed) {
             $messages = [];
             if (file_exists(ROOT_PATH . "/app/var/languages/" . $language . ".php")) {
                 require ROOT_PATH . "/app/var/languages/" . $language . ".php";

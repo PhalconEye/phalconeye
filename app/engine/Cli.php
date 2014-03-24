@@ -130,7 +130,7 @@ class Cli extends Application
         print ConsoleUtil::infoLine('================================================================', false, 2);
 
         // Installation is required.
-        if (!$this->_config->application->installed) {
+        if (!$this->_config->installed) {
             print ConsoleUtil::error('Please, install system first.') . PHP_EOL;
             die();
         }

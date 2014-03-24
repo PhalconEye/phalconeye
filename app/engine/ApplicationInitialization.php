@@ -115,7 +115,7 @@ trait ApplicationInitialization
         $loader = new Loader();
         $loader->registerNamespaces($namespaces);
 
-        if ($config->application->debug && $config->application->installed) {
+        if ($config->application->debug && $config->installed) {
             $loader->setEventsManager($eventsManager);
         }
 
@@ -162,7 +162,7 @@ trait ApplicationInitialization
             }
         );
 
-        if ($config->application->profiler && $config->application->installed) {
+        if ($config->application->profiler && $config->installed) {
             $profiler = new Profiler();
             $di->set('profiler', $profiler);
         }
@@ -242,7 +242,7 @@ trait ApplicationInitialization
         $defaultModuleName = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
 
         // Check installation.
-        if (!$config->application->installed) {
+        if (!$config->installed) {
             $router = new RouterAnnotations(false);
             $router->setDefaultModule(Application::SYSTEM_DEFAULT_MODULE);
             $router->setDefaultNamespace($defaultModuleName . '\Controller');
@@ -308,7 +308,7 @@ trait ApplicationInitialization
      */
     protected function _initDatabase($di, $config, $eventsManager)
     {
-        if (!$config->application->installed) {
+        if (!$config->installed) {
             return;
         }
 
