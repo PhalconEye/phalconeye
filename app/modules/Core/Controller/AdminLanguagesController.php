@@ -144,6 +144,11 @@ class AdminLanguagesController extends AbstractAdminController
             return $this->response->redirect(['for' => "admin-languages"]);
         }
 
+        if ($item->language == Config::CONFIG_DEFAULT_LANGUAGE && $item->locale = Config::CONFIG_DEFAULT_LOCALE) {
+            $this->flashSession->notice('Not allowed to edit default language!');
+            return $this->response->redirect(['for' => "admin-languages"]);
+        }
+
         $form = new Edit($item);
         $this->view->form = $form;
 
@@ -175,6 +180,11 @@ class AdminLanguagesController extends AbstractAdminController
     {
         $item = Language::findFirst($id);
         if ($item) {
+            if ($item->language == Config::CONFIG_DEFAULT_LANGUAGE && $item->locale = Config::CONFIG_DEFAULT_LOCALE) {
+                $this->flashSession->notice('Not allowed to delete default language!');
+                return $this->response->redirect(['for' => "admin-languages"]);
+            }
+
             if ($item->delete()) {
                 $this->flashSession->notice('Object deleted!');
             } else {

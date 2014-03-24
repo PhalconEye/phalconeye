@@ -79,8 +79,15 @@ class LanguageGrid extends CoreGrid
                 'attr' => ['class' => 'grid-action-delete']
             ]
         ];
-        if ($item->getObject()->language == Config::CONFIG_DEFAULT_LANGUAGE) {
+
+        if (
+            $item->getObject()->language == Config::CONFIG_DEFAULT_LANGUAGE &&
+            $item->getObject()->locale == Config::CONFIG_DEFAULT_LOCALE
+        ) {
+            unset($actions['|']);
+            unset($actions['Edit']);
             unset($actions['Wizard']);
+            unset($actions['Delete']);
         }
 
         return $actions;
