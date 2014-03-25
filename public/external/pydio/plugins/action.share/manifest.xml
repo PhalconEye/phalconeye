@@ -1,0 +1,521 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ajxp_plugin name="share" label="CONF_MESSAGE[Sharing Features]" description="CONF_MESSAGE[Share Center actions and hooks]"  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../core.ajaxplorer/ajxp_registry.xsd">
+    <server_settings>
+        <global_param name="USE_REWRITE_RULE" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Use web server RewriteEngine mechanism to generate prettier URLs]" label="CONF_MESSAGE[Use Rewrite Rule]" type="boolean" default="false"/>
+        <global_param name="HASH_MIN_LENGTH" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Minimum length of the generated hash]" label="CONF_MESSAGE[Hash minimum length]" type="integer" default="6"/>
+        <global_param name="FILE_MAX_EXPIRATION" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Maximum share expiration limit for file, 0 = unlimited]" label="CONF_MESSAGE[Maximum file expiration limit]" type="integer" default="0" expose="true"/>
+        <global_param name="FILE_MAX_DOWNLOAD" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Maximum download limit for file, 0 = unlimited]" label="CONF_MESSAGE[Maximum file download limit]" type="integer" default="0" expose="true"/>
+        <global_param name="EMAIL_INVITE_EXTERNAL" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Use external mailer for invitations]" label="CONF_MESSAGE[Force External Mailer]" type="boolean" default="false" expose="true"/>
+        <global_param name="CREATE_QRCODE" group="CONF_MESSAGE[Link Generation]" description="CONF_MESSAGE[Create and display QRCode for shared link]" label="CONF_MESSAGE[Create QRCode]" type="boolean" default="true" expose="true"/>
+        <global_param name="ENABLE_FOLDER_SHARING" group="CONF_MESSAGE[Folder Sharing]" description="CONF_MESSAGE[Enable folder sharing (workspace and minisite)]" label="CONF_MESSAGE[Enable folder sharing]" type="boolean" default="true" expose="true"/>
+        <global_param name="AVOID_SHARED_FOLDER_SAME_LABEL" group="CONF_MESSAGE[Folder Sharing]" description="CONF_MESSAGE[Disallow users to create shared folders if a workspace already exists with the same label]" label="CONF_MESSAGE[Avoid labels duplication]" type="boolean" default="false"/>
+        <!--
+        <global_param name="SHARED_USERS_LIST_MINIMUM" group="CONF_MESSAGE[Shared users configurations]" description="CONF_MESSAGE[Minimum number of characters to start getting results by auto-completion when sharing a folder with other users]" label="CONF_MESSAGE[Autocomplete minimum chars]" type="integer" default="2" expose="true"/>
+        <global_param name="SHARED_USERS_LIST_LIMIT" group="CONF_MESSAGE[Shared users configurations]" description="CONF_MESSAGE[Limit the number of results returned by the auto-completion feature when sharing a folder with other users]" label="CONF_MESSAGE[Autocompletion results limit]" type="integer" default="50" expose="true"/>
+        -->
+        <global_param name="SHARED_USERS_TMP_PREFIX" group="CONF_MESSAGE[Shared users configurations]" description="CONF_MESSAGE[Mandatory prefix for users created temporary users login]" label="CONF_MESSAGE[Tmp users prefix]" type="string" expose="true"/>
+        <global_param name="METADATA_FILE" group="CONF_MESSAGE[Metadata Files]" type="string" label="CONF_MESSAGE[Metadata File]" description="CONF_MESSAGE[Hidden file containing shared metadata]" mandatory="true" default=".ajxp_share_meta"/>
+        <global_param name="METADATA_FILE_LOCATION" group="CONF_MESSAGE[Metadata Files]" type="select" choices="infolders|In Local Folders,global|In Global Folder" label="CONF_MESSAGE[File location]" description="CONF_MESSAGE[Where to store the metadata file : LOCAL means a hidden file will be created in each folder, GLOBAL means that one file will be created in AJXP_DATA_PATH/plugins/action.share folder.]" mandatory="true" default="infolders"/>
+        <global_param name="CUSTOM_SHAREPAGE_TITLE" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Page Title]" description="CONF_MESSAGE[Share page title. Use AJXP_FILENAME keyword to display the file name.]" mandatory="false" default=""/>
+        <global_param name="CUSTOM_SHAREPAGE_LEGEND" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Download text]" description="CONF_MESSAGE[Text displayed below the download button. Use AJXP_FILENAME keyword to display the file name, and PYDIO_APP_TITLE for the application title.]" mandatory="false" default=""/>
+        <global_param name="CUSTOM_SHAREPAGE_LEGEND_PASS" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Download text w/ Pass]" description="CONF_MESSAGE[Text displayed below the download button when a password is mandatory. Use AJXP_FILENAME keyword to display the file name, and PYDIO_APP_TITLE for the application title.]" mandatory="false" default=""/>
+        <global_param name="CUSTOM_SHAREPAGE_BUTTON" group="CONF_MESSAGE[Weblink Page]" type="image" label="CONF_MESSAGE[Download Button]" description="CONF_MESSAGE[Image used as a button for downloading the file]" mandatory="false"
+                      editable="true"
+                      uploadAction="store_binary_temp"
+                      loadAction="get_global_binary_param"
+                      defaultImage="plugins/action.share/res/dl.png"
+                      expose="true"
+        />
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_COLOR" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Background Color]" description="CONF_MESSAGE[Share page background color.]" mandatory="false" default="#FFFFFF"/>
+        <global_param name="CUSTOM_SHAREPAGE_TEXT_COLOR" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Text Color]" description="CONF_MESSAGE[Share page text color.]" mandatory="false" default="#399c9b"/>
+        <global_param name="CUSTOM_SHAREPAGE_TEXTSHADOW_COLOR" group="CONF_MESSAGE[Weblink Page]" type="string" label="CONF_MESSAGE[Text Shadow]" description="CONF_MESSAGE[Share page text shadow color.]" mandatory="false" default="#FFFFFF"/>
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_1" group="CONF_MESSAGE[Page Background Images]" type="image" label="CONF_MESSAGE[Custom Background (1)]" description="CONF_MESSAGE[Image used as a background]" mandatory="false"
+                      editable="true"
+                      uploadAction="store_binary_temp"
+                      loadAction="get_global_binary_param"
+                      defaultImage="plugins/action.share/res/grid_t.png"
+                      expose="true"
+        />
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_ATTRIBUTES_1" group="CONF_MESSAGE[Page Background Images]" type="select"
+                      choices="background-repeat:no-repeat;background-position:50% 50%;|Center in Page (no-repeat),background-repeat:repeat;background-size:100%;|Fetch Window (repeat vertically),background-repeat:no-repeat;background-size:100%; background-position:center center;|Fetch Window (no repeat),background-repeat:repeat;|Tile (repeat both directions)"
+                      label="CONF_MESSAGE[Background Attributes(1)]" description="CONF_MESSAGE[Image used as a background]"
+                      mandatory="false" expose="true"/>
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_2" group="CONF_MESSAGE[Page Background Images]" type="image" label="CONF_MESSAGE[Custom Background (2)]" description="CONF_MESSAGE[Image used as a background]" mandatory="false"
+                      editable="true"
+                      uploadAction="store_binary_temp"
+                      loadAction="get_global_binary_param"
+                      defaultImage="plugins/action.share/res/grid_t.png"
+                      expose="true"
+        />
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_ATTRIBUTES_2" group="CONF_MESSAGE[Page Background Images]" type="select"
+                      choices="background-repeat:no-repeat;background-position:50% 50%;|Center in Page (no-repeat),background-repeat:repeat;background-size:100%;|Fetch Window (repeat vertically),background-repeat:no-repeat;background-size:100%; background-position:center center;|Fetch Window (no repeat),background-repeat:repeat;|Tile (repeat both directions)"
+                      label="CONF_MESSAGE[Background Attributes(2)]" description="CONF_MESSAGE[Image used as a background]" mandatory="false" expose="true"/>
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_3" group="CONF_MESSAGE[Page Background Images]" type="image" label="CONF_MESSAGE[Custom Background (3)]" description="CONF_MESSAGE[Image used as a background]" mandatory="false"
+                      editable="true"
+                      uploadAction="store_binary_temp"
+                      loadAction="get_global_binary_param"
+                      defaultImage="plugins/action.share/res/grid_t.png"
+                      expose="true"
+        />
+        <global_param name="CUSTOM_SHAREPAGE_BACKGROUND_ATTRIBUTES_3" group="CONF_MESSAGE[Page Background Images]" type="select"
+                      choices="background-repeat:no-repeat;background-position:50% 50%;|Center in Page (no-repeat),background-repeat:repeat;background-size:100%;|Fetch Window (repeat vertically),background-repeat:no-repeat;background-size:100%; background-position:center center;|Fetch Window (no repeat),background-repeat:repeat;|Tile (repeat both directions)"
+                      label="CONF_MESSAGE[Background Attributes(3)]" description="CONF_MESSAGE[Image used as a background]" mandatory="false" expose="true"/>
+        <global_param name="CUSTOM_MINISITE_LOGO" group="CONF_MESSAGE[Minisite]" type="image" label="CONF_MESSAGE[Minisite Logo]" description="CONF_MESSAGE[Top-right logo displayed on minisite page]" mandatory="false"
+                      editable="true"
+                      uploadAction="store_binary_temp"
+                      loadAction="get_global_binary_param"
+                      defaultImage="plugins/gui.ajax/PydioLogo250.png"
+                      expose="true"
+        />
+    </server_settings>
+    <client_settings>
+        <resources>
+            <i18n namespace="share_center" path="plugins/action.share/res/i18n"/>
+            <js file="plugins/action.share/qrcode.js" className="QRCode" autoload="true"/>
+            <js file="plugins/action.share/class.ShareCenter.js" className="ShareCenter" autoload="true"/>
+        </resources>
+    </client_settings>
+    <registry_contributions>
+        <hooks>
+            <serverCallback hookName="node.info" methodName="nodeSharedMetadata"></serverCallback>
+            <serverCallback hookName="node.before_path_change" methodName="updateNodeSharedData"></serverCallback>
+        </hooks>
+        <actions>
+            <action name="share">
+                <gui text="292" title="292" src="share.png" iconClass="icon-share" hasAccessKey="false">
+                    <context selection="true" dir="" recycle="hidden"
+                        actionBar="true" contextMenu="true" infoPanel="true"
+                        actionBarGroup="get">
+                    </context>
+                    <selectionContext dir="true" evalMetadata="!metadata.get('ajxp_mime') || !metadata.get('ajxp_mime').startsWith('shared_')" file="true" recycle="false" unique="true"></selectionContext></gui>
+                <rightsContext noUser="true" userLogged="only" read="true" write="false" adminOnly=""></rightsContext>
+                <processing>
+                    <clientCallback prepareModal="true"><![CDATA[
+                        if(!ajaxplorer.actionBar.shareCenter){
+                            ajaxplorer.actionBar.shareCenter = new ShareCenter();
+                        }
+                        ajaxplorer.actionBar.shareCenter.performShareAction();
+                    ]]></clientCallback>
+                        <clientForm id="share_form"><![CDATA[
+                        <div id="share_form" box_width="320" action="share"><div class="dialogContentMainTitle" ajxp_message_id="share_center.27">AJXP_MESSAGE[share_center.27]</div>
+                            <div class="dialogLegend" ajxp_message_id="share_center.24">AJXP_MESSAGE[share_center.24]</div>
+                            <div id="share_optional_fields" class="oneFieldForm" style="margin: 10px;">
+                                <div class="SF_element SF_largeLabel">
+                                    <div class="SF_label" ajxp_message_id="share_center.21">AJXP_MESSAGE[share_center.21]</div>
+                                    <input type="text" name="expiration" value="0" class="SF_input SF_number">
+                                </div>
+                                <div class="SF_element SF_largeLabel">
+                                    <div class="SF_label" ajxp_message_id="share_center.22">AJXP_MESSAGE[share_center.22]</div>
+                                    <input type="text" name="downloadlimit" value="0" class="SF_input SF_number">
+                                </div>
+                                <div class="SF_element SF_largeLabel">
+                                    <div class="SF_label" ajxp_message_id="share_center.23">AJXP_MESSAGE[share_center.23]</div>
+                                    <input type="password" name="password" value="" autocomplete="off" class="SF_input">
+                                </div>
+                                <div class="SF_element" id="public_pass_container" style="display:none;height:20px;"></div>
+                                <div id="share_generate">
+                                    <div align="center" style="margin: 4px 0;text-align:center;">
+                                        <div align="center" id="generate_publiclet" class="largeButton"><img id="generate_image" src="AJXP_THEME_FOLDER/images/actions/16/share.png" height="16" width="16"/><span>AJXP_MESSAGE[309]</span></div>
+                                    </div>
+                                </div>
+                                <div style="display:none;margin: 3px 0px; text-align:center;" id="share_unshare">
+                                        <div id="unshare_button" class="largeButton" title="AJXP_MESSAGE[share_center.7]" >
+                                            <img src="AJXP_THEME_FOLDER/images/actions/16/editdelete.png" height="16" width="16" id="stop_sharing_indicator" valign="middle"> <span>AJXP_MESSAGE[share_center.6]</span>
+                                        </div>
+                                </div>
+                            </div>
+                            <div style="display:none;position:relative;margin-bottom:0;" id="share_result">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.29">AJXP_MESSAGE[share_center.29]</div>
+                                <div id="generate_indicator" style="position:absolute;top:2px;right:4px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                                <textarea id="share_container" style="padding: 4px;width: 266px;height: 33px;margin:0 10px; font-size:13px;"></textarea>
+                                <div class="share_qrcode" style="display:none;"></div>
+                            </div>
+                        </div>
+                        <div id="share_folder_chooser" box_width="320">
+                            <div class="dialogContentMainTitle" ajxp_message_id="share_center.28">AJXP_MESSAGE[share_center.28]</div>
+                            <ul class="share_chooser_list">
+                                <li data-shareListValue="workspace">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.63">AJXP_MESSAGE[share_center.63]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.64">AJXP_MESSAGE[share_center.64]</div>
+                                </li>
+                                <li data-shareListValue="minisite_public">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.65">AJXP_MESSAGE[share_center.65]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.66">AJXP_MESSAGE[share_center.66]</div>
+                                </li>
+                                <li data-shareListValue="minisite_private">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.67">AJXP_MESSAGE[share_center.67]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.68">AJXP_MESSAGE[share_center.68]</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="share_folder_form" box_width="320" action="share">
+                            <div class="mode-ws">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.28">AJXP_MESSAGE[share_center.28]</div>
+                                <div class="dialogLegend" ajxp_message_id="share_center.36">AJXP_MESSAGE[share_center.36]</div>
+                            </div>
+                            <div class="mode-minipub mode-minipriv">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.69">AJXP_MESSAGE[share_center.69]</div>
+                                <div class="dialogLegend" ajxp_message_id="share_center.70">AJXP_MESSAGE[share_center.70]</div>
+                            </div>
+                            <div id="target_repository" class="SF_element oneFieldForm" style="margin: 5px 10px 15px;">
+                                <div class="SF_label" style="font-size:12px;" ajxp_message_id="share_center.35">AJXP_MESSAGE[share_center.35]</div>
+                                <input type="text" value="" id="repo_label" name="repo_label" class="SF_input" style="float:right;font-size:12px;"/>
+                                <div class="SF_label" style="font-size:12px; clear:left;" ajxp_message_id="share_center.35">Description</div>
+                                <textarea id="repo_description" name="repo_description" class="SF_input" style="float:right;font-size:12px;"></textarea>
+                                <div id="target_user_simple" class="mode-minipub">
+                                    <br style="clear:both;"/>
+                                    <div class="SF_label" style="font-size:12px;" ajxp_message_id="share_center.71">AJXP_MESSAGE[share_center.71]</div>
+                                    <div class="SF_input" style="padding: 7px !important;">
+                                        <input type="checkbox" id="simple_right_read" name="simple_right_read" checked="true" class="checkbox_left"><label class="checkbox_label_left" for="simple_right_read">AJXP_MESSAGE[share_center.72]</label><br/>
+                                        <input type="checkbox" id="simple_right_download" name="simple_right_download" checked="true" class="checkbox_left"><label class="checkbox_label_left" for="simple_right_download">AJXP_MESSAGE[share_center.73]</label><br/>
+                                        <input type="checkbox" id="simple_right_write" name="simple_right_write" class="checkbox_left"><label class="checkbox_label_left" for="simple_right_write">AJXP_MESSAGE[share_center.74]</label><br/>
+                                    </div>
+                                </div>
+                                <br style="clear:both;"/>
+                                <div id="share_generate" class="mode-minipub mode-minipriv" style="display:none;">
+                                    <div align="center" style="margin: 4px 0;text-align:center;">
+                                        <div align="center" id="generate_publiclet" class="largeButton"><img id="generate_image" src="AJXP_THEME_FOLDER/images/actions/16/share.png" height="16" width="16"/><span>AJXP_MESSAGE[309]</span></div>
+                                    </div>
+                                </div>
+                                <div style="display:none;margin: 4px 0;text-align:center;" id="share_unshare">
+                                    <div id="unshare_button" class="largeButton" title="AJXP_MESSAGE[share_center.7]" >
+                                        <img src="AJXP_THEME_FOLDER/images/actions/16/editdelete.png" height="16" width="16" id="stop_sharing_indicator" valign="middle"> <span>AJXP_MESSAGE[share_center.6]</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div id="target_user_title" class="mode-ws">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.30">AJXP_MESSAGE[share_center.30]</div>
+                                <div class="dialogLegend" ajxp_message_id="share_center.26">AJXP_MESSAGE[share_center.26]</div>
+                            </div>
+                            <div id="target_user" style="margin:0 10px;position:relative;display:none;" class="mode-ws mode-minipriv">
+                                <div class="editable_users_header">
+                                    <span id="header_read" ajxp_message_id="share_center.31">AJXP_MESSAGE[share_center.31]</span>
+                                    <span id="header_write" ajxp_message_id="share_center.32">AJXP_MESSAGE[share_center.32]</span>
+                                    <span id="header_watch" ajxp_message_id="share_center.33">AJXP_MESSAGE[share_center.33]</span>
+                                </div>
+                                <input type="text" class="dialogFocus" value="" style="width:98%;" placeholder="AJXP_MESSAGE[share_center.34]" id="shared_user"/>
+                                <div id="complete_indicator" style="position:absolute;top:25px;right:4px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                                <div id="shared_users_autocomplete_choices" class="autocomplete" style="margin-top:0px !important;z-index:20000 !important;"></div>
+                                <div class="editable_users_list grey_gradient_light_inputs" id="shared_users_summary" style="margin-bottom:7px;">
+                                    <div style="display:none;" id="create_shared_user" class="soft_css_gradient">
+                                        <div class="SF_element">
+                                            <div ajxp_message_id="share_center.12" class="SF_label">AJXP_MESSAGE[share_center.12]</div>
+                                            <input type="password" class="SF_input" value="" name="shared_pass" id="shared_pass">
+                                        </div>
+                                        <div class="SF_element" id="shared_pass_div">
+                                            <div class="SF_label" ajxp_message_id="share_center.37">AJXP_MESSAGE[share_center.37]</div>
+                                            <input type="password" autocomplete="off" value="" name="shared_pass_confirm" id="shared_pass_confirm" class="SF_input"/>
+                                        </div>
+                                        <div class="SF_element" id="pass_strength_container"></div>
+                                        <div class="dialogButtons">
+                                            <input type="image" name="ok" src="AJXP_THEME_FOLDER/images/actions/22/dialog_ok_apply.png" height="22" width="22" title="OK">
+                                            <input type="image" name="can" height="22" width="22" src="AJXP_THEME_FOLDER/images/actions/22/dialog_close.png" title="CANCEL">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div  style="display:none;position:relative;margin-bottom:0;" id="share_result" class="">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.29">AJXP_MESSAGE[share_center.29]</div>
+                                <div id="generate_indicator" style="position:absolute;top:2px;right:4px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                                <textarea id="share_container" style="padding: 4px;width: 266px;height: 33px;margin:0 10px; font-size:13px;"></textarea>
+                                <div class="share_qrcode" style="display:none;"></div>
+                            </div>
+                        </div>
+                        <style type="text/css">
+                        .share_chooser_list {
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .share_chooser_list li {
+                            list-style: none;
+                            margin: 0;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            border-radius: 3px;
+                            border: 1px solid #cccccc;
+                            margin: 7px 0;
+                            box-shadow: inset 1px 1px 1px white;
+                        }
+                        .shareChooserTitle {
+                            font-size: 14px;
+                            margin-bottom: 5px;
+                        }
+                        .share_chooser_list li.selected {
+                            border: 1px solid rgb(117, 128, 139);
+                            background-color: rgba(226, 238, 255, 0.46) !important;
+                            box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.16);
+                        }
+                        </style>
+                        ]]>
+                        </clientForm>
+                    <clientForm id="share_form" theme="vision"><![CDATA[
+                        <div id="share_form" box_width="420" action="share"><div class="dialogContentMainTitle" ajxp_message_id="share_center.92">AJXP_MESSAGE[share_center.92]</div>
+                            <div id="share_optional_fields">
+                                <div class="SF_horizontal_labelRow">
+                                    <div class="SF_label" ajxp_message_id="share_center.23" style="width:130px;" title="AJXP_MESSAGE[share_center.23]">AJXP_MESSAGE[share_center.23]</div>
+                                    <div class="SF_label" ajxp_message_id="share_center.21" style="width:100px;" title="AJXP_MESSAGE[share_center.21]">AJXP_MESSAGE[share_center.21]</div>
+                                    <div class="SF_label" ajxp_message_id="share_center.22" style="width:100px;" title="AJXP_MESSAGE[share_center.22]">AJXP_MESSAGE[share_center.22]</div>
+                                </div>
+                                <div class="SF_horizontal_fieldsRow">
+                                    <input type="password" name="password" value="" placeholder="AJXP_MESSAGE[share_center.23]" autocomplete="off" class="SF_input" style="width:130px !important;">
+                                    <input type="text" name="expiration" value="0" placeholder="AJXP_MESSAGE[share_center.21]" class="SF_input SF_number" style="width:100px !important;">
+                                    <input type="text" name="downloadlimit" value="0" placeholder="AJXP_MESSAGE[share_center.22]" class="SF_input SF_number" style="width:100px !important;">
+                                    <div class="SF_horizontal_actions"><span id="generate_publiclet" class="SF_horizontal_action icon-plus-sign dialogFocus"></span></div>
+                                </div>
+                                <div class="SF_element" id="public_pass_container" style="display:none;height:20px;"></div>
+                            </div>
+                            <div class="dialogLegend" ajxp_message_id="share_center.24" style="clear: both;padding: 10px 1px 0;font-size: 13px;line-height: 19px;">AJXP_MESSAGE[share_center.24]</div>
+                            <div style="display:none;position:relative;margin-bottom:20px;clear:left; padding-top: 20px;" id="share_result">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.93">AJXP_MESSAGE[share_center.93]</div>
+                                <div class="SF_horizontal_fieldsRow" style="display:none; margin-bottom:7px;">
+                                    <div id="handle_existing_links" class="SF_horizontal_actions SF_horizontal_pastilles"></div>
+                                    <div style="clear:left;">
+                                        <input type="text" placeholder="AJXP_MESSAGE[share_center.90]" name="link_url" id="share_container" class="SF_input SF_number" style="width:230px !important;">
+                                        <input type="text" placeholder="AJXP_MESSAGE[share_center.91]" name="link_tag" value="" class="SF_input SF_number" style="width:113px !important;">
+                                    </div>
+                                    <div id="handle_existing_links" class="SF_horizontal_actions">
+                                        <span data-action="remove" class="SF_horizontal_action icon-minus-sign SF_horizontal_action_destructive"></span>
+                                    </div>
+                                    <div class="share_qrcode" style="display:none;"></div>
+                                    <div style="clear:both"></div>
+                                </div>
+                                <div id="generate_indicator" style="position:absolute;top:35px;right:12px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                            </div>
+                        </div>
+                        <div id="share_folder_chooser" box_width="360">
+                            <div class="dialogContentMainTitle" ajxp_message_id="share_center.28">AJXP_MESSAGE[share_center.28]</div>
+                            <ul class="share_chooser_list">
+                                <li data-shareListValue="workspace">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.63">AJXP_MESSAGE[share_center.63]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.64">AJXP_MESSAGE[share_center.64]</div>
+                                </li>
+                                <li data-shareListValue="minisite_public">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.65">AJXP_MESSAGE[share_center.65]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.66">AJXP_MESSAGE[share_center.66]</div>
+                                </li>
+                                <li data-shareListValue="minisite_private">
+                                    <div class="shareChooserTitle" ajxp_message_id="share_center.67">AJXP_MESSAGE[share_center.67]</div>
+                                    <div class="dialogLegend" ajxp_message_id="share_center.68">AJXP_MESSAGE[share_center.68]</div>
+                                </li>
+                            </ul>
+                        </div>
+                        <div id="share_folder_form" box_width="360" action="share">
+                            <div class="mode-ws">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.28">AJXP_MESSAGE[share_center.28]</div>
+                                <div class="dialogLegend" style="margin:0 5px;" ajxp_message_id="share_center.36">AJXP_MESSAGE[share_center.36]</div>
+                            </div>
+                            <div class="mode-minipub mode-minipriv">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.69">AJXP_MESSAGE[share_center.69]</div>
+                                <div class="dialogLegend" style="margin:0 5px;" ajxp_message_id="share_center.70">AJXP_MESSAGE[share_center.70]</div>
+                            </div>
+                            <div id="target_repository">
+                                <div class="SF_horizontal_fieldsRow" style="margin:0 5px;">
+                                    <input type="text" value="" id="repo_label" name="repo_label" class="SF_input" style="width: 90px !important;" placeholder="AJXP_MESSAGE[share_center.35]"/>
+                                    <input type="text" id="repo_description" name="repo_description" class="SF_input" style="width:212px !important;" placeholder="Description"/>
+                                </div>
+                                <div id="target_user_simple" class="mode-minipub">
+                                    <br style="clear:both;"/>
+                                    <div style="padding: 8px 1px !important; text-align:center;">
+                                        <input type="checkbox" style="clear:none;" id="simple_right_read" name="simple_right_read" checked="true" class=""> <label class="" for="simple_right_read"> AJXP_MESSAGE[share_center.72]</label>
+                                        <input type="checkbox" style="clear:none;" id="simple_right_download" name="simple_right_download" checked="true" class=""> <label class="" for="simple_right_download"> AJXP_MESSAGE[share_center.73]</label>
+                                        <input type="checkbox" style="clear:none;" id="simple_right_write" name="simple_right_write" class=""> <label class="" for="simple_right_write"> AJXP_MESSAGE[share_center.74]</label>
+                                    </div>
+                                </div>
+                                <div id="share_generate" class="mode-minipub mode-minipriv" style="display:none;">
+                                    <div align="center" style="margin: 4px 0;text-align:center;">
+                                        <div align="center" id="generate_publiclet" class="largeButton" style="padding:6px;"><span class="icon-retweet" style="font-size:14px;"></span> <img style="display:none;" id="generate_image" src="AJXP_THEME_FOLDER/images/actions/16/share.png" height="16" width="16"/><span>AJXP_MESSAGE[309]</span></div>
+                                    </div>
+                                </div>
+                                <br style="clear:both;"/>
+                            </div>
+                            <div id="target_user_title" class="mode-ws" style="margin-top: 15px;">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.30" style="display:none;">AJXP_MESSAGE[share_center.30]</div>
+                                <div class="dialogLegend" style="margin:0 5px; padding-bottom:0" ajxp_message_id="share_center.26">AJXP_MESSAGE[share_center.26]</div>
+                            </div>
+                            <div id="target_user" style="margin:0 5px;position:relative;display:none;" class="mode-ws mode-minipriv">
+                                <div style="clear: both; margin-top:20px;" class="mode-minipriv">&nbsp;</div>
+                                <div class="editable_users_header">
+                                    <span id="header_read" ajxp_message_id="share_center.31">AJXP_MESSAGE[share_center.31]</span>
+                                    <span id="header_write" ajxp_message_id="share_center.32">AJXP_MESSAGE[share_center.32]</span>
+                                    <span id="header_watch" ajxp_message_id="share_center.33">AJXP_MESSAGE[share_center.33]</span>
+                                </div>
+                                <input type="text" class="dialogFocus" value="" style="width:98%;" placeholder="AJXP_MESSAGE[share_center.34]" id="shared_user"/>
+                                <div id="complete_indicator" style="position:absolute;top:25px;right:4px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                                <div id="shared_users_autocomplete_choices" class="autocomplete" style="margin-top:0px !important;z-index:20000 !important;"></div>
+                                <div class="editable_users_list grey_gradient_light_inputs" id="shared_users_summary" style="margin-bottom:7px;">
+                                    <div style="display:none;" id="create_shared_user" class="soft_css_gradient">
+                                        <div class="SF_element">
+                                            <div ajxp_message_id="share_center.12" class="SF_label">AJXP_MESSAGE[share_center.12]</div>
+                                            <input type="password" class="SF_input" value="" name="shared_pass" id="shared_pass">
+                                        </div>
+                                        <div class="SF_element" id="shared_pass_div">
+                                            <div class="SF_label" ajxp_message_id="share_center.37">AJXP_MESSAGE[share_center.37]</div>
+                                            <input type="password" autocomplete="off" value="" name="shared_pass_confirm" id="shared_pass_confirm" class="SF_input"/>
+                                        </div>
+                                        <div class="SF_element" id="pass_strength_container"></div>
+                                        <div class="dialogButtons">
+                                            <input type="image" name="ok" src="AJXP_THEME_FOLDER/images/actions/22/dialog_ok_apply.png" height="22" width="22" title="OK">
+                                            <input type="image" name="can" height="22" width="22" src="AJXP_THEME_FOLDER/images/actions/22/dialog_close.png" title="CANCEL">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="display:none;position:relative;margin-bottom:0;" id="share_result" class="">
+                                <div class="dialogContentMainTitle" ajxp_message_id="share_center.29">AJXP_MESSAGE[share_center.29]</div>
+                                <div id="generate_indicator" style="position:absolute;top:2px;right:4px;display:none;"><img src="AJXP_THEME_FOLDER/images/autocompleter-loader.gif"></div>
+                                <div class="SF_horizontal_fieldsRow">
+                                    <div class="SF_horizontal_actions SF_horizontal_pastilles"></div>
+                                    <input type="text" id="share_container" style="width: 317px; margin:0 5px; font-size:13px;"/>
+                                    <div class="share_qrcode" style="margin-top:5px; clear:left; display:none;"></div>
+                                </div>
+
+                            </div>
+                        </div>
+                        <style type="text/css">
+                        .share_chooser_list {
+                            margin: 0;
+                            padding: 0;
+                        }
+                        .share_chooser_list li {
+                            list-style: none;
+                            margin: 0;
+                            padding: 5px 10px;
+                            cursor: pointer;
+                            border-radius: 3px;
+                            border: 1px solid #cccccc;
+                            margin: 7px 0;
+                            box-shadow: inset 1px 1px 1px white;
+                        }
+                        .shareChooserTitle {
+                            font-size: 14px;
+                            margin-bottom: 5px;
+                        }
+                        .share_chooser_list li.selected {
+                            border: 1px solid rgb(117, 128, 139);
+                            background-color: rgba(226, 238, 255, 0.46) !important;
+                            box-shadow: inset 1px 1px 1px rgba(0, 0, 0, 0.16);
+                        }
+                        .share_qrcode {
+                            margin: 43px auto 10px;
+                            width: 130px;
+                            padding: 10px;
+                            background-color: white;
+                            box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.42);
+                            border-radius: 4px;
+                        }
+                        #generate_publiclet, #unshare_button{
+                            float: none;
+                            width: 41%;
+                            margin: 0 auto;
+                        }
+                        </style>
+                        ]]>
+                    </clientForm>
+                    <clientListener name="init"><![CDATA[
+                        if(ajaxplorer.user && !ajaxplorer.user.canWrite() || ajaxplorer.getPluginConfigs("ajxp_plugin[@id='action.share']").get("ENABLE_FOLDER_SHARING") === false ){
+                            var action = ajaxplorer.getActionBar().getActionByName('share');
+                            action.selectionContext.dir = false;
+                        }
+                    ]]></clientListener>
+                    <serverCallback methodName="switchAction" developerComment="Main action for sharing a file or a folder">
+                        <input_param description="Path of the resource to share" name="file" type="path" mandatory="true"/>
+                        <input_param description="Specific type of sharing" name="sub_action" type="delegate_repo|create_minisite|public_link" mandatory="true"/>
+                        <input_param description="For editing the data of an existing workspace/minisite" name="repository_id" type="string" mandatory="false"/>
+                        <input_param description="For a workspace, directly set a watch on this for the current user" name="self_watch_folder" type="boolean"/>
+                        <input_param description="For a minisite, will determine whether it will be public (true) or private (false), creating a temporary user in the first case." name="create_guest_user" type="boolean"/>
+                        <input_param description="For a workspace/private minisite, define zero or more ACL for users" name="user_[n]" type="string"/>
+                        <input_param description="For a workspace/private minisite, read right for user N" name="right_read_[n]" type="boolean"/>
+                        <input_param description="For a workspace/private minisite, write right for user N" name="right_write_[n]" type="boolean"/>
+                        <input_param description="For a workspace/private minisite, watch status for user N" name="right_watch_[n]" type="boolean"/>
+                        <input_param description="For a public link, set a maximum number of downloads authorized" name="downloadlimit" type="integer"/>
+                        <input_param description="For a public link, set a maximum number of authorized days" name="expiration" type="integer"/>
+                        <input_param description="For a public link, set a password" name="password" type="string"/>
+                        <input_param description="Additional plugins data that can be stored in the shared resource" name="PLUGINS_DATA" type="FORM_DATA"/>
+                    </serverCallback>
+                    </processing>
+            </action>
+            <action name="load_shared_element_data">
+                <processing>
+                    <serverCallback methodName="switchAction" developerComment="Loads all current sharing data for a given resource. Workspace must support metadata management (metastore).">
+                        <input_param description="Path of the resource to share" name="file" type="path" mandatory="true"/>
+                        <input_param description="Type of element to load (file or folder)" name="element_type" type="file|repository" mandatory="true"/>
+                        <output type="application/json"/>
+                    </serverCallback>
+                </processing>
+            </action>
+            <action name="unshare">
+                <processing>
+                    <serverCallback methodName="switchAction" developerComment="Stop sharing a folder, or remove a public link from a file.">
+                        <input_param description="Path of the resource to unshare" name="file" type="path" mandatory="true"/>
+                        <input_param description="Type of element to load (file or folder)" name="element_type" type="file|repository" mandatory="true"/>
+                        <input_param description="If the resource is a file, send also the element_id, as many links can be generated for one file" name="element_id" type="string"/>
+                    </serverCallback>
+                </processing>
+            </action>
+            <action name="toggle_link_watch">
+                <processing>
+                    <serverCallback methodName="switchAction" developerComment="Toggle a shared element status for being watched or not.">
+                        <input_param description="Path of the resource to unshare" name="file" type="path" mandatory="true"/>
+                        <input_param description="Type of element to load (file or folder)" name="element_type" type="file|repository" mandatory="true"/>
+                        <input_param description="If the resource is a file, send also the element_id, as many links can be generated for one file" name="element_id" type="string"/>
+                    </serverCallback>
+                </processing>
+            </action>
+            <action name="reset_counter">
+                <processing>
+                    <serverCallback methodName="switchAction" developerComment="Reset download counter for a given link generated on a file.">
+                        <input_param description="Path of the resource to unshare" name="file" type="path" mandatory="true"/>
+                        <input_param description="Send also the element_id, as many links can be generated for one file" name="element_id" type="string"/>
+                    </serverCallback>
+                </processing>
+            </action>
+            <action name="update_shared_element_data">
+                <processing>
+                    <serverCallback methodName="switchAction">
+                        <input_param description="Path of the resource to unshare" name="file" type="path" mandatory="true"/>
+                        <input_param description="Send also the element_id, as many links can be generated for one file" name="element_id" type="string"/>
+                        <input_param description="Name of the property to modify (only tags supported)" name="p_name" type="string" mandatory="true" default="tags"/>
+                        <input_param description="Value of the property to modify" name="p_value" type="string" mandatory="true"/>
+                    </serverCallback>
+                </processing>
+            </action>
+        </actions>
+        <client_configs>
+            <component_config className="InfoPanel">
+                <infoPanelExtension mime="meta:ajxp_shared" attributes="" modifier="ShareCenter.prototype.loadInfoPanel">
+                    <messages>
+                        <message key="type_string" id="share_center.50"/>
+                    </messages>
+                    <html><![CDATA[
+                        <div id="ajxp_shared_info_panel">
+                            <div class="panelHeader infoPanelGroup" colspan="2"><span class="icon-share" data-ajxpAction="share" title="AJXP_MESSAGE[share_center.55]"></span>#{type_string}</div>
+                            <table class="infoPanelTable" cellspacing="0" border="0" cellpadding="0"></table>
+                        </div>
+                    ]]></html>
+                </infoPanelExtension>
+            </component_config>
+            <component_config className="AjxpTabulator::userdashboard_main_tab">
+                <additional_tab id="shared_pane"
+                                tabInfo='{"id":"my-shared","iconClass":"icon-share","element":"shared_pane","closeable":false,"label":"share_center.98","title":"share_center.99","dontFocus":true,"position":3}'
+                                paneInfo='{"type":"widget"}'><![CDATA[
+                    <div id="shared_pane" ajxpClass="AjxpPane">
+                        <div id="shared_tab" ajxpClass="AjxpTabulator" class="horizontal_tabulator left_tabulator" ajxpOptions='{"fit":"height", "fitMarginBottom":0, "registerAsEditorOpener":false, "saveState":false,"events":{}, "defaultTabId": "shared-files","tabInfos" : [{"id":"shared-files","label":"share_center.100", "title":"share_center.101","iconClass":"icon-file", "element":"shared_files_pane"},{"id":"shared-folders","label":"share_center.102","title":"share_center.103","iconClass":"icon-folder-close", "element":"shared_folders_pane"}]}'>
+                            <div id="shared_files_pane" ajxpClass="AjxpPane" ajxpOptions=''>
+                                <div id="buttons_bar" class="action_bar" ajxpClass="ActionsToolbar" ajxpOptions='{"toolbarsList":["change","public_links"],"skipBubbling":true, "skipCarousel":true,"submenuOffsetTop":2}'></div>
+                                <div id="shared_files_pane" ajxpClass="FetchedResultPane" ajxpOptions='{"updateGlobalContext":true,"nodeProviderProperties":{"get_action":"ls","dir":"files"}}'></div>
+                            </div>
+                            <div id="shared_folders_pane" ajxpClass="AjxpPane" ajxpOptions='{}'>
+                                <div id="buttons_bar" class="action_bar" ajxpClass="ActionsToolbar" ajxpOptions='{"toolbarsList":["change","shared_folders"],"skipBubbling":true, "skipCarousel":true,"submenuOffsetTop":2}'></div>
+                                <div id="shared_folders_list" ajxpClass="FetchedResultPane" ajxpOptions='{"updateGlobalContext":true, "nodeProviderProperties":{"get_action":"ls","dir":"repositories"}}'></div>
+                            </div>
+                        </div>
+                    </div>
+                ]]></additional_tab>
+            </component_config>
+        </client_configs>
+    </registry_contributions>
+    <class_definition filename="plugins/action.share/class.ShareCenter.php" classname="ShareCenter"/>
+    <dependencies>
+        <activePlugin pluginName="access.AJXP_STREAM_PROVIDER|access.ajxp_user"/>
+    </dependencies>
+</ajxp_plugin>

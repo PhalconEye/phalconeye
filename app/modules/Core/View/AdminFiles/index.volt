@@ -38,7 +38,7 @@
 
     <div class="span12">
         <div class="row-fluid">
-            <iframe style="" src="{{ url('external/ajaxplorer')}}"></iframe>
+            <iframe style="" src="{{ url('external/pydio/index_shared.php')}}"></iframe>
         </div>
         <!--/row-->
     </div><!--/span-->

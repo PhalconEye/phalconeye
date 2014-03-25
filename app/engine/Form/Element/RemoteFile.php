@@ -40,7 +40,7 @@ class RemoteFile extends AbstractElement implements ElementInterface
         /**
          * Ajaxplorer url.
          */
-        EDITOR_URL = '/external/ajaxplorer/?external_selector_type=popup&relative_path=/files';
+        EDITOR_URL = 'external/pydio/?external_selector_type=popup&relative_path=/files';
 
     /**
      * Get allowed options for this element.
@@ -64,7 +64,7 @@ class RemoteFile extends AbstractElement implements ElementInterface
             '
                 <div class="form_element_remote_file">
                     <input type="text" name="%s" id="%s" value="%s" />
-                    <input onclick="PhalconEye.ajaxplorer.openAjaxplorerPopup($(this).parent(), \'%s\', \'%s\');"
+                    <input onclick="PhalconEye.pydio.openPopup($(this).parent(), \'%s\', \'%s\');"
                            type="button"
                            class="btn btn-primary"
                            value="%s"/>

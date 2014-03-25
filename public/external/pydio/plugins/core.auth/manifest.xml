@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ajxpcore id="core.auth" label="CONF_MESSAGE[Authentification]" description="CONF_MESSAGE[Options applied to all auth drivers]" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../core.ajaxplorer/ajxp_registry.xsd">
+	<class_definition filename="plugins/core.auth/class.CoreAuthLoader.php" classname="CoreAuthLoader"/>
+    <client_settings>
+        <resources>
+            <i18n namespace="core_auth" path="plugins/core.auth/i18n"/>
+        </resources>
+    </client_settings>
+	<server_settings>
+		<global_param name="ENABLE_USERS" group="CONF_MESSAGE[Generic Auth Features]"  type="boolean" label="CONF_MESSAGE[Enable Users]" description="CONF_MESSAGE[Activate the users management system to protect your Pydio installation.]" mandatory="true" default="false"/>
+		<global_param name="CASE_SENSITIVE" group="CONF_MESSAGE[Generic Auth Features]"  type="boolean" label="CONF_MESSAGE[Case Sensitive]" description="CONF_MESSAGE[Whether the users identifiers should be case sensitive or not]" mandatory="true" default="true"/>
+		<global_param name="ALLOW_GUEST_BROWSING" group="CONF_MESSAGE[Generic Auth Features]"  type="boolean" label="CONF_MESSAGE[Guest Browsing]" description="CONF_MESSAGE[Enable the 'guest' user, who does not need to log in.]" mandatory="true" default="false"/>
+		<global_param name="PASSWORD_MINLENGTH" group="CONF_MESSAGE[Generic Auth Features]" type="string" label="CONF_MESSAGE[Password length]" description="CONF_MESSAGE[Minimum number of characters required for passwords in the application]" mandatory="true" default="8"/>
+		<global_param name="SESSION_SET_CREDENTIALS" group="CONF_MESSAGE[Generic Auth Features]"  type="boolean" label="CONF_MESSAGE[Store Credentials in Session]" description="CONF_MESSAGE[Set the users credentials in the session after a successful login, this can be necessary when bridging specific auth and access plugins.]" mandatory="true" default="false"/>
+		<global_param name="SECURE_LOGIN_FORM" group="CONF_MESSAGE[Login Form]"  type="boolean" label="CONF_MESSAGE[Secure Login Form]" description="CONF_MESSAGE[Raise the security of the login form by disabling autocompletion and remember me feature]" mandatory="true" default="false" expose="true"/>
+		<global_param name="ENABLE_FORGOT_PASSWORD" group="CONF_MESSAGE[Login Form]"  type="boolean" label="CONF_MESSAGE[Enable Forgot Password]" description="CONF_MESSAGE[Add a Forgot Password link at the bottom of the login form]" mandatory="true" default="false" expose="true"/>
+		<global_param name="FORGOT_PASSWORD_ACTION" group="CONF_MESSAGE[Login Form]"  type="string" label="CONF_MESSAGE[Forgot Password Action]" description="CONF_MESSAGE[Action to trigger when clicking on Forgot Password]" mandatory="true" default="reset-password-ask" expose="true"/>
+        <global_param type="plugin_instance:auth" name="MASTER_INSTANCE_CONFIG" group="CONF_MESSAGE[Main Instance]" label="CONF_MESSAGE[Instance Type]" description="CONF_MESSAGE[Choose the configuration plugin]" mandatory="true" default="auth.serial"/>
+
+        <global_param group="CONF_MESSAGE[Secondary Instance (optional)]" name="MULTI_MODE" type="group_switch:multimode" label="CONF_MESSAGE[Mode]" description="CONF_MESSAGE[Master/slave will assume that the master is read-only, and the slave is a local alternative to allow sharing features. User Choice will allow the user to manually choose its authentification method at startup.]" mandatory="true" default="MASTER_SLAVE"/>
+        <global_param group_switch_name="multimode" group_switch_label="Master/Slave" group_switch_value="MASTER_SLAVE" description="" label="Master slave" name="instance_name" type="hidden" default="MASTER_SLAVE" mandatory="true"/>
+        <global_param group_switch_name="multimode" group_switch_label="Master/Slave" group_switch_value="MASTER_SLAVE" description="Create a local copy (at login time) of master users inside slave base" label="Cache master users" name="CACHE_MASTER_USERS_TO_SLAVE" type="boolean" default="true" mandatory="false"/>
+        <global_param group_switch_name="multimode" group_switch_label="User Choice" group_switch_value="USER_CHOICE" description="" label="User choice" name="instance_name" type="hidden" default="USER_CHOICE" mandatory="true"/>
+        <global_param group_switch_name="multimode" group_switch_label="Master/Slave" group_switch_value="USER_CHOICE" group="CONF_MESSAGE[Secondary Instance (optional)]" name="MULTI_USER_ID_SEPARATOR" type="string" label="CONF_MESSAGE[Separator]" description="CONF_MESSAGE[This is necessary to discriminate users data loaded from various sources. Warning, use foldername compliant characters. For example :: does not work!]" mandatory="false" default="_-_"/>
+        <global_param group_switch_name="multimode" group_switch_label="Master/Slave" group_switch_value="USER_CHOICE" group="CONF_MESSAGE[Secondary Instance (optional)]" name="MULTI_MASTER_LABEL" type="string" label="CONF_MESSAGE[Master Authentifiaction Label]" description="CONF_MESSAGE[Will be shown to the user at login]" mandatory="false" default="Company Users"/>
+        <global_param group_switch_name="multimode" group_switch_label="Master/Slave" group_switch_value="USER_CHOICE" group="CONF_MESSAGE[Secondary Instance (optional)]" name="MULTI_SLAVE_LABEL" type="string" label="CONF_MESSAGE[Slave Authentifiaction Label]" description="CONF_MESSAGE[Will be shown to the user at login]" mandatory="false" default="Guest Users"/>
+
+        <global_param group="CONF_MESSAGE[Secondary Instance (optional)]" name="MULTI_USER_BASE_DRIVER" type="select" choices="master|Master Only,slave|Slave Only,both|Both" label="CONF_MESSAGE[Users Listing]" description="CONF_MESSAGE[In Master_Slave mode, use this option to limit the users listing in the administration to one driver only (leave empty if you want to see all users)]" mandatory="false"/>
+        <global_param type="plugin_instance:auth" name="SLAVE_INSTANCE_CONFIG" group="CONF_MESSAGE[Secondary Instance (optional)]" label="CONF_MESSAGE[Instance Type]" description="CONF_MESSAGE[Choose the configuration plugin]" mandatory="false" default=""/>
+    </server_settings>
+</ajxpcore>

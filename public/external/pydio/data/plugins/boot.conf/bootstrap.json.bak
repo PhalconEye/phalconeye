@@ -1,0 +1,22 @@
+{
+  "core.conf":{
+    "UNIQUE_INSTANCE_CONFIG":{
+      "instance_name":"conf.serial",
+      "group_switch_value":"conf.serial",
+      "REPOSITORIES_FILEPATH":"AJXP_DATA_PATH\/plugins\/conf.serial\/repo.ser",
+      "ROLES_FILEPATH":"AJXP_DATA_PATH\/plugins\/auth.serial\/roles.ser",
+      "USERS_DIRPATH":"AJXP_DATA_PATH\/plugins\/auth.serial",
+      "FAST_CHECKS":false,
+      "CUSTOM_DATA":{
+        "email":"Email",
+        "country":"Country"
+      }
+    }
+  },
+  "core.auth":{
+    "MASTER_INSTANCE_CONFIG":{
+      "instance_name":"auth.serial",
+      "group_switch_value":"auth.serial"
+    }
+  }
+}

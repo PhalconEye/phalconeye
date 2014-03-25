@@ -28,7 +28,7 @@
 (function (window, $, root, undefined) {
     $(function () {
         root.ns(
-            'PhalconEye.ajaxplorer',
+            'PhalconEye.pydio',
             {
                 /**
                  * Current element object.
@@ -44,7 +44,7 @@
                  * @param url Url.
                  * @param title Button title.
                  */
-                openAjaxplorerPopup: function (element, url, title) {
+                openPopup: function (element, url, title) {
                     this._currentElement = element;
                     window.open(url, title, 'width=800,height=600,resizable=yes,scrollbars=yes,status=yes').focus();
                 },
@@ -54,7 +54,7 @@
                  *
                  * @param data Ajaxplorer data.
                  */
-                ajaxplorerPopupCallback: function (data) {
+                popupCallback: function (data) {
                     if (typeof(data) === "string" && this._currentElement) {
                         if (data.charAt(0) == '/'){
                             data = data.substr(1);

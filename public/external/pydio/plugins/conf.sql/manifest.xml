@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<confdriver name="sql" id="conf.sql" label="CONF_MESSAGE[DB Storage]" description="CONF_MESSAGE[Stores the conf data in an SQL database.]"
+            xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../core.ajaxplorer/ajxp_registry.xsd"
+        mixins="dibidriver_consumer" >
+    <client_settings>
+        <resources>
+            <i18n namespace="sql_conf" path="plugins/conf.sql/i18n"/>
+        </resources>
+    </client_settings>
+	<server_settings>
+		<param name="SQL_DRIVER" type="group_switch:dibi" label="CONF_MESSAGE[Connexion]" description="CONF_MESSAGE[The Database Connexion]" mandatory="true"/>
+        <param type="button" name="INSTALL_SQL" choices="run_plugin_action:conf.sql:installSQLTables" label="CONF_MESSAGE[SQL Tables]" description="CONF_MESSAGE[Install SQL Tables]" mandatory="false"/>
+	</server_settings>
+	<class_definition filename="plugins/conf.sql/class.sqlConfDriver.php" classname="sqlConfDriver"/>
+	<registry_contributions>
+		<external_file filename="plugins/core.conf/standard_conf_actions.xml" include="actions/*,client_configs/*" exclude=""/>
+        <actions>
+            <action name="user_team_create">
+                <processing>
+                    <serverCallback methodName="userTeamsActions"/>
+                </processing>
+            </action>
+            <action name="user_team_delete">
+                <gui src="delete.png" iconClass="icon-trash" text="7" title="7">
+                    <context dir="false" recycle="false" selection="true" actionBar="true" actionBarGroup="team_address_book"/>
+                    <selectionContext dir="false" file="true" recycle="false" unique="true" allowedMimes="ajxp_team"/>
+                </gui>
+                <processing>
+                    <clientCallback><![CDATA[
+                    if(window.confirm(MessageHash["user_dash.52"])){
+                        var sel = ajaxplorer.getUserSelection().getUniqueNode();
+                        var conn = new Connexion();
+                        conn.setParameters($H({
+                            get_action: "user_team_delete",
+                            team_id: getBaseName(sel.getPath())
+                        }));
+                        conn.onComplete = function(){
+                            var pane = $("team_panel").ajxpPaneObject;
+                            pane.getCurrentContextNode().observeOnce("loaded", function(){
+                                pane.reload();
+                            });
+                            pane.getCurrentContextNode().reload();
+                        };
+                        conn.sendAsync();
+                    }
+                    ]]></clientCallback>
+                    <serverCallback methodName="userTeamsActions"/>
+                </processing>
+            </action>
+            <action name="user_team_add_user">
+                <processing>
+                    <serverCallback methodName="userTeamsActions"/>
+                </processing>
+            </action>
+            <action name="user_team_delete_user">
+                <processing>
+                    <serverCallback methodName="userTeamsActions"/>
+                </processing>
+            </action>
+        </actions>
+        <client_configs>
+            <component_config className="AjxpTabulator::userdashboard_addressbook_tab">
+                <additional_tab id="team_pane"
+                                tabInfo='{"id":"team_pane","iconClass":"icon-group","element":"team_pane","closeable":false,"label":"user_dash.50","title":"user_dash.51","dontFocus":true}'
+                                paneInfo='{"type":"widget"}'><![CDATA[
+                <div id="team_pane" ajxpClass="AjxpPane" ajxpOptions='{"fit":"height"}'>
+                    <div id="buttons_bar" class="action_bar" ajxpClass="ActionsToolbar" ajxpOptions='{"toolbarsList":["team_address_book"],"skipBubbling":true, "skipCarousel":true,"submenuOffsetTop":2}'></div>
+                    <div id="team_panel" style="border-left:1px solid #5C5C5C;border-radius:0;" ajxpClass="FetchedResultPane" ajxpOptions='{"updateGlobalContext":true,"nodeProviderProperties":{"get_action":"ls","dir":"teams"}}' class="tabbed_editor"></div>
+                </div>
+                ]]></additional_tab>
+            </component_config>
+        </client_configs>
+	</registry_contributions>
+</confdriver>

@@ -28,7 +28,7 @@ Third Party
 -----------
 * jQuery: https://jquery.org/ (MIT)
 * CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
-* AjaXplorer: http://ajaxplorer.info/ (GPL)
+* Pydio: http://pyd.io/ (Affero GPL)
 * lessphp: http://leafo.net/lessphp/ (GPL3/MIT)
 
 License

@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ajxp_plugin name="popupchooser" enabled="true" label="Popup Window Plugin" description="Extends external select for popup windows" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="file:../core.ajaxplorer/ajxp_registry.xsd">
+	<dependencies>
+		<pluginResources pluginName="gui.ajax"/>
+		<!-- Stream Wrapper Access -->
+		<activePlugin pluginName="access.AJXP_STREAM_PROVIDER"/>		
+	</dependencies>
+	<registry_contributions>
+		<actions>
+			<!-- Override the ext_select action -->
+			<action name="ext_select">
+				<processing>
+					<clientCallback><![CDATA[
+							var userSelection = ajaxplorer.getUserSelection();
+							var selectorData = ajaxplorer.actionBar.selectorData;
+							var passedData = selectorData.get('data');
+							var multi = passedData.allow_multi;
+							
+							if((userSelection.isUnique() && !userSelection.hasDir()))
+							{
+								var fileName = userSelection.getUniqueFileName();
+								if(selectorData.get('type') == "ckeditor"){
+									if (passedData['CKEditorFuncNum']) {
+										var imagePath = fileName;
+										if(passedData['relative_path']){
+											imagePath = passedData['relative_path'] + fileName;
+										}
+										window.opener.CKEDITOR.tools.callFunction(passedData['CKEditorFuncNum'], imagePath);
+										window.close();
+									}
+								}
+								
+								else if(selectorData.get('type') == "popup"){
+									
+									var filePath = fileName;
+									if(passedData.relative_path){
+										filePath = passedData.relative_path + fileName;
+									}
+									
+									if(typeof(passedData.filetypes) !== "undefined"){
+										var fileTypesArr = passedData.filetypes.match(/([a-zA-Z]+)/g);
+										
+										var match = false;
+										
+										for(var i = 0; i < fileTypesArr.length; i++){
+											if(fileName.match(fileTypesArr[i])){
+												match = true;
+											}
+										}
+										
+										if(match){
+											window.opener.PhalconEye.pydio.popupCallback(filePath);
+											window.close();
+										} else {
+											modal.displayMessage('ERROR', 'You did not select a valid file type');
+										}
+									} else {
+										window.opener.PhalconEye.pydio.popupCallback(filePath);
+										window.close();
+									}
+								}
+							}
+							else if(typeof(multi) !== "undefined" && multi == "true" && !userSelection.hasDir()){
+								var items = userSelection.getSelectedNodes();
+								if(items && items.length > 0){
+									var fileTypesArr = passedData.filetypes.match(/([a-zA-Z]+)/gi);
+									var paths = [];
+									
+									for(var i in items){
+										if(items[i] instanceof AjxpNode && items[i].isLeaf()){
+											var filePath = items[i].getPath();
+											if(passedData.relative_path){
+												filePath = passedData.relative_path + filePath;
+											}
+											
+											if(typeof(fileTypesArr) == "object" && fileTypesArr.length > 0){
+												for(var j = 0; j < fileTypesArr.length; j++){
+													var ext = fileTypesArr[j];
+													var patt = new RegExp(ext);
+													var match = filePath.match(patt);
+													if(match){
+														paths.push(filePath);
+														break;
+													}
+												}
+											}
+											else{
+												paths.push(filePath);
+											}
+										}
+									}
+									if(paths.length > 0){
+										window.opener.PhalconEye.pydio.popupCallback(paths);
+										window.close();
+									} else {
+										modal.displayMessage('ERROR', 'No valid files selected.');
+									}
+								} else {
+									modal.displayMessage('ERROR', 'Error selecting files.');
+								}
+							}
+							else if(typeof(multi) === "undefined" || multi == "false" && !userSelection.hasDir()){
+								modal.displayMessage('ERROR', 'Unable to select multiple files.');
+							}
+						]]></clientCallback>
+				</processing>
+			</action>
+			<action name="logout" expireDefault="false">
+				<pre_processing>
+					<clientCallback><![CDATA[
+						return false;
+					]]></clientCallback>
+				</pre_processing>
+			</action>	
+		</actions>
+	</registry_contributions>
+</ajxp_plugin>
