@@ -17,7 +17,7 @@
 
 {% extends "layouts/admin.volt" %}
 
-{% block title %}Index{% endblock %}
+{% block title %}Admin panel{% endblock %}
 
 {% block head %}
     {{ helper('assets').addJs('assets/js/core/admin/dashboard.js') }}
