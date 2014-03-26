@@ -71,7 +71,7 @@
 
         <!-- Clear temp data -->
         <delete>
-            <fileset dir="${build.src.dir}/public/external/ajaxplorer/data/cache" includes="**/*.*" />
+            <fileset dir="${build.src.dir}/public/external/pydio/data/cache" includes="*.ser,diag_result.php" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.php" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.cache" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.log" />
