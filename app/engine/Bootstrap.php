@@ -21,13 +21,11 @@ namespace Engine;
 use Engine\Behaviour\DIBehaviour;
 use Engine\Plugin\CacheAnnotation;
 use Engine\Plugin\DispatchErrorHandler;
-use Engine\View\Extension;
-use Engine\View\ViewFactory;
+use Engine\View;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
-use Phalcon\Mvc\View;
 use Phalcon\Mvc\View\Engine\Volt;
 
 /**
@@ -104,7 +102,7 @@ abstract class Bootstrap implements BootstrapInterface
         $di->set(
             'view',
             function () use ($di, $config, $moduleDirectory, $eventsManager) {
-                return ViewFactory::create($di, $config, $moduleDirectory . '/View/', $eventsManager);
+                return View::factory($di, $config, $moduleDirectory . '/View/', $eventsManager);
             }
         );
 

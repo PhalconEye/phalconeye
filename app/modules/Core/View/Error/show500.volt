@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/main.volt" %}
+{% extends "../../Core/View/layouts/main.volt" %}
 
 {% block title %}
     {{ 'Internal Server Error'|i18n }}

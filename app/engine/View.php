@@ -16,27 +16,26 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\View;
+namespace Engine;
 
 use Engine\Behaviour\DIBehaviour;
-use Engine\Config;
-use Engine\Exception;
+use Engine\View\Extension;
 use Phalcon\DI;
 use Phalcon\Events\Manager;
+use Phalcon\Mvc\View as PhalconView;
 use Phalcon\Mvc\View\Engine\Volt;
-use Phalcon\Mvc\View;
 
 /**
  * View factory.
  *
  * @category  PhalconEye
- * @package   Engine\View
+ * @package   Engine
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class ViewFactory
+class View extends PhalconView
 {
     /**
      * Create view instance.
@@ -49,7 +48,7 @@ class ViewFactory
      *
      * @return View
      */
-    public static function create($di, $config, $viewsDirectory, $em = null)
+    public static function factory($di, $config, $viewsDirectory, $em = null)
     {
         $view = new View();
         $volt = new Volt($view, $di);
@@ -91,5 +90,22 @@ class ViewFactory
         }
 
         return $view;
+    }
+
+    /**
+     * Pick view to render.
+     *
+     * @param array|string $renderView View to render.
+     * @param string|null  $module     Specify module.
+     *
+     * @return PhalconView|void
+     */
+    public function pick($renderView, $module = null)
+    {
+        if ($module != null) {
+            $renderView = '../../' . ucfirst($module) . '/View/' . $renderView;
+        }
+
+        parent::pick($renderView);
     }
 }

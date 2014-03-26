@@ -39,10 +39,11 @@ use Phalcon\Mvc\View;
  * @property \Phalcon\Db\Adapter\Pdo    $db
  * @property \Phalcon\Cache\Backend     $cacheData
  * @property \Engine\Application        $app
+ * @property \Engine\View               $view
  * @property \Engine\Asset\Manager      $assets
  * @property \Engine\Config             $config
- * @property DIBehaviour|DI     $di
  * @property \Phalcon\Translate\Adapter $i18n
+ * @property DIBehaviour|DI             $di
  *
  * @method \Engine\DIBehaviour|\Phalcon\DI getDI()
  */

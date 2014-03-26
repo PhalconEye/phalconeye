@@ -17,6 +17,7 @@
 */
 
 namespace Core\Controller;
+use Engine\Application;
 
 /**
  * Error handler.
@@ -38,6 +39,7 @@ class ErrorController extends AbstractController
     public function show404Action()
     {
         $this->response->setStatusCode('404', 'Page not found');
+        $this->view->pick('Error/show404', Application::SYSTEM_DEFAULT_MODULE);
     }
 
     /**
@@ -48,6 +50,7 @@ class ErrorController extends AbstractController
     public function show500Action()
     {
         $this->response->setStatusCode('500', 'Internal Server Error');
+        $this->view->pick('Error/show500', Application::SYSTEM_DEFAULT_MODULE);
     }
 }
 
