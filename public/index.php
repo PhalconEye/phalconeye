@@ -15,8 +15,6 @@
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   +------------------------------------------------------------------------+
 */
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
 
 /**
  * Stages.
@@ -24,6 +22,11 @@ error_reporting(E_ALL);
 define('APPLICATION_STAGE_DEVELOPMENT', 'development');
 define('APPLICATION_STAGE_PRODUCTION', 'production');
 define('APPLICATION_STAGE', (getenv('PHALCONEYE_STAGE') ? getenv('PHALCONEYE_STAGE') : APPLICATION_STAGE_PRODUCTION));
+
+if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
+    ini_set('display_errors', 1);
+    error_reporting(E_ALL);
+}
 
 /**
  * Versions.
