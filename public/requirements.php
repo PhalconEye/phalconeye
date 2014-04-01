@@ -28,7 +28,7 @@ if (version_compare(phpversion('phalcon'), PHALCON_VERSION_REQUIRED, '<')) {
     printf('Phalcon Framework %s is required, you have %s.', PHALCON_VERSION_REQUIRED, phpversion('phalcon'));
     exit(1);
 }
-if (!in_array('mod_rewrite', apache_get_modules())) {
+if (php_sapi_name() !== 'cli' && !in_array('mod_rewrite', apache_get_modules())) {
     print('Apache "mod_rewrite" module is required!');
     exit(1);
 }

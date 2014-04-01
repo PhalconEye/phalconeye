@@ -45,6 +45,6 @@
 <div class="header_container">
     <img alt="" src="{{ url('assets/img/core/pe_logo.png') }}"/>
     <div>
-        v.<?php echo PHALCONEYE_VERSION ?>
+        v.<?php echo PHALCONEYE_VERSION ?> {{ 'installation...'|i18n }}
     </div>
 </div>

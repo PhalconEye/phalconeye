@@ -60,6 +60,6 @@ class Database extends CoreForm
             ->addPassword('password')
             ->addText('dbname', 'Database name', null, 'phalconeye');
 
-        $this->addFooterFieldSet()->addButton('continue');
+        $this->addFooterFieldSet()->addButton('next');
     }
 }

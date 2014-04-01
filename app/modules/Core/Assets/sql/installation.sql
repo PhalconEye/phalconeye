@@ -46,17 +46,18 @@ INSERT IGNORE INTO `widgets` (`id`, `module`, `name`, `description`, `is_paginat
 -- Dumping data for table `content`
 --
 
-INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_id`, `widget_order`, `layout`, `params`) VALUES
-(67, 3, 1, 1, 'top', '{"title":"Header","html_en":"<p>Header<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"67"}'),
-(70, 3, 1, 1, 'right', '{"title":"Right","html_en":"<p>Right<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"70"}'),
-(71, 3, 1, 1, 'left', '{"title":"Left","html_en":"<p>Left<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"71"}'),
-(72, 3, 1, 1, 'middle', '{"title":"Content","html_en":"<p>Content<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
-(108, 3, 1, 2, 'top', '{"title":"Header2","html_en":"<p>Header2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
-(109, 3, 1, 2, 'right', '{"title":"Right2","html_en":"<p>Right2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
-(110, 3, 1, 2, 'middle', '{"title":"Content2","html_en":"<p>Content2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
-(111, 3, 1, 2, 'left', '{"title":"Left2","html_en":"<p>Left2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
-(112, 1, 3, 1, 'middle', '{"logo":"assets\\/img\\/core\\/pe_logo.png","show_title":null,"show_auth":"1","roles":null,"content_id":"112"}'),
-(113, 1, 2, 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null}');
+INSERT INTO `content` (`id`, `page_id`, `widget_id`, `widget_order`, `layout`, `params`) VALUES
+  (1, 3, 1, 1, 'top', '{"title":"Header","html_en":"<p>Header<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"67"}'),
+  (2, 3, 1, 1, 'right', '{"title":"Right","html_en":"<p>Right<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"70"}'),
+  (3, 3, 1, 1, 'left', '{"title":"Left","html_en":"<p>Left<\\/p>\\r\\n","html_ru":"","html":null,"roles":null,"content_id":"71"}'),
+  (4, 3, 1, 1, 'middle', '{"title":"Content","html_en":"<p>Content<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
+  (5, 3, 1, 2, 'top', '{"title":"Header2","html_en":"<p>Header2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
+  (6, 3, 1, 2, 'right', '{"title":"Right2","html_en":"<p>Right2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
+  (7, 3, 1, 2, 'middle', '{"title":"Content2","html_en":"<p>Content2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
+  (8, 3, 1, 2, 'left', '{"title":"Left2","html_en":"<p>Left2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
+  (9, 1, 3, 1, 'middle', '{"logo":"assets\\/img\\/core\\/pe_logo.png","show_title":null,"show_auth":"1","roles":null,"content_id":"112"}'),
+  (10, 1, 2, 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null}'),
+  (11, 2, 1, 1, 'middle', '{"title":"","html_en":"<p style=\\"text-align: center;\\">PhalconEye v.0.4.0<\\/p>\\r\\n","roles":null}');
 
 --
 -- Dumping data for table `languages`
