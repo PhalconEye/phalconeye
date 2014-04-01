@@ -42,7 +42,9 @@ class Finish extends CoreForm
      */
     public function initialize()
     {
-        $this->setAttribute('autocomplete', 'off');
+        $this
+            ->setTitle('Admin account')
+            ->setAttribute('autocomplete', 'off');
 
         $content = $this->addContentFieldSet()
             ->addText('username', null, null, null, [], ['autocomplete' => 'off'])

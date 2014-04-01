@@ -21,13 +21,9 @@
     {{ 'Installation'|i18n }}
 {% endblock %}
 
-{% block header %}
-    {{ partial('/Install/header') }}
-{% endblock %}
-
 {% block content %}
     {% set action = 'database' %}
-    {{ partial('/Install/steps') }}
+    {{ partial('/Install/navigation') }}
 
     <div>
         {{ form.render() }}

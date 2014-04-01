@@ -51,13 +51,18 @@ class InstallController extends AbstractController
 {
     /**
      * System requirements.
-     * name => version
      *
      * @var array
      */
     protected $_requirements = [
-        'php' => '5.4.0',
-        'phalcon' => PHALCON_VERSION_REQUIRED,
+        'php' => [
+            'version' => '5.4.0',
+            'title' => 'PHP v.5.4+'
+        ],
+        'phalcon' => [
+            'version' => PHALCON_VERSION_REQUIRED,
+            'title' => "Phalcon v."
+        ],
         'zlib' => false,
         'mbstring' => false,
         'mcrypt' => false,
@@ -74,6 +79,7 @@ class InstallController extends AbstractController
      */
     protected $_actions = [
         'indexAction',
+        'requirementsAction',
         'databaseAction',
         'finishAction'
     ];
@@ -107,7 +113,7 @@ class InstallController extends AbstractController
      */
     public function indexAction()
     {
-        if ($_SERVER['REQUEST_URI'] != $this->config->application->baseUrl) {
+        if ($_SERVER['REQUEST_URI'] != $this->config->application->baseUrl && $_SERVER['REQUEST_URI'] != '/install') {
             echo "
             System must be installed.<br/>
             If requested url ('{$_SERVER['REQUEST_URI']}') is root of your application please set it in config.<br/>
@@ -121,6 +127,35 @@ class InstallController extends AbstractController
 
         // Make sure that all assets installed.
         $this->assets->installAssets();
+        $licenseFile = PUBLIC_PATH . '/../LICENSE.txt';
+
+
+        if (!file_exists($licenseFile)) {
+            $this->view->license = 'Missing LICENSE.txt file.
+            You can visit
+            <a target="_blank" href="https://github.com/lantian/PhalconEye/blob/master/LICENSE.txt">
+            GitHub page<a/>
+            to read it.';
+        } else {
+
+            $this->view->license = str_replace('<', '&#60;', file_get_contents($licenseFile));
+        }
+
+        $this->_setPassed(__FUNCTION__, true);
+    }
+
+    /**
+     * Requirements page.
+     *
+     * @return void
+     *
+     * @Route("/requirements", methods={"GET", "POST"}, name="install-requirements")
+     */
+    public function requirementsAction()
+    {
+        if (!$this->_isPassed('indexAction')) {
+            return $this->_selectAction();
+        }
 
         // Run requirements check.
         $allPassed = true;
@@ -128,22 +163,27 @@ class InstallController extends AbstractController
         // Modules requirements.
         $requirements = [];
         foreach ($this->_requirements as $req => $version) {
-            $installedVersion = false;
+            $title = $req;
+            if (is_array($version)) {
+                $title = $version['title'];
+                $version = $version['version'];
+            }
+
+            if ($req == 'phalcon') {
+                $title .= $version;
+            }
+
             if ($req == 'php') {
-                $installedVersion = phpversion();
-                $passed = version_compare($installedVersion, $version, '>=');
+                $passed = version_compare(phpversion(), $version, '>=');
             } else {
                 $passed = extension_loaded($req);
                 $comparison = '>=';
                 if ($passed && $version !== false) {
-                    $installedVersion = phpversion($req);
-                    $passed = version_compare($installedVersion, $version, $comparison);
+                    $passed = version_compare(phpversion($req), $version, $comparison);
                 }
             }
             $requirements[] = [
-                'name' => $req,
-                'version' => $version,
-                'installed_version' => $installedVersion,
+                'name' => $title,
                 'passed' => $passed
             ];
             $allPassed = $allPassed && $passed;
@@ -175,7 +215,7 @@ class InstallController extends AbstractController
      */
     public function databaseAction()
     {
-        if (!$this->_isPassed('indexAction') || $this->_isPassed('databaseAction')) {
+        if (!$this->_isPassed('requirementsAction') || $this->_isPassed('databaseAction')) {
             return $this->_selectAction();
         }
 
@@ -297,7 +337,7 @@ class InstallController extends AbstractController
         $packageManager->generateMetadata();
 
         $assetsManager = new AssetManager($this->getDI(), false);
-        $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
+        $assetsManager->clear(true, PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
 
         return $this->response->redirect();
     }

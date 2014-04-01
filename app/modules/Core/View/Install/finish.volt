@@ -21,17 +21,10 @@
     {{ 'Installation'|i18n }}
 {% endblock %}
 
-{% block header %}
-    {{ partial('/Install/header') }}
-{% endblock %}
-
 {% block content %}
     {% set action = 'finish' %}
-    {{ partial('/Install/steps') }}
+    {{ partial('/Install/navigation') }}
 
-    <div class="thanks_message">
-        {{ 'Specify admin account'|i18n }}
-    </div>
     <div>
         {{ form.render() }}
     </div>

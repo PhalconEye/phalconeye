@@ -10,15 +10,7 @@
 
     ],
     "widgets": [
-        {
-            "name": "Test",
-            "module": "user",
-            "description": "Test",
-            "is_paginated": "0",
-            "is_acl_controlled": "0",
-            "admin_form": null,
-            "enabled": true
-        }
+
     ],
     "i18n": [
 

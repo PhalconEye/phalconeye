@@ -21,83 +21,14 @@
     {{ 'Installation | Database'|i18n }}
 {% endblock %}
 
-{% block header %}
-    {{ partial('/Install/header') }}
-{% endblock %}
-
 {% block content %}
-    {% set action = 'index' %}
-    {{ partial('/Install/steps') }}
+    {% set action = 'license' %}
+    {{ partial('/Install/navigation') }}
 
-    <div>
-        <table>
-            <thead>
-            <tr>
-                <th>
-                    {{ 'Requirement'|i18n }}
-                </th>
-                <th>
-                    {{ 'Required Version / Installed Version'|i18n }}
-                </th>
-                <th>
-                    {{ 'Passed'|i18n }}
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for req in reqs %}
-                <tr>
-                    <td class="table-column-name">
-                        {{ req['name'] }}
-                    </td>
-                    <td>
-                        {{ req['version'] }} / {{ req['installed_version'] }}
-                    </td>
-                    <td>
-                        {% if req['passed'] %}
-                            <img alt="Passed" src="{{ url('assets/img/core/install/good.png') }}"/>
-                        {% else %}
-                            <img alt="Not Passed" src="{{ url('assets/img/core/install/bad.png') }}"/>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        <table>
-            <thead>
-            <tr>
-                <th class="table-column-left">
-                    {{ 'Path'|i18n }}
-                </th>
-                <th>
-                    {{ 'Writable'|i18n }}
-                </th>
-            </tr>
-            </thead>
-            <tbody>
-            {% for path in pathInfo %}
-                <tr>
-                    <td class="table-column-name table-column-left">
-                        {{ path['name'] }}
-                    </td>
-                    <td>
-                        {% if path['is_writable'] %}
-                            <img alt="Passed" src="{{ url('assets/img/core/install/good.png') }}"/>
-                        {% else %}
-                            <img alt="Not Passed" src="{{ url('assets/img/core/install/bad.png') }}"/>
-                        {% endif %}
-                    </td>
-                </tr>
-            {% endfor %}
-            </tbody>
-        </table>
-
-        {% if passed %}
-            <a href="{{ url('install/database') }} " class="proceed">{{ 'Install'|i18n }}</a>
-        {% else %}
-            <div class="error">{{ 'Please, install all requirements and check pathes.'|i18n }}</div>
-        {% endif %}
+    <div class="content">
+        <pre>
+            {{- license -}}
+        </pre>
     </div>
+    <a href="{{ url('install/requirements') }} " class="proceed">{{ 'Accept'|i18n }}</a>
 {% endblock %}
