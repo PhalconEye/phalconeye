@@ -44,6 +44,7 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Model\Manager getModelsManager()
  * @method \Phalcon\Config getConfig()
  * @method \Phalcon\Translate\Adapter getI18n()
+ * @method \Phalcon\Events\Manager getEventsManager()
  */
 trait DIBehaviour
 {

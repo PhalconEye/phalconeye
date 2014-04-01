@@ -249,15 +249,11 @@ class Acl extends AbstractApi
             Text::startsWith($controller, 'Admin', true) &&
             $acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW
         ) {
-            return $dispatcher->forward(
-                [
-                    'module' => Application::SYSTEM_DEFAULT_MODULE,
-                    'namespace' => ucfirst(Application::SYSTEM_DEFAULT_MODULE) . '\Controller',
-                    "controller" => 'Error',
-                    "action" => 'show404'
-                ]
+            $this->getDI()->getEventsManager()->fire(
+                'dispatch:beforeException',
+                $dispatcher,
+                new Dispatcher\Exception()
             );
-
         }
 
         return !$event->isStopped();

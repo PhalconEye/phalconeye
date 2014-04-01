@@ -27,8 +27,8 @@ use Core\Model\Menu;
 use Core\Model\MenuItem;
 use Core\Model\Page;
 use Engine\Navigation;
+use Engine\Widget\Controller as WidgetController;
 use Phalcon\Http\ResponseInterface;
-use Phalcon\Paginator\Adapter\QueryBuilder;
 
 /**
  * Admin menus controller.
@@ -257,6 +257,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
+        $this->_clearMenuCache();
         $this->resolveModal(['reload' => true]);
     }
 
@@ -305,6 +306,7 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $item->save();
+        $this->_clearMenuCache();
         $this->resolveModal(['reload' => true]);
     }
 
@@ -387,6 +389,21 @@ class AdminMenusController extends AbstractAdminController
         }
 
         $this->response->setContent(json_encode($data))->send();
+    }
+
+    /**
+     * Clear menu items cache.
+     *
+     * @return void
+     */
+    protected function _clearMenuCache()
+    {
+        $cache = $this->getDI()->get('cacheOutput');
+        $prefix = $this->config->application->cache->prefix;
+        $widgetKeys = $cache->queryKeys($prefix . WidgetController::CACHE_PREFIX);
+        foreach ($widgetKeys as $key) {
+            $cache->delete(str_replace($prefix, '', $key));
+        }
     }
 }
 

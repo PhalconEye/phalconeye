@@ -12,9 +12,9 @@ SET time_zone = "+00:00";
 --
 
 INSERT IGNORE INTO `roles` (`id`, `name`, `description`, `is_default`, `type`, `undeletable`) VALUES
-(1, 'Admin', 'Administrator', 0, 'admin', 1),
+(1, 'Admin', 'Administrator.', 0, 'admin', 1),
 (2, 'User', 'Default user role.', 1, 'user', 1),
-(3, 'Guest', 'Guest role', 0, 'guest', 1);
+(3, 'Guest', 'Guest role.', 0, 'guest', 1);
 
 -- Dumping data for table `access`
 --
@@ -78,7 +78,7 @@ INSERT IGNORE INTO `menus` (`id`, `name`) VALUES
 
 INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id`, `url`, `onclick`, `target`, `tooltip`, `tooltip_position`, `icon`, `icon_position`, `item_order`, `languages`, `roles`, `is_enabled`) VALUES
 (1, 'Home', 1, NULL, NULL, '/', NULL, NULL, NULL, 'top', 'files/PE_logo.png', 'left', 0, NULL, NULL, 1),
-(2, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'left', 'files/github.gif', 'left', 1, NULL, NULL, 1);
+(2, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'right', 'files/github.gif', 'left', 1, NULL, NULL, 1);
 
 --
 -- Dumping data for table `packages`
