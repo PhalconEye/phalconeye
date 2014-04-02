@@ -33,7 +33,7 @@ use Engine\Exception as EngineException;
 trait Sluggable
 {
     /**
-     * @Column(type="string", nullable=false, column="slug")
+     * @Column(type="string", nullable=false, column="slug", size="255")
      */
     public $slug;
 
