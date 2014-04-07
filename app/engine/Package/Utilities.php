@@ -141,6 +141,12 @@ class Utilities
     {
         $paths = glob($defaultPath . '*', GLOB_MARK | GLOB_ONLYDIR | GLOB_NOSORT);
         $files = glob($defaultPath . $pattern, $flags);
+        if ($paths === false) {
+            if ($files === false) {
+                return array();
+            }
+            return $files; // error or empty match for sub directories.
+        }
         foreach ($paths as $path) {
             $files = array_merge($files, self::fsRecursiveGlob($path, $pattern, $flags));
         }
