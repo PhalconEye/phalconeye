@@ -588,17 +588,28 @@ form .form_elements select {
   margin-left: 20px;
 }
 
-.dashboard .row > div {
+.dashboard main,
+.dashboard aside {
   background: white;
   border: 1px solid #cdcdcd;
+  border-radius: 5px;
+  display: inline-block;
+  margin: 10px 10px 5px 0;
   padding: 20px;
-  margin-left: 20px;
-  margin-top: 20px;
+  vertical-align: top;
 }
 
-.dashboard .debug-mode {
-  width: 185px;
+.dashboard main {
+  width: ~"calc(100% - 315px)";
+}
+
+.dashboard aside {
+  width: 285px;
   text-align: center
+}
+
+.dashboard aside > div {
+  margin: 10px 0;
 }
 
 .languages_header h2 {
