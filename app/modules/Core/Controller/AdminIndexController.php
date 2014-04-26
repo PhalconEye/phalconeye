@@ -73,7 +73,6 @@ class AdminIndexController extends AbstractAdminController
         $this->view->disable();
         $this->app->clearCache();
         $this->flashSession->success('Cache cleared!');
-        $this->assets->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
         $this->response->redirect(['for' => 'admin-home']);
     }
 }

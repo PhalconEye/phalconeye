@@ -22,7 +22,6 @@ use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Registry;
-use Core\Model\Settings;
 
 /**
  * Application class.
@@ -203,9 +202,11 @@ class Application extends PhalconApplication
     /**
      * Clear application cache.
      *
+     * @param string $themeDirectory Theme directory.
+     *
      * @return void
      */
-    public function clearCache()
+    public function clearCache($themeDirectory = '')
     {
         $viewCache = $this->_dependencyInjector->get('viewCache');
         $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
@@ -259,7 +260,6 @@ class Application extends PhalconApplication
         }
 
         // Clear assets.
-        $themeDirectory = PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme');
         $this->_dependencyInjector->getShared('assets')->clear(true, $themeDirectory);
     }
 
