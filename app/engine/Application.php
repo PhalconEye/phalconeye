@@ -202,9 +202,11 @@ class Application extends PhalconApplication
     /**
      * Clear application cache.
      *
+     * @param string $themeDirectory Theme directory.
+     *
      * @return void
      */
-    public function clearCache()
+    public function clearCache($themeDirectory = '')
     {
         $viewCache = $this->_dependencyInjector->get('viewCache');
         $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
@@ -258,7 +260,7 @@ class Application extends PhalconApplication
         }
 
         // Clear assets.
-        $this->_dependencyInjector->getShared('assets')->clear(true);
+        $this->_dependencyInjector->getShared('assets')->clear(true, $themeDirectory);
     }
 
     /**

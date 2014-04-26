@@ -25,15 +25,22 @@
 
 {% block content %}
     <div class="dashboard">
-        <div class="row">
-            <div class="col-md-8">
-                <h1>{{ 'Dashboard' |i18n }}</h1>
-                Some activity here... imagine it =)... coming soon (maybe in 0.5.0)...
-            </div>
-            <div class="col-md-4 debug-mode">
+
+        <main>
+            <h1>{{ 'Dashboard' |i18n }}</h1>
+            Some activity here... imagine it =)... coming soon (maybe in 0.5.0)...
+        </main>
+
+        <aside>
+            <div>
                 <h4>{{ 'Debug mode'|i18n }}</h4>
                 <input name="debug" type="checkbox" data-href="{{ url(['for':'admin-mode'])}}" {% if debug %}checked{% endif %}>
             </div>
-        </div>
+            <hr>
+            <div>
+                <a href="{{ url(['for':'admin-clear'])}}" class="btn btn-primary">{{ 'Clear cache'|i18n }}</a>
+            </div>
+        </aside>
+
     </div>
 {% endblock %}
