@@ -254,7 +254,23 @@ class Manager
             throw new PackageException('Can\'t open archive...');
         }
 
-        $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . self::PACKAGE_MANIFEST_NAME);
+        $sourceDirectory = $tempDir = $this->getTempDirectory(false);
+        $manifestLocation = $tempDir . self::PACKAGE_MANIFEST_NAME;
+
+        // check manifest existence in expected location or its subdir
+        if (!file_exists($manifestLocation) && count($tempDirFolders = glob($tempDir . '/*', GLOB_ONLYDIR)) == 1) {
+            $sourceDirectory = realpath($tempDirFolders[0]);
+            $manifestLocation = $sourceDirectory . DS . self::PACKAGE_MANIFEST_NAME;
+        }
+
+        if (is_dir($sourceDirectory .'/package')) {
+            $sourceDirectory .=  '/package';
+        }
+        if (!file_exists($sourceDirectory.'/Bootstrap.php')) {
+            throw new PackageException('Missing Bootstrap file');
+        }
+
+        $manifest = $this->_readPackageManifest($manifestLocation);
         $manifest->offsetSet('isUpdate', false);
         $filter = new PhalconFilter();
 
@@ -290,7 +306,7 @@ class Manager
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
         Utilities::fsCheckLocation($destinationDirectory);
-        Utilities::fsCopyRecursive($this->getTempDirectory(false) . 'package', $destinationDirectory);
+        Utilities::fsCopyRecursive($sourceDirectory, $destinationDirectory, false, [basename($packageFilePath)]);
 
         return $manifest;
     }
@@ -559,7 +575,7 @@ class Manager
      */
     private function _readPackageManifest($manifestLocation)
     {
-        // check manifest existense
+        // check manifest existence
         if (!file_exists($manifestLocation)) {
             throw new InvalidManifest('Missing manifest file in uploaded package.');
         }
