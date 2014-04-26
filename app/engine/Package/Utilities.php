@@ -60,9 +60,9 @@ class Utilities
             return;
         }
 
+        $iteratorFlags = \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS;
         $it = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source,
-                                            \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS),
+            new \RecursiveDirectoryIterator($source, $iteratorFlags),
             \RecursiveIteratorIterator::SELF_FIRST
         );
         foreach ($it as $itemPath => $item) {
