@@ -18,8 +18,6 @@
 
 namespace Core\Controller;
 
-use Core\Model\Settings;
-
 /**
  * Admin Index controller.
  *
