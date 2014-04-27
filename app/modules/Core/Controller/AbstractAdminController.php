@@ -19,6 +19,7 @@
 namespace Core\Controller;
 
 use Core\Model\Package;
+use Core\Model\Settings;
 use Engine\Navigation;
 use Engine\Package\Manager;
 
@@ -190,6 +191,16 @@ abstract class AbstractAdminController extends AbstractController
             ->addJs('external/bootstrap/js/bootstrap.min.js')
             ->addJs('external/bootstrap/js/bootstrap-switch.min.js')
             ->addJs('external/ckeditor/ckeditor.js');
+    }
+
+    /**
+     * Clear cache
+     *
+     * @return void
+     */
+    protected function _clearCache()
+    {
+        $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
     }
 }
 
