@@ -216,7 +216,7 @@ class AdminPackagesController extends AbstractAdminController
                 if ($manifest->type == Manager::PACKAGE_TYPE_MODULE) {
                     // Run module install script.
                     $newPackageVersion = $packageManager->runInstallScript($manifest);
-                    $this->app->clearCache();
+                    $this->_clearCache();
 
                     // Install translations if possible.
                     if (!empty($manifest->i18n)) {
@@ -527,7 +527,7 @@ class AdminPackagesController extends AbstractAdminController
 
                 $this->_removePackageConfig($package);
                 $this->_updateMetadata();
-                $this->app->clearCache();
+                $this->_clearCache();
 
                 // Update database.
                 $schema = new Schema($this->getDI());
@@ -571,7 +571,7 @@ class AdminPackagesController extends AbstractAdminController
 
             $this->_enablePackageConfig($package);
             $this->_updateMetadata();
-            $this->app->clearCache();
+            $this->_clearCache();
         }
 
         return $this->response->redirect(['for' => $return]);
@@ -607,7 +607,7 @@ class AdminPackagesController extends AbstractAdminController
 
             $this->_disablePackageConfig($package);
             $this->_updateMetadata();
-            $this->app->clearCache();
+            $this->_clearCache();
         }
 
         return $this->response->redirect(['for' => $return]);
