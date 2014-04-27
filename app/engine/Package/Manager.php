@@ -254,25 +254,29 @@ class Manager
             throw new PackageException('Can\'t open archive...');
         }
 
-        $sourceDirectory = $tempDir = $this->getTempDirectory(false);
-        $manifestLocation = $tempDir . self::PACKAGE_MANIFEST_NAME;
+        $tempDir = rtrim($this->getTempDirectory(false), '/\\');
+        $manifestLocation = $tempDir . DS . self::PACKAGE_MANIFEST_NAME;
 
         // check manifest existence in expected location or its subdir
         if (!file_exists($manifestLocation) && count($tempDirFolders = glob($tempDir . '/*', GLOB_ONLYDIR)) == 1) {
-            $sourceDirectory = realpath($tempDirFolders[0]);
-            $manifestLocation = $sourceDirectory . DS . self::PACKAGE_MANIFEST_NAME;
-        }
-
-        if (is_dir($sourceDirectory .'/package')) {
-            $sourceDirectory .=  '/package';
-        }
-        if (!file_exists($sourceDirectory.'/Bootstrap.php')) {
-            throw new PackageException('Missing Bootstrap file');
+            $tempDir = realpath($tempDirFolders[0]);
+            $manifestLocation = $tempDir . DS . self::PACKAGE_MANIFEST_NAME;
         }
 
         $manifest = $this->_readPackageManifest($manifestLocation);
         $manifest->offsetSet('isUpdate', false);
         $filter = new PhalconFilter();
+
+        // look up for package folder in manifest or fallback to 'package' folder
+        if (isset($manifest->source)) {
+            $packageDirectory = $tempDir . DS . basename($manifest->source);
+        } else {
+            $packageDirectory = $tempDir . DS . 'package';
+        }
+
+        if (!is_dir($packageDirectory)) {
+            throw new PackageException('Missing package folder.');
+        }
 
         // check itself
         if (isset($this->_packagesVersions[$manifest->type][$manifest->name])) {
@@ -306,7 +310,7 @@ class Manager
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
         Utilities::fsCheckLocation($destinationDirectory);
-        Utilities::fsCopyRecursive($sourceDirectory, $destinationDirectory, false, [basename($packageFilePath)]);
+        Utilities::fsCopyRecursive($packageDirectory, $destinationDirectory);
 
         return $manifest;
     }
