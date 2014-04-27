@@ -171,7 +171,12 @@ class Profiler extends Helper
     private function _viewRender($template, $params)
     {
         ob_start();
+
+        $viewsDir = $this->_view->getViewsDir();
+        $this->_view->setViewsDir(ROOT_PATH . '/app/modules/Core/View/');
         $this->_view->partial('partials/profiler/' . $template, $params);
+        $this->_view->setViewsDir($viewsDir);
+
         $html = ob_get_contents();
         ob_end_clean();
 
