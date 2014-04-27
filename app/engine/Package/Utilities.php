@@ -60,26 +60,21 @@ class Utilities
             return;
         }
 
+        $iteratorFlags = \FilesystemIterator::KEY_AS_PATHNAME | \FilesystemIterator::SKIP_DOTS;
         $it = new \RecursiveIteratorIterator(
-            new \RecursiveDirectoryIterator($source, \RecursiveDirectoryIterator::KEY_AS_PATHNAME),
+            new \RecursiveDirectoryIterator($source, $iteratorFlags),
             \RecursiveIteratorIterator::SELF_FIRST
         );
-        foreach ($it as $item) {
-            $itemPath = $item->getPathname();
+        foreach ($it as $itemPath => $item) {
             $partial = str_replace($source, '', $itemPath);
             if (in_array($partial, $excludeNames) || in_array(basename($itemPath), $excludeNames)) {
                 continue;
             }
-            if ($partial == '.' || $partial == '..') {
-                continue;
-            }
 
-            $fDest = rtrim($dest, '/\\') . $partial;
+            $fDest = rtrim($dest, '/\\') . DS . $partial;
             // Ignore errors on mkdir (only fail if the file fails to copy
-            if ($item->isDir()) {
-                if (!is_dir($fDest)) {
-                    @mkdir($fDest, $item->getPerms(), true);
-                }
+            if ($item->isDir() && !is_dir($fDest)) {
+                @mkdir($fDest, $item->getPerms(), true);
             } else if ($item->isFile()) {
                 if ($statFiles && (is_file($fDest) && filemtime($itemPath) <= filemtime($fDest))) {
                     continue;

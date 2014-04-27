@@ -254,9 +254,29 @@ class Manager
             throw new PackageException('Can\'t open archive...');
         }
 
-        $manifest = $this->_readPackageManifest($this->getTempDirectory(false) . self::PACKAGE_MANIFEST_NAME);
+        $tempDir = rtrim($this->getTempDirectory(false), '/\\');
+        $manifestLocation = $tempDir . DS . self::PACKAGE_MANIFEST_NAME;
+
+        // check manifest existence in expected location or its subdir
+        if (!file_exists($manifestLocation) && count($tempDirFolders = glob($tempDir . '/*', GLOB_ONLYDIR)) == 1) {
+            $tempDir = realpath($tempDirFolders[0]);
+            $manifestLocation = $tempDir . DS . self::PACKAGE_MANIFEST_NAME;
+        }
+
+        $manifest = $this->_readPackageManifest($manifestLocation);
         $manifest->offsetSet('isUpdate', false);
         $filter = new PhalconFilter();
+
+        // look up for package folder in manifest or fallback to 'package' folder
+        if (isset($manifest->source)) {
+            $packageDirectory = $tempDir . DS . basename($manifest->source);
+        } else {
+            $packageDirectory = $tempDir . DS . 'package';
+        }
+
+        if (!is_dir($packageDirectory)) {
+            throw new PackageException('Missing package folder.');
+        }
 
         // check itself
         if (isset($this->_packagesVersions[$manifest->type][$manifest->name])) {
@@ -290,7 +310,7 @@ class Manager
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
         Utilities::fsCheckLocation($destinationDirectory);
-        Utilities::fsCopyRecursive($this->getTempDirectory(false) . 'package', $destinationDirectory);
+        Utilities::fsCopyRecursive($packageDirectory, $destinationDirectory);
 
         return $manifest;
     }
@@ -559,7 +579,7 @@ class Manager
      */
     private function _readPackageManifest($manifestLocation)
     {
-        // check manifest existense
+        // check manifest existence
         if (!file_exists($manifestLocation)) {
             throw new InvalidManifest('Missing manifest file in uploaded package.');
         }
