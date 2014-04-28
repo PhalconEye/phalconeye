@@ -1,3 +1,9 @@
+Version 0.4.1
+ - Added more flexible manifest.json support for packages, thanks to @WooDzu.
+ - Fixed #30, thanks to @WooDzu.
+ - Cache clearing optimizations, added "Clear cache" button to dashboard, thanks to @WooDzu.
+ - Fixed minor problems with cache path detection.
+
 Version 0.4.0
  - Implemented isCached, getCacheKey, getCacheLifeTime, clearCache methods for widgets caching.
  - Implemented modules system.
