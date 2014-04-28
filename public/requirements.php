@@ -36,7 +36,7 @@ if (php_sapi_name() !== 'cli' && function_exists('apache_get_modules') && !in_ar
 $checkPath = array(
     $this->_config->application->assets->local,
     $this->_config->application->logger->path,
-    $this->_config->application->cache->cacheDir,
+    $this->_config->application->cache->get('cacheDir') ? $this->_config->application->cache->cacheDir : null,
     $this->_config->application->view->compiledPath,
     $this->_config->application->metadata->metaDataDir,
     $this->_config->application->annotations->annotationsDir,
@@ -49,6 +49,9 @@ $GLOBALS['PATH_REQUIREMENTS'] = $checkPath;
 $allPassed = true;
 
 foreach ($checkPath as $path) {
+    if ($path === null) {
+        continue;
+    }
     $is_writable = is_writable($path);
     if (!$is_writable) {
         echo "{$path} isn't writable.</br>";

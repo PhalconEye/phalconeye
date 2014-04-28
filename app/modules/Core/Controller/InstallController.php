@@ -192,6 +192,9 @@ class InstallController extends AbstractController
         // Path is writable?
         $pathInfo = [];
         foreach ($GLOBALS['PATH_REQUIREMENTS'] as $path) {
+            if ($path === null) {
+                continue;
+            }
             $is_writable = is_writable($path);
             $pathInfo[] = [
                 'name' => $path,
