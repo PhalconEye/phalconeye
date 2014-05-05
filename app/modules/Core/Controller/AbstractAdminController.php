@@ -144,6 +144,9 @@ abstract class AbstractAdminController extends AbstractController
                     'href' => $href,
                     'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                 ];
+                if ($activeItem == 'admin/module' && (string) $path[3] == $module->name) {
+                    $activeItem = $href;
+                }
             }
 
             if (!empty($modulesMenuItems)) {
