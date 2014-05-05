@@ -46,6 +46,8 @@ class AdminModuleController extends AbstractAdminController
     /**
      * Index action.
      *
+     * @param string $module Module name
+     *
      * @return mixed
      *
      * @Route("/{name:[a-zA-Z0-9_-]+}", methods={"GET", "POST"}, name="admin-module-index")
@@ -91,8 +93,9 @@ class AdminModuleController extends AbstractAdminController
     /**
      * Ensure module existence
      *
-     * @param string $module
+     * @param string $module Module name
      *
+     * @return void
      * @throws DispatcherAdminException
      */
     protected function _checkModuleExists($module)
