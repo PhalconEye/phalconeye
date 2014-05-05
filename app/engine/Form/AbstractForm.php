@@ -411,7 +411,7 @@ abstract class AbstractForm implements ElementContainerInterface
     /**
      * Add content fieldset.
      *
-     * @param string $legend
+     * @param string $legend Fieldset legend
      *
      * @return FieldSet
      */
