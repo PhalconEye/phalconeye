@@ -1,0 +1,7 @@
+# Ignore everything in this directory
+*
+# Except core packages
+*
+/*
+!module-core.json
+!module-user.json
