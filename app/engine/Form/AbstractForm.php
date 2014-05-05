@@ -409,13 +409,15 @@ abstract class AbstractForm implements ElementContainerInterface
     }
 
     /**
-     * Add footer fieldset.
+     * Add content fieldset.
+     *
+     * @param string $legend
      *
      * @return FieldSet
      */
-    public function addContentFieldSet()
+    public function addContentFieldSet($legend = null)
     {
-        $fieldSet = new FieldSet(self::FIELDSET_CONTENT);
+        $fieldSet = new FieldSet(self::FIELDSET_CONTENT, $legend);
         $this->addFieldSet($fieldSet);
 
         return $fieldSet;

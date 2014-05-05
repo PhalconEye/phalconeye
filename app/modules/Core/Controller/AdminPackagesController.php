@@ -27,6 +27,7 @@ use Core\Form\CoreForm;
 use Core\Model\Language;
 use Core\Model\Package;
 use Core\Model\PackageDependency;
+use Core\Model\Settings;
 use Core\Model\Widget;
 use Engine\Db\Schema;
 use Engine\Exception;
@@ -653,8 +654,9 @@ class AdminPackagesController extends AbstractAdminController
     {
         switch ($package->type) {
             case Manager::PACKAGE_TYPE_MODULE:
-                // remove widgets
+                // remove widgets and settings
                 $this->db->delete(Widget::getTableName(), 'module = ?', [$package->name]);
+                $this->db->delete(Settings::getTableName(), 'name LIKE ?', [$package->name .'%']);
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
                 if ($widget = $package->getWidget()) {

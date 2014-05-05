@@ -22,7 +22,11 @@
 {% block content %}
     <div class="span12">
         <div class="row-fluid">
-            {{ 'This module has no settings...'|i18n }}
+            {% if form is defined %}
+                {{ form.render() }}
+            {% else %}
+                {{ 'This module has no settings...'|i18n }}
+            {% endif %}
         </div>
         <!--/row-->
     </div><!--/span-->

@@ -61,8 +61,12 @@ class Settings extends AbstractModel
      */
     public function setValue($value)
     {
-        $this->value = $value;
-        $this->save();
+        if (!empty($value)) {
+            $this->value = $value;
+            $this->save();
+        } else {
+            $this->delete();
+        }
 
         // Clear cache.
         $this->getDI()->get('cacheData')->delete(self::CACHE_PREFIX . $this->name);
