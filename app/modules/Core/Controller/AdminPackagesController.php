@@ -214,6 +214,8 @@ class AdminPackagesController extends AbstractAdminController
                     }
                 }
 
+                $redirect = null;
+
                 if ($manifest->type == Manager::PACKAGE_TYPE_MODULE) {
                     // Run module install script.
                     $newPackageVersion = $packageManager->runInstallScript($manifest);
@@ -246,12 +248,23 @@ class AdminPackagesController extends AbstractAdminController
                     // Update database.
                     $schema = new Schema($this->getDI());
                     $schema->updateDatabase();
+
+                    // Redirect to modules page
+                    $redirect = 'admin/module/'. $manifest->name;
+                }
+
+                if ($redirect) {
+                    $flashType = 'flashSession';
+                    $this->response->redirect($redirect);
+                    $this->view->disable();
+                } else {
+                    $flashType = 'flash';
                 }
 
                 if ($manifest->isUpdate) {
-                    $this->flash->success('Package updated to version ' . $newPackageVersion . '!');
+                    $this->{$flashType}->success("Package $manifest->title updated to version $newPackageVersion!");
                 } else {
-                    $this->flash->success('Package installed!');
+                    $this->{$flashType}->success("Package $manifest->title installed!");
                 }
 
             } catch (Exception $e) {
