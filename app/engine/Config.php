@@ -163,12 +163,19 @@ class Config extends PhalconConfig
     {
         $config = new Config(null, $stage);
         $configDirectory = ROOT_PATH . self::CONFIG_PATH . $stage;
-        foreach (scandir($configDirectory) as $file) {
-            if ($file == "." || $file == "..") {
-                continue;
-            }
+        $configFiles = glob($configDirectory .'/*.php');
 
-            $data = include_once($configDirectory . '/' . $file);
+        // create config files from .dist
+        if (!$configFiles) {
+            foreach (glob($configDirectory .'/*.dist') as $file) {
+                $configFile = substr($file, 0, -5);
+                copy($file, $configFile);
+                $configFiles[] = $configFile;
+            }
+        }
+
+        foreach ($configFiles as $file) {
+            $data = include_once($file);
             $config->offsetSet(basename($file, ".php"), $data);
         }
 
