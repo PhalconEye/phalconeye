@@ -15,18 +15,18 @@
 */
 
 /**
- * WARNING
- *
- * Manual changes to this file may cause a malfunction of the system.
- * Be careful when changing settings!
- *
- */
+* WARNING
+*
+* Manual changes to this file may cause a malfunction of the system.
+* Be careful when changing settings!
+*
+*/
 
 return array (
-    'adapter' => 'Mysql',
-    'host' => 'localhost',
-    'port' => '3306',
-    'username' => 'root',
-    'password' => NULL,
-    'dbname' => 'phalconeye',
+  'adapter' => 'Mysql',
+  'host' => 'localhost',
+  'port' => '3306',
+  'username' => 'root',
+  'password' => NULL,
+  'dbname' => 'phalconeye',
 );
