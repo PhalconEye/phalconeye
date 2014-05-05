@@ -24,9 +24,9 @@
 
 return array (
   'adapter' => 'Mysql',
-  'host' => '192.168.42.145',
+  'host' => 'localhost',
   'port' => '3306',
-  'username' => 'woodzu',
-  'password' => NULL,
+  'username' => 'root',
+  'password' => '',
   'dbname' => 'phalconeye',
 );

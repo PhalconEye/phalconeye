@@ -23,10 +23,47 @@
 */
 
 return array (
-  'adapter' => 'Mysql',
-  'host' => '192.168.42.145',
-  'port' => '3306',
-  'username' => 'woodzu',
-  'password' => NULL,
-  'dbname' => 'phalconeye',
+  'debug' => true,
+  'profiler' => true,
+  'baseUrl' => '/',
+  'cache' => 
+  array (
+    'lifetime' => '86400',
+    'prefix' => 'pe_',
+    'adapter' => 'File',
+    'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
+  ),
+  'logger' => 
+  array (
+    'enabled' => true,
+    'path' => ROOT_PATH . '/app/var/logs/',
+    'format' => '[%date%][%type%] %message%',
+  ),
+  'view' => 
+  array (
+    'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
+    'compiledExtension' => '.php',
+    'compiledSeparator' => '_',
+    'compileAlways' => true,
+  ),
+  'session' => 
+  array (
+    'adapter' => 'Files',
+    'uniqueId' => 'PhalconEye_',
+  ),
+  'assets' => 
+  array (
+    'local' => 'assets/',
+    'remote' => false,
+  ),
+  'metadata' => 
+  array (
+    'adapter' => 'Files',
+    'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
+  ),
+  'annotations' => 
+  array (
+    'adapter' => 'Files',
+    'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
+  ),
 );
