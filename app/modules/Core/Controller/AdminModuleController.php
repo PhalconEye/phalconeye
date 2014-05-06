@@ -69,9 +69,6 @@ class AdminModuleController extends AbstractAdminController
             throw new Exception('Config form must be instance of CoreForm');
         }
 
-        $form->setTitle(ucfirst($module) .' settings');
-        $form->addFooterFieldSet()->addButton('save');
-
         if (!$this->request->isPost()) {
             foreach ($form->getValues() as $key => $default) {
                 $form->setValue($key, Settings::getSetting($module . '_'. $key, $default));
