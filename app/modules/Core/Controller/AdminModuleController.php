@@ -70,9 +70,7 @@ class AdminModuleController extends AbstractAdminController
         }
 
         if (!$this->request->isPost()) {
-            foreach ($form->getValues() as $key => $default) {
-                $form->setValue($key, Settings::getSetting($module . '_'. $key, $default));
-            }
+            $form->setValues(Settings::getValue($module));
             return;
         }
 
@@ -81,7 +79,7 @@ class AdminModuleController extends AbstractAdminController
         }
 
         foreach ($form->getValues() as $key => $value) {
-            Settings::setSetting($module .'_'. $key, $value);
+            Settings::setValue($module, $key, $value);
         }
 
         $this->flash->success('Settings saved!');

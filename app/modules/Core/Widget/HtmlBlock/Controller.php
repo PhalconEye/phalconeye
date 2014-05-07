@@ -45,7 +45,7 @@ class Controller extends WidgetController
     {
         $this->view->title = $this->getParam('title');
         $currentLanguage = $this->session->get('language');
-        $defaultLanguage = Settings::getSetting('system_default_language');
+        $defaultLanguage = Settings::getValue('system', 'default_language');
 
         if (!$defaultLanguage || $defaultLanguage == 'auto') {
             $defaultLanguage = Config::CONFIG_DEFAULT_LANGUAGE;
@@ -116,7 +116,7 @@ class Controller extends WidgetController
         // Creating languages boxes.
         $languages = Language::find();
         $languageHtmlItems = '';
-        $defaultLanguage = Settings::getSetting('system_default_language', 'en');
+        $defaultLanguage = Settings::getValue('system', 'default_language', 'en');
         if ($defaultLanguage == 'auto') {
             $defaultLanguage = 'en';
         }

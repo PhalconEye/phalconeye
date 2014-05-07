@@ -37,13 +37,13 @@ class Setting extends Helper
     /**
      * Get setting by name.
      *
-     * @param string     $name    Setting name.
-     * @param null|mixed $default Default value.
+     * @param string     $module    Setting name.
+     * @param null|mixed $setting Default value.
      *
      * @return null|string
      */
-    protected function _get($name, $default = null)
+    protected function _get($module, $setting, $default = null)
     {
-        return Settings::getSetting($name, $default);
+        return Settings::getValue($module, $setting, $default);
     }
 }

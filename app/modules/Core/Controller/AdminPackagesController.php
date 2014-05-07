@@ -669,7 +669,7 @@ class AdminPackagesController extends AbstractAdminController
             case Manager::PACKAGE_TYPE_MODULE:
                 // remove widgets and settings
                 $this->db->delete(Widget::getTableName(), 'module = ?', [$package->name]);
-                $this->db->delete(Settings::getTableName(), 'name LIKE ?', [$package->name .'%']);
+                Settings::factory($package->name)->delete();
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
                 if ($widget = $package->getWidget()) {

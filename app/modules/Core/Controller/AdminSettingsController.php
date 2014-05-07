@@ -51,8 +51,9 @@ class AdminSettingsController extends AbstractAdminController
             return;
         }
 
-        $values = $form->getValues();
-        Settings::setSettings($values);
+        foreach ($form->getValues() as $key => $value) {
+            Settings::setValue('system', $key, $value);
+        }
 
         $this->flash->success('Settings saved!');
     }

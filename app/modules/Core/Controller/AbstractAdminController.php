@@ -203,7 +203,7 @@ abstract class AbstractAdminController extends AbstractController
      */
     protected function _clearCache()
     {
-        $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
+        $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getValue('system', 'theme'));
     }
 }
 
