@@ -134,9 +134,9 @@ class Settings extends AbstractModel
     /**
      * Set setting by name.
      *
-     * @param string      $module   Module name.
-     * @param null|string $setting  Setting name.
-     * @param mixed       $value    Setting value.
+     * @param string      $module  Module name.
+     * @param null|string $setting Setting name.
+     * @param mixed       $value   Setting value.
      *
      * @throw \InvalidArgumentException
      */
@@ -210,8 +210,8 @@ class Settings extends AbstractModel
     /**
      * Set module's setting using full name
      *
-     * @param null|string $name    Setting name.
-     * @param null|mixed  $default Default value.
+     * @param null|string $name  Setting name.
+     * @param null|mixed  $value Setting value.
      *
      * @deprecated since 0.5, use Settings::setValue() instead
      * @return mixed

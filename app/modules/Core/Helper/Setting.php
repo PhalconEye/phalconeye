@@ -43,8 +43,8 @@ class Setting extends Helper
     /**
      * Get setting by name.
      *
-     * @param string     $setting   Setting name.
-     * @param null|mixed $default   Default value.
+     * @param string     $setting Setting name.
+     * @param null|mixed $default Default value.
      *
      * @return null|string
      */
