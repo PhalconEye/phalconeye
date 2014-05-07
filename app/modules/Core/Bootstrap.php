@@ -99,7 +99,7 @@ class Bootstrap extends EngineBootstrap
 
         // Install assets if required.
         if ($config->application->debug) {
-            $di->get('assets')->installAssets(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
+            $di->get('assets')->installAssets(PUBLIC_PATH . '/themes/' . Settings::getValue('system', 'theme'));
         }
     }
 
@@ -121,7 +121,7 @@ class Bootstrap extends EngineBootstrap
         if (!$di->get('session')->has('language')) {
             /** @var Language $languageObject */
             if ($config->installed) {
-                $language = Settings::getSetting('system_default_language');
+                $language = Settings::getValue('system', 'default_language');
                 if ($language == 'auto') {
                     $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
                     $languageObject = Language::findFirst("language = '" . $locale . "' OR locale = '" . $locale . "'");

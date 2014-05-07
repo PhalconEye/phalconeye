@@ -52,14 +52,14 @@ class System extends CoreForm
             ->setDescription('All system settings here.');
 
         $this->addContentFieldSet()
-            ->addText('system_title', 'Site name', null, Settings::getSetting('system_title', ''))
-            ->addSelect('system_theme', 'Theme', null, $this->_getThemeOptions(), Settings::getSetting('system_theme'))
+            ->addText('title', 'Site name', null, Settings::getValue('system', 'title', ''))
+            ->addSelect('theme', 'Theme', null, $this->_getThemeOptions(), Settings::getValue('system', 'theme'))
             ->addSelect(
-                'system_default_language',
+                'default_language',
                 'Default language',
                 null,
                 $this->_getLanguageOptions(),
-                Settings::getSetting('system_default_language')
+                Settings::getValue('system', 'default_language')
             );
 
 

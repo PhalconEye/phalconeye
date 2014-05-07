@@ -18,7 +18,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ helper('setting', 'core').get('system_title', '') }} | {% block title %}{% endblock %}</title>
+    <title>{{ helper('setting', 'core').get('title', '') }} | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="generator" content="PhalconEye - Open Source Content Management System"/>

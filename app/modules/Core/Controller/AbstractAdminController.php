@@ -144,6 +144,9 @@ abstract class AbstractAdminController extends AbstractController
                     'href' => $href,
                     'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                 ];
+                if ($activeItem == 'admin/module' && (string) $path[3] == $module->name) {
+                    $activeItem = $href;
+                }
             }
 
             if (!empty($modulesMenuItems)) {
@@ -200,7 +203,7 @@ abstract class AbstractAdminController extends AbstractController
      */
     protected function _clearCache()
     {
-        $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
+        $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getValue('system', 'theme'));
     }
 }
 

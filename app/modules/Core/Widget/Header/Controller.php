@@ -40,7 +40,7 @@ class Controller extends WidgetController
      */
     public function indexAction()
     {
-        $this->view->site_title = Settings::getSetting('system_title', '');
+        $this->view->site_title = Settings::getValue('system', 'title', '');
         $this->view->logo = $this->getParam('logo');
         $this->view->show_title = $this->getParam('show_title');
         $this->view->show_auth = $this->getParam('show_auth');

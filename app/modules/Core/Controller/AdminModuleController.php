@@ -18,6 +18,11 @@
 
 namespace Core\Controller;
 
+use Core\Form\CoreForm;
+use Core\Model\Settings;
+use Engine\Exception;
+use Phalcon\Mvc\Dispatcher\Exception as DispatcherAdminException;
+
 /**
  * Admin modules controller.
  *
@@ -32,14 +37,69 @@ namespace Core\Controller;
  */
 class AdminModuleController extends AbstractAdminController
 {
+    const
+        /**
+         * Module config form namespace
+         */
+        CONFIG_FORM_NS = '\Form\ConfigForm';
+
     /**
      * Index action.
      *
+     * @param string $module Module name
+     *
      * @return mixed
      *
-     * @Route("/{name:[a-zA-Z0-9_-]+}", methods={"GET"}, name="admin-module-index")
+     * @Route("/{name:[a-zA-Z0-9_-]+}", methods={"GET", "POST"}, name="admin-module-index")
      */
-    public function indexAction()
+    public function indexAction($module)
     {
+        $this->_checkModuleExists($module);
+
+        $configForm = ucfirst($module) . self::CONFIG_FORM_NS;
+
+        if (!class_exists($configForm)) {
+            return;
+        }
+
+        /** @var $form CoreForm */
+        $this->view->form = $form = new $configForm;
+
+        if (!$form instanceof CoreForm) {
+            throw new Exception('Config form must be instance of CoreForm');
+        }
+
+        if (!$this->request->isPost()) {
+            $form->setValues(Settings::getValue($module));
+            return;
+        }
+
+        if (!$form->isValid()) {
+            return;
+        }
+
+        foreach ($form->getValues() as $key => $value) {
+            Settings::setValue($module, $key, $value);
+        }
+
+        $this->flash->success('Settings saved!');
+    }
+
+    /**
+     * Ensure module existence
+     *
+     * @param string $module Module name
+     *
+     * @return void
+     * @throws DispatcherAdminException
+     */
+    protected function _checkModuleExists($module)
+    {
+        $modules = $this->getDI()->get('registry')->modules;
+
+        if (!in_array($module, $modules)) {
+            // todo: create DispatcherAdminException handler
+            throw new DispatcherAdminException;
+        }
     }
 }
