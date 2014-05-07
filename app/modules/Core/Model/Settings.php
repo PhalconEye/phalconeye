@@ -66,7 +66,7 @@ class Settings extends AbstractModel
     public function save($data=null, $whiteList=null)
     {
         if (!empty($this->value) && !isset($data['value'])) {
-            parent::save($data, $whiteList) and $this->clearCache();
+            parent::save($data, $whiteList) and $this->_clearCache();
         } else {
             $this->delete();
         }
@@ -74,20 +74,20 @@ class Settings extends AbstractModel
     }
 
     /**
-     * Save settings and clear cache
+     * Delete a setting and clear cache
      *
      * {@inheritdoc}
      */
     public function delete()
     {
-        parent::delete() and $this->clearCache();
+        parent::delete() and $this->_clearCache();
         return true;
     }
 
     /**
      * Update cache with new value
      */
-    public function updateCache()
+    protected function _updateCache()
     {
         $this->getDI()->get('cacheData')->save(self::CACHE_PREFIX . $this->name, $this->value);
     }
@@ -95,16 +95,17 @@ class Settings extends AbstractModel
     /**
      * Delete setting from cache
      */
-    protected function clearCache() {
+    protected function _clearCache()
+    {
         $this->getDI()->get('cacheData')->delete(self::CACHE_PREFIX . $this->name);
     }
 
     /**
      * Get module's setting or a list
      *
-     * @param string $module Module name.
+     * @param string      $module  Module name.
      * @param null|string $setting Setting name.
-     * @param null|mixed $default Default value.
+     * @param null|mixed  $default Default value.
      *
      * @return mixed
      */
@@ -122,7 +123,7 @@ class Settings extends AbstractModel
             foreach ($settingObject as $entity) {
                 $entityName = substr($entity->name, strlen($module . self::SEPARATOR));
                 $rows[$entityName] = $entity->value;
-                $entity->updateCache();
+                $entity->_updateCache();
             }
             return $rows;
         }
@@ -133,9 +134,9 @@ class Settings extends AbstractModel
     /**
      * Set setting by name.
      *
-     * @param string $module Module name.
-     * @param null|string $setting Setting name.
-     * @param mixed $value Setting value.
+     * @param string      $module   Module name.
+     * @param null|string $setting  Setting name.
+     * @param mixed       $value    Setting value.
      *
      * @throw \InvalidArgumentException
      */
@@ -157,7 +158,7 @@ class Settings extends AbstractModel
     /**
      * Create module's setting instance or a resultset
      *
-     * @param string $module Module name.
+     * @param string      $module  Module name.
      * @param null|string $setting Setting name.
      *
      * @return null|Settings|Settings[]
@@ -191,13 +192,14 @@ class Settings extends AbstractModel
     /**
      * Get module's setting using full name
      *
-     * @param null|string $setting Setting name.
-     * @param null|mixed $default Default value.
+     * @param null|string $name    Setting name.
+     * @param null|mixed  $default Default value.
      *
      * @deprecated since 0.5, use Settings::getValue() instead
      * @return mixed
      */
-    public static function getSetting($name, $default = null) {
+    public static function getSetting($name, $default = null)
+    {
         return self::getValue(
             strstr($name, self::SEPARATOR, true),
             ltrim(strstr($name, self::SEPARATOR), self::SEPARATOR),
@@ -208,8 +210,8 @@ class Settings extends AbstractModel
     /**
      * Set module's setting using full name
      *
-     * @param null|string $setting Setting name.
-     * @param null|mixed $default Default value.
+     * @param null|string $name    Setting name.
+     * @param null|mixed  $default Default value.
      *
      * @deprecated since 0.5, use Settings::setValue() instead
      * @return mixed

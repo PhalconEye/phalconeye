@@ -34,16 +34,22 @@ use Phalcon\Tag;
  */
 class Setting extends Helper
 {
+    const
+        /**
+         * System setting prefix
+         */
+        PREFIX = 'system';
+
     /**
      * Get setting by name.
      *
-     * @param string     $module    Setting name.
-     * @param null|mixed $setting Default value.
+     * @param string     $setting   Setting name.
+     * @param null|mixed $default   Default value.
      *
      * @return null|string
      */
-    protected function _get($module, $setting, $default = null)
+    protected function _get($setting, $default = null)
     {
-        return Settings::getValue($module, $setting, $default);
+        return Settings::getValue(static::PREFIX, $setting, $default);
     }
 }
