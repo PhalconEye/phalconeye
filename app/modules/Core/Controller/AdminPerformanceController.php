@@ -73,7 +73,7 @@ class AdminPerformanceController extends AbstractAdminController
 
         $data = $form->getValues();
         if (!empty($data['clear_cache']) && $data['clear_cache'] = 1) {
-            $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getSetting('system_theme'));
+            $this->app->clearCache(PUBLIC_PATH . '/themes/' . Settings::getValue('system', 'theme'));
             $this->flash->success('Cache cleared!');
             $form->setValue('clear_cache', null);
         }

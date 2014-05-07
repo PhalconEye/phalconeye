@@ -19,6 +19,7 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
+use Phalcon\Mvc\Model\ResultsetInterface;
 
 /**
  * Settings.
@@ -38,7 +39,12 @@ class Settings extends AbstractModel
         /**
          * Cache prefix.
          */
-        CACHE_PREFIX = 'setting_';
+        CACHE_PREFIX = 'setting_',
+
+        /**
+         * Setting separator
+         */
+        SEPARATOR = '_';
 
     /**
      * @Primary
@@ -53,90 +59,169 @@ class Settings extends AbstractModel
     public $value;
 
     /**
-     * Set value of current setting and save to db.
+     * Save settings and clear cache
      *
-     * @param mixed $value Setting value.
-     *
-     * @return void
+     * {@inheritdoc}
      */
-    public function setValue($value)
+    public function save($data=null, $whiteList=null)
     {
-        $this->value = $value;
-        $this->save();
+        if (!empty($this->value) && !isset($data['value'])) {
+            parent::save($data, $whiteList) and $this->_clearCache();
+        } else {
+            $this->delete();
+        }
+        return true;
+    }
 
-        // Clear cache.
+    /**
+     * Delete a setting and clear cache
+     *
+     * {@inheritdoc}
+     */
+    public function delete()
+    {
+        parent::delete() and $this->_clearCache();
+        return true;
+    }
+
+    /**
+     * Update cache with new value
+     */
+    protected function _updateCache()
+    {
+        $this->getDI()->get('cacheData')->save(self::CACHE_PREFIX . $this->name, $this->value);
+    }
+
+    /**
+     * Delete setting from cache
+     */
+    protected function _clearCache()
+    {
         $this->getDI()->get('cacheData')->delete(self::CACHE_PREFIX . $this->name);
     }
 
     /**
-     * Get setting by name.
+     * Get module's setting or a list
      *
-     * @param string     $name    Setting name.
-     * @param null|mixed $default Default value.
+     * @param string      $module  Module name.
+     * @param null|string $setting Setting name.
+     * @param null|mixed  $default Default value.
      *
-     * @return null|string
+     * @return mixed
      */
-    public static function getSetting($name, $default = null)
+    public static function getValue($module, $setting = null, $default = null)
     {
-        $setting = self::getSettingObject($name);
-        if (!$setting) {
+        $settingObject = self::factory($module, $setting);
+
+        if (!$settingObject) {
             return $default;
         }
 
-        return $setting->value;
-    }
+        if ($settingObject instanceof ResultsetInterface) {
+            $rows = [];
+            /** @var $entity Settings **/
+            foreach ($settingObject as $entity) {
+                $entityName = substr($entity->name, strlen($module . self::SEPARATOR));
+                $rows[$entityName] = $entity->value;
+                $entity->_updateCache();
+            }
+            return $rows;
+        }
 
-    /**
-     * Get setting object by name.
-     *
-     * @param string $name Setting name.
-     *
-     * @return null|Settings
-     */
-    public static function getSettingObject($name)
-    {
-        return Settings::findFirst(
-            [
-                'name = :name:',
-                'bind' => [
-                    'name' => $name
-                ],
-                'cache' => [
-                    'key' => self::CACHE_PREFIX . $name
-                ]
-            ]
-        );
+        return $settingObject->value;
     }
 
     /**
      * Set setting by name.
      *
-     * @param string $name  Setting name.
-     * @param mixed  $value Setting value.
+     * @param string      $module  Module name.
+     * @param null|string $setting Setting name.
+     * @param mixed       $value   Setting value.
+     *
+     * @throw \InvalidArgumentException
      */
-    public static function setSetting($name, $value)
+    public static function setValue($module, $setting, $value)
     {
-        $setting = self::getSettingObject($name);
-
-        if (!$setting) {
-            $setting = new Settings();
-            $setting->name = $name;
+        if (empty($setting)) {
+            throw new \InvalidArgumentException('Missing required $setting');
         }
 
-        $setting->setValue($value);
+        $settingObject = self::factory($module, $setting);
+        if (!$settingObject) {
+            $settingObject = new self;
+        }
+        $settingObject->name = $module . self::SEPARATOR . $setting;
+        $settingObject->value = $value;
+        $settingObject->save();
     }
 
     /**
-     * Set array settings with key related values.
+     * Create module's setting instance or a resultset
      *
-     * @param array $settings Settings data (key=>value).
+     * @param string      $module  Module name.
+     * @param null|string $setting Setting name.
      *
-     * @return void
+     * @return null|Settings|Settings[]
      */
-    public static function setSettings($settings)
+    public static function factory($module, $setting = null)
     {
-        foreach ($settings as $key => $value) {
-            self::setSetting($key, $value);
+        if (empty($setting)) {
+            return self::find(
+                [
+                    'name LIKE :name:',
+                    'bind' => [
+                        'name' => $module . self::SEPARATOR .'%'
+                    ]
+                ]
+            );
+        } else {
+            return self::findFirst(
+                [
+                    'name = :name:',
+                    'bind' => [
+                        'name' => $module . self::SEPARATOR . $setting
+                    ],
+                    'cache' => [
+                        'key' => self::CACHE_PREFIX . $module . self::SEPARATOR . $setting
+                    ]
+                ]
+            );
         }
+    }
+
+    /**
+     * Get module's setting using full name
+     *
+     * @param null|string $name    Setting name.
+     * @param null|mixed  $default Default value.
+     *
+     * @deprecated since 0.5, use Settings::getValue() instead
+     * @return mixed
+     */
+    public static function getSetting($name, $default = null)
+    {
+        return self::getValue(
+            strstr($name, self::SEPARATOR, true),
+            ltrim(strstr($name, self::SEPARATOR), self::SEPARATOR),
+            $default
+        );
+    }
+
+    /**
+     * Set module's setting using full name
+     *
+     * @param null|string $name  Setting name.
+     * @param null|mixed  $value Setting value.
+     *
+     * @deprecated since 0.5, use Settings::setValue() instead
+     * @return mixed
+     */
+    public static function setSetting($name, $value)
+    {
+        self::setValue(
+            strstr($name, self::SEPARATOR, true),
+            ltrim(strstr($name, self::SEPARATOR), self::SEPARATOR),
+            $value
+        );
     }
 }
