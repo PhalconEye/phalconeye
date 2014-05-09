@@ -19,12 +19,16 @@
 
 {%- block content -%}
     <div class="header_widget">
+    {% if show_title is 1 or not(logo is empty)%}
         <div class="header_logo">
-        <a href="{{ url() }}">
-            <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
-            {% if show_title is 1 %}{{ site_title }}{% endif %}
-        </a>
-    </div>
+            <a href="{{ url() }}">
+                {% if not(logo is empty) %}
+                <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
+                {% endif %}
+                {% if show_title is 1 %}{{ site_title }}{% endif %}
+            </a>
+        </div>
+    {% endif %}
 
     {% if show_auth is 1 %}
         <div class="header_auth">
