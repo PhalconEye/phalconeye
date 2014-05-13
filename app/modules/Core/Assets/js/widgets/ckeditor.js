@@ -38,10 +38,11 @@
                 var data = element.data('options');
                 if (typeof data == 'string') {
                     data = $.parseJSON(data);
-                }
-                else {
+                } else if (typeof data != 'object') {
                     data = {};
                 }
+
+                console.log(element.data('name'), data);
 
                 CKEDITOR.replace(element.data('name'), data);
             }
