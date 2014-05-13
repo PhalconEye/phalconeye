@@ -42,8 +42,6 @@
                     data = {};
                 }
 
-                console.log(element.data('name'), data);
-
                 CKEDITOR.replace(element.data('name'), data);
             }
         }
