@@ -55,7 +55,7 @@ class CkEditor extends TextArea implements ElementInterface
             [
                 'data-widget' => 'ckeditor',
                 'data-name' => $this->getName(),
-                'data-options' => json_encode($this->getOption('elementOptions', []))
+                'data-options' => htmlspecialchars(json_encode($this->getOption('elementOptions', [])))
             ]
         );
     }
