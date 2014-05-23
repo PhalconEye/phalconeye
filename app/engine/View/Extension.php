@@ -45,6 +45,13 @@ class Extension extends DI\Injectable
     public function compileFunction($name, $arguments, $params)
     {
         switch ($name) {
+            case 'php':
+                $code = '';
+                if (isset($params[0]) && isset($params[0]['expr']['value'])) {
+                    $code = $params[0]['expr']['value'];
+                }
+                return $code;
+
             case 'helper':
                 return '\Engine\Helper::getInstance(' . $arguments . ')';
 
