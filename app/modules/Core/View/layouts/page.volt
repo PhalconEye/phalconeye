@@ -33,11 +33,11 @@
     {{ partial("partials/layout", ['page': page, 'content': content]) }}
 
 
-    {#{% if helper('security').isAllowed('\Core\Model\Page', 'show_views') %}#}
+    {#{% if helper('acl').isAllowed('\Core\Model\Page', 'show_views') %}#}
         {#<div class="page_views">{{ 'View count:'|i18n }}{{ page.view_count }}</div>#}
     {#{% endif %}#}
 
-    {#{{ helper('security').getAllowed('\Core\Model\Page', 'page_footer') }}#}
+    {#{{ helper('acl').getAllowed('\Core\Model\Page', 'page_footer') }}#}
 
 
     <div class="clear"></div>
