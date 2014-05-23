@@ -57,18 +57,18 @@ class Security extends Helper
     /**
      * Check allowed value.
      *
-     * @param mixed  $resource Resource.
-     * @param string $action   Action to perform.
+     * @param mixed  $resource  Resource.
+     * @param string $valueName Value name.
      *
      * @return mixed
      */
-    protected function _getAllowed($resource, $action)
+    protected function _getAllowed($resource, $valueName)
     {
         $viewer = User::getViewer();
 
         return $this->getDI()
             ->get('core')
             ->acl()
-            ->getAllowedValue($resource, $viewer->getRole(), $action);
+            ->getAllowedValue($resource, $viewer->getRole(), $valueName);
     }
 }
