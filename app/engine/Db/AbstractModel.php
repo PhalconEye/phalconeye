@@ -122,13 +122,29 @@ abstract class AbstractModel extends PhalconModel
         return $builder;
     }
 
-    /**
+        /**
      * Get identity.
      *
-     * @return int
+     * @return mixed
      */
     public function getId()
     {
-        return $this->id;
+        /** @var \Phalcon\Mvc\Model\MetaData $modelsMetadata */
+        $modelsMetadata = $this->getDI()->get('modelsMetadata');
+        $primaryKeys = $modelsMetadata->getPrimaryKeyAttributes($this);
+
+        switch (count($primaryKeys)) {
+            case 0:
+                return null;
+                break;
+            case 1:
+                return $this->{$primaryKeys[0]};
+                break;
+            default:
+                return array_intersect_key(
+                    get_object_vars($this),
+                    array_flip($primaryKeys)
+                );
+        }
     }
 }
