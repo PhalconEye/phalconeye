@@ -131,9 +131,7 @@ abstract class AbstractModel extends PhalconModel
      */
     public function getId()
     {
-        /** @var \Phalcon\Mvc\Model\MetaData $modelsMetadata */
-        $modelsMetadata = $this->getDI()->get('modelsMetadata');
-        $primaryKeys = $modelsMetadata->getPrimaryKeyAttributes($this);
+        $primaryKeys = $this->getDI()->get('modelsMetadata')->getPrimaryKeyAttributes($this);
 
         switch (count($primaryKeys)) {
             case 0:
