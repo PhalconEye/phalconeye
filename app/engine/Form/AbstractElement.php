@@ -383,7 +383,7 @@ abstract class AbstractElement implements ElementInterface
         $values = (array) $originalValue;
 
         if ($minElements > $maxElements) {
-            throw new \LogicException('Minimum number of element exceeds minimum');
+            throw new \LogicException('Minimum number of elements exceeds maximum');
         }
 
         if (count($values) < $minElements) {
