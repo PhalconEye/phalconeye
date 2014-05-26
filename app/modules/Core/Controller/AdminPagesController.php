@@ -328,7 +328,7 @@ class AdminPagesController extends AbstractAdminController
                 null,
                 ['using' => ['id', 'name']]
             );
-            $form->setOrder('roles[]', 1000);
+            $form->setOrder('roles[]', 1001);
         }
 
         // set form values

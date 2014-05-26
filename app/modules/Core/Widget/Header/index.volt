@@ -19,12 +19,16 @@
 
 {%- block content -%}
     <div class="header_widget">
+    {% if show_title is 1 or not(logo is empty)%}
         <div class="header_logo">
-        <a href="{{ url() }}">
-            <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
-            {% if show_title is 1 %}{{ site_title }}{% endif %}
-        </a>
-    </div>
+            <a href="{{ url() }}">
+                {% if not(logo is empty) %}
+                <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
+                {% endif %}
+                {% if show_title is 1 %}{{ site_title }}{% endif %}
+            </a>
+        </div>
+    {% endif %}
 
     {% if show_auth is 1 %}
         <div class="header_auth">
@@ -35,7 +39,7 @@
         {% else %}
             {{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}&nbsp;
             |
-            {% if helper('security', 'core').isAllowed('AdminArea', 'access') %}
+            {% if helper('acl', 'core').isAllowed('AdminArea', 'access') %}
                 <a href="{{ url('admin') }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
             <a href="{{ url('logout') }}">{{ 'Logout' |i18n }}</a>

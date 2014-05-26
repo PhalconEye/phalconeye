@@ -128,7 +128,7 @@ abstract class AbstractForm implements ElementContainerInterface
         FILTER_EMAIL = 'email',
 
         /**
-         * Filter type 'email'.
+         * Filter type 'int'.
          */
         FILTER_INT = 'int',
 

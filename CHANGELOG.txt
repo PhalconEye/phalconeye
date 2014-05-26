@@ -3,6 +3,7 @@ Version 0.4.1
  - Fixed #30, thanks to @WooDzu.
  - Cache clearing optimizations, added "Clear cache" button to dashboard, thanks to @WooDzu.
  - Fixed minor problems with cache path detection.
+ - Added method "php" to view. Allows to use php code inside volt.
 
 Version 0.4.0
  - Implemented isCached, getCacheKey, getCacheLifeTime, clearCache methods for widgets caching.

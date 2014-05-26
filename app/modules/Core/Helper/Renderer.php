@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -33,6 +34,7 @@ use User\Model\User;
  * @category  PhalconEye
  * @package   Core\Helper
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -79,7 +81,7 @@ class Renderer extends Helper
         // Resort content by sides.
         $content = [];
         foreach ($widgets as $widget) {
-            $content[$widget->layout][] = $widget;
+            $content[$widget->layout][] = $this->_renderWidgetId($widget->widget_id, $widget->getParams());;
         }
 
         /** @var \Phalcon\Mvc\View $view */

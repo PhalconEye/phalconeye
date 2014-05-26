@@ -241,7 +241,12 @@ abstract class AbstractCommand implements CommandInterface
             }
 
             print ConsoleUtil::headLine('Help for "' . $commandName . ' ' . $action . '":');
-            print ConsoleUtil::textLine($this->getDescription());
+            if (isset($this->_actions[$action]) && isset($this->_actions[$action]['description'])) {
+                print ConsoleUtil::textLine($this->_actions[$action]['description']);
+            } else {
+                print ConsoleUtil::textLine($this->getDescription());
+            }
+
             $this->printParameters($action);
             return;
         } else {
@@ -460,36 +465,13 @@ abstract class AbstractCommand implements CommandInterface
 
             // Method annotations.
             $reflection = new \ReflectionMethod(get_class($this), $method);
-            $docComment = $reflection->getDocComment();
 
             // Method name.
             $method = str_replace('Action', '', $method);
             $this->_actions[$method] = [];
 
             // Get action description and params metadata.
-            $paramsMetadata = [];
-            $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
-            $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
-            if (!empty($actionComment)) {
-                foreach ($actionComment as $comment) {
-                    if (strpos($comment, '@') === false) {
-                        if (empty($this->_actions[$method]['description'])) {
-                            $this->_actions[$method]['description'] = $comment;
-                        } else {
-                            $this->_actions[$method]['description'] .= $comment;
-                        }
-                    } elseif (strpos($comment, '@param') !== false) {
-                        $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
-                        $paramOptions = explode(' ', $comment);
-                        if (!empty($paramOptions[2])) {
-                            $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
-                                'type' => $paramOptions[1],
-                                'description' => (!empty($paramOptions[3]) ? $paramOptions[3] : '')
-                            ];
-                        }
-                    }
-                }
-            }
+            $paramsMetadata = $this->_getActionMetadata($reflection, $method);
 
             // Get action params.
             $this->_actions[$method]['params'] = [];
@@ -506,5 +488,56 @@ abstract class AbstractCommand implements CommandInterface
                 ];
             }
         }
+    }
+
+    /**
+     * Get action metadata.
+     *
+     * @param \ReflectionMethod $reflection Reflection object.
+     * @param string            $method     Method name.
+     *
+     * @return array
+     */
+    private function _getActionMetadata($reflection, $method)
+    {
+        $docComment = $reflection->getDocComment();
+        $paramsMetadata = [];
+        $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
+        $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
+
+        if (!empty($actionComment)) {
+            foreach ($actionComment as $comment) {
+                if (strpos($comment, '@') === false) {
+                    if (empty($this->_actions[$method]['description'])) {
+                        $this->_actions[$method]['description'] = $comment;
+                    } else {
+                        $this->_actions[$method]['description'] .= $comment;
+                    }
+                } elseif (strpos($comment, '@param') !== false) {
+                    $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
+                    $paramOptions = explode(' ', $comment);
+                    $description = '';
+
+                    if (!empty($paramOptions[0]) && !empty($paramOptions[1]) && !empty($paramOptions[2])) {
+                        $description = trim(
+                            str_replace(
+                                implode(' ', [$paramOptions[0], $paramOptions[1], $paramOptions[2]]),
+                                '',
+                                $comment
+                            )
+                        );
+                    }
+
+                    if (!empty($paramOptions[2])) {
+                        $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
+                            'type' => $paramOptions[1],
+                            'description' => $description
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $paramsMetadata;
     }
 }

@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -20,6 +21,7 @@ namespace Core\Controller;
 
 use Core\Controller\Traits\JsTranslations;
 use Core\Model\Page;
+use Core\Helper\Renderer;
 use Engine\Behaviour\DIBehaviour;
 use Phalcon\Db\Column;
 use Phalcon\DI;
@@ -32,6 +34,7 @@ use Phalcon\Mvc\View;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -139,8 +142,9 @@ abstract class AbstractController extends PhalconController
 
         // Resort content by sides.
         $content = [];
+        $renderer = Renderer::getInstance($this->getDI());
         foreach ($page->getWidgets() as $widget) {
-            $content[$widget->layout][] = $widget;
+            $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
         $this->view->content = $content;

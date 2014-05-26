@@ -19,7 +19,7 @@
 namespace Core\Helper;
 
 use Engine\Helper;
-use Phalcon\Acl;
+use Phalcon\Acl as PhalconAcl;
 use Phalcon\DI;
 use Phalcon\Tag;
 use User\Model\User;
@@ -34,7 +34,7 @@ use User\Model\User;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Security extends Helper
+class Acl extends Helper
 {
     /**
      * Check if action is allowed.
@@ -51,24 +51,24 @@ class Security extends Helper
         return $this->getDI()
             ->get('core')
             ->acl()
-            ->isAllowed($viewer->getRole()->name, $resource, $action) == Acl::ALLOW;
+            ->isAllowed($viewer->getRole()->name, $resource, $action) == PhalconAcl::ALLOW;
     }
 
     /**
      * Check allowed value.
      *
-     * @param mixed  $resource Resource.
-     * @param string $action   Action to perform.
+     * @param mixed  $resource  Resource.
+     * @param string $valueName Value name.
      *
      * @return mixed
      */
-    protected function _getAllowed($resource, $action)
+    protected function _getAllowed($resource, $valueName)
     {
         $viewer = User::getViewer();
 
         return $this->getDI()
             ->get('core')
             ->acl()
-            ->getAllowedValue($resource, $viewer->getRole(), $action);
+            ->getAllowedValue($resource, $viewer->getRole(), $valueName);
     }
 }

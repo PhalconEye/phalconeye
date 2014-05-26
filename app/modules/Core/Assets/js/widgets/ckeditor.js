@@ -38,8 +38,7 @@
                 var data = element.data('options');
                 if (typeof data == 'string') {
                     data = $.parseJSON(data);
-                }
-                else {
+                } else if (typeof data != 'object') {
                     data = {};
                 }
 
