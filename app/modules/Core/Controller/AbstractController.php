@@ -142,7 +142,7 @@ abstract class AbstractController extends PhalconController
 
         // Resort content by sides.
         $content = [];
-        $renderer = Renderer::getInstance('renderer', 'core');
+        $renderer = Renderer::getInstance($this->getDI());
         foreach ($page->getWidgets() as $widget) {
             $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
         }
