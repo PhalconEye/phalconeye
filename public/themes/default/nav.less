@@ -1,0 +1,161 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+.navbar {
+  position: relative;
+  z-index: 10;
+
+  .nav {
+    li {
+      a {
+        background-color: @buttonNavBgColor;
+        border-bottom: 1px solid @buttonNavBorderColor;
+        border-left: 1px inset @buttonNavBorderColor;
+        border-right: 1px solid @buttonNavBorderColor;
+        color: @buttonNavColor;
+        display: list-item;
+        line-height: @buttonNavHeight;
+        padding: 0.2*@buttonNavHeight 0.8*@buttonNavHeight;
+        text-decoration: none;
+        height: @buttonNavHeight;
+        min-width: 3 * @buttonNavHeight;
+        .transition();
+
+        .active, &:hover {
+          background-color: @buttonNavBorderColor;
+          border-bottom: 1px solid #428bca;
+          color: #fff;
+        }
+      }
+
+      // Tablet and desktop
+      @media screen and (min-width: @viewportTablet) {
+
+        &.dropdown  {
+          & > a {
+            padding-right: 23px;
+
+            &.dropdown-toggle:after {
+              content: "▼";
+              font-size: 10px;
+              position: absolute;
+              right: 10px;
+              top: 7px
+            }
+          }
+          li.dropdown-submenu:hover > .dropdown-menu {
+            display: list-item;
+            left: 100%;
+            top: 0;
+          }
+        }
+      }
+    }
+
+    .nav-icon {
+      max-width: 20px;
+      max-height: 20px;
+      vertical-align: middle;
+    }
+
+    .nav-icon-left {
+      margin-right: 7px;
+    }
+
+    .nav-icon-right {
+      margin-left: 7px;
+    }
+
+    & > li.dropdown:hover > .dropdown-menu {
+      display: block;
+    }
+  }
+
+  ul {
+    list-style: none;
+    white-space: nowrap;
+    padding: 0px;
+    margin: 0;
+
+    li {
+      position: relative;
+
+      .dropdown-menu {
+
+        // Smartphone
+        @media screen and (max-width: (@viewportTablet - 1)) {
+          a:before {
+            border-left: 1px solid #6A6A6A;
+            content: " ";
+            margin-left: -20px;
+            padding-right: 10px;
+          }
+        }
+
+        // Tablet and desktop
+        @media screen and (min-width: @viewportTablet) {
+          position: absolute;
+          display: none;
+
+          a {
+            // width: 3 * @buttonNavHeight;
+            padding-right: 23px;
+            &.dropdown-toggle:after {
+              content: "►";
+              font-size: 10px;
+              position: absolute;
+              right: 10px;
+              top: 7px
+            }
+          }
+        }
+      }
+    }
+  }
+
+  .navbar-toggle {
+    display: none;
+  }
+
+  .navbar-handle {
+    background-color: #FFF;
+    color: @buttonNavBgColor;
+    cursor: pointer;
+    position: absolute;
+    right: 0;
+    top: 0;
+    width: 33px;
+    padding: 3px;
+    height: 14px;
+    margin: 8px;
+    &:before, &:after {
+      position: absolute;
+      left: 0;
+      right: 0;
+      content: ' ';
+      border-top: 7px solid;
+    }
+    &:before {
+      top: 11px;
+    }
+    &:after {
+      top: 2px;
+    }
+  }
+}
+

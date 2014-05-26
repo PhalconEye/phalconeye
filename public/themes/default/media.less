@@ -1,0 +1,197 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+/**
+ * Smartphones
+ */
+@media screen and (max-width: (@viewportTablet - 1)) {
+
+  .phone-hidden, .tablet-visible, .desktop-visible {
+    display: none;
+  }
+
+  .navbar {
+
+    overflow-x: hidden;
+    background-color: @buttonNavBgColor;
+
+    .nav  {
+      & > li, a {
+        // Widen nav items
+        width: 100%;
+      }
+
+      // Hide nav icons
+      .nav-icon {
+        display: none;
+      }
+
+      // Nested menu
+      .dropdown-menu a {
+          padding-left: 40px;
+      }
+      .dropdown-submenu .dropdown-menu a {
+          padding-left: 60px;
+      }
+    }
+
+    // Hide navigation by default
+    .navbar-inner li {
+      display: none;
+    }
+
+    // Show first nav item and handle
+    .navbar-inner > ul > li:first-child {
+      display: block;
+      a {
+        max-width: ~"calc(100% - 100px)";
+        &:hover {
+          background-color: @buttonNavBgColor;
+        }
+      }
+    }
+    .navbar-handle {
+      display: block;
+    }
+    .navbar-toggle:checked + .navbar-inner li {
+      display: block;
+    }
+  }
+
+  // Hide logo
+  .header_logo {
+    display: none;
+  }
+
+  .header_auth {
+    margin: 0;
+    position: absolute;
+    right: 2.5 * @buttonNavHeight;
+    z-index: 20;
+
+    // Hide welcome...
+    span {
+      display: none
+    }
+
+    a {
+      background-color: @buttonNavBgColor !important;
+      border-left: 1px solid @buttonNavBorderColor;
+    }
+  }
+
+  main section,
+  main aside {
+    clear: both !important;
+    width: 100% !important;
+  }
+
+  // Responsive form
+  form {
+    .form_element, .form_label {
+      float: none;
+      width: 100%;
+      margin: 0.5em 0;
+    }
+    .form_label {
+      width: 100%;
+    }
+
+    .form_element_radio input[type=checkbox] {
+      position: absolute;
+      left: -1.8em;
+      top: -1.8em;
+      width: 1em;
+    }
+  }
+}
+
+/**
+ * Tablets
+ */
+@media screen and (min-width: @viewportTablet) and (max-width: (@viewportDesktop - 1)) {
+
+  .phone-visible, .tablet-hidden, .desktop-visible {
+    display: none;
+  }
+  .header_logo {
+    float: left
+  }
+  .header_auth {
+    float: right;
+    span {
+      display: none
+    }
+  }
+  .navbar .nav > li {
+    float: left
+  }
+  .navbar-handle {
+    display: none;
+  }
+  main section.content {
+    width: @contentSectionTabletWidth;
+  }
+  main aside.content-right {
+    clear: both;
+    width: 100%;
+  }
+  main aside.content-left {
+    width: (100% - @contentSectionTabletWidth);
+  }
+  form {
+    .form_element, .form_label {
+      float: left;
+      width: 50%;
+    }
+    .form_label {
+      width: 46%;
+      text-align: right;
+    }
+  }
+}
+
+/**
+ * Desktops and Laptops
+ */
+@media screen and (min-width: @viewportDesktop) {
+  .phone-visible, .tablet-visible, .desktop-hidden {
+    display: none;
+  }
+  .header_logo {
+    float: left
+  }
+  .header_auth {
+    float: right
+  }
+  .navbar .nav > li {
+    float: left
+  }
+  .navbar-handle {
+    display: none;
+  }
+  form {
+    .form_element, .form_label {
+      float: left;
+      width: 50%;
+    }
+    .form_label {
+      width: 46%;
+      text-align: right;
+    }
+  }
+}

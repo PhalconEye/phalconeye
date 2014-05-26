@@ -16,39 +16,28 @@
   +------------------------------------------------------------------------+
 */
 
-@contentMaxWidth: 1200px;
-@contentMinHeight: 115px;
+.border-radius (@radius: 5px) {
+  -webkit-border-radius: @radius;
+  -moz-border-radius: @radius;
+  border-radius: @radius;
+}
 
-@contentSectionWidth: 50%;
-@contentSectionTabletWidth: 66%;
-@contentAsideLeftWidth: 25%;
-@contentAsideRightWidth: 25%;
+.box-shadow(@arguments) {
+  -webkit-box-shadow: @arguments;
+  -moz-box-shadow: @arguments;
+  box-shadow: @arguments;
+}
 
-@viewportTablet: 480px;
-@viewportDesktop: 1200px;
+.box-sizing(@type: border-box) {
+  -webkit-box-sizing: @type;
+  -moz-box-sizing: @type;
+  box-sizing: @type;
+}
 
-@font: "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
-@fontSize: 14px;
-@fontSizeHeader: 16px;
-@fontSizeForms: 10px;
-@fontColor: #B8B8B8;
-@fontErrorColor: CA5552;
-
-@linkColor: #428BCA;
-@linkHoverColor: #CA5552;
-@linkActiveColor: #3067B6;
-
-@buttonHeight: 26px;
-@buttonColor: #FFF;
-@buttonBgColor: #428BCA;
-@buttonBgHoverColor: #CA5552;
-
-@buttonNavHeight: 25px;
-@buttonNavColor: #B8B8B8;
-@buttonNavBgColor: #404040;
-@buttonNavBorderColor: #6A6A6A;
-
-@containerBgColor: #FFF;
-@containerBorderColor: #DDD;
-@formDescriptionColor: #969696;
-@formLabelColor: #428BCA;
+.transition(@scope: all, @delay: 0.25s, @ease: ease) {
+  -webkit-transition: @scope @delay @ease;
+  -moz-transition: @scope @delay @ease;
+  -ms-transition: @scope @delay @ease;
+  -o-transition: @scope @delay @ease;
+  transition: @scope @delay @ease;
+}

@@ -16,39 +16,72 @@
   +------------------------------------------------------------------------+
 */
 
-@contentMaxWidth: 1200px;
-@contentMinHeight: 115px;
+#wrapper {
+  max-width: @contentMaxWidth;
+  margin: 0 auto;
+}
 
-@contentSectionWidth: 50%;
-@contentSectionTabletWidth: 66%;
-@contentAsideLeftWidth: 25%;
-@contentAsideRightWidth: 25%;
+main {
+  clear: both;
+  width: 100%;
+  padding: 20px 0;
+}
 
-@viewportTablet: 480px;
-@viewportDesktop: 1200px;
+section, aside {
+  float: left;
+  &.content, &.content-left, &.content-right {
+    min-height: @contentMinHeight;
+    display: inline-block;
+  }
+  &.content-left {
+    clear: left;
+  }
+  &.content-right {
+    clear: right;
+  }
+}
 
-@font: "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
-@fontSize: 14px;
-@fontSizeHeader: 16px;
-@fontSizeForms: 10px;
-@fontColor: #B8B8B8;
-@fontErrorColor: CA5552;
+section {
+  &.content {
+    clear: none;
+    width: @contentSectionWidth;
+  }
+  &.content-full, &.content-top, &.content-bottom {
+    width: 100%;
+    clear: both;
+  }
+  &.content-left {
+    width: 100% - @contentAsideRightWidth;
+  }
+  &.content-right {
+    width: 100% - @contentAsideLeftWidth;
+  }
+}
 
-@linkColor: #428BCA;
-@linkHoverColor: #CA5552;
-@linkActiveColor: #3067B6;
+aside {
+  &.content-left {
+    width: @contentAsideRightWidth;
+  }
+  &.content-right {
+    width: @contentAsideLeftWidth;
+  }
+}
 
-@buttonHeight: 26px;
-@buttonColor: #FFF;
-@buttonBgColor: #428BCA;
-@buttonBgHoverColor: #CA5552;
+footer section {
+  padding: 30px 0;
+}
 
-@buttonNavHeight: 25px;
-@buttonNavColor: #B8B8B8;
-@buttonNavBgColor: #404040;
-@buttonNavBorderColor: #6A6A6A;
+/****************************************************/
 
-@containerBgColor: #FFF;
-@containerBorderColor: #DDD;
-@formDescriptionColor: #969696;
-@formLabelColor: #428BCA;
+#content-left-left {
+  height: 452px;
+  width: 505px;
+  float: left;
+}
+
+#content-left-right {
+  background-position: 10px 120px;
+  height: 415px;
+  width: 25px;;
+  float: left;
+}

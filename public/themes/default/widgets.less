@@ -16,39 +16,43 @@
   +------------------------------------------------------------------------+
 */
 
-@contentMaxWidth: 1200px;
-@contentMinHeight: 115px;
+article.widget {
+  clear: both;
 
-@contentSectionWidth: 50%;
-@contentSectionTabletWidth: 66%;
-@contentAsideLeftWidth: 25%;
-@contentAsideRightWidth: 25%;
+  header {
+    h3 {
+      border-bottom: 1px solid;
+      font-size: 1.2em;
+      font-weight: 700;
+      margin: 0 0 10px;
+      padding: 0 0 10px;
+    }
+  }
+}
 
-@viewportTablet: 480px;
-@viewportDesktop: 1200px;
+.widget-body {
+  padding: 0;
 
-@font: "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
-@fontSize: 14px;
-@fontSizeHeader: 16px;
-@fontSizeForms: 10px;
-@fontColor: #B8B8B8;
-@fontErrorColor: CA5552;
+  p {
+    margin: 0;
+  }
+}
 
-@linkColor: #428BCA;
-@linkHoverColor: #CA5552;
-@linkActiveColor: #3067B6;
+main {
+  article.widget {
+    margin: 5px;
+    padding: 10px;
+  }
+  article.widget + article.widget {
+    margin-top: 10px;
+  }
 
-@buttonHeight: 26px;
-@buttonColor: #FFF;
-@buttonBgColor: #428BCA;
-@buttonBgHoverColor: #CA5552;
-
-@buttonNavHeight: 25px;
-@buttonNavColor: #B8B8B8;
-@buttonNavBgColor: #404040;
-@buttonNavBorderColor: #6A6A6A;
-
-@containerBgColor: #FFF;
-@containerBorderColor: #DDD;
-@formDescriptionColor: #969696;
-@formLabelColor: #428BCA;
+  /**
+   * .content-left, .content, .content-right {
+   *   article.widget {
+   *     background-image: url("@{baseUrl}themes/default/images/cover-bg.png");
+   *     .box-shadow(-5px -15px 30px 10px rgba(0, 0, 0, 0.15) inset);
+   *    }
+   *  }
+   */
+}
