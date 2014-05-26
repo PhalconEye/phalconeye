@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -26,6 +27,7 @@ use Engine\Form\ElementInterface;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -61,8 +63,33 @@ class File extends AbstractInput implements ElementInterface
     {
         $value = parent::getValue();
         if ($this->getOption('isImage') && !empty($value)) {
-            return $this->getDI()->getUrl()->get($value);
+            if ($this->isDynamic() && is_array($value)) {
+                $values = [];
+                foreach ($value as $one) {
+                    $values[] = $this->getDI()->getUrl()->get($one);
+                }
+                return $values;
+            } else {
+                return $this->getDI()->getUrl()->get($value);
+            }
         }
         return $value;
+    }
+
+    /**
+     * Get element html template.
+     *
+     * @return string
+     */
+    public function getHtmlTemplate()
+    {
+        if ($this->getOption('isImage') && $this->getValue() != '/') {
+            return '<div class="form_element_file_image">
+                         <img alt="Preview image" src="'. $this->getValue() .'"/>
+                     </div>'.
+                   parent::getHtmlTemplate();
+        } else {
+            return parent::getHtmlTemplate();
+        }
     }
 }

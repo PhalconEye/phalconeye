@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -31,6 +32,7 @@ use Engine\Form\Exception;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -125,6 +127,12 @@ class Select extends AbstractElement implements ElementInterface
         if (!is_array($value)) {
             $value = [$value];
         }
+        if ($this->isDynamic()) {
+            $value = [];
+            foreach (new \RecursiveIteratorIterator(new \RecursiveArrayIterator((array) $originalValue)) as $oneValue) {
+                $value[] = $oneValue;
+            }
+        }
 
         $elementOptions = $this->getOption('elementOptions', []);
         foreach ($value as $currentValue) {
@@ -140,11 +148,11 @@ class Select extends AbstractElement implements ElementInterface
     }
 
     /**
-     * Render element.
+     * Get element html template values
      *
-     * @return string
+     * @return array
      */
-    public function render()
+    public function getHtmlTemplateValues()
     {
         $elementOptions = $this->getOption('elementOptions', []);
         $disabledOptions = $this->getOption('disabledOptions', []);
@@ -166,7 +174,7 @@ class Select extends AbstractElement implements ElementInterface
             );
         }
 
-        return sprintf($this->getHtmlTemplate(), $content);
+        return [$content];
     }
 
     /**

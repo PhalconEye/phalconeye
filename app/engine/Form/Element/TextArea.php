@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -27,6 +28,7 @@ use Engine\Form\ElementInterface;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -43,16 +45,4 @@ class TextArea extends AbstractElement implements ElementInterface
         return $this->getOption('htmlTemplate', '<textarea' . $this->_renderAttributes() . '>%s</textarea>');
     }
 
-    /**
-     * Render element.
-     *
-     * @return string
-     */
-    public function render()
-    {
-        return sprintf(
-            $this->getHtmlTemplate(),
-            $this->getValue()
-        );
-    }
 }

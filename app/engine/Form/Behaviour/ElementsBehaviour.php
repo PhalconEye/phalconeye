@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -31,6 +32,7 @@ use Phalcon\Mvc\View;
  * @category  PhalconEye
  * @package   Engine\Form\Behaviour
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -238,12 +240,16 @@ trait ElementsBehaviour
         $name,
         $label = null,
         $description = null,
-        $elementOptions = [],
+        $elementOptions = null,
         $value = null,
         array $options = [],
         array $attributes = []
     )
     {
+        if (is_array($elementOptions)) {
+            $options['elementOptions'] = $elementOptions;
+        }
+
         $element = new Form\Element\CkEditor($name, $options, $attributes);
 
         if (!$label) {
@@ -253,7 +259,6 @@ trait ElementsBehaviour
         $element
             ->setOption('label', $label)
             ->setOption('description', $description)
-            ->setOption('elementOptions', $elementOptions)
             ->setValue($value);
 
         $this->add($element);

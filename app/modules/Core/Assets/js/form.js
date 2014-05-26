@@ -12,6 +12,7 @@
  | to license@phalconeye.com so we can send you a copy immediately.       |
  +------------------------------------------------------------------------+
  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+ | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
  +------------------------------------------------------------------------+
  */
 
@@ -21,6 +22,7 @@
  * @category  PhalconEye
  * @package   PhalconEye Core Module
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright Copyright (c) 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -81,6 +83,10 @@
                     var condition = item.data('related');
                     $this._switchElement(item, condition, true);
                     $this._setupEvents(item, condition);
+                });
+
+                $('*[data-dynamic]', context).each(function (index, item) {
+                    root.form.dynamicField.init(item);
                 });
             },
 
