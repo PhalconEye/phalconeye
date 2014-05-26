@@ -131,6 +131,10 @@ abstract class AbstractModel extends PhalconModel
      */
     public function getId()
     {
+        if (property_exists($this, 'id')) {
+            return $this->id;
+        }
+
         $primaryKeys = $this->getDI()->get('modelsMetadata')->getPrimaryKeyAttributes($this);
 
         switch (count($primaryKeys)) {
