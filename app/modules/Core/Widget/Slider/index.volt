@@ -19,8 +19,6 @@
 
 {% block content %}
 
-<link href="{{baseUrl}}external/bxslider-4/jquery.bxslider.css" type="text/css" rel="stylesheet">
-
 <ul class="bxslider" data-slider-id="{{ slider_id }}">
 {% for slide in slides %}
     {% if height > 0 %}

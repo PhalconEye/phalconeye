@@ -30,7 +30,7 @@
         color: @buttonNavColor;
         display: list-item;
         line-height: @buttonNavHeight;
-        padding: 0.2*@buttonNavHeight 0.8*@buttonNavHeight;
+        padding: 0.2 * @buttonNavHeight 0.8 * @buttonNavHeight;
         text-decoration: none;
         height: @buttonNavHeight;
         min-width: 3 * @buttonNavHeight;
@@ -38,31 +38,8 @@
 
         .active, &:hover {
           background-color: @buttonNavBorderColor;
-          border-bottom: 1px solid #428bca;
-          color: #fff;
-        }
-      }
-
-      // Tablet and desktop
-      @media screen and (min-width: @viewportTablet) {
-
-        &.dropdown  {
-          & > a {
-            padding-right: 23px;
-
-            &.dropdown-toggle:after {
-              content: "▼";
-              font-size: 10px;
-              position: absolute;
-              right: 10px;
-              top: 7px
-            }
-          }
-          li.dropdown-submenu:hover > .dropdown-menu {
-            display: list-item;
-            left: 100%;
-            top: 0;
-          }
+          border-bottom: 1px solid @linkColor;
+          color: #FFFFFF;
         }
       }
     }
@@ -94,37 +71,6 @@
 
     li {
       position: relative;
-
-      .dropdown-menu {
-
-        // Smartphone
-        @media screen and (max-width: (@viewportTablet - 1)) {
-          a:before {
-            border-left: 1px solid #6A6A6A;
-            content: " ";
-            margin-left: -20px;
-            padding-right: 10px;
-          }
-        }
-
-        // Tablet and desktop
-        @media screen and (min-width: @viewportTablet) {
-          position: absolute;
-          display: none;
-
-          a {
-            // width: 3 * @buttonNavHeight;
-            padding-right: 23px;
-            &.dropdown-toggle:after {
-              content: "►";
-              font-size: 10px;
-              position: absolute;
-              right: 10px;
-              top: 7px
-            }
-          }
-        }
-      }
     }
   }
 
@@ -133,7 +79,7 @@
   }
 
   .navbar-handle {
-    background-color: #FFF;
+    background-color: #FFFFFF;
     color: @buttonNavBgColor;
     cursor: pointer;
     position: absolute;
@@ -157,5 +103,104 @@
       top: 2px;
     }
   }
-}
 
+  /**
+   * Specific media queries
+   */
+  @media screen and (max-width: (@viewportTablet - 1)) {
+    overflow-x: hidden;
+    background-color: @buttonNavBgColor;
+
+    .nav  {
+      & > li, a {
+        // Widen nav items
+        width: 100%;
+      }
+
+      // Hide nav icons
+      .nav-icon {
+        display: none;
+      }
+
+      // Nested menu
+      .dropdown-menu a {
+        padding-left: 40px;
+      }
+      .dropdown-submenu .dropdown-menu a {
+        padding-left: 60px;
+      }
+    }
+
+    // Hide navigation by default
+    .navbar-inner li {
+      display: none;
+    }
+
+    // Show first nav item and handle
+    .navbar-inner > ul > li:first-child {
+      display: block;
+      a {
+        max-width: ~"calc(100% - 100px)";
+        &:hover {
+          background-color: @buttonNavBgColor;
+        }
+      }
+    }
+    .navbar-handle {
+      display: block;
+    }
+    .navbar-toggle:checked + .navbar-inner li {
+      display: block;
+    }
+  }
+
+  // Tablet and desktop
+  .nav li.dropdown  {
+    @media screen and (min-width: @viewportTablet) {
+      & > a {
+        padding-right: 23px;
+
+        &.dropdown-toggle:after {
+          content: "▼";
+          font-size: 10px;
+          position: absolute;
+          right: 10px;
+          top: 7px
+        }
+      }
+      li.dropdown-submenu:hover > .dropdown-menu {
+        display: list-item;
+        left: 100%;
+        top: 0;
+      }
+    }
+  }
+
+  ul li .dropdown-menu {
+    // Smartphone
+    @media screen and (max-width: (@viewportTablet - 1)) {
+      a:before {
+        border-left: 1px solid #6A6A6A;
+        content: " ";
+        margin-left: -20px;
+        padding-right: 10px;
+      }
+    }
+    // Tablet and desktop
+    @media screen and (min-width: @viewportTablet) {
+      position: absolute;
+      display: none;
+
+      a {
+        padding-right: 23px;
+        &.dropdown-toggle:after {
+          content: "►";
+          font-size: 10px;
+          position: absolute;
+          right: 10px;
+          top: 7px
+        }
+      }
+    }
+  }
+}

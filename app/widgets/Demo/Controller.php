@@ -40,6 +40,10 @@ class Controller extends WidgetController
      */
     public function indexAction()
     {
-        $this->view->form = new DemoForm();
+        $form = $this->view->form = new DemoForm();
+
+        if ($this->request->has('submit')) {
+            $form->isValid($this->request->get());
+        }
     }
 }

@@ -18,36 +18,27 @@
 
 header {
   font-size: @fontSizeHeader;
-  color: #FFF;
-}
 
-.header_logo img {
-  height: 37px;
-  margin: 4px 15px
-}
+  .header_auth {
+    margin: 6px 0;
+    font-size: 0;
 
-.header_auth {
-  margin: 6px;
-  font-size: 0;
-}
+    span {
+      font-size: @fontSizeHeader;
+      margin: 0 1em;
+    }
 
-.header_auth span {
-  font-size: @fontSizeHeader;
-  margin: 0 10px;
-}
+    a {
+      background-color: @buttonBgColor;
+      color: @buttonColor;
+      margin-right: 2px;
+      font-size: @fontSizeHeader;
+      padding: 0.2 * @buttonNavHeight 0.8 * @buttonNavHeight;
+      text-decoration: none;
 
-.header_auth a {
-  background-color: @buttonBgColor;
-  color: @buttonColor;
-  display: inline-block;
-  margin-right: 1px;
-  font-size: @fontSizeHeader;
-  line-height: @buttonNavHeight;
-  padding: 0.2*@buttonNavHeight 0.8*@buttonNavHeight;
-  height: @buttonNavHeight;
-  text-decoration: none;
-
-  &:last-child {
-    background-color: @buttonBgHoverColor;
+      &:last-child {
+        background-color: @buttonBgHoverColor;
+      }
+    }
   }
 }

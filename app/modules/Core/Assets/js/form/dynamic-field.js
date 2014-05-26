@@ -173,7 +173,7 @@
                         element.parent().remove();
                     } else {
 
-                        if (element.data('widget') == 'ckeditor') {
+                        if (element.data('widget') == '(ckeditor):invoked') {
                             root.widget.ckeditor.destroy(element);
                         }
 

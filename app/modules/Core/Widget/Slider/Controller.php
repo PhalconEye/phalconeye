@@ -35,9 +35,14 @@ class Controller extends WidgetController
 {
     const
         /**
-         * Default number of slides
+         * Minimum number of slides
          */
-        DEFAULT_SLIDES = 4,
+        MIN_SLIDES = 3,
+
+        /**
+         * Maximum number of slides
+         */
+        MAX_SLIDES = 99,
 
         /**
          * Default duration between slides (ms)
@@ -85,18 +90,6 @@ class Controller extends WidgetController
             'pager'      => (int) $this->getParam('pager', 1)
         ];
 
-        // Set slides
-        $maxSlides = (int) $this->getParam('qty', static::DEFAULT_SLIDES);
-        $slides = [];
-        $i = 0;
-
-        foreach ($this->getAllParams() as $name => $value) {
-            if ($i < $maxSlides && strpos($name, 'slide') === 0 && !empty($value)) {
-                $slides[] = $value;
-                $i++;
-            }
-        }
-
         // Add assets
         $assets = $this->getDi()->get('assets');
         if ($sliderParams['video']) {
@@ -110,8 +103,8 @@ class Controller extends WidgetController
         $this->view->title     = (string) $this->getParam('title');
         $this->view->height    = (int) $this->getParam('height');
         $this->view->slider_id = (int) $this->getParam('content_id');
+        $this->view->slides    = $this->getParam('slides', []);
         $this->view->params    = $sliderParams;
-        $this->view->slides    = $slides;
     }
 
     /**
@@ -121,33 +114,34 @@ class Controller extends WidgetController
      */
     public function adminAction()
     {
-        $nrOfSlides = $this->getParam('qty', static::DEFAULT_SLIDES);
-        $selectOptions = array_combine(range(3, 10), range(3, 10));
-        $editorOptions =  [
-            'toolbar' => [[ 'Source', '-', 'Bold', 'Italic', '-', 'Link', 'Image' ]],
-            'allowedContent' => true,
-        ];
-
         $form = new CoreForm();
 
-        // Dynamic number of slides
-        $fieldSet = $form->addContentFieldSet('Slides');
-        $fieldSet->addSelect('qty', 'Number of slides', 'Save to take effect', $selectOptions, static::DEFAULT_SLIDES);
-
-        for ($i=1; $i <= $nrOfSlides; $i++) {
-            $fieldSet->addCkEditor("slide$i", "Slide $i HTML", '', [], null, ['elementOptions' => $editorOptions ]);
-        }
+        // Dynamic slides
+        $form->addContentFieldSet('Slides')
+            ->addCkEditor(
+                "slides[]",
+                "Slides",
+                '',
+                [
+                    'toolbar' => [['Source', '-', 'Bold', 'Italic', '-', 'Link', 'Image']],
+                    'allowedContent' => true
+                ],
+                null,
+                [
+                    'dynamic' => ['min' => static::MIN_SLIDES, 'max' => static::MAX_SLIDES]
+                ]
+            );
 
         // Advanced params
         $form->addContentFieldSet('Advanced')
-             ->addText('height', 'Height', 'Force height of the slider (in px)')
-             ->addText('duration', 'Duration', 'Duration between slides (in ms)', static::DEFAULT_DURATION)
-             ->addText('speed', 'Speed', 'Spped of slides (in ms)', static::DEFAULT_SPEED)
-             ->addCheckbox('auto', 'Auto', 'Slides will automatically transition', 1, true)
-             ->addCheckbox('auto_hover', 'Auto Hover', 'Auto show will pause when mouse hovers over slider', 1, true)
-             ->addCheckbox('controls', 'Controls', 'Next and Prev controls will be added', 1, true)
-             ->addCheckbox('video', 'Has video', 'You will need this if any slides contain video', 1, false)
-             ->addCheckbox('pager', 'Pager', 'Pager will be added', 1, true);
+            ->addText('height', 'Height', 'Force height of the slider (in px)')
+            ->addText('duration', 'Duration', 'Duration between slides (in ms)', static::DEFAULT_DURATION)
+            ->addText('speed', 'Speed', 'Spped of slides (in ms)', static::DEFAULT_SPEED)
+            ->addCheckbox('auto', 'Auto', 'Slides will automatically transition', 1, true)
+            ->addCheckbox('auto_hover', 'Auto Hover', 'Auto show will pause when mouse hovers over slider', 1, true)
+            ->addCheckbox('controls', 'Controls', 'Next and Prev controls will be added', 1, true)
+            ->addCheckbox('video', 'Has video', 'You will need this if any slides contain video', 1, false)
+            ->addCheckbox('pager', 'Pager', 'Pager will be added', 1, true);
 
         $form->addHtml('separator');
 

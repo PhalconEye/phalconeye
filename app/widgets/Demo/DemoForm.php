@@ -115,9 +115,8 @@ class DemoForm extends CoreForm
          * Footer
          */
         $this->addFooterFieldSet()
-            ->addButtonLink('link', 'Link', '')
-            ->addButton('reset', 'Reset')
-            ->addButton('submit', 'Create');
+            ->addButtonLink('link', 'ButtonLink')
+            ->addButton('submit', 'Button');
 
     }
 }

@@ -16,6 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
+// Layout
 @contentMaxWidth: 1200px;
 @contentMinHeight: 115px;
 
@@ -24,31 +25,36 @@
 @contentAsideLeftWidth: 25%;
 @contentAsideRightWidth: 25%;
 
-@viewportTablet: 480px;
-@viewportDesktop: 1200px;
+@viewportTablet: 520px;
+@viewportDesktop: 1024px;
 
+// Fonts
 @font: "Open Sans", "HelveticaNeue-Light", "Helvetica Neue Light", "Helvetica Neue", Helvetica, Arial, sans-serif;
 @fontSize: 14px;
 @fontSizeHeader: 16px;
-@fontSizeForms: 10px;
+@fontSizeForms: 12px;
 @fontColor: #B8B8B8;
-@fontErrorColor: CA5552;
+@fontErrorColor: #CA5552;
 
 @linkColor: #428BCA;
-@linkHoverColor: #CA5552;
+@linkHoverColor: @fontErrorColor;
 @linkActiveColor: #3067B6;
 
-@buttonHeight: 26px;
-@buttonColor: #FFF;
-@buttonBgColor: #428BCA;
-@buttonBgHoverColor: #CA5552;
+// Buttons
+@buttonColor: #FFFFFF;
+@buttonBgColor: @linkColor;
+@buttonBgHoverColor: @fontErrorColor;
 
 @buttonNavHeight: 25px;
-@buttonNavColor: #B8B8B8;
+@buttonNavColor: @fontColor;
 @buttonNavBgColor: #404040;
 @buttonNavBorderColor: #6A6A6A;
 
-@containerBgColor: #FFF;
-@containerBorderColor: #DDD;
+// Forms
+@containerBgColor: #FFFFFF;
+@containerBorderColor: #DDDDDD;
 @formDescriptionColor: #969696;
-@formLabelColor: #428BCA;
+@formLabelColor: @linkColor;
+
+// Widgets
+@widgetHeaderBorder: 1px solid;

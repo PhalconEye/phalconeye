@@ -17,24 +17,33 @@
 */
 
 form {
-  padding: 10px;
-  margin: 0 10px;
+  padding: 0;
+  margin: 0 auto;
   max-width: 95%;
-  .box-shadow(0px 0px 2px #808080);
+  .box-shadow(0px 0px 2px @formDescriptionColor);
 
   fieldset {
     clear: both;
     border: none;
-    margin: 1em;
+    margin: 1em 1em 0;
+    padding: 0;
 
     legend {
       border-bottom: 1px solid @formDescriptionColor;
+      margin: 1em auto;
+      padding: 1em 0;
+      width: 100%;
+    }
+
+    & > div {
+      clear: both;
       width: 100%;
     }
   }
 
   .form_header {
     border-bottom: 1px solid @formDescriptionColor;
+    padding: 1em;
 
     & > h3 {
       margin: 0;
@@ -45,20 +54,19 @@ form {
     & > p {
       color: @formDescriptionColor;
       font-size: @fontSizeForms;
-      margin: 0 0 10px 0;
+      margin: 0 0 0.75em 0;
     }
   }
 
   .form_elements {
 
-    & > div {
-      min-height: 4em;
-      clear: both;
-      padding-top: 10px;
+    .form_element, .form_label {
+      float: left;
+      width: ~"calc(50% - 2em)";
+      padding: 0.5em 1em;
     }
 
     .form_label {
-      margin-right: 4%;
 
       & > label {
         color: @formLabelColor;
@@ -75,32 +83,39 @@ form {
 
       & > * {
         width: 100%;
+        margin-bottom: 0.4em;
       }
 
       textarea {
         min-height: 100px;
       }
+
+      .dynamic-controls {
+        margin-left: 1em;
+        text-align: right;
+        button {
+          margin-left: 0.4em;
+        }
+      }
+      select + .dynamic-controls {
+        margin: 0;
+      }
     }
 
-    .validation_failed  {
+    .validation_failed {
       label {
         color: @fontErrorColor;
       }
       input, textarea, select, {
-        outline: 1px solid @fontErrorColor;
+        background-color: @fontErrorColor;
       }
     }
   }
 
-  fieldset > div,
-  .form_elements > div {
-    min-height: 30px;
-    clear: both;
-    padding-top: 10px;
-  }
-
   .form_footer {
     text-align: right;
+    padding: 1em;
+    border-top: 1px solid @formDescriptionColor;
   }
 
   .form_element_checkbox,
@@ -114,59 +129,67 @@ form {
   .form_element_file_image {
     text-align: center;
     overflow-x: hidden;
+    width: auto;
 
     img[src*="/"] {
-      width: auto;
-      max-width: 100%;
+      width: inherit;
+      max-width: 50%;
     }
   }
 
   .form_errors,
   .form_notices {
-    margin: 0 0 0 20px;
-    padding: 10px;
+    margin: 0;
+    padding: 2em 2em 0;
     li {
       color: @fontErrorColor;
     }
   }
 
-
-  .form_element_remote_file > input[type="text"] {
-    float: left;
-    padding-right: 15px;
-    margin-right: -10px;
+  .form_element_remote_file {
+    position: relative;
+    & > input[type="text"] {
+      width: 70%;
+      & + input {
+        position: absolute;
+        top: 0;
+        width: 30%;
+      }
+    }
   }
 }
 
 /** General form elements **/
-
 input[type=text], input[type=email], input[type=password], input.text, textarea, select {
   background-color: @containerBgColor;
   border: 1px solid @containerBorderColor;
-  padding: .5em;
+  padding: 0.5em;
   font-size: @fontSizeForms;
   resize: none;
   font-family: @font;
   .box-shadow(0 3px 8px rgba(0, 0, 0, 0.125) inset);
 }
 
-.btn,
-button {
-  height: @buttonHeight;
-  font-size: 0.8em;
-  padding: 5px 10px;
+button, input[type=button], input[type=file], .btn {
+  padding: 0.5em;
   border: 0;
   background-color: @buttonBgColor;
   color: @buttonColor;
   cursor: pointer;
+  font-size: @fontSize;
   text-decoration: none;
-  &:hover, &:focus, &:active {
+  display: inline-block;
+  vertical-align: middle;
+  &:hover, &:focus, &.btn-danger {
+    color: @buttonColor;
     background-color: @buttonBgHoverColor;
   }
 }
+a.btn {
+  height: 1.29 * @fontSize;
+}
 
 /** Specific forms **/
-
 .form_login {
   margin: 0 auto;
   max-width: 420px;
