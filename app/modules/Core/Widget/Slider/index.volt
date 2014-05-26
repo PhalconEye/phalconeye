@@ -11,20 +11,42 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
-<article class="widget">
-    {% if title is defined and title is not null %}
-    <header>
-        <h3>{{ title|i18n }}</h3>
-    </header>
-    {% endif %}
+{% extends "../../Core/View/layouts/widget.volt" %}
 
-    <div class="widget-body">
-        {% block content %}
-        {% endblock %}
-    </div>
-</article>
+{% block content %}
+
+<link href="{{baseUrl}}external/bxslider-4/jquery.bxslider.css" type="text/css" rel="stylesheet">
+
+<ul class="bxslider" data-slider-id="{{ slider_id }}">
+{% for slide in slides %}
+    {% if height > 0 %}
+    <li><div style="min-height: {{ height }}px">{{ slide }}</div></li>
+    {% else %}
+    <li>{{ slide }}</li>
+    {% endif %}
+{% endfor %}
+</ul>
+
+<script type="application/javascript">
+document.addEventListener('DOMContentLoaded', function() {
+  $('.bxslider').filter('[data-slider-id="{{ slider_id }}"]').bxSlider({
+    pause: {{ params['duration'] }},
+    speed: {{ params['speed'] }},
+    auto: ({{ params['auto'] }} == 1),
+    autoHover: ({{ params['auto_hover'] }} == 1),
+    controls: ({{ params['controls'] }} == 1),
+    video: ({{ params['video'] }} == 1),
+    pager: ({{ params['pager'] }} == 1),
+    adaptiveHeight: true,
+    captions: true,
+    nextText: "›",
+    prevText : "‹"
+  });
+}, false);
+</script>
+
+{% endblock %}

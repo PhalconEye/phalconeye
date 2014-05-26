@@ -12,16 +12,16 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
-
 <!DOCTYPE html>
 <html>
 <head>
     <title>{{ helper('setting', 'core').get('title', '') }} | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="generator" content="PhalconEye - Open Source Content Management System"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+    <meta name="generator" content="PhalconEye - Open Source Content Management System">
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
     {{ assets.outputCss() }}
@@ -39,31 +39,33 @@
 </head>
 <body data-base-url="{{ url() }}" data-debug="{{ config.application.debug }}">
 <div id="wrapper">
-    <div id="header" class="container">
+
+    <header>
         {% if disableHeader is not defined %}
         {{ helper('renderer', 'core').renderContent('header', resolveView("partials/layout", 'core')) }}
         {% endif %}
 
         {%- block header -%}
         {%- endblock -%}
-    </div>
+    </header>
 
     <div class="system-container">
         {{ content() }}
     </div>
 
-    <div class="container main_widget_container">
+    <main role="main">
         {%- block content -%}
         {%- endblock -%}
-    </div>
+    </main>
 
-    <div id="footer" class="container">
+    <footer>
         {% if disableFooter is not defined %}
         {{ helper('renderer', 'core').renderContent('footer', resolveView("partials/layout", 'core')) }}
         {% endif %}
+
         {%- block footer -%}
         {%- endblock -%}
-    </div>
+    </footer>
 </div>
 
 {{ assets.outputJs() }}

@@ -1,4 +1,5 @@
-{#
+<?php
+/*
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
@@ -11,20 +12,34 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
-#}
+*/
 
-<article class="widget">
-    {% if title is defined and title is not null %}
-    <header>
-        <h3>{{ title|i18n }}</h3>
-    </header>
-    {% endif %}
+namespace Widget\Demo;
 
-    <div class="widget-body">
-        {% block content %}
-        {% endblock %}
-    </div>
-</article>
+use Engine\Widget\Controller as WidgetController;
+
+/**
+ * Demo widget controller.
+ *
+ * @category  PhalconEye
+ * @package   Widget\Demo
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
+ * @copyright 2013-2014 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+class Controller extends WidgetController
+{
+
+    /**
+     * Index action.
+     *
+     * @return void
+     */
+    public function indexAction()
+    {
+        $this->view->form = new DemoForm();
+    }
+}

@@ -12,6 +12,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
@@ -33,12 +34,10 @@
     {% if show_auth is 1 %}
         <div class="header_auth">
         {% if not helper('user', 'user').isUser() %}
-            <a href="{{ url('login') }}">{{ 'Login' |i18n }}</a>&nbsp;
-            |
+            <a href="{{ url('login') }}">{{ 'Login' |i18n }}</a>
             <a href="{{ url('register') }}">{{ 'Register' |i18n }}</a>
         {% else %}
-            {{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}&nbsp;
-            |
+            <span>{{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}</span>
             {% if helper('acl', 'core').isAllowed('AdminArea', 'access') %}
                 <a href="{{ url('admin') }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
@@ -46,6 +45,5 @@
         {% endif %}
         </div>
     {% endif %}
-    <div class="clear"></div>
     </div>
 {%- endblock -%}

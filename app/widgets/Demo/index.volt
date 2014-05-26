@@ -11,20 +11,12 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
-<article class="widget">
-    {% if title is defined and title is not null %}
-    <header>
-        <h3>{{ title|i18n }}</h3>
-    </header>
-    {% endif %}
+{% extends "../../Core/View/layouts/widget.volt" %}
 
-    <div class="widget-body">
-        {% block content %}
-        {% endblock %}
-    </div>
-</article>
+{% block content %}
+  {{ form.render() }}
+{% endblock %}

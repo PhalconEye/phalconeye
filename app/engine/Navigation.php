@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Phalcon\DiInterface;
  * @category  PhalconEye
  * @package   Engine
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -37,6 +39,13 @@ class Navigation
     use DIBehaviour {
         DIBehaviour::__construct as protected __DIConstruct;
     }
+
+    /**
+     * Navigation id
+     *
+     * @var int
+     */
+    protected $_id = 0;
 
     /**
      * Items in navigation.
@@ -152,6 +161,30 @@ class Navigation
     {
         $this->__DIConstruct($di);
         $this->_activeItem = substr($this->getDI()->get('request')->get('_url'), 1);
+    }
+
+    /**
+     * Set navigation id
+     *
+     * @param string $id Navigation ID
+     *
+     * @return $this
+     */
+    public function setId($id)
+    {
+        $this->_id = $id;
+
+        return $this;
+    }
+
+    /**
+     * Get navigation id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->_id;
     }
 
     /**
