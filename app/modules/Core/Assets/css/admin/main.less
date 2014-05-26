@@ -12,6 +12,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 @main_color: #428bca;
@@ -472,6 +473,22 @@ form .form_element_file_image img {
   max-width: 220px;
   max-height: 220px;
   margin: 0 10px 10px 10px;
+}
+
+form div[data-dynamic] {
+  & > * {
+    clear: both;
+    margin: 5px 0;
+    width: auto;
+  }
+
+  .dynamic-controls {
+    float: right;
+
+    i {
+      margin-right: 10px;
+    }
+  }
 }
 
 form .form_footer {

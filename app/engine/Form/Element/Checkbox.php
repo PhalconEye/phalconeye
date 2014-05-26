@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Engine\Form\ElementInterface;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -87,22 +89,19 @@ class Checkbox extends AbstractElement implements ElementInterface
             'htmlTemplate',
             '
             <div class="form_element_radio">
-            <input' . $this->_renderAttributes() . '%s/>
+              <input' . $this->_renderAttributes() . '%s/>
             </div>
             '
         );
     }
 
     /**
-     * Render element.
+     * Get element html template values
      *
-     * @return string
+     * @return array
      */
-    public function render()
+    public function getHtmlTemplateValues()
     {
-        return sprintf(
-            $this->getHtmlTemplate(),
-            ($this->getOption('checked') ? ' checked="checked"' : '')
-        );
+        return [$this->getOption('checked') ? ' checked="checked"' : ''];
     }
 }

@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Engine\Form\ElementInterface;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -74,25 +76,24 @@ class RemoteFile extends AbstractElement implements ElementInterface
     }
 
     /**
-     * Render element.
+     * Get element html template values
      *
-     * @return string
+     * @return array
      */
-    public function render()
+    public function getHtmlTemplateValues()
     {
         $buttonTitle = $this->getOption('buttonTitle');
         if (!$buttonTitle) {
             $buttonTitle = $this->_('Select file');
         }
 
-        return sprintf(
-            $this->getHtmlTemplate(),
+        return [
             $this->getName(),
-            $this->getName(),
+            $this->getAttribute('id'),
             $this->getValue(),
             $this->getDI()->getUrl()->get(self::EDITOR_URL),
             $buttonTitle,
             $buttonTitle
-        );
+        ];
     }
 }

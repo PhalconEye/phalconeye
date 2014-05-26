@@ -12,6 +12,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
@@ -39,12 +40,15 @@
                 {% endif %}
             </div>
         {% endif %}
+
+        {% if element.isDynamic() %}
+        <div class="form_element"
+             data-dynamic="{{ element.getName() }}"
+             data-dynamic-min="{{ element.getOption('dynamic')['min'] }}"
+             data-dynamic-max="{{ element.getOption('dynamic')['max'] }}">
+        {% else %}
         <div class="form_element">
-            {% if instanceof(element, 'Engine\Form\Element\File') and element.getOption('isImage') and element.getValue() != '/' %}
-                <div class="form_element_file_image">
-                    <img alt="" src="{{ element.getValue() }}"/>
-                </div>
-            {% endif %}
+        {% endif %}
             {{ element.render() }}
         </div>
 

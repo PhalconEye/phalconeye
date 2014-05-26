@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Engine\Form\ElementInterface;
  * @category  PhalconEye
  * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -100,6 +102,16 @@ class Button extends AbstractElement implements ElementInterface
     }
 
     /**
+     * Get element html template values
+     *
+     * @return array
+     */
+    public function getHtmlTemplateValues()
+    {
+        return [$this->_($this->getOption('label'))];
+    }
+
+    /**
      * Render element.
      *
      * @return string
@@ -109,9 +121,7 @@ class Button extends AbstractElement implements ElementInterface
         if (!$this->getAttribute('value') && $this->getValue()) {
             $this->setAttribute('value', $this->getValue());
         }
-        return sprintf(
-            $this->getHtmlTemplate(),
-            $this->_($this->getOption('label'))
-        );
+
+        return parent::render();
     }
 }

@@ -219,6 +219,7 @@ abstract class AbstractController extends PhalconController
                 ->addJs('assets/js/core/core.js')
                 ->addJs('assets/js/core/i18n.js')
                 ->addJs('assets/js/core/form.js')
+                ->addJs('assets/js/core/form/dynamic-field.js')
                 ->addJs('assets/js/core/form/remote-file.js')
                 ->addJs('assets/js/core/widgets/grid.js')
                 ->addJs('assets/js/core/widgets/autocomplete.js')

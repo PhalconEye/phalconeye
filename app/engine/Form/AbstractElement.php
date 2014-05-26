@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Phalcon\Forms\Element as PhalconElement;
  * @category  PhalconEye
  * @package   Engine\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -129,6 +131,20 @@ abstract class AbstractElement implements ElementInterface
     public function isIgnored()
     {
         return $this->getOption('ignore');
+    }
+
+    /**
+     * Is the element dynamic?
+     *
+     * @return bool
+     */
+    public function isDynamic()
+    {
+        return isset(
+            $this->_options['dynamic'],
+            $this->_options['dynamic']['min'],
+            $this->_options['dynamic']['max']
+        );
     }
 
     /**
@@ -292,7 +308,8 @@ abstract class AbstractElement implements ElementInterface
             'emptyAllowed',
             'ignore',
             'htmlTemplate',
-            'defaultValue'
+            'defaultValue',
+            'dynamic'
         ];
     }
 
@@ -313,11 +330,85 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getDefaultAttributes()
     {
-        $default = ['id' => $this->getName(), 'name' => $this->getName(), 'class' => 'form-control'];
+        $default = [
+            'id' => rtrim($this->getName(), '[]'),
+            'name' => $this->getName(),
+            'class' => 'form-control'
+        ];
+
         if ($this->getOption('required')) {
             $default['required'] = 'required';
         }
         return $default;
+    }
+
+    /**
+     * Get element html template values
+     *
+     * @return array
+     */
+    public function getHtmlTemplateValues()
+    {
+        return [$this->getValue()];
+    }
+
+    /**
+     * Render element.
+     *
+     * @return string
+     */
+    public function render()
+    {
+        if ($this->isDynamic()) {
+            return $this->_renderDynamicElement();
+        }
+
+        return vsprintf(
+            $this->getHtmlTemplate(),
+            $this->getHtmlTemplateValues()
+        );
+    }
+
+    /**
+     * Render dynamic element.
+     *
+     * @return string
+     */
+    protected function _renderDynamicElement()
+    {
+        $originalId    = $this->getAttribute('id');
+        $originalValue = $this->getValue();
+        $minElements = (int) $this->getOption('dynamic')['min'];
+        $maxElements = (int) $this->getOption('dynamic')['max'];
+        $values = (array) $originalValue;
+
+        if ($minElements > $maxElements) {
+            throw new \LogicException('Minimum number of element exceeds minimum');
+        }
+
+        if (count($values) < $minElements) {
+            // Too few values
+            $values = array_merge($values, array_fill(0, $minElements - count($values), ''));
+        } elseif (count($values) > $maxElements) {
+            // Too many values
+            $values = array_slice($values, 0, $maxElements);
+        }
+
+        $html = '';
+        foreach ($values as $id => $value) {
+            $this->setValue($value);
+            $this->setAttribute('id', $originalId.$id);
+            $html .= vsprintf(
+                $this->getHtmlTemplate(),
+                $this->getHtmlTemplateValues()
+            );
+        }
+
+        // Restore original value and id
+        $this->setValue($originalValue);
+        $this->setAttribute('id', $originalId);
+
+        return $html;
     }
 
     /**
