@@ -42,7 +42,7 @@ class Assets extends Helper
      *
      * @return void
      */
-    protected function _addJs($file, $collection = 'js')
+    public function addJs($file, $collection = 'js')
     {
         $this->getDI()->get('assets')->get($collection)->addJs($file);
     }
@@ -55,7 +55,7 @@ class Assets extends Helper
      *
      * @return void
      */
-    protected function _addCss($file, $collection = 'css')
+    public function addCss($file, $collection = 'css')
     {
         $this->getDI()->get('assets')->get($collection)->addCss($file);
     }

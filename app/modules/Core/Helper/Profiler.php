@@ -58,7 +58,7 @@ class Profiler extends Helper
      *
      * @return string
      */
-    protected function _render()
+    public function render()
     {
         $di = $this->getDI();
         $this->_config = $di->get('config');

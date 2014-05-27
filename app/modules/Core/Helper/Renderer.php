@@ -50,7 +50,7 @@ class Renderer extends Helper
      * @throws \Engine\Exception
      * @return mixed
      */
-    protected function _renderContent($pageType, $layout = null)
+    public function renderContent($pageType, $layout = null)
     {
         $content = '';
         $page = Page::findFirst(
@@ -72,7 +72,7 @@ class Renderer extends Helper
          */
         if (!$layout) {
             foreach ($widgets as $widget) {
-                $content .= $this->_renderWidgetId($widget->widget_id, $widget->getParams());
+                $content .= $this->renderWidgetId($widget->widget_id, $widget->getParams());
             }
 
             return $content;
@@ -81,7 +81,7 @@ class Renderer extends Helper
         // Resort content by sides.
         $content = [];
         foreach ($widgets as $widget) {
-            $content[$widget->layout][] = $this->_renderWidgetId($widget->widget_id, $widget->getParams());;
+            $content[$widget->layout][] = $this->renderWidgetId($widget->widget_id, $widget->getParams());;
         }
 
         /** @var \Phalcon\Mvc\View $view */
@@ -103,9 +103,9 @@ class Renderer extends Helper
      *
      * @return mixed
      */
-    protected function _renderWidget($id, $params = [])
+    public function renderWidget($id, $params = [])
     {
-        if (!$this->_widgetIsAllowed($params)) {
+        if (!$this->widgetIsAllowed($params)) {
             return '';
         }
         $widget = new Element($id, $params, $this->getDI());
@@ -121,9 +121,9 @@ class Renderer extends Helper
      *
      * @return mixed
      */
-    protected function _renderWidgetId($id, $params = [])
+    public function renderWidgetId($id, $params = [])
     {
-        return $this->_renderWidget((int)$id, $params);
+        return $this->renderWidget((int)$id, $params);
     }
 
     /**
@@ -133,7 +133,7 @@ class Renderer extends Helper
      *
      * @return bool
      */
-    protected function _widgetIsAllowed($params)
+    public function widgetIsAllowed($params)
     {
         $viewer = User::getViewer();
         if (empty($params['roles']) || !is_array($params['roles'])) {

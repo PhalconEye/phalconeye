@@ -80,32 +80,4 @@ abstract class Helper extends Tag
 
         return $di->get($helperClassName);
     }
-
-    /**
-     * Call helper through magic method.
-     *
-     * @param string $name      Helper name.
-     * @param array  $arguments Helper arguments.
-     *
-     * @return mixed
-     * @throws Exception
-     */
-    public function __call($name, $arguments)
-    {
-        // Collect profile info.
-        $di = $this->getDI();
-        $profilerIsActive = $di->has('profiler');
-        if ($profilerIsActive) {
-            $di->get('profiler')->start();
-        }
-
-        $result = call_user_func_array(array(&$this, '_' . $name), $arguments);
-
-        // collect profile info
-        if ($profilerIsActive) {
-            $di->get('profiler')->stop(get_called_class(), 'helper');
-        }
-
-        return $result;
-    }
 }

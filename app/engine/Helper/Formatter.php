@@ -42,7 +42,7 @@ class Formatter extends Helper
      *
      * @return mixed
      */
-    protected function _formatNumber($number, $style = \NumberFormatter::DECIMAL)
+    public function formatNumber($number, $style = \NumberFormatter::DECIMAL)
     {
         $locale = $this->getDI()->get('session')->get('locale');
         $formatter = new \NumberFormatter($locale, $style);
@@ -57,7 +57,7 @@ class Formatter extends Helper
      *
      * @return mixed
      */
-    protected function _formatCurrency($number)
+    public function formatCurrency($number)
     {
         return $this->_formatNumber($number, \NumberFormatter::CURRENCY);
     }
