@@ -66,4 +66,8 @@ return array (
     'adapter' => 'Files',
     'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
   ),
+  'languages' =>
+  array(
+    'cacheDir' => ROOT_PATH . '/app/var/cache/languages/',
+  ),
 );
