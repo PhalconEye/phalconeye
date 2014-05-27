@@ -44,7 +44,7 @@ class Acl extends Helper
      *
      * @return bool
      */
-    protected function _isAllowed($resource, $action)
+    public function isAllowed($resource, $action)
     {
         $viewer = User::getViewer();
 
@@ -62,7 +62,7 @@ class Acl extends Helper
      *
      * @return mixed
      */
-    protected function _getAllowed($resource, $valueName)
+    public function getAllowed($resource, $valueName)
     {
         $viewer = User::getViewer();
 

@@ -40,7 +40,7 @@ class User extends Helper
      *
      * @return UserModel
      */
-    protected function _current()
+    public function current()
     {
         return UserModel::getViewer();
     }
@@ -52,7 +52,7 @@ class User extends Helper
      *
      * @return UserModel
      */
-    protected function _get($id)
+    public function get($id)
     {
         return UserModel::findFirstById($id);
     }
@@ -62,7 +62,7 @@ class User extends Helper
      *
      * @return bool
      */
-    protected function _isUser()
+    public function isUser()
     {
         return (bool)UserModel::getViewer()->id;
     }

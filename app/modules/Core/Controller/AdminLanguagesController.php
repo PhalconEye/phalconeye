@@ -34,6 +34,7 @@ use Engine\Exception;
 use Engine\Navigation;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
+use Phalcon\Validation\Message;
 
 /**
  * Admin languages controller.
@@ -270,6 +271,9 @@ class AdminLanguagesController extends AbstractAdminController
         if (!$this->request->isPost() || !$form->isValid()) {
             $messages = [];
             foreach ($form->getErrors() as $error) {
+                if ($error instanceof Message) {
+                    $error = $error->getMessage();
+                }
                 $messages[] = $this->i18n->_($error);
             }
             $this->flashSession->error($this->i18n->_('There are errors:') . '<br/>' . implode('<br/>', $messages));
@@ -464,7 +468,7 @@ class AdminLanguagesController extends AbstractAdminController
         // Dump all data from database to files with native php array.
         try {
             $languages = Language::find();
-            $directory = $this->config->application->cache->cacheDir;
+            $directory = $this->config->application->languages->cacheDir;
 
             foreach ($languages as $language) {
                 $file = $directory . '../languages/' . $language->language . '.php';

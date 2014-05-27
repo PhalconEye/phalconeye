@@ -39,7 +39,7 @@ class Url extends Helper
      *
      * @return mixed
      */
-    protected function _currentUrl()
+    public function currentUrl()
     {
         return $this->getDI()->get('request')->get('_url');
     }
@@ -51,7 +51,7 @@ class Url extends Helper
      *
      * @return string
      */
-    protected function _paginatorUrl($pageNumber = null)
+    public function paginatorUrl($pageNumber = null)
     {
         $page = (!empty($pageNumber) ? $pageNumber : 1);
         list ($url, $vars) = $this->_decomposeParams();

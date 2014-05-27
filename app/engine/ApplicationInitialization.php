@@ -444,26 +444,13 @@ trait ApplicationInitialization
             $frontOutputCache = new CacheOutput($frontEndOptions);
             $frontDataCache = new CacheData($frontEndOptions);
 
-            // Cache:View.
-            $di->set(
-                'viewCache',
-                function () use ($cacheAdapter, $frontOutputCache, $backEndOptions) {
-                    return new $cacheAdapter($frontOutputCache, $backEndOptions);
-                }
-            );
+            $cacheOutputAdapter = new $cacheAdapter($frontOutputCache, $backEndOptions);
+            $di->set('viewCache', $cacheOutputAdapter, true);
+            $di->set('cacheOutput', $cacheOutputAdapter, true);
 
-            // Cache:Output.
-            $cacheOutput = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $di->set('cacheOutput', $cacheOutput, true);
-
-            // Cache:Data.
-            $cacheData = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $di->set('cacheData', $cacheData, true);
-
-            // Cache:Models.
-            $cacheModels = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $di->set('modelsCache', $cacheModels, true);
-
+            $cacheDataAdapter = new $cacheAdapter($frontDataCache, $backEndOptions);
+            $di->set('cacheData', $cacheDataAdapter, true);
+            $di->set('modelsCache', $cacheDataAdapter, true);
         } else {
             // Create a dummy cache for system.
             // System will work correctly and the data will be always current for all adapters.
