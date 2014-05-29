@@ -21,7 +21,6 @@ namespace Core\Helper;
 use Engine\Config;
 use Engine\Helper;
 use Engine\Profiler as EngineProfiler;
-use Phalcon\Acl;
 use Phalcon\DI;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
