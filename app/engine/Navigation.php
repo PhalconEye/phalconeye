@@ -431,7 +431,7 @@ class Navigation
             $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
             $content .= "<{$lit}{$active}>";
             $link = '#';
-            if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/') {
+            if (preg_match("/^(http|https|mailto|ftp|javascript:|\/):\/\//", $key) === 0) {
                 $link = $url->get($key);
             }
             $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
@@ -485,14 +485,7 @@ class Navigation
         $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-tooltip-position="' .
             $item['tooltip_position'] . '"' : '');
 
-        if (
-            is_array($item['href']) ||
-            (
-                strpos($item['href'], 'http') === false &&
-                strpos($item['href'], 'javascript:') === false &&
-                $item['href'] != '/'
-            )
-        ) {
+        if (is_array($item['href']) || preg_match("/^(http|https|mailto|ftp|javascript:|\/):\/\//", $item['href']) === 0) {
             $item['href'] = $this->getDI()->get('url')->get($item['href']);
         }
 
