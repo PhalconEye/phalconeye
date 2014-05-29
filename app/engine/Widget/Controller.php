@@ -34,6 +34,8 @@ use Phalcon\Mvc\View;
  * @link      http://phalconeye.com/
  *
  * @property \Phalcon\Cache\Backend $cacheData
+ *
+ * @method \Engine\Behaviour\DIBehaviour getDI()
  */
 class Controller extends PhalconController
 {
