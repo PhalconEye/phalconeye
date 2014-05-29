@@ -55,6 +55,7 @@ return array (
   array (
     'local' => 'assets/',
     'remote' => false,
+    'lifetime' => 0,
   ),
   'metadata' => 
   array (

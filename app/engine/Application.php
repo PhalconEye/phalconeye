@@ -212,15 +212,9 @@ class Application extends PhalconApplication
         $cacheData = $this->_dependencyInjector->get('cacheData');
         $config = $this->_dependencyInjector->get('config');
 
-        $keys = $cacheOutput->queryKeys();
-        foreach ($keys as $key) {
-            $cacheOutput->delete($key);
-        }
+        $cacheOutput->flush();
+        $cacheData->flush();
 
-        $keys = $cacheData->queryKeys();
-        foreach ($keys as $key) {
-            $cacheData->delete($key);
-        }
 
         // Files deleter helper.
         $deleteFiles = function ($files) {
