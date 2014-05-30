@@ -11,14 +11,13 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
 // Background
-@background: rgba(52, 55, 40, 0.89);
-@backgroundImage: url("@{baseUrl}themes/default/images/body-bg.png");
+@background: #FFFFFF;
+@backgroundImage: none;
 
 // Layout
 @contentMaxWidth: 1200px;
@@ -37,11 +36,11 @@
 @fontSize: 14px;
 @fontSizeHeader: 16px;
 @fontSizeForms: 12px;
-@fontColor: #D8D8D8;
+@fontColor: #161616;
 @fontErrorColor: #CA5552;
 
 @linkColor: #428BCA;
-@linkHoverColor: @fontErrorColor;
+@linkHoverColor: #CA5552;
 @linkActiveColor: #3067B6;
 
 // Buttons
@@ -51,20 +50,20 @@
 
 // Nav
 @buttonNavHeight: 25px;
-@buttonNavColor: @fontColor;
+@buttonNavColor: #FFFFFF;
 @buttonNavHoverColor: #FFFFFF;
-@buttonNavBgColor: #404040;
-@buttonNavBgHoverColor: @buttonNavBgColor;
-@buttonNavBorderWidth: 1px;
-@buttonNavBorderStyle: none solid solid inset;
-@buttonNavBorderColor: #969696;
-@buttonNavBorderHoverColor: #969696 #969696 #428BCA #969696;
+@buttonNavBgColor: @buttonBgColor;
+@buttonNavBgHoverColor: @linkHoverColor;
+@buttonNavBorderWidth: 0 1px;
+@buttonNavBorderStyle: none solid;
+@buttonNavBorderColor: none #FFFFFF;
+@buttonNavBorderHoverColor: none;
 @buttonNavHandleBg: #FFFFFF;
 
 // Forms
 @containerBgColor: #FFFFFF;
 @containerBorderColor: #DDDDDD;
-@formDescriptionColor: #969696;
+@formDescriptionColor: #404040;
 @formLabelColor: @linkColor;
 
 // Widgets

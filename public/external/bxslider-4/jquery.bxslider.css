@@ -259,6 +259,7 @@
 
 .bx-wrapper .bx-caption span {
     font: inherit !important;
+    background-color: #000000;
 }
 
 .bx-wrapper .bxslider > li {

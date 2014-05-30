@@ -24,9 +24,10 @@
     li {
       a {
         background-color: @buttonNavBgColor;
-        border-bottom: 1px solid @buttonNavBorderColor;
-        border-left: 1px inset @buttonNavBorderColor;
-        border-right: 1px solid @buttonNavBorderColor;
+        border-color: @buttonNavBorderColor;
+        border-style: @buttonNavBorderStyle;
+        border-width: @buttonNavBorderWidth;
+
         color: @buttonNavColor;
         display: list-item;
         line-height: @buttonNavHeight;
@@ -37,9 +38,9 @@
         .transition();
 
         .active, &:hover {
-          background-color: @buttonNavBorderColor;
-          border-bottom: 1px solid @linkColor;
-          color: #FFFFFF;
+          background-color: @buttonNavBgHoverColor;
+          border-color: @buttonNavBorderHoverColor;
+          color: @buttonNavHoverColor;
         }
       }
     }
@@ -79,7 +80,7 @@
   }
 
   .navbar-handle {
-    background-color: #FFFFFF;
+    background: @buttonNavHandleBg;
     color: @buttonNavBgColor;
     cursor: pointer;
     position: absolute;
@@ -108,7 +109,7 @@
    * Specific media queries
    */
   @media screen and (max-width: (@viewportTablet - 1)) {
-    overflow-x: hidden;
+    overflow: hidden;
     background-color: @buttonNavBgColor;
 
     .nav  {
@@ -180,7 +181,7 @@
     // Smartphone
     @media screen and (max-width: (@viewportTablet - 1)) {
       a:before {
-        border-left: 1px solid #6A6A6A;
+        border-left: 1px solid @buttonNavBgHoverColor;
         content: " ";
         margin-left: -20px;
         padding-right: 10px;

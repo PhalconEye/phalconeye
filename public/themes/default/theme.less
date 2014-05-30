@@ -18,67 +18,12 @@
 
 @import "constants";
 @import "mixins";
-
-html {
-  -webkit-font-smoothing: antialiased;
-}
-
-body {
-  background: rgba(52, 55, 40, 0.89);
-  background: url("@{baseUrl}themes/default/images/body-bg.png");
-  font-family: @font;
-  font-size: @fontSize;
-  color: @fontColor;
-  margin: 0;
-}
-
-img {
-  border: none;
-}
-
-a {
-  color: @linkColor;
-  font-family: @font;
-  &:hover,
-  &:focus {
-    color: @linkHoverColor;
-  }
-  &:active {
-    color: @linkActiveColor;
-  }
-}
-
-h1 {
-  font-size: 1.8em;
-}
-
-h1, h2, h3, h4 {
-  color: @linkColor;
-}
-
-.clear {
-  clear: both;
-}
-.text-center {
-  text-align: center;
-}
-.text-right {
-  text-align: right;
-}
-.text-left {
-  text-align: left;
-}
-
-#wrapper {
-  max-width: @contentMaxWidth;
-  margin: 0 auto;
-}
-
-/* Import stuff */
+@import "common";
 @import "misc";
 @import "layout";
 @import "header";
 @import "nav";
 @import "widgets";
 @import "forms";
+@import "forms-elements";
 @import "media";

@@ -20,12 +20,14 @@
  */
 @media screen and (max-width: (@viewportTablet - 1)) {
 
-  .header_auth {
-    margin: 0;
+  header .header_auth {
     position: absolute;
     right: 2.28 * @buttonNavHeight;
     z-index: 20;
 
+    a {
+      background: none !important;
+    }
     // Hide welcome...
     span {
       display: none

@@ -52,7 +52,7 @@ INSERT IGNORE INTO `widgets` (`id`, `name`, `module`, `description`, `is_paginat
 INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_id`, `widget_order`, `layout`, `params`) VALUES
 (1, 1, 3, 1, 'middle', '{"logo":"assets\\/img\\/core\\/pe_logo_white.png","show_title":null,"show_auth":"1","roles":null,"content_id":"9"}'),
 (2, 1, 2, 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null,"content_id":"10"}'),
-(3, 3, 4, 1, 'top', '{"qty":"4","slide1":"<div><img alt=\\"Slide 1\\" src=\\"files\\/demo\\/slide1.jpg\\" \\/><\\/div>\\r\\n","slide2":"<div class=\\"text-center\\">\\r\\n<h2>Simplified page administration:<\\/h2>\\r\\n\\r\\n<p><img alt=\\"Title\\" src=\\"files\\/demo\\/admin.page.png\\" \\/><\\/p>\\r\\n<\\/div>\\r\\n","slide3":"<div class=\\"text-center\\">\\r\\n<h2>Powered by Phalcon Frawework<\\/h2>\\r\\n<img alt=\\"Phalcon code\\" src=\\"files\\/demo\\/code.png\\" \\/><\\/div>\\r\\n","slide4":"<div style=\\"max-width: 640px; position: relative; margin: 0 auto\\"><br \\/>\\r\\n<br \\/>\\r\\n<img alt=\\"Title\\" src=\\"files\\/demo\\/walle.cube.png\\" \\/>\\r\\n<div class=\\"bx-caption\\"><span>Flexible Multi MVC Architecture targeting High Performance<\\/span><\\/div>\\r\\n<\\/div>\\r\\n","height":null,"duration":"5000","speed":"500","auto":"1","auto_hover":"1","controls":"1","video":null,"pager":"1","roles":null}'),
+(3, 3, 4, 1, 'top', '{"slides":["<div style=\\"display: flex;\\"><img alt=\\"Slide 1\\" src=\\"\\/files\\/demo\\/slide1.jpg\\" \\/><\\/div>\\r\\n","<div class=\\"text-center\\">\\r\\n<h2>Simplified page administration:<\\/h2>\\r\\n\\r\\n<p><img alt=\\"Title\\" src=\\"\\/files\\/demo\\/admin.page.png\\" \\/><\\/p>\\r\\n<\\/div>\\r\\n","<div class=\\"text-center\\">\\r\\n<h2>Powered by Phalcon Frawework<\\/h2>\\r\\n<img alt=\\"Phalcon code\\" src=\\"\\/files\\/demo\\/code.png\\" \\/><\\/div>\\r\\n","<div style=\\"max-width: 640px; position: relative; margin: 0 auto\\"><br \\/>\\r\\n<br \\/>\\r\\n<img alt=\\"Title\\" src=\\"\\/files\\/demo\\/walle.cube.jpg\\" \\/>\\r\\n<div class=\\"bx-caption\\"><span>Flexible Multi MVC Architecture targeting High Performance<\\/span><\\/div>\\r\\n<\\/div>\\r\\n"],"height":null,"duration":"5000","speed":"500","auto":"1","auto_hover":"1","controls":"1","video":null,"pager":"1","roles":null}'),
 (4, 2, 1, 1, 'middle', '{"title":"","html_en":"<p style=\\"text-align: center;\\">PhalconEye v.0.4.0<\\/p>\\r\\n","roles":null}'),
 (5, 3, 1, 1, 'left', '{"title":"TOP 10 Robots","html_en":"<ul style=\\"list-style:square\\">\\r\\n\\t<li>Marvin<\\/li>\\r\\n\\t<li>Optimus Prime<\\/li>\\r\\n\\t<li>Wall-E<\\/li>\\r\\n\\t<li>C-3PO<\\/li>\\r\\n\\t<li>R2D2<\\/li>\\r\\n\\t<li>Johnny 5<\\/li>\\r\\n\\t<li>Daimos<\\/li>\\r\\n\\t<li>Sonny<\\/li>\\r\\n\\t<li>Josef<\\/li>\\r\\n\\t<li>Ratchet<\\/li>\\r\\n<\\/ul>\\r\\n","roles":null,"content_id":"5"}'),
 (6, 3, 1, 2, 'left', '{"title":"Latest Parts","html_en":"<ul style=\\"list-style:square\\">\\r\\n\\t<li>Jet-Pack<\\/li>\\r\\n\\t<li>LIDAR A\\/V Sensor<\\/li>\\r\\n\\t<li>Global SatNav<\\/li>\\r\\n\\t<li>Hydraulic Effector<\\/li>\\r\\n\\t<li>UltraSonic Aerial<\\/li>\\r\\n\\t<li>HC-500 Tracked ATR Platform<\\/li>\\r\\n\\t<li>Tactical KIT X4<\\/li>\\r\\n\\t<li>Carbon-Fibre Body<\\/li>\\r\\n<\\/ul>\\r\\n","roles":null,"content_id":"6"}'),
@@ -84,7 +84,7 @@ INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id
 (1, 'Home', 1, NULL, NULL, '/', NULL, NULL, NULL, 'top', 'files/PE_logo.png', 'left', NULL, NULL, 1, 0),
 (2, 'Forms', 1, NULL, NULL, NULL, NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 1),
 (3, 'Text elements', 1, 2, NULL, 'page/forms#robot1', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 0),
-(4, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'right', 'files/github.gif', 'left', NULL, NULL, 1, 2),
+(4, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'right', 'files/github.png', 'left', NULL, NULL, 1, 2),
 (5, 'Control elements', 1, 2, NULL, 'page/forms#color', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 1),
 (6, 'File elements', 1, 2, NULL, 'page/forms#schema', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 2);
 
@@ -95,7 +95,8 @@ INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id
 INSERT IGNORE INTO `packages` (`id`, `name`, `type`, `title`, `description`, `version`, `author`, `website`, `enabled`, `is_system`, `data`) VALUES
 (1, 'core', 'module', 'Core', 'PhalconEye Core', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 1, NULL),
 (2, 'user', 'module', 'Users', 'PhalconEye Users', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 1, NULL),
-(3, 'demo', 'widget', 'Demo Widget', 'Displays forms and other structures', '0.4.0', 'PhalconEye Team', 'https://github.com/lantian/PhalconEye', 1, 0, '{"widget_id":"5"}');
+(3, 'demo', 'widget', 'Demo Widget', 'Displays forms and other structures', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 0, '{"widget_id":"5"}'),
+(4, 'light', 'theme', 'LightEye', 'Lighter version of the default theme.', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 0, NULL);
 
 --
 -- Dumping data for table `settings`

@@ -33,13 +33,6 @@ use Core\Form\CoreForm;
 class DemoForm extends CoreForm
 {
     /**
-     * Form current method.
-     *
-     * @var string
-     */
-    protected $_method = self::METHOD_GET;
-
-    /**
      * Initialize form.
      *
      * @return void
@@ -47,13 +40,8 @@ class DemoForm extends CoreForm
     public function initialize()
     {
         $loremShort = 'Lorem ipsum dolor sit amet';
-        $loremMedium = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt
-                        ut labore et dolore magna aliqua.';
-        $loremLong = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut '.
-                     'labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco '.
-                     'laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in '.
-                     'voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat '.
-                     'non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.';
+        $loremMedium = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt'.
+                       'ut labore et dolore magna aliqua. ';
 
         $this->setTitle('Robots factory');
         $this->setDescription($loremMedium);
@@ -62,25 +50,109 @@ class DemoForm extends CoreForm
          * Text elements
          */
         $this->addContentFieldSet()
-            ->addText('robot1', 'Robot name', null, 'Wall-E')
-            ->addText('robot1', 'Robot code', $loremShort, 'CRA 25 CALLE 100')
+
+            ->addText(
+                'robot_name',
+                'Robot name',
+                null, 'Wall-E',
+                ['required' => true]
+            )
+
+            ->addText(
+                'robot_alias[]',
+                'Robot aliases',
+                $loremMedium,
+                ['CXB-250 T-500', 'CXB-250 T-500-PRO', 'CXB-250 T-1000', 'CXB-250 T-1000-PRO'],
+                ['dynamic' => ['min' => 1, 'max' => 4]]
+            )
+
             ->addPassword(
                 'password',
-                'Password',
-                $loremMedium,
+                'Master Password',
+                $loremShort,
                 [],
                 ['placeholder' => 'Provide master password']
             )
-            ->addTextArea('desc', 'Skills', $loremMedium, $loremLong);
+
+            ->addPassword(
+                'spare_passwords[]',
+                'Spare Passwords',
+                $loremShort,
+                [
+                    'placeholder' => 'Provide spare password',
+                    'dynamic' => ['min' => 1, 'max' => 4]
+                ]
+            )
+
+            ->addTextArea(
+                'desc',
+                'Description',
+                $loremMedium,
+                $loremMedium . $loremMedium . $loremMedium
+            )
+
+            ->addTextArea(
+                'skills[]',
+                'Additional Skills',
+                $loremMedium,
+                null,
+                ['dynamic' => ['min' => 1, 'max' => 3]]
+            );
+
 
         /**
          * Control elements
          */
         $this->addContentFieldSet('Control elements')
-            ->addSelect('color', 'Color', null, ['Rusty orange', 'Snow white', 'Carbon black'])
-            ->addMultiSelect('parts', 'Parts', $loremMedium, ['Head', 'Body', 'Arms', 'Legs', 'CPU'], [0, 1, 2, 3, 4])
-            ->addCheckbox('laser', 'Add laser', null, 1, true)
-            ->addCheckbox('parachute', 'Add parachute', $loremShort, 1)
+
+            ->addSelect(
+                'color',
+                'Main color',
+                null,
+                ['Rusty orange', 'Snow white', 'Carbon black']
+            )
+
+            ->addSelect(
+                'colors[]',
+                'Secondary colors',
+                $loremMedium,
+                ['Red', 'Green', 'Blue'],
+                [0, 1, 2],
+                ['dynamic' => ['min' => 1, 'max' => 3]]
+            )
+
+            ->addMultiSelect(
+                'parts',
+                'Parts',
+                null,
+                ['Head', 'Body', 'Arms', 'Legs', 'CPU'],
+                [0, 1, 2, 3, 4]
+            )
+
+            ->addMultiSelect(
+                'spare_parts[]',
+                'Spare parts',
+                $loremMedium,
+                ['Head', 'Body', 'Arms', 'Legs', 'CPU'],
+                [[0], [1,2], [3,4]],
+                ['dynamic' => ['min' => 2, 'max' => 5]]
+            )
+
+            ->addCheckbox(
+                'laser',
+                'Add laser',
+                null,
+                1,
+                true
+            )
+
+            ->addCheckbox(
+                'parachute',
+                'Add parachute',
+                $loremShort,
+                1
+            )
+
             ->addRadio(
                 'cpu',
                 'CPU',
@@ -92,6 +164,7 @@ class DemoForm extends CoreForm
                     'Atom-XI 128-bit 0.5 THz',
                 ]
             )
+
             ->addMultiCheckbox(
                 'tuning',
                 'Tuning',
@@ -107,9 +180,53 @@ class DemoForm extends CoreForm
          * File elements
          */
         $this->addContentFieldSet('File elements')
-             ->addFile('schema', 'Scheme', 'Upload electric circuits scheme')
-             ->addFile('image', 'Image', 'Upload image', true, 'files/demo/robot.png')
-             ->addRemoteFile('remote', 'Image', 'Remote image', 'files/demo/robot.png');
+
+            ->addFile(
+                'scheme',
+                'Scheme',
+                'Upload electric circuits scheme'
+            )
+
+            ->addFile(
+                'schemas[]',
+                'Extra schemes',
+                'Upload up to 10 extra electric circuits schemes',
+                false,
+                null,
+                ['dynamic' => ['min' => 1, 'max' => 10]]
+            )
+
+            ->addFile(
+                'image',
+                'Image',
+                'Upload image',
+                true,
+                'files/demo/robot.png'
+            )
+
+            ->addFile(
+                'images[]',
+                'Even more images',
+                'Upload even more images',
+                true,
+                null,
+                ['dynamic' => ['min' => 1, 'max' => 3]]
+            )
+
+            ->addRemoteFile(
+                'remote',
+                'Server image',
+                null,
+                'files/demo/robot.png'
+            )
+
+            ->addRemoteFile(
+                'remotes[]',
+                'Even more server images',
+                null,
+                null,
+                ['dynamic' => ['min' => 1, 'max' => 3]]
+            );
 
         /**
          * Footer

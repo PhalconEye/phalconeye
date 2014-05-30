@@ -26,7 +26,9 @@
                 {% if not(logo is empty) %}
                 <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
                 {% endif %}
-                {% if show_title is 1 %}{{ site_title }}{% endif %}
+                {% if show_title is 1 %}
+                <h1>{{ site_title }}</h1>
+                {% endif %}
             </a>
         </div>
     {% endif %}

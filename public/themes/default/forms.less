@@ -149,44 +149,14 @@ form {
   .form_element_remote_file {
     position: relative;
     & > input[type="text"] {
-      width: 70%;
+      width: 65%;
       & + input {
         position: absolute;
         top: 0;
-        width: 30%;
+        width: 35%;
       }
     }
   }
-}
-
-/** General form elements **/
-input[type=text], input[type=email], input[type=password], input.text, textarea, select {
-  background-color: @containerBgColor;
-  border: 1px solid @containerBorderColor;
-  padding: 0.5em;
-  font-size: @fontSizeForms;
-  resize: none;
-  font-family: @font;
-  .box-shadow(0 3px 8px rgba(0, 0, 0, 0.125) inset);
-}
-
-button, input[type=button], input[type=file], .btn {
-  padding: 0.5em;
-  border: 0;
-  background-color: @buttonBgColor;
-  color: @buttonColor;
-  cursor: pointer;
-  font-size: @fontSize;
-  text-decoration: none;
-  display: inline-block;
-  vertical-align: middle;
-  &:hover, &:focus, &.btn-danger {
-    color: @buttonColor;
-    background-color: @buttonBgHoverColor;
-  }
-}
-a.btn {
-  height: 1.29 * @fontSize;
 }
 
 /** Specific forms **/
