@@ -88,7 +88,7 @@ class File extends AbstractInput implements ElementInterface
 
         if (!empty($value) && $value != '/' && $this->getOption('isImage')) {
             $html = '<div class="form_element_file_image">
-                         <img alt="Preview image" src="'. $value .'"/>
+                         <img alt="'. $this->getOption('label', 'Preview image') .'" src="'. $value .'"/>
                      </div>'.
                     $html;
         }

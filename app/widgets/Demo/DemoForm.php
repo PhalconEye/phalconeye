@@ -136,7 +136,7 @@ class DemoForm extends CoreForm
                 'Spare parts',
                 $loremMedium,
                 ['Head', 'Body', 'Arms', 'Legs', 'CPU'],
-                [[0], [1,2], [3,4]],
+                [[0], [1, 2], [3, 4]],
                 ['dynamic' => ['min' => 2, 'max' => 5]]
             )
 
