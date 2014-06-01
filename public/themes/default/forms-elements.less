@@ -37,11 +37,15 @@ button, input[type=button], input[type=file], .btn {
   text-decoration: none;
   display: inline-block;
   vertical-align: middle;
-  &:hover, &:focus, &.btn-danger {
+  &:active, &:focus, &.active {
+    outline: 0;
+  }
+  &:hover, &.btn-danger {
     color: @buttonColor;
     background-color: @buttonBgHoverColor;
   }
 }
+
 a.btn {
   height: 1.29 * @fontSize;
 }

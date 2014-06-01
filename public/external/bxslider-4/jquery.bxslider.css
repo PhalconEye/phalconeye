@@ -217,7 +217,6 @@
   box-shadow: none;
   left: 0;
   transform: none;
-  height: auto !important;
 }
 
 .bx-wrapper .bx-pager.bx-default-pager a:hover,
@@ -257,9 +256,14 @@
     right: -10px;
 }
 
+.bx-wrapper .bx-caption {
+    bottom: 1em;
+}
+
 .bx-wrapper .bx-caption span {
     font: inherit !important;
     background-color: #000000;
+    padding: 0.5em 1em;
 }
 
 .bx-wrapper .bxslider > li {

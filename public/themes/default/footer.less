@@ -1,0 +1,58 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+footer {
+  color: @footerColor;
+
+  section {
+    background: @footerBackground;
+  }
+
+  .social-icons {
+    margin: 0;
+    padding: 0;
+
+    li {
+      float: left;
+      list-style: none outside none;
+      border: none;
+
+      a {
+        background-color: transparent;
+        background-image: url("@{baseUrl}files/mini-social-icons.png");
+        background-repeat: no-repeat;
+        background-size: auto 96px; border: 0 none;
+        color: white;
+        display: block;
+        height: 32px;
+        overflow: hidden;
+        text-align: left; text-decoration: none;
+        text-indent: -999em;
+        .transition();
+        width:32px
+      }
+
+      &.facebook a{ background-position: 0 -1px;      &:hover { background-position: 0 -32px }}
+      &.gplus    a{ background-position: -96px -1px;  &:hover { background-position: -96px -32px }}
+      &.rss      a{ background-position: -192px -1px; &:hover { background-position: -192px -32px }}
+      &.twitter  a{ background-position: -256px -1px; &:hover { background-position: -256px -32px }}
+      &.youtube  a{ background-position: -320px -1px; &:hover { background-position: -320px -32px }}
+      &.skype    a{ background-position: -224px -1px; &:hover { background-position: -224px -32px }}
+    }
+  }
+}

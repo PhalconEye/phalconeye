@@ -50,6 +50,7 @@ class DemoForm extends CoreForm
          * Text elements
          */
         $this->addContentFieldSet()
+            ->setAttribute('id', 'form_content_text')
 
             ->addText(
                 'robot_name',
@@ -104,6 +105,7 @@ class DemoForm extends CoreForm
          * Control elements
          */
         $this->addContentFieldSet('Control elements')
+            ->setAttribute('id', 'form_content_controls')
 
             ->addSelect(
                 'color',
@@ -180,6 +182,7 @@ class DemoForm extends CoreForm
          * File elements
          */
         $this->addContentFieldSet('File elements')
+            ->setAttribute('id', 'form_content_files')
 
             ->addFile(
                 'scheme',

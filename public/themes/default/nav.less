@@ -18,7 +18,6 @@
 
 .navbar {
   position: relative;
-  z-index: 10;
 
   .nav {
     li {
@@ -61,6 +60,7 @@
 
     & > li.dropdown:hover > .dropdown-menu {
       display: block;
+      z-index: 10;
     }
   }
 
@@ -178,15 +178,6 @@
   }
 
   ul li .dropdown-menu {
-    // Smartphone
-    @media screen and (max-width: (@viewportTablet - 1)) {
-      a:before {
-        border-left: 1px solid @buttonNavBgHoverColor;
-        content: " ";
-        margin-left: -20px;
-        padding-right: 10px;
-      }
-    }
     // Tablet and desktop
     @media screen and (min-width: @viewportTablet) {
       position: absolute;

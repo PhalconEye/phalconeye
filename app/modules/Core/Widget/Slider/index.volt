@@ -39,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
     controls: ({{ params['controls'] }} == 1),
     video: ({{ params['video'] }} == 1),
     pager: ({{ params['pager'] }} == 1),
-    adaptiveHeight: true,
+    adaptiveHeight: {{ height > 0 ? 'false' : 'true' }},
     captions: true,
     nextText: "›",
     prevText : "‹"

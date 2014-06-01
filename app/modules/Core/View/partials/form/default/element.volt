@@ -28,11 +28,9 @@
         {% if element.getOption('label') or element.getOption('description') %}
             <div class="form_label">
                 {% if element.getOption('label') %}
-                    <label for="{{ element.getName() }}">
+                    <label for="{{ element.getAttribute('id') }}">
                         {{ element.getOption('label') |i18n }}
-                        {% if element.getOption('required') %}
-                            *
-                        {% endif %}
+                        {% if element.getOption('required') %}<span>*</span>{% endif %}
                     </label>
                 {% endif %}
                 {% if element.getOption('description') %}
