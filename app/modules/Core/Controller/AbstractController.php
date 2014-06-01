@@ -20,9 +20,11 @@
 namespace Core\Controller;
 
 use Core\Controller\Traits\JsTranslations;
-use Core\Model\Page;
 use Core\Helper\Renderer;
+use Core\Model\Page;
+use Engine\Asset\Manager as AssetManager;
 use Engine\Behaviour\DIBehaviour;
+use Engine\Exception;
 use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
@@ -203,7 +205,7 @@ abstract class AbstractController extends PhalconController
     protected function _setupAssets()
     {
         $this->assets->set(
-            'css',
+            AssetManager::DEFAULT_COLLECTION_CSS,
             $this->assets->getEmptyCssCollection()
                 ->addCss('external/jquery/jquery-ui.css')
                 ->addCss('assets/css/constants.css')
@@ -211,7 +213,7 @@ abstract class AbstractController extends PhalconController
         );
 
         $this->assets->set(
-            'js',
+            AssetManager::DEFAULT_COLLECTION_JS,
             $this->assets->getEmptyJsCollection()
                 ->addJs('external/jquery/jquery-2.1.0.js')
                 ->addJs('external/jquery/jquery-ui-1.10.4.js')
@@ -229,11 +231,11 @@ abstract class AbstractController extends PhalconController
 
         if ($this->di->has('profiler')) {
             $this->di->get('assets')
-                ->collection('css')
+                ->collection(AssetManager::DEFAULT_COLLECTION_CSS)
                 ->addCss('assets/css/core/profiler.css');
 
             $this->di->get('assets')
-                ->collection('js')
+                ->collection(AssetManager::DEFAULT_COLLECTION_JS)
                 ->addCss('assets/js/core/profiler.js');
         }
 

@@ -18,10 +18,13 @@
 
 namespace Core\Widget\Menu;
 
+use Core\Api\Acl;
 use Core\Model\Menu;
 use Core\Model\MenuItem;
 use Engine\Navigation;
 use Engine\Widget\Controller as WidgetController;
+use User\Model\Role;
+use User\Model\User;
 
 /**
  * Menu widget controller.
@@ -35,6 +38,12 @@ use Engine\Widget\Controller as WidgetController;
  */
 class Controller extends WidgetController
 {
+    const
+        /**
+         * Cache prefix.
+         */
+        CACHE_PREFIX = 'menu_cache_key_';
+
     /**
      * Main action.
      *
@@ -137,5 +146,26 @@ class Controller extends WidgetController
     public function isCached()
     {
         return true;
+    }
+
+    /**
+     * Get widget cache key.
+     *
+     * @return string|null
+     */
+    public function getCacheKey()
+    {
+        $key = self::CACHE_PREFIX;
+
+        $role = User::getViewer()->getRole();
+        if ($role) {
+            $key .= $role->type;
+        } else {
+            $key .= Role::getRoleByType(Acl::DEFAULT_ROLE_GUEST)->type;
+        }
+
+        $key .= '_' . $this->getDI()->getSession()->get('language');
+
+        return $key;
     }
 }
