@@ -48,7 +48,7 @@ class Setting extends Helper
      *
      * @return null|string
      */
-    protected function _get($setting, $default = null)
+    public function get($setting, $default = null)
     {
         return Settings::getValue(static::PREFIX, $setting, $default);
     }

@@ -22,6 +22,7 @@ use Core\Model\Package;
 use Core\Model\Settings;
 use Engine\Navigation;
 use Engine\Package\Manager;
+use Engine\Asset\Manager as AssetManager;
 
 /**
  * Base admin controller.
@@ -181,7 +182,7 @@ abstract class AbstractAdminController extends AbstractController
 
         // Assets setup.
         $this->assets->set(
-            'css',
+            AssetManager::DEFAULT_COLLECTION_CSS,
             $this->assets->getEmptyCssCollection()
                 ->addCss('external/bootstrap/css/bootstrap.min.css')
                 ->addCss('external/bootstrap/css/bootstrap-switch.min.css')
@@ -190,7 +191,7 @@ abstract class AbstractAdminController extends AbstractController
                 ->join(false)
         );
 
-        $this->assets->get('js')
+        $this->assets->get(AssetManager::DEFAULT_COLLECTION_JS)
             ->addJs('external/bootstrap/js/bootstrap.min.js')
             ->addJs('external/bootstrap/js/bootstrap-switch.min.js')
             ->addJs('external/ckeditor/ckeditor.js');

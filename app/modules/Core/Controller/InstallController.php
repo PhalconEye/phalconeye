@@ -101,7 +101,7 @@ class InstallController extends AbstractController
 
         $collection = new AssetsCollection();
         $collection->addCss('assets/css/core/install.css');
-        $this->assets->set('css', $collection);
+        $this->assets->set(AssetManager::DEFAULT_COLLECTION_CSS, $collection);
     }
 
     /**

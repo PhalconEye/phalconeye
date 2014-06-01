@@ -48,7 +48,7 @@ class I18n extends Helper
      *
      * @return $this
      */
-    protected function _add($translations, $params = [])
+    public function add($translations, $params = [])
     {
         if (!is_array($translations)) {
             $translations = [$translations => $params];
@@ -66,7 +66,7 @@ class I18n extends Helper
      *
      * @return string
      */
-    protected function _js($translations, $params = [])
+    public function js($translations, $params = [])
     {
         if (!is_array($translations)) {
             $translations = [$translations => $params];
@@ -80,7 +80,7 @@ class I18n extends Helper
      *
      * @return void
      */
-    protected function _clear()
+    public function clear()
     {
         $this->_translations = [];
     }
@@ -92,7 +92,7 @@ class I18n extends Helper
      *
      * @return string
      */
-    protected function _render($translations = null)
+    public function render($translations = null)
     {
         if (!$translations) {
             $translations = $this->_translations;

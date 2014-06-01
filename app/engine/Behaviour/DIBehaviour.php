@@ -45,6 +45,7 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Config getConfig()
  * @method \Phalcon\Translate\Adapter getI18n()
  * @method \Phalcon\Events\Manager getEventsManager()
+ * @method \Phalcon\Session\Adapter getSession()
  */
 trait DIBehaviour
 {

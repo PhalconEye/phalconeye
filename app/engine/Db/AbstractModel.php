@@ -68,7 +68,7 @@ abstract class AbstractModel extends PhalconModel
      */
     public static function get($condition, $params, $order = null, $limit = null)
     {
-        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $condition = vsprintf($condition, $params);
         $parameters = [$condition];
 
         if ($order) {
@@ -94,7 +94,7 @@ abstract class AbstractModel extends PhalconModel
      */
     public static function getFirst($condition, $params, $order = null)
     {
-        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $condition = vsprintf($condition, $params);
         $parameters = [$condition];
 
         if ($order) {

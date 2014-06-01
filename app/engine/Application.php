@@ -208,31 +208,13 @@ class Application extends PhalconApplication
      */
     public function clearCache($themeDirectory = '')
     {
-        $viewCache = $this->_dependencyInjector->get('viewCache');
         $cacheOutput = $this->_dependencyInjector->get('cacheOutput');
         $cacheData = $this->_dependencyInjector->get('cacheData');
-        $modelsCache = $this->_dependencyInjector->get('modelsCache');
         $config = $this->_dependencyInjector->get('config');
 
-        $keys = $viewCache->queryKeys();
-        foreach ($keys as $key) {
-            $viewCache->delete($key);
-        }
+        $cacheOutput->flush();
+        $cacheData->flush();
 
-        $keys = $cacheOutput->queryKeys();
-        foreach ($keys as $key) {
-            $cacheOutput->delete($key);
-        }
-
-        $keys = $cacheData->queryKeys();
-        foreach ($keys as $key) {
-            $cacheData->delete($key);
-        }
-
-        $keys = $modelsCache->queryKeys();
-        foreach ($keys as $key) {
-            $modelsCache->delete($key);
-        }
 
         // Files deleter helper.
         $deleteFiles = function ($files) {
@@ -244,7 +226,9 @@ class Application extends PhalconApplication
         };
 
         // Clear files cache.
-        $deleteFiles(glob($config->application->cache->cacheDir . '*'));
+        if (isset($config->application->cache->cacheDir)) {
+            $deleteFiles(glob($config->application->cache->cacheDir . '*'));
+        }
 
         // Clear view cache.
         $deleteFiles(glob($config->application->view->compiledPath . '*'));
