@@ -115,11 +115,16 @@
                 }
 
                 // Reset value and increase id
+                var replaced = false;
+
                 realElement
                     .val('')
                     .attr('id', element.attr('id').replace(/(\d+)/, function() {
+                        replaced = true;
                         return parseInt(arguments[1]) + 1;
                     }));
+
+                replaced || realElement.attr('id', realElement.attr('id') + "1");
 
                 // Needed for re-initializing CKEditor
                 if (clone.data('widget') == '(ckeditor):invoked') {
@@ -166,14 +171,14 @@
                 if (this._canRemove(scope)) {
 
                     var name = scope.data('dynamic'),
-                        element = $('[name="'+ name +'"]', scope).last();
+                        element = $('[name="'+ name +'"]', scope).last(),
+                        widget = element.data('widget');
 
                     // Remove the last element
                     if (element.parent().hasClass('form_element_remote_file')) {
                         element.parent().remove();
                     } else {
-
-                        if (element.data('widget') == 'ckeditor') {
+                        if (widget == 'ckeditor' || widget == '(ckeditor):invoked') {
                             root.widget.ckeditor.destroy(element);
                         }
 

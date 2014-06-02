@@ -1,0 +1,49 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+
+.border-radius (@radius: 5px) {
+  border-radius: @radius;                  /* Chrome 5+, Android 2.2+, Firefox 4+, IE 9+, iOS 4+, Opera 10.50+, Safari 5+ */
+  background-clip: padding-box;            /* useful if you don't want a bg color from leaking outside the border: */
+}
+
+.box-shadow (@arguments) {
+  -webkit-box-shadow: @arguments;          /* Chrome 4+, iOS 4+, Safari 5.0+ */
+  box-shadow: @arguments;                  /* Chrome 10+, Firefox 4+, IE 9+, iOS 5+, Opera 10.50+ */
+}
+
+.box-sizing (@type: border-box) {
+  -webkit-box-sizing: @type;               /* Chrome 4+, iOS 4+, Android 2.1+, Safari 3.2+ */
+  -moz-box-sizing: @type;                  /* Firefox 2+ */
+  box-sizing: @type;                       /* Chrome 10+, Firefox 29+, IE 8+, Opera 9.5+, Safari 5+ */
+}
+
+.transform (@arguments) {
+  -webkit-transform: @arguments;           /* Chrome 4+, iOS 3.2+, Android 2.1+, Opera 15+, Safari 3.1+ */
+  -moz-transform: @arguments;              /* Firefox 3.5+ */
+  -ms-transform: @arguments;               /* IE 9+ */
+  -o-transform: @arguments;                /* Opera 10.5+ */
+  tranform: @arguments;                    /* Chrome 36+, Firefox 16+, IE 10+ */
+}
+
+.transition (@scope: all, @delay: 0.25s, @ease: ease) {
+  -webkit-transition: @scope @delay @ease; /* Chrome 4+, iOS 3.2+, Android 2.1+, Safari 3.2+  */
+  -moz-transition: @scope @delay @ease;    /* Firefox 4+ */
+  -o-transition: @scope @delay @ease;      /* Opera 10.50+ */
+  transition: @scope @delay @ease;         /* Chrome 26+, Firefox 16+, Android 4.4+, iOS 7+, IE 10+, Opera 12.1, Safari 6.1+ */
+}

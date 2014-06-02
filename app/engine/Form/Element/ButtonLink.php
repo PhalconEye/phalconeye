@@ -113,6 +113,6 @@ class ButtonLink extends AbstractElement implements ElementInterface
         }
         $this->setAttribute('href', $href);
 
-        parent::render();
+        return parent::render();
     }
 }

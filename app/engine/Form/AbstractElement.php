@@ -397,7 +397,7 @@ abstract class AbstractElement implements ElementInterface
         $html = '';
         foreach ($values as $id => $value) {
             $this->setValue($value);
-            $this->setAttribute('id', $originalId.$id);
+            $this->setAttribute('id', $id? $originalId . $id : $originalId);
             $html .= vsprintf(
                 $this->getHtmlTemplate(),
                 $this->getHtmlTemplateValues()

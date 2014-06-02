@@ -1,0 +1,64 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+main {
+  clear: both;
+  width: 100%;
+  padding: 1em 0;
+}
+
+section, aside {
+  float: left;
+  &.content, &.content-left, &.content-right {
+    min-height: @contentMinHeight;
+    display: inline-block;
+  }
+  &.content-left {
+    clear: left;
+  }
+  &.content-right {
+    clear: right;
+  }
+}
+
+section {
+  &.content {
+    clear: none;
+    width: @contentSectionWidth;
+  }
+  &.content-full, &.content-top, &.content-bottom {
+    width: 100%;
+    clear: both;
+  }
+  &.content-left {
+    width: 100% - @contentAsideRightWidth;
+  }
+  &.content-right {
+    width: 100% - @contentAsideLeftWidth;
+  }
+}
+
+aside {
+  &.content-left {
+    width: @contentAsideRightWidth;
+  }
+  &.content-right {
+    width: @contentAsideLeftWidth;
+  }
+}
+

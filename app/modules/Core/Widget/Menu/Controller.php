@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -32,6 +33,7 @@ use User\Model\User;
  * @category  PhalconEye
  * @package   Core\Widget\Header
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -78,6 +80,7 @@ class Controller extends WidgetController
 
         $navigation = new Navigation();
         $navigation
+            ->setId($menuId)
             ->setListClass($menuClass)
             ->setItems($items)
             ->setActiveItem($this->dispatcher->getActionName());

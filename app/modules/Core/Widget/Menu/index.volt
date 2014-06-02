@@ -12,15 +12,18 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
 {% extends "../../Core/View/layouts/widget.volt" %}
 
 {% block content %}
-    <div class="navbar">
+    <nav id="{{ 'nav-' ~ navigation.getId() }}" class="navbar">
+        <input type="checkbox" class="navbar-toggle"  id="{{ 'nav-toggle-' ~ navigation.getId() }}" />
         <div class="navbar-inner">
             {{ navigation.render() }}
         </div>
-    </div>
+        <label class="navbar-handle" for="{{ 'nav-toggle-' ~ navigation.getId() }}"></label>
+    </nav>
 {% endblock %}

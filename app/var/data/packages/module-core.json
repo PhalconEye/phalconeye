@@ -36,6 +36,15 @@
             "is_acl_controlled": "1",
             "admin_form": "\\Core\\Form\\Admin\\Widget\\Header",
             "enabled": true
+        },
+        {
+            "name": "Slider",
+            "module": "core",
+            "description": "Dynamic content slider",
+            "is_paginated": "0",
+            "is_acl_controlled": "1",
+            "admin_form": "action",
+            "enabled": true
         }
     ],
     "i18n": [

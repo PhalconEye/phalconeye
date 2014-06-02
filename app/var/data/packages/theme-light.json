@@ -1,0 +1,15 @@
+{
+    "type": "theme",
+    "name": "light",
+    "title": "LightEye",
+    "description": "Lighter version of the default theme.",
+    "version": "0.4.0",
+    "author": "PhalconEye Team",
+    "website": "http:\/\/phalconeye.com\/",
+    "events": [
+
+    ],
+    "i18n": [
+
+    ]
+}

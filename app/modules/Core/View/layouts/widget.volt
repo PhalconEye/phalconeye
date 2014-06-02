@@ -12,18 +12,19 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
 
-<div class="widget_wrapper">
+<article class="widget">
     {% if title is defined and title is not null %}
-    <div class="widget_header">
+    <header>
         <h3>{{ title|i18n }}</h3>
-    </div>
+    </header>
     {% endif %}
 
-    <div class="widget_container">
+    <div class="widget-body">
         {% block content %}
         {% endblock %}
     </div>
-</div>
+</article>

@@ -1,0 +1,168 @@
+/*
+  +------------------------------------------------------------------------+
+  | PhalconEye CMS                                                         |
+  +------------------------------------------------------------------------+
+  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  +------------------------------------------------------------------------+
+  | This source file is subject to the New BSD License that is bundled     |
+  | with this package in the file LICENSE.txt.                             |
+  |                                                                        |
+  | If you did not receive a copy of the license and are unable to         |
+  | obtain it through the world-wide-web, please send an email             |
+  | to license@phalconeye.com so we can send you a copy immediately.       |
+  +------------------------------------------------------------------------+
+  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
+  +------------------------------------------------------------------------+
+*/
+
+form {
+  padding: 0;
+  margin: 0 auto;
+  max-width: 95%;
+  .box-shadow(0px 0px 2px @formDescriptionColor);
+
+  fieldset {
+    clear: both;
+    border: none;
+    margin: 1em 1em 0;
+    padding: 0;
+
+    legend {
+      border-bottom: 1px solid @formDescriptionColor;
+      margin: 1em auto;
+      padding: 1em 0;
+      width: 100%;
+    }
+
+    & > div {
+      clear: both;
+      width: 100%;
+    }
+  }
+
+  .form_header {
+    border-bottom: 1px solid @formDescriptionColor;
+    padding: 1em;
+
+    & > h3 {
+      margin: 0;
+      font-size: 1.2em;
+      font-weight: 700;
+    }
+
+    & > p {
+      color: @formDescriptionColor;
+      font-size: @fontSizeForms;
+      margin: 0 0 0.75em 0;
+    }
+  }
+
+  .form_elements {
+
+    .form_element, .form_label {
+      float: left;
+      width: ~"-webkit-calc(50% - 2em)";
+      width: ~"calc(50% - 2em)";
+      padding: 0.5em 1em;
+    }
+
+    .form_label {
+
+      & > label {
+        color: @formLabelColor;
+      }
+      & > p {
+        font-size: @fontSizeForms;
+        line-height: 1em;
+        color: @formDescriptionColor;
+        margin: 0;
+      }
+    }
+
+    .form_element {
+
+      & > * {
+        width: 100%;
+        margin-bottom: 0.4em;
+      }
+
+      textarea {
+        min-height: 100px;
+      }
+
+      .dynamic-controls {
+        margin-left: 1em;
+        text-align: right;
+        button {
+          margin-left: 0.4em;
+        }
+      }
+      select + .dynamic-controls {
+        margin: 0;
+      }
+    }
+
+    .validation_failed {
+      label {
+        color: @fontErrorColor;
+      }
+      input, textarea, select, {
+        background-color: @fontErrorColor;
+      }
+    }
+  }
+
+  .form_footer {
+    text-align: right;
+    padding: 1em;
+    border-top: 1px solid @formDescriptionColor;
+  }
+
+  .form_element_checkbox,
+  .form_element_radio {
+    position: relative;
+    label {
+      font-size: 0.8em;
+    }
+  }
+
+  .form_element_file_image {
+    text-align: center;
+    overflow-x: hidden;
+    width: auto;
+
+    img[src*="/"] {
+      width: inherit;
+      max-width: 50%;
+    }
+  }
+
+  .form_errors,
+  .form_notices {
+    margin: 0;
+    padding: 2em 2em 0;
+    li {
+      color: @fontErrorColor;
+    }
+  }
+
+  .form_element_remote_file {
+    position: relative;
+    & > input[type="text"] {
+      width: 65%;
+      & + input {
+        position: absolute;
+        top: 0;
+        width: 35%;
+      }
+    }
+  }
+}
+
+/** Specific forms **/
+.form_login {
+  margin: 50px auto;
+  max-width: 420px;
+  width: 90%;
+}

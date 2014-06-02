@@ -1,0 +1,15 @@
+{
+    "type": "widget",
+    "name": "demo",
+    "title": "Demo Widget",
+    "description": "Displays forms and other structures",
+    "version": "0.4.0",
+    "author": "PhalconEye Team",
+    "website": "http:\/\/phalconeye.com\/",
+    "events": [
+
+    ],
+    "i18n": [
+
+    ]
+}
