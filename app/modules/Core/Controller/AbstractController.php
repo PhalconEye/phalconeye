@@ -167,6 +167,23 @@ abstract class AbstractController extends PhalconController
             $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
+        $contentHeader = $contentFooter = '';
+
+        if (!$this->_hideHeader) {
+            $contentHeader = $renderer->renderContent(
+                Page::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'core')
+            );
+        }
+
+        if (!$this->_hideFooter) {
+            $contentFooter = $renderer->renderContent(
+                Page::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'core')
+            );
+        }
+
+        $this->view->contentHeader = $contentHeader;
+        $this->view->contentFooter = $contentFooter;
+
         $this->view->content = $content;
         $this->view->page = $page;
 

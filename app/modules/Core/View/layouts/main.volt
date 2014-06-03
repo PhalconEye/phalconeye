@@ -42,9 +42,7 @@
 <div id="wrapper">
 
     <header>
-        {% if hideHeader is not defined %}
-        {{ helper('renderer', 'core').renderContent('header', resolveView("partials/layout", 'core')) }}
-        {% endif %}
+        {{ contentHeader }}
 
         {%- block header -%}
         {%- endblock -%}
@@ -60,9 +58,7 @@
     </main>
 
     <footer>
-        {% if hideFooter is not defined %}
-        {{ helper('renderer', 'core').renderContent('footer', resolveView("partials/layout", 'core')) }}
-        {% endif %}
+        {{ contentFooter }}
 
         {%- block footer -%}
         {%- endblock -%}

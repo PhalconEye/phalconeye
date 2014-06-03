@@ -86,7 +86,17 @@ class Page extends AbstractModel
         /**
          * Home page type.
          */
-        PAGE_TYPE_HOME = 'home';
+        PAGE_TYPE_HOME = 'home',
+
+        /**
+         * Header block.
+         */
+        PAGE_TYPE_HEADER = 'header',
+
+        /**
+         * Footer block.
+         */
+        PAGE_TYPE_FOOTER = 'footer';
 
     /**
      * @Primary
