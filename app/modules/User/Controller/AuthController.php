@@ -51,6 +51,7 @@ class AuthController extends AbstractController
             return $this->response->redirect();
         }
 
+        $this->renderParts(); // Render header and footer.
         $form = new LoginForm();
         if (!$this->request->isPost() || !$form->isValid()) {
             $this->view->form = $form;
@@ -109,6 +110,7 @@ class AuthController extends AbstractController
             return $this->response->redirect();
         }
 
+        $this->renderParts(); // Render header and footer.
         $form = new RegisterForm();
 
         if (!$this->request->isPost() || !$form->isValid()) {

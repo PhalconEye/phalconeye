@@ -167,22 +167,7 @@ abstract class AbstractController extends PhalconController
             $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
-        $contentHeader = $contentFooter = '';
-
-        if (!$this->_hideHeader) {
-            $contentHeader = $renderer->renderContent(
-                Page::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'core')
-            );
-        }
-
-        if (!$this->_hideFooter) {
-            $contentFooter = $renderer->renderContent(
-                Page::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'core')
-            );
-        }
-
-        $this->view->contentHeader = $contentHeader;
-        $this->view->contentFooter = $contentFooter;
+        $this->renderParts($renderer);
 
         $this->view->content = $content;
         $this->view->page = $page;
@@ -274,5 +259,66 @@ abstract class AbstractController extends PhalconController
         }
 
         $this->addDefaultJsTranslations();
+    }
+
+    /**
+     * Render left parts of the page (header and footer).
+     *
+     * @return void
+     */
+    public function renderParts()
+    {
+        $renderer = Renderer::getInstance($this->getDI());
+
+        // Store result, and only after finishing the render process - assign.
+        $contentHeader = $this->getHeader($renderer);
+        $contentFooter = $this->getFooter($renderer);
+
+        $this->view->contentHeader = $contentHeader;
+        $this->view->contentFooter = $contentFooter;
+    }
+
+    /**
+     * Render header part.
+     *
+     * @param Renderer|null $renderer Renderer helper object.
+     *
+     * @return string
+     */
+    public function getHeader($renderer = null)
+    {
+        if ($this->_hideHeader) {
+            return '';
+        }
+
+        if (!$renderer) {
+            $renderer = Renderer::getInstance($this->getDI());
+        }
+
+        return $renderer->renderContent(
+            Page::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'core')
+        );
+    }
+
+    /**
+     * Render footer part.
+     *
+     * @param Renderer|null $renderer Renderer helper object.
+     *
+     * @return string
+     */
+    public function getFooter($renderer = null)
+    {
+        if ($this->_hideFooter) {
+            return '';
+        }
+
+        if (!$renderer) {
+            $renderer = Renderer::getInstance($this->getDI());
+        }
+
+        return $renderer->renderContent(
+            Page::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'core')
+        );
     }
 }

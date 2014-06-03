@@ -23,7 +23,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="generator" content="PhalconEye - Open Source Content Management System">
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 
     {{ assets.outputCss() }}
 
@@ -42,7 +42,9 @@
 <div id="wrapper">
 
     <header>
-        {{ contentHeader }}
+        {% if contentHeader is defined %}
+            {{ contentHeader }}
+        {% endif %}
 
         {%- block header -%}
         {%- endblock -%}
@@ -58,7 +60,9 @@
     </main>
 
     <footer>
-        {{ contentFooter }}
+        {% if contentFooter is defined %}
+            {{ contentFooter }}
+        {% endif %}
 
         {%- block footer -%}
         {%- endblock -%}
