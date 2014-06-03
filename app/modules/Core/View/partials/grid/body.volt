@@ -24,7 +24,7 @@
     {% endfor %}
     <tr>
         <td colspan="{{ (grid.getColumns() | length) + 1 }}">
-            {{ partial(resolveView('partials/paginator', 'core')) }}
+            {{ partial(resolveView("partials/paginator", 'core')) }}
         </td>
     </tr>
 {% else %}

@@ -15,6 +15,7 @@
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,7 +42,7 @@
 <div id="wrapper">
 
     <header>
-        {% if disableHeader is not defined %}
+        {% if hideHeader is not defined %}
         {{ helper('renderer', 'core').renderContent('header', resolveView("partials/layout", 'core')) }}
         {% endif %}
 
@@ -59,7 +60,7 @@
     </main>
 
     <footer>
-        {% if disableFooter is not defined %}
+        {% if hideFooter is not defined %}
         {{ helper('renderer', 'core').renderContent('footer', resolveView("partials/layout", 'core')) }}
         {% endif %}
 

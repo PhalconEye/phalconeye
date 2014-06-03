@@ -27,7 +27,7 @@
 </div>
 {% block footer %}
 {% endblock %}
-{% if disableFooter is not defined %}
+{% if hideFooter is not defined %}
     <div class="modal-footer">
         {% if hideClose is not defined %}
             <button class="btn" data-dismiss="modal" aria-hidden="true">{{ "Close"|i18n }}</button>

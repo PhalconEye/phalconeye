@@ -124,15 +124,8 @@ class Element
                 return '';
             }
 
-            if (!$widgetModule) {
-                ob_start();
-                $controller->view->render('', $action);
-                $output = ob_get_contents();
-                ob_end_clean();
-            } else {
-                $controller->view->getRender(null, $action);
-                $output = $controller->view->getContent();
-            }
+            $controller->view->getRender(null, null);
+            $output = $controller->view->getContent();
 
             if ($controller->isCached()) {
                 $cache->save($cacheKey, trim($output), $cacheLifeTime);

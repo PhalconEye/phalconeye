@@ -96,8 +96,8 @@ class InstallController extends AbstractController
         }
 
         $this->view->setRenderLevel(View::LEVEL_ACTION_VIEW);
-        $this->disableHeader();
-        $this->disableFooter();
+        $this->hideHeader();
+        $this->hideFooter();
 
         $collection = new AssetsCollection();
         $collection->addCss('assets/css/core/install.css');

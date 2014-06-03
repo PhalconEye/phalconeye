@@ -172,7 +172,7 @@ class Profiler extends Helper
         ob_start();
 
         $viewsDir = $this->_view->getViewsDir();
-        $this->_view->setViewsDir(ROOT_PATH . '/app/modules/Core/View/');
+        $this->_view->setViewsDir($this->getDI()->getRegistry()->directories->modules .'Core/View/');
         $this->_view->partial('partials/profiler/' . $template, $params);
         $this->_view->setViewsDir($viewsDir);
 

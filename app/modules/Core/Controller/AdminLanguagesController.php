@@ -324,7 +324,7 @@ class AdminLanguagesController extends AbstractAdminController
 
         $form = new Export($item);
         $this->view->form = $form;
-        $this->disableFooter();
+        $this->hideFooter();
 
         if (!$this->request->isPost()) {
             return;
@@ -367,7 +367,7 @@ class AdminLanguagesController extends AbstractAdminController
         }
 
         $condition = 'original = translated AND checked = 0 AND language_id = ' . $id;
-        $this->disableFooter();
+        $this->hideFooter();
         $this->view->form = $form = new Wizard($item);
         $this->view->total = LanguageTranslation::find([$condition])->count();
         $this->view->translation = $translation =

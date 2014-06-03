@@ -130,7 +130,9 @@ abstract class AbstractGrid implements GridInterface
          * Ajax call, we need to render only partials.
          */
         if ($this->getDI()->getRequest()->isAjax()) {
-            $view->disable();
+            $view
+                ->restoreViewDir()
+                ->disable();
             $this->_response = $this->getDI()->getResponse();
             $this->_response->setContent($this->render($this->getTableBodyView()));
         }

@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "../../Core/View/layouts/widget.volt" %}
+{% extends "Core/View/layouts/widget.volt" %}
 
 {% block content %}
     <nav id="{{ 'nav-' ~ navigation.getId() }}" class="navbar">

@@ -20,6 +20,7 @@ namespace Core\Controller\Grid;
 
 use Engine\Form;
 use Engine\Grid\AbstractGrid;
+use Engine\Behaviour\ViewBehaviour;
 use Phalcon\Mvc\View;
 
 /**
@@ -35,6 +36,8 @@ use Phalcon\Mvc\View;
  */
 abstract class CoreGrid extends AbstractGrid
 {
+    use ViewBehaviour;
+
     /**
      * Get grid view name.
      *
@@ -42,7 +45,7 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getLayoutView()
     {
-        return $this->_resolveView('partials/grid/layout');
+        return $this->resolveView('partials/grid/layout', 'core');
     }
 
     /**
@@ -52,7 +55,7 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getItemView()
     {
-        return $this->_resolveView('partials/grid/item');
+        return $this->resolveView('partials/grid/item', 'core');
     }
 
     /**
@@ -62,19 +65,6 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getTableBodyView()
     {
-        return $this->_resolveView('partials/grid/body');
-    }
-
-    /**
-     * Resolve view.
-     *
-     * @param string $view   View path.
-     * @param string $module Module name (capitalized).
-     *
-     * @return string
-     */
-    protected function _resolveView($view, $module = 'Core')
-    {
-        return '../../' . $module . '/View/' . $view;
+        return $this->resolveView('partials/grid/body', 'core');
     }
 }

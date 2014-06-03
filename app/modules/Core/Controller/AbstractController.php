@@ -57,6 +57,20 @@ abstract class AbstractController extends PhalconController
     use JsTranslations;
 
     /**
+     * Disable header rendering.
+     *
+     * @var bool
+     */
+    private $_hideHeader = false;
+
+    /**
+     * Disable footer rendering.
+     *
+     * @var bool
+     */
+    private $_hideFooter = false;
+
+    /**
      * Initializes the controller.
      *
      * @return void
@@ -71,7 +85,7 @@ abstract class AbstractController extends PhalconController
             $this->_setupAssets();
         }
 
-        // run init function
+        // Run init function.
         if (method_exists($this, 'init')) {
             $this->init();
         }
@@ -87,6 +101,10 @@ abstract class AbstractController extends PhalconController
         if ($this->di->has('profiler')) {
             $this->profiler->stop(get_called_class(), 'controller');
         }
+
+        $this->view
+            ->restoreViewDir()
+            ->pickDefaultView();
     }
 
     /**
@@ -152,7 +170,7 @@ abstract class AbstractController extends PhalconController
         $this->view->content = $content;
         $this->view->page = $page;
 
-        $this->view->pick('layouts/page');
+        $this->view->pick('layouts/page', 'core', true);
     }
 
     /**
@@ -160,10 +178,9 @@ abstract class AbstractController extends PhalconController
      *
      * @return $this
      */
-    public function disableHeader()
+    public function hideHeader()
     {
-        $this->view->disableHeader = true;
-
+        $this->view->hideHeader = $this->_hideHeader = true;
         return $this;
     }
 
@@ -172,9 +189,9 @@ abstract class AbstractController extends PhalconController
      *
      * @return $this
      */
-    public function disableFooter()
+    public function hideFooter()
     {
-        $this->view->disableFooter = true;
+        $this->view->hideFooter = $this->_hideFooter = true;
 
         return $this;
     }
@@ -194,7 +211,7 @@ abstract class AbstractController extends PhalconController
 
         $this->view->setVars($params, false);
         $this->view->hideSave = true;
-        $this->view->pick('utils/modal');
+        $this->view->pick('utils/modal', 'core', true);
     }
 
     /**

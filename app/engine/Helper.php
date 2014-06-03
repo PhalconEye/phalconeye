@@ -50,7 +50,7 @@ abstract class Helper extends Tag
      * @param DiInterface|string $nameOrDI Helper name.
      * @param string             $module   Module name.
      *
-     * @return mixed
+     * @return $this
      * @throws Exception
      */
     public static function getInstance($nameOrDI, $module = 'engine')
