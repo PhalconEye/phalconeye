@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/main.volt" %}
+{% extends "Core/View/layouts/main.volt" %}
 
 {% block title %}{{ page.title |i18n }}{% endblock %}
 
@@ -30,7 +30,7 @@
 
 {% block content %}
 
-    {{ partial("partials/layout", ['page': page, 'content': content]) }}
+    {{ partial(resolveView("partials/layout", 'core'), ['page': page, 'content': content]) }}
 
 
     {#{% if helper('acl').isAllowed('\Core\Model\Page', 'show_views') %}#}

@@ -26,49 +26,49 @@ return array (
   'debug' => true,
   'profiler' => true,
   'baseUrl' => '/',
-  'cache' =>
+  'cache' => 
   array (
     'lifetime' => '86400',
     'prefix' => 'pe_',
     'adapter' => 'File',
     'cacheDir' => ROOT_PATH . '/app/var/cache/data/',
   ),
-  'logger' =>
+  'logger' => 
   array (
     'enabled' => true,
     'path' => ROOT_PATH . '/app/var/logs/',
     'format' => '[%date%][%type%] %message%',
   ),
-  'view' =>
+  'view' => 
   array (
     'compiledPath' => ROOT_PATH . '/app/var/cache/view/',
     'compiledExtension' => '.php',
     'compiledSeparator' => '_',
     'compileAlways' => true,
   ),
-  'session' =>
+  'session' => 
   array (
     'adapter' => 'Files',
     'uniqueId' => 'PhalconEye_',
   ),
-  'assets' =>
+  'assets' => 
   array (
     'local' => 'assets/',
     'remote' => false,
     'lifetime' => 0,
   ),
-  'metadata' =>
+  'metadata' => 
   array (
     'adapter' => 'Files',
     'metaDataDir' => ROOT_PATH . '/app/var/cache/metadata/',
   ),
-  'annotations' =>
+  'annotations' => 
   array (
     'adapter' => 'Files',
     'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
   ),
-  'languages' =>
-  array(
+  'languages' => 
+  array (
     'cacheDir' => ROOT_PATH . '/app/var/cache/languages/',
   ),
 );

@@ -47,5 +47,5 @@ interface BootstrapInterface
      *
      * @return void
      */
-    public function registerServices();
+    public function initialize();
 }

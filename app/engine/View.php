@@ -19,6 +19,7 @@
 namespace Engine;
 
 use Engine\Behaviour\DIBehaviour;
+use Engine\Behaviour\ViewBehaviour;
 use Engine\View\Extension;
 use Phalcon\DI;
 use Phalcon\Events\Manager;
@@ -37,18 +38,27 @@ use Phalcon\Mvc\View\Engine\Volt;
  */
 class View extends PhalconView
 {
+    use ViewBehaviour;
+
+    /**
+     * Last picked view was final?
+     *
+     * @var bool
+     */
+    protected $_finalView = false;
+
     /**
      * Create view instance.
      * If no events manager provided - events would not be attached.
      *
      * @param DIBehaviour  $di             DI.
      * @param Config       $config         Configuration.
-     * @param string       $viewsDirectory Views directory location.
+     * @param string|null  $viewsDirectory Views directory location.
      * @param Manager|null $em             Events manager.
      *
      * @return View
      */
-    public static function factory($di, $config, $viewsDirectory, $em = null)
+    public static function factory($di, $config, $viewsDirectory = null, $em = null)
     {
         $view = new View();
         $volt = new Volt($view, $di);
@@ -66,7 +76,11 @@ class View extends PhalconView
         $view
             ->registerEngines([".volt" => $volt])
             ->setRenderLevel(View::LEVEL_ACTION_VIEW)
-            ->setViewsDir($viewsDirectory);
+            ->restoreViewDir();
+
+        if (!$viewsDirectory) {
+            $view->setViewsDir($viewsDirectory);
+        }
 
         // Attach a listener for type "view".
         if ($em) {
@@ -97,15 +111,50 @@ class View extends PhalconView
      *
      * @param array|string $renderView View to render.
      * @param string|null  $module     Specify module.
+     * @param bool|null    $finalView  This view will be final in pick process.
      *
-     * @return PhalconView|void
+     * @return $this
      */
-    public function pick($renderView, $module = null)
+    public function pick($renderView, $module = null, $finalView = null)
     {
-        if ($module != null) {
-            $renderView = '../../' . ucfirst($module) . '/View/' . $renderView;
+        if ($finalView !== null) {
+            $this->_finalView = $finalView;
         }
 
-        parent::pick($renderView);
+        parent::pick($this->resolveView($renderView, $module));
+    }
+
+    /**
+     * Restore basic view directory.
+     *
+     * @return $this
+     */
+    public function restoreViewDir()
+    {
+        $this->setViewsDir($this->getDI()->getRegistry()->directories->modules);
+        return $this;
+    }
+
+    /**
+     * Pick default view according on current dispatcher parameters about
+     * current controller and action.
+     *
+     * If another view was picked up with final view flag 'true' - this method will not work.
+     *
+     * @return $this
+     */
+    public function pickDefaultView()
+    {
+        if ($this->_finalView) {
+            return $this;
+        }
+
+        $dispatcher = $this->getDI()->getDispatcher();
+        $router = $this->getDI()->getRouter();
+
+        return $this->pick(
+            $dispatcher->getControllerName() . '/' . $dispatcher->getActionName(),
+            $router->getModuleName()
+        );
     }
 }

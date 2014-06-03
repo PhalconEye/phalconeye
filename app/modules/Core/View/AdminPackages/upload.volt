@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/admin.volt" %}
+{% extends "Core/View/layouts/admin.volt" %}
 
 {% block title %}{{ "Upload new package"|i18n }}{% endblock %}
 

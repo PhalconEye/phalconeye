@@ -81,13 +81,18 @@ class Renderer extends Helper
         // Resort content by sides.
         $content = [];
         foreach ($widgets as $widget) {
-            $content[$widget->layout][] = $this->renderWidgetId($widget->widget_id, $widget->getParams());;
+            $content[$widget->layout][] = $this->renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
         /** @var \Phalcon\Mvc\View $view */
-        $view = $this->getDI()->get('view');
-        $view->disableLevel(View::LEVEL_LAYOUT);
-        $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
+        $view = $this
+            ->getDI()
+            ->getView()
+            ->reset()
+            ->setVars([], false)
+            ->disableLevel(View::LEVEL_LAYOUT)
+            ->disableLevel(View::LEVEL_MAIN_LAYOUT);
+
         $view->content = $content;
         $view->page = $page;
         $view->pick($layout);
@@ -98,32 +103,34 @@ class Renderer extends Helper
     /**
      * Render widget.
      *
-     * @param mixed $id     Widget id in widgets table.
-     * @param array $params Widgets params in page.
+     * @param mixed  $id     Widget id in widgets table.
+     * @param array  $params Widgets params in page.
+     * @param string $action Widgets action to render.
      *
      * @return mixed
      */
-    public function renderWidget($id, $params = [])
+    public function renderWidget($id, $params = [], $action = 'index')
     {
         if (!$this->widgetIsAllowed($params)) {
             return '';
         }
         $widget = new Element($id, $params, $this->getDI());
 
-        return $widget->render();
+        return $widget->render($action);
     }
 
     /**
      * Render widget by identity.
      *
-     * @param mixed $id     Widget id in widgets table.
-     * @param array $params Widgets params in page.
+     * @param mixed  $id     Widget id in widgets table.
+     * @param array  $params Widgets params in page.
+     * @param string $action Widgets action to render.
      *
      * @return mixed
      */
-    public function renderWidgetId($id, $params = [])
+    public function renderWidgetId($id, $params = [], $action = 'index')
     {
-        return $this->renderWidget((int)$id, $params);
+        return $this->renderWidget((int)$id, $params, $action);
     }
 
     /**

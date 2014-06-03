@@ -20,6 +20,7 @@ namespace Engine;
 
 use Engine\Api\Injector as ApiInjector;
 use Engine\Asset\Manager as AssetsManager;
+use Engine\Behaviour\DIBehaviour;
 use Engine\Cache\Dummy;
 use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
@@ -64,8 +65,8 @@ trait ApplicationInitialization
     /**
      * Init logger.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return void
      */
@@ -89,9 +90,9 @@ trait ApplicationInitialization
     /**
      * Init loader.
      *
-     * @param DI            $di            Dependency Injection.
-     * @param Config        $config        Config object.
-     * @param EventsManager $eventsManager Event manager.
+     * @param DIBehaviour|DI $di            Dependency Injection.
+     * @param Config         $config        Config object.
+     * @param EventsManager  $eventsManager Event manager.
      *
      * @return Loader
      */
@@ -130,8 +131,8 @@ trait ApplicationInitialization
     /**
      * Init environment.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return Url
      */
@@ -206,8 +207,8 @@ trait ApplicationInitialization
     /**
      * Init annotations.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return void
      */
@@ -232,8 +233,8 @@ trait ApplicationInitialization
     /**
      * Init router.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return Router
      */
@@ -300,9 +301,9 @@ trait ApplicationInitialization
     /**
      * Init database.
      *
-     * @param DI            $di            Dependency Injection.
-     * @param Config        $config        Config object.
-     * @param EventsManager $eventsManager Event manager.
+     * @param DIBehaviour|DI $di            Dependency Injection.
+     * @param Config         $config        Config object.
+     * @param EventsManager  $eventsManager Event manager.
      *
      * @return Pdo
      */
@@ -407,8 +408,8 @@ trait ApplicationInitialization
     /**
      * Init session.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return SessionAdapter
      */
@@ -429,8 +430,8 @@ trait ApplicationInitialization
     /**
      * Init cache.
      *
-     * @param DI     $di     Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehaviour|DI $di     Dependency Injection.
+     * @param Config         $config Config object.
      *
      * @return void
      */
@@ -465,7 +466,7 @@ trait ApplicationInitialization
     /**
      * Init flash messages.
      *
-     * @param DI $di Dependency Injection.
+     * @param DIBehaviour|DI $di Dependency Injection.
      *
      * @return void
      */
@@ -497,9 +498,26 @@ trait ApplicationInitialization
     }
 
     /**
+     * Initialize view.
+     *
+     * @param DIBehaviour|DI $di            Dependency Injection.
+     * @param Config         $config        Config object.
+     * @param EventsManager  $eventsManager Event manager.
+     *
+     * @return void
+     */
+    protected function _initView($di, $config, $eventsManager)
+    {
+        /*************************************************/
+        //  Initialize view.
+        /*************************************************/
+        $di->setShared('view', View::factory($di, $config, null, $eventsManager));
+    }
+
+    /**
      * Init engine.
      *
-     * @param DI $di Dependency Injection.
+     * @param DIBehaviour|DI $di Dependency Injection.
      *
      * @return void
      */

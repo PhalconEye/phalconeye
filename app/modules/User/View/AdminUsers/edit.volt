@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "../../Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/admin.volt" %}
 {% block title %}{{ "User Editing"|i18n }}{% endblock %}
 
 {% block header %}

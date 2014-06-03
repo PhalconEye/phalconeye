@@ -1,4 +1,5 @@
-{#
+<?php
+/*
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
@@ -13,27 +14,41 @@
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   +------------------------------------------------------------------------+
-#}
+*/
 
-{% extends "Core/View/layouts/admin.volt" %}
+namespace Engine\Behaviour;
 
-{% block title %}{{ "Menu Creation"|i18n }}{% endblock %}
+use Engine\Behaviour\DIBehaviour;
+use Phalcon\DI;
+use Phalcon\Mvc\View as PhalconView;
+use Phalcon\Mvc\View\Engine\Volt;
 
-{% block header %}
-    <div class="navbar navbar-header">
-        <div class="navbar-inner">
-            {{ navigation.render() }}
-        </div>
-    </div>
-{% endblock %}
+/**
+ * View behaviour.
+ *
+ * @category  PhalconEye
+ * @package   Engine
+ * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @copyright 2013-2014 PhalconEye Team
+ * @license   New BSD License
+ * @link      http://phalconeye.com/
+ */
+trait ViewBehaviour
+{
+    /**
+     * Resolve view path.
+     *
+     * @param string $viewPath Path to view.
+     * @param null   $module   Module name.
+     *
+     * @return string
+     */
+    public function resolveView($viewPath, $module = null)
+    {
+        if (!$module) {
+            return $viewPath;
+        }
 
-{% block content %}
-
-    <div class="span12">
-        <div class="row-fluid">
-            {{ form.render() }}
-        </div>
-        <!--/row-->
-    </div><!--/span-->
-
-{% endblock %}
+        return ucfirst($module) . '/View/' . $viewPath;
+    }
+}

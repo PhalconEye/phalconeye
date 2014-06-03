@@ -18,7 +18,6 @@
 
 namespace Engine\Widget;
 
-use Engine\Package\Utilities;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
@@ -44,6 +43,13 @@ class Controller extends PhalconController
          * Cache prefix.
          */
         CACHE_PREFIX = 'widget_';
+
+    const
+        /**
+         * Default controller action.
+         */
+        DEFAULT_ACTION = 'index';
+
 
     /**
      * Dependency injection.
@@ -108,37 +114,31 @@ class Controller extends PhalconController
      *
      * @return void
      */
-    public function prepare($action = null)
+    public function prepare($action = self::DEFAULT_ACTION)
     {
         $this->di = DI::getDefault();
         $this->dispatcher = $this->di->get('dispatcher');
         $this->cacheData = $this->di->get('cacheData');
 
         if ($this->_widgetName !== null) {
+            /** @var \Engine\View $view */
+            $this->view = $view = $this->di->get('view');
+            $view
+                ->reset()
+                ->restoreViewDir()
+                ->setVars([], false)
+                ->disableLevel(View::LEVEL_LAYOUT)
+                ->disableLevel(View::LEVEL_MAIN_LAYOUT);
+
+            $viewPath = null;
             if ($this->_widgetModule !== null) {
-                /** @var \Phalcon\Mvc\View $view */
-                $this->view = $view = $this->di->get('view');
-                $view->disableLevel(View::LEVEL_LAYOUT);
-                $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-
-                if ($action) {
-                    $view->pick('../../' . $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action);
-                }
+                // Widget from module.
+                $viewPath = $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action;
             } else {
-                /** @var \Phalcon\Mvc\View $view */
-                $this->view = $view = $this->di->get('view');
-                $view->disableLevel(View::LEVEL_LAYOUT);
-                $view->disableLevel(View::LEVEL_MAIN_LAYOUT);
-                $view->setVars([], false);
-
-                if ($action) {
-                    $relativePath = Utilities::getRelativePath(
-                        $view->getViewsDir(),
-                        $this->di->get('registry')->directories->widgets
-                    );
-                    $view->pick($relativePath . $this->_widgetName . '/' . $action);
-                }
+                // External widget.
+                $viewPath = '../widgets/' . $this->_widgetName . '/' . $action;
             }
+            $view->pick($viewPath);
         }
 
         // run init function

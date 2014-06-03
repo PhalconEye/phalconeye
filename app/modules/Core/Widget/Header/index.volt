@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{%- extends "../../Core/View/layouts/widget.volt" -%}
+{%- extends "Core/View/layouts/widget.volt" -%}
 
 {%- block content -%}
     <div class="header_widget">

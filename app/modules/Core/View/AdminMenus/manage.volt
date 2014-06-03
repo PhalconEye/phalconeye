@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/admin.volt" %}
+{% extends "Core/View/layouts/admin.volt" %}
 
 {% block title %}{{ "Manage menu"|i18n }}{% endblock %}
 

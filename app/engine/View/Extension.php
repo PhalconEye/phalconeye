@@ -18,6 +18,7 @@
 
 namespace Engine\View;
 
+use Engine\Behaviour\ViewBehaviour;
 use Phalcon\DI;
 use Phalcon\Mvc\Router;
 
@@ -33,6 +34,8 @@ use Phalcon\Mvc\Router;
  */
 class Extension extends DI\Injectable
 {
+    use ViewBehaviour;
+
     /**
      * Compile functions for volt.
      *
@@ -66,29 +69,14 @@ class Extension extends DI\Injectable
             case 'resolveView':
 
                 if (isset($params[1])) {
-                    $value = $this->_resolveView($params[0]['expr']['value'], $params[1]['expr']['value']);
+                    $value = $this->resolveView($params[0]['expr']['value'], $params[1]['expr']['value']);
                 } else {
-                    $value = $this->_resolveView(
+                    $value = $this->resolveView(
                         $params[0]['expr']['value'],
                         $this->getDI()->getRouter()->getModuleName()
                     );
                 }
                 return "'" . $value . "'";
-
-            case 'partial':
-                if (!isset($params[0]['expr']['value'])) {
-                    return '$this->partial(' . $arguments . ')';
-                }
-
-                if (isset($params[2])) {
-                    $value = $this->_resolveView($params[0]['expr']['value'], $params[2]['expr']['value']);
-                    $arguments = substr($arguments, 0, strripos($arguments, ','));
-                } else {
-                    $value = $this->_resolveView(
-                        $params[0]['expr']['value'],
-                        $this->getDI()->getRouter()->getModuleName()
-                    );
-                }
 
                 $arguments = str_replace($params[0]['expr']['value'], $value, $arguments);
                 return '$this->partial(' . $arguments . ')';
@@ -109,18 +97,5 @@ class Extension extends DI\Injectable
             case 'i18n':
                 return '$this->i18n->query(' . $arguments . ')';
         }
-    }
-
-    /**
-     * Resolve view, according to module.
-     *
-     * @param string $view   View path.
-     * @param string $module Module name.
-     *
-     * @return string
-     */
-    protected function _resolveView($view, $module)
-    {
-        return '../../' . ucfirst($module) . '/View/' . $view;
     }
 }

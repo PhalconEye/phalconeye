@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "../../Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/admin.volt" %}
 
 {% block title %}{{ "Role Editing"|i18n }}{% endblock %}
 

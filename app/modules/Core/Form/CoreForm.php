@@ -19,6 +19,7 @@
 namespace Core\Form;
 
 use Engine\Form\AbstractForm;
+use Engine\Behaviour\ViewBehaviour;
 
 /**
  * Main core form.
@@ -38,7 +39,8 @@ class CoreForm extends AbstractForm
          */
         LAYOUT_DEFAULT_PATH = 'partials/form/default';
 
-    use EntityForm;
+    use EntityForm,
+        ViewBehaviour;
 
     /**
      * Get layout view path.
@@ -47,7 +49,7 @@ class CoreForm extends AbstractForm
      */
     public function getLayoutView()
     {
-        return $this->_resolveView(self::LAYOUT_DEFAULT_PATH);
+        return $this->resolveView(self::LAYOUT_DEFAULT_PATH, 'core');
     }
 
     /**
@@ -88,18 +90,5 @@ class CoreForm extends AbstractForm
     public function getFieldSetView()
     {
         return $this->getLayoutView() . '/fieldSet';
-    }
-
-    /**
-     * Resolve view.
-     *
-     * @param string $view   View path.
-     * @param string $module Module name (capitalized).
-     *
-     * @return string
-     */
-    protected function _resolveView($view, $module = 'Core')
-    {
-        return '../../' . $module . '/View/' . $view;
     }
 }

@@ -15,8 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "../../Core/View/layouts/admin.volt" %}
-
+{% extends "Core/View/layouts/admin.volt" %}
 
 {% block title %}{{ 'Users'|i18n }}{% endblock %}
 

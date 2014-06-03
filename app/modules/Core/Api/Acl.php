@@ -236,7 +236,7 @@ class Acl extends AbstractApi
      */
     public function getResources()
     {
-        $this->getAcl()->getResources();
+        return $this->getAcl()->getResources();
     }
 
     /**

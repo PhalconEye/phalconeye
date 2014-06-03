@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "layouts/modal.volt" %}
+{% extends "Core/View/layouts/modal.volt" %}
 
 {% block title %}
     {{ 'Edit translation'|i18n }}

@@ -65,6 +65,7 @@ class Application extends PhalconApplication
                 'router',
                 'session',
                 'flash',
+                'view',
                 'engine'
             ],
             'console' => [
@@ -180,7 +181,7 @@ class Application extends PhalconApplication
 
             $bootstrap = new $moduleClass($di, $this->getEventsManager());
             $bootstraps[$moduleName] = function () use ($bootstrap, $di) {
-                $bootstrap->registerServices();
+                $bootstrap->initialize();
 
                 return $bootstrap;
             };

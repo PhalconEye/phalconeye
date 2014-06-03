@@ -84,7 +84,7 @@ abstract class Bootstrap implements BootstrapInterface
      * @throws Exception
      * @return void
      */
-    public function registerServices()
+    public function initialize()
     {
         if (empty($this->_moduleName)) {
             $class = new \ReflectionClass($this);
@@ -94,17 +94,6 @@ abstract class Bootstrap implements BootstrapInterface
         $di = $this->getDI();
         $config = $this->getConfig();
         $eventsManager = $this->getEventsManager();
-        $moduleDirectory = $this->getModuleDirectory();
-
-        /*************************************************/
-        //  Initialize view.
-        /*************************************************/
-        $di->set(
-            'view',
-            function () use ($di, $config, $moduleDirectory, $eventsManager) {
-                return View::factory($di, $config, $moduleDirectory . '/View/', $eventsManager);
-            }
-        );
 
         /*************************************************/
         //  Initialize dispatcher.

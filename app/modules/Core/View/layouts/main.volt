@@ -40,16 +40,12 @@
 <body data-base-url="{{ url() }}" data-debug="{{ config.application.debug }}">
 <div id="wrapper">
     <div id="header" class="container">
-        {% if disableHeader is not defined %}
+        {% if hideHeader is not defined %}
         {{ helper('renderer', 'core').renderContent('header', resolveView("partials/layout", 'core')) }}
         {% endif %}
 
         {%- block header -%}
         {%- endblock -%}
-    </div>
-
-    <div class="system-container">
-        {{ content() }}
     </div>
 
     <div class="container main_widget_container">
@@ -58,7 +54,7 @@
     </div>
 
     <div id="footer" class="container">
-        {% if disableFooter is not defined %}
+        {% if hideFooter is not defined %}
         {{ helper('renderer', 'core').renderContent('footer', resolveView("partials/layout", 'core')) }}
         {% endif %}
         {%- block footer -%}

@@ -485,7 +485,10 @@ class Navigation
         $linkTooltip = (!empty($item['tooltip']) ? 'title="' . $item['tooltip'] . '" data-tooltip-position="' .
             $item['tooltip_position'] . '"' : '');
 
-        if (is_array($item['href']) || preg_match("/^(http|https|mailto|ftp|javascript:|\/):\/\//", $item['href']) === 0) {
+        if (
+            is_array($item['href']) ||
+            preg_match("/^(http|https|mailto|ftp|javascript:|\/):\/\//", $item['href']) === 0
+        ) {
             $item['href'] = $this->getDI()->get('url')->get($item['href']);
         }
 
