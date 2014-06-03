@@ -125,7 +125,7 @@ abstract class AbstractCommand implements CommandInterface
         if (!empty($this->_actions[$actionName]['params'])) {
             foreach ($this->_actions[$actionName]['params'] as $key => $param) {
                 if (!$this->hasParameter($param['name'])) {
-                    $actionParams[$key] = null;
+                    $actionParams[$key] = $param['defaultValue'];
                     continue;
                 }
 
@@ -288,8 +288,8 @@ abstract class AbstractCommand implements CommandInterface
             $cmd = ' --' . $parameter['name'];
             $type = '';
 
-            if ($parameter['default'] != 'boolean') {
-                $cmd .= '=' . $parameter['default'];
+            if ($parameter['defaultValueType'] != 'boolean') {
+                $cmd .= '=' . $parameter['defaultValueType'];
                 $type = ' (' . $parameter['type'] . ')';
             }
 
@@ -385,7 +385,10 @@ abstract class AbstractCommand implements CommandInterface
             foreach ($this->_actions[$action]['params'] as $actionParams) {
 
                 // Check required param.
-                if ($actionParams['default'] == '<required>' && empty($this->_parameters[$actionParams['name']])) {
+                if (
+                    $actionParams['defaultValueType'] == '<required>' &&
+                    empty($this->_parameters[$actionParams['name']])
+                ) {
                     print ConsoleUtil::error(
                         sprintf(
                             'Parameter "%s" is required!',
@@ -398,7 +401,7 @@ abstract class AbstractCommand implements CommandInterface
 
                 // Check required value of param.
                 if (
-                    $actionParams['default'] != 'boolean' &&
+                    $actionParams['defaultValueType'] != 'boolean' &&
                     in_array($actionParams['name'], $withoutValue)
                 ) {
                     print ConsoleUtil::error(
@@ -477,12 +480,14 @@ abstract class AbstractCommand implements CommandInterface
             $this->_actions[$method]['params'] = [];
             foreach ($reflection->getParameters() as $parameter) {
                 $name = $parameter->getName();
-                $defaultValue = $parameter->isDefaultValueAvailable() ?
-                    gettype($parameter->getDefaultValue()) : '<required>';
+                $defaultValue = $parameter->getDefaultValue();
+                $defaultValueType = $parameter->isDefaultValueAvailable() ?
+                    gettype($defaultValue) : '<required>';
 
                 $this->_actions[$method]['params'][] = [
                     'name' => $name,
-                    'default' => $defaultValue,
+                    'defaultValueType' => $defaultValueType,
+                    'defaultValue' => $defaultValue,
                     'type' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['type'] : ''),
                     'description' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['description'] : '')
                 ];
