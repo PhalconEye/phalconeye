@@ -44,6 +44,13 @@ trait ContainerBehaviour
         TranslationBehaviour;
 
     /**
+     * Form identity.
+     *
+     * @var string
+     */
+    protected $_identity = null;
+
+    /**
      * Elements catalog.
      *
      * @var array
@@ -74,6 +81,51 @@ trait ContainerBehaviour
     protected $_conditions = array();
 
     /**
+     * Set form identity. In case you have two forms on page and identity isn't null (string required)
+     * form validation method isValid will check current form post data and will not throw validation errors
+     * if this form is not current by post data.
+     *
+     * @param string|null $identity Form identity name.
+     *
+     * @return $this
+     */
+    public function setIdentity($identity)
+    {
+        $this->_identity = $identity;
+        return $this;
+    }
+
+    /**
+     * Get current form identity.
+     *
+     * @return string
+     */
+    public function getIdentity()
+    {
+        return $this->_identity;
+    }
+
+    /**
+     * Parse data by container identity.
+     *
+     * @param array $data Array of data to check.
+     *
+     * @return array
+     */
+    public function parseDataByIdentity($data)
+    {
+        $id = $this->getIdentity();
+        if ($id !== null) {
+            if (!isset($data[$id]) || !is_array($data[$id])) {
+                return false;
+            }
+            $data = $data[$id];
+        }
+
+        return $data;
+    }
+
+    /**
      * Add element to form.
      *
      * @param AbstractElement $element Element object.
@@ -90,6 +142,10 @@ trait ContainerBehaviour
         $element->setContainer($this);
         $this->_elements[$order] = $element;
         $this->_order[$element->getName()] = $order;
+
+        if ($this->getIdentity() !== null) {
+            $element->setAttribute('name', sprintf('%s[%s]', $this->getIdentity(), $element->getName()));
+        }
 
         return $this;
     }
