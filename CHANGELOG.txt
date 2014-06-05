@@ -1,3 +1,7 @@
+Version 0.5.0
+ - Implemented widgets assets. Now external widgets can have Assets directory. See #51.
+ - New dark and light theme with good less structure. Thanks to WooDzu. See #46.
+
 Version 0.4.1
  - Added more flexible manifest.json support for packages, thanks to @WooDzu.
  - Fixed #30, thanks to @WooDzu.
