@@ -110,6 +110,8 @@ class Application extends PhalconApplication
             $this->_config->modules->toArray()
         );
 
+        $registry->widgets = $this->_config->widgets->toArray();
+
         $registry->directories = (object)[
             'engine' => ROOT_PATH . '/app/engine/',
             'modules' => ROOT_PATH . '/app/modules/',

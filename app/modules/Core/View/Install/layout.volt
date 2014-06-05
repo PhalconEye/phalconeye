@@ -37,10 +37,6 @@
 <div id="wrapper">
 
     <div id="header">
-        {% if disableHeader is not defined %}
-        {{ helper('renderer', 'core').renderContent('header') }}
-        {% endif %}
-
         {%- block header -%}
         {%- endblock -%}
     </div>
@@ -55,9 +51,6 @@
     </div>
 
     <div id="footer">
-        {% if disableFooter is not defined %}
-        {{ helper('renderer', 'core').renderContent('footer') }}
-        {% endif %}
         {%- block footer -%}
         {%- endblock -%}
     </div>

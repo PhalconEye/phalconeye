@@ -247,6 +247,12 @@ abstract class AbstractPackage extends AbstractModel
      */
     public function assign($data, $columnMap = null)
     {
+        $events = !empty($data['events']) ? $data['events'] : [];
+        $widgets = !empty($data['widgets']) ? $data['widgets'] : [];
+
+        unset($data['events']);
+        unset($data['widgets']);
+
         parent::assign($data, $columnMap);
 
         if (
@@ -255,8 +261,8 @@ abstract class AbstractPackage extends AbstractModel
         ) {
 
             $this->data = [
-                'events' => (!empty($data['events']) ? $data['events'] : []),
-                'widgets' => (!empty($data['widgets']) ? $data['widgets'] : [])
+                'events' => $events,
+                'widgets' => $widgets
             ];
         }
         if (!empty($data['module'])) {

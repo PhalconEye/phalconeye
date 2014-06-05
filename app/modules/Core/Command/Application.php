@@ -103,7 +103,7 @@ class Application extends AbstractCommand implements CommandInterface
 
         print ConsoleUtil::headLine('Checking packages existence...');
         foreach (scandir(ROOT_PATH . Config::CONFIG_METADATA_PACKAGES) as $file) {
-            if ($file == '.' || $file == '..') {
+            if ($file == '.' || $file == '..' || substr($file, -5) != '.json') {
                 continue;
             }
 

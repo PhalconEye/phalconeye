@@ -30,6 +30,7 @@ use Phalcon\Cache\Backend;
 use Phalcon\Config;
 use Phalcon\DI;
 use Phalcon\DiInterface;
+use Phalcon\Registry;
 use Phalcon\Tag;
 
 /**
@@ -149,41 +150,48 @@ class Manager extends AssetManager
         }
 
         ///////////////////////////////////
-        // Collect css/js/img from modules.
+        // Collect css/js/img from modules and widgets.
         ///////////////////////////////////
+        /** @var Registry $registry */
         $registry = $this->getDI()->get('registry');
-        foreach ($registry->modules as $module) {
-            // CSS
-            $assetsPath = $registry->directories->modules . ucfirst($module) . '/Assets/';
-            $path = $location . 'css/' . $module . '/';
-            FsUtilities::fsCheckLocation($path);
-            $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');
-            $less->addImportDir($themeDirectory);
-            foreach ($cssFiles as $file) {
-                if (!is_file($file)) {
-                    continue;
+        $items = array_merge(
+            [$registry->directories->modules => $registry->modules],
+            [$registry->directories->widgets => $registry->widgets]
+        );
+        foreach ($items as $path => $item) {
+            foreach ($item as $packageName) {
+                // CSS
+                $assetsPath = $path . ucfirst($packageName) . '/Assets/';
+                $path = $location . 'css/' . $packageName . '/';
+                FsUtilities::fsCheckLocation($path);
+                $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');
+                $less->addImportDir($themeDirectory);
+                foreach ($cssFiles as $file) {
+                    if (!is_file($file)) {
+                        continue;
+                    }
+                    $fileName = basename($file);
+                    $fileNameWithoutExt = basename($file, '.less');
+                    $additionalPath = str_replace($fileName, '', str_replace($assetsPath . 'css/', '', $file));
+                    if (pathinfo($file, PATHINFO_EXTENSION) == 'less') {
+                        FsUtilities::fsCheckLocation($path . $additionalPath);
+                        $newFileName = $path . $additionalPath . $fileNameWithoutExt . '.css';
+                        $less->checkedCompile($file, $newFileName);
+                    } else {
+                        copy($file, $path . $additionalPath . $fileName);
+                    }
                 }
-                $fileName = basename($file);
-                $fileNameWithoutExt = basename($file, '.less');
-                $additionalPath = str_replace($fileName, '', str_replace($assetsPath . 'css/', '', $file));
-                if (pathinfo($file, PATHINFO_EXTENSION) == 'less') {
-                    FsUtilities::fsCheckLocation($path . $additionalPath);
-                    $newFileName = $path . $additionalPath . $fileNameWithoutExt . '.css';
-                    $less->checkedCompile($file, $newFileName);
-                } else {
-                    copy($file, $path . $additionalPath . $fileName);
-                }
+
+                // JS
+                $path = $location . 'js/' . $packageName . '/';
+                FsUtilities::fsCheckLocation($path);
+                FsUtilities::fsCopyRecursive($assetsPath . 'js', $path, true);
+
+                // IMAGES
+                $path = $location . 'img/' . $packageName . '/';
+                FsUtilities::fsCheckLocation($path);
+                FsUtilities::fsCopyRecursive($assetsPath . 'img', $path, true);
             }
-
-            // JS
-            $path = $location . 'js/' . $module . '/';
-            FsUtilities::fsCheckLocation($path);
-            FsUtilities::fsCopyRecursive($assetsPath . 'js', $path, true);
-
-            // IMAGES
-            $path = $location . 'img/' . $module . '/';
-            FsUtilities::fsCheckLocation($path);
-            FsUtilities::fsCopyRecursive($assetsPath . 'img', $path, true);
         }
     }
 

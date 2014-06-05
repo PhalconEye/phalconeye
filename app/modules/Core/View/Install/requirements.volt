@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "Install/layout.volt" %}
+{% extends "Core/View/Install/layout.volt" %}
 
 {% block title %}
     {{ 'Installation | Database'|i18n }}
@@ -23,7 +23,7 @@
 
 {% block content %}
     {% set action = 'requirements' %}
-    {{ partial('/Install/navigation') }}
+    {{ partial('Core/View/Install/navigation') }}
 
     <div>
         <table>

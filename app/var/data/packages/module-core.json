@@ -6,9 +6,7 @@
     "version": "0.4.0",
     "author": "PhalconEye Team",
     "website": "http:\/\/phalconeye.com\/",
-    "events": [
-
-    ],
+    "events": [],
     "widgets": [
         {
             "name": "HtmlBlock",
@@ -47,7 +45,5 @@
             "enabled": true
         }
     ],
-    "i18n": [
-
-    ]
+    "i18n": []
 }

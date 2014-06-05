@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "Install/layout.volt" %}
+{% extends "Core/View/Install/layout.volt" %}
 
 {% block title %}
     {{ 'Installation'|i18n }}
@@ -23,7 +23,7 @@
 
 {% block content %}
     {% set action = 'finish' %}
-    {{ partial('/Install/navigation') }}
+    {{ partial('Core/View/Install/navigation') }}
 
     <div>
         {{ form.render() }}

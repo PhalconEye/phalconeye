@@ -493,7 +493,7 @@ class Manager
         $packagesMetadataDirectory = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES;
         Utilities::fsCheckLocation($packagesMetadataDirectory);
 
-        $config = ['installed' => PHALCONEYE_VERSION, 'events' => [], 'modules' => []];
+        $config = ['installed' => PHALCONEYE_VERSION, 'events' => [], 'modules' => [], 'widgets' => []];
         foreach ($packages as $package) {
             if (!$package->enabled) {
                 continue;
@@ -502,6 +502,10 @@ class Manager
 
             if ($package->type == self::PACKAGE_TYPE_MODULE && !$package->is_system) {
                 $config['modules'][] = $package->name;
+            }
+
+            if ($package->type == self::PACKAGE_TYPE_WIDGET) {
+                $config['widgets'][] = $package->name;
             }
 
             // Get package events.
