@@ -335,6 +335,7 @@ class InstallController extends AbstractController
             $this->_setPassed($action, false);
         }
         $this->_setupDatabase();
+        $this->config->offsetSet('installed', true);
 
         $packageManager = new PackageManager(Package::find());
         $packageManager->generateMetadata();
