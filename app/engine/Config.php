@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <piotr.gasiorowski@vipserv.org>              |
   +------------------------------------------------------------------------+
 */
 
@@ -185,6 +186,7 @@ class Config extends PhalconConfig
             $config->offsetSet('installed', false);
             $config->offsetSet('events', array());
             $config->offsetSet('modules', array());
+            $config->offsetSet('widgets', array());
             return $config;
         }
 
