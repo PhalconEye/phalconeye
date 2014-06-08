@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -158,10 +159,10 @@ class Manager extends AssetManager
             [$registry->directories->modules => $registry->modules],
             [$registry->directories->widgets => $registry->widgets]
         );
-        foreach ($items as $path => $item) {
+        foreach ($items as $sourcePath => $item) {
             foreach ($item as $packageName) {
                 // CSS
-                $assetsPath = $path . ucfirst($packageName) . '/Assets/';
+                $assetsPath = $sourcePath . ucfirst($packageName) . '/Assets/';
                 $path = $location . 'css/' . $packageName . '/';
                 FsUtilities::fsCheckLocation($path);
                 $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');
