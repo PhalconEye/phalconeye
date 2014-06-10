@@ -235,13 +235,20 @@
     color: #2B2B2B;
     font-size: 65px;
     height: 50px;
-    line-height: 35px;
+    line-height: 41px;
     position: absolute;
     text-align: center;
     width: 50px;
     text-indent: 0;
     top: calc(50% - 25px);
     text-decoration: none;
+    display: inline-block;
+    vertical-align: middle;
+
+    -webkit-transition: all 0.25s ease; /* Chrome 4+, iOS 3.2+, Android 2.1+, Safari 3.2+  */
+    -moz-transition: all 0.25s ease;    /* Firefox 4+ */
+    -o-transition: all 0.25s ease;      /* Opera 10.50+ */
+    transition: all 0.25s ease;         /* Chrome 26+, Firefox 16+, Android 4.4+, iOS 7+, IE 10+, Opera 12.1, Safari 6.1+ */
 }
 
 .bx-wrapper .bx-controls-direction a:hover {
@@ -267,5 +274,6 @@
 }
 
 .bx-wrapper .bxslider > li {
-  margin-right: 1px;
+    margin-right: 1px;
+    text-align: center;
 }

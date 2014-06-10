@@ -39,15 +39,22 @@
 @fontSizeForms: 12px;
 @fontColor: #D8D8D8;
 @fontErrorColor: #CA5552;
+@fontNoticeColor: #caca21;
+@fontSuccessColor: #0ab93c;
 
 @linkColor: #428BCA;
 @linkHoverColor: @fontErrorColor;
 @linkActiveColor: #3067B6;
 
 // Buttons
-@buttonColor: #FFFFFF;
-@buttonBgColor: @linkColor;
-@buttonBgHoverColor: @fontErrorColor;
+@buttonColor: #000000;
+@buttonBgColor: #FFFFFF;
+@primaryButtonColor: #FFFFFF;
+@primaryButtonBgColor: @linkColor;
+@dangerButtonColor: #FFFFFF;
+@dangerButtonBgColor: @fontErrorColor;
+@successButtonColor: #FFFFFF;
+@successButtonBgColor: @fontSuccessColor;
 
 // Nav
 @buttonNavHeight: 25px;
@@ -56,9 +63,9 @@
 @buttonNavBgColor: #404040;
 @buttonNavBgHoverColor: @buttonNavBgColor;
 @buttonNavBorderWidth: 1px;
-@buttonNavBorderStyle: none solid solid inset;
-@buttonNavBorderColor: #969696;
-@buttonNavBorderHoverColor: #969696 #969696 #428BCA #969696;
+@buttonNavBorderStyle: solid;
+@buttonNavBorderColor: transparent;
+@buttonNavBorderHoverColor: transparent transparent #428BCA transparent;
 @buttonNavHandleBg: #FFFFFF;
 
 // Forms
@@ -66,6 +73,7 @@
 @containerBorderColor: #DDDDDD;
 @formDescriptionColor: #969696;
 @formLabelColor: @linkColor;
+@formInputColor: black;
 
 // Widgets
 @widgetHeaderBorder: 1px solid;

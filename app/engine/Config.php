@@ -185,6 +185,7 @@ class Config extends PhalconConfig
             $config->offsetSet('installed', false);
             $config->offsetSet('events', array());
             $config->offsetSet('modules', array());
+            $config->offsetSet('widgets', array());
             return $config;
         }
 

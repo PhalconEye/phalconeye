@@ -40,8 +40,8 @@ class DemoForm extends CoreForm
     public function initialize()
     {
         $loremShort = 'Lorem ipsum dolor sit amet';
-        $loremMedium = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt'.
-                       'ut labore et dolore magna aliqua. ';
+        $loremMedium = 'Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt' .
+            'ut labore et dolore magna aliqua. ';
 
         $this->setTitle('Robots factory');
         $this->setDescription($loremMedium);
@@ -235,8 +235,10 @@ class DemoForm extends CoreForm
          * Footer
          */
         $this->addFooterFieldSet()
-            ->addButtonLink('link', 'ButtonLink')
-            ->addButton('submit', 'Button');
-
+            ->addButton('default', 'DefaultButton', false)
+            ->addButton('success', 'SuccessButton', false, null, [], ['class' => 'btn btn-success'])
+            ->addButton('danger', 'DangerButton', false, null, [], ['class' => 'btn btn-danger'])
+            ->addButton('submit', 'PrimaryButton (aKa SubmitButton)')
+            ->addButtonLink('link', 'LinkButton');
     }
 }

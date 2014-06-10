@@ -32,6 +32,7 @@
         line-height: @buttonNavHeight;
         padding: 0.2 * @buttonNavHeight 0.8 * @buttonNavHeight;
         text-decoration: none;
+        text-transform: uppercase;
         height: @buttonNavHeight;
         min-width: 3 * @buttonNavHeight;
         .transition();
@@ -72,6 +73,7 @@
 
     li {
       position: relative;
+      margin-right: 20px;
     }
   }
 
@@ -163,10 +165,10 @@
 
         &.dropdown-toggle:after {
           content: "▼";
-          font-size: 10px;
+          font-size: 18px;
           position: absolute;
           right: 10px;
-          top: 7px
+          top: 3px
         }
       }
       li.dropdown-submenu:hover > .dropdown-menu {

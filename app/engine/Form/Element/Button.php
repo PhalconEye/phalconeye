@@ -19,8 +19,8 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\AbstractElement;
 use Engine\Behaviour\TranslationBehaviour;
+use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 
 /**
@@ -87,7 +87,12 @@ class Button extends AbstractElement implements ElementInterface
     {
         return array_merge(
             parent::getDefaultAttributes(),
-            ($this->getOption('isSubmit') ? ['type' => 'submit', 'class' => 'btn btn-primary'] : ['class' => 'btn'])
+            (
+            $this->getOption('isSubmit') ?
+                ['type' => 'submit', 'class' => 'btn btn-primary']
+                :
+                ['type' => 'button', 'class' => 'btn']
+            )
         );
     }
 

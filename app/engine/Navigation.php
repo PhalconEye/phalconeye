@@ -40,7 +40,7 @@ class Navigation
         /**
          * Regexp Menu Item pattern.
          */
-        ITEM_LINK_PATTERN = "/^(http|https|mailto|ftp|javascript:|\/):\/\//";
+        ITEM_LINK_PATTERN = "/^((http|https|mailto|ftp):\/\/|javascript:|\/)/";
 
     use DIBehaviour {
         DIBehaviour::__construct as protected __DIConstruct;

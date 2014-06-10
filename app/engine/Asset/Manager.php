@@ -141,11 +141,13 @@ class Manager extends AssetManager
         // Compile themes css.
         ///////////////////////////////////
         if ($this->_config->installed && !empty($themeDirectory)) {
+            $lessCompileFunction = $this->_config->application->assets->get('lessCompileAlways') ?
+                'compileFile' : 'checkedCompile';
             $themeFiles = glob($themeDirectory . '/*.less');
             FsUtilities::fsCheckLocation($location . 'css/');
             foreach ($themeFiles as $file) {
                 $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
-                $less->checkedCompile($file, $newFileName);
+                $less->{$lessCompileFunction}($file, $newFileName);
             }
         }
 

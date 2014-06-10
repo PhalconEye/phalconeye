@@ -24,6 +24,11 @@ header {
     background: @headerBackground;
   }
 
+  .header_widget {
+    height: 40px;
+    padding: 15px 5px;
+  }
+
   .header_auth {
     margin: 6px 0;
     font-size: 0;
@@ -34,16 +39,22 @@ header {
     }
 
     a {
-      background-color: @buttonBgColor;
-      color: @buttonColor;
+      color: @fontColor;
       margin-right: 2px;
       font-size: @fontSizeHeader;
       padding: 0.2 * @buttonNavHeight 0.8 * @buttonNavHeight;
       text-decoration: none;
+      text-transform: uppercase;
+      border-bottom: 2px solid transparent;
+      .transition();
+    }
 
-      &:last-child {
-        background-color: @buttonBgHoverColor;
-      }
+    a:hover {
+      border-bottom: 2px solid @linkColor;
+    }
+
+    a:last-child:hover {
+      border-bottom: 2px solid @fontSuccessColor;
     }
   }
 }

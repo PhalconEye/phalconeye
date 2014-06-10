@@ -18,6 +18,7 @@
 
 // General form elements
 input[type=text], input[type=email], input[type=password], input.text, textarea, select {
+  color: @formInputColor;
   background-color: @containerBgColor;
   border: 1px solid @containerBorderColor;
   padding: 0.5em;
@@ -29,7 +30,9 @@ input[type=text], input[type=email], input[type=password], input.text, textarea,
 
 button, input[type=button], input[type=file], .btn {
   padding: 0.5em;
-  border: 0;
+  border: 2px solid transparent;
+  border-left: none;
+  border-right: none;
   background-color: @buttonBgColor;
   color: @buttonColor;
   cursor: pointer;
@@ -37,15 +40,30 @@ button, input[type=button], input[type=file], .btn {
   text-decoration: none;
   display: inline-block;
   vertical-align: middle;
+  .transition();
   &:active, &:focus, &.active {
     outline: 0;
   }
-  &:hover, &.btn-danger {
-    color: @buttonColor;
-    background-color: @buttonBgHoverColor;
+  &:hover {
+    color: @linkColor;
+    border-bottom-color: @linkColor;
+  }
+  &.btn-primary {
+    color: @primaryButtonColor;
+    background-color: @primaryButtonBgColor;
+  }
+  &.btn-success {
+    color: @successButtonColor;
+    background-color: @successButtonBgColor;
+  }
+  &.btn-danger {
+    color: @dangerButtonColor;
+    background-color: @dangerButtonBgColor;
   }
 }
 
-a.btn {
-  height: 1.29 * @fontSize;
+.btn-primary, .btn-success, .btn-danger {
+  &:hover {
+    border-bottom-color: @buttonBgColor;
+  }
 }

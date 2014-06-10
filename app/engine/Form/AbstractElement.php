@@ -86,8 +86,8 @@ abstract class AbstractElement implements ElementInterface
     {
         $this->__DIConstruct();
         $this->_name = $name;
-        $this->_options = array_merge($this->getDefaultOptions(), $options);
-        $this->_attributes = array_merge($this->getDefaultAttributes(), $attributes);
+        $this->_options = $options;
+        $this->_attributes = $attributes;
     }
 
     /**
@@ -140,10 +140,11 @@ abstract class AbstractElement implements ElementInterface
      */
     public function isDynamic()
     {
+        $options = $this->getOptions();
         return isset(
-            $this->_options['dynamic'],
-            $this->_options['dynamic']['min'],
-            $this->_options['dynamic']['max']
+        $options['dynamic'],
+        $options['dynamic']['min'],
+        $options['dynamic']['max']
         );
     }
 
@@ -184,7 +185,7 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getOptions()
     {
-        return $this->_options;
+        return array_merge($this->getDefaultOptions(), $this->_options);
     }
 
     /**
@@ -224,11 +225,12 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getOption($name, $default = null)
     {
-        if (!isset($this->_options[$name])) {
+        $options = $this->getOptions();
+        if (!isset($options[$name])) {
             return $default;
         }
 
-        return $this->_options[$name];
+        return $options[$name];
     }
 
     /**
@@ -238,7 +240,7 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getAttributes()
     {
-        return $this->_attributes;
+        return array_merge($this->getDefaultAttributes(), $this->_attributes);
     }
 
     /**
@@ -264,11 +266,12 @@ abstract class AbstractElement implements ElementInterface
      */
     public function getAttribute($name)
     {
-        if (!isset($this->_attributes[$name])) {
+        $attributes = $this->getAttributes();
+        if (!isset($attributes[$name])) {
             return null;
         }
 
-        return $this->_attributes[$name];
+        return $attributes[$name];
     }
 
     /**
@@ -372,15 +375,16 @@ abstract class AbstractElement implements ElementInterface
     /**
      * Render dynamic element.
      *
+     * @throws \LogicException
      * @return string
      */
     protected function _renderDynamicElement()
     {
-        $originalId    = $this->getAttribute('id');
+        $originalId = $this->getAttribute('id');
         $originalValue = $this->getValue();
-        $minElements = (int) $this->getOption('dynamic')['min'];
-        $maxElements = (int) $this->getOption('dynamic')['max'];
-        $values = (array) $originalValue;
+        $minElements = (int)$this->getOption('dynamic')['min'];
+        $maxElements = (int)$this->getOption('dynamic')['max'];
+        $values = (array)$originalValue;
 
         if ($minElements > $maxElements) {
             throw new \LogicException('Minimum number of elements exceeds maximum');
@@ -397,7 +401,7 @@ abstract class AbstractElement implements ElementInterface
         $html = '';
         foreach ($values as $id => $value) {
             $this->setValue($value);
-            $this->setAttribute('id', $id? $originalId . $id : $originalId);
+            $this->setAttribute('id', $id ? $originalId . $id : $originalId);
             $html .= vsprintf(
                 $this->getHtmlTemplate(),
                 $this->getHtmlTemplateValues()
@@ -419,7 +423,7 @@ abstract class AbstractElement implements ElementInterface
     protected function _renderAttributes()
     {
         $html = '';
-        foreach ($this->_attributes as $key => $attribute) {
+        foreach ($this->getAttributes() as $key => $attribute) {
             $html .= sprintf(' %s="%s"', $key, $attribute);
         }
 

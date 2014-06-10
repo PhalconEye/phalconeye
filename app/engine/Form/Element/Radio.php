@@ -18,8 +18,8 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Form\AbstractElement;
 use Engine\Behaviour\TranslationBehaviour;
+use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 use Engine\Form\Exception;
 
@@ -48,12 +48,14 @@ class Radio extends AbstractElement implements ElementInterface
      */
     public function getOption($name, $default = null)
     {
-        if (!isset($this->_options[$name])) {
+        $options = $this->getOptions();
+
+        if (!isset($options[$name])) {
             return $default;
         }
 
         if ($name == 'elementOptions') {
-            $elementOptions = $this->_options[$name];
+            $elementOptions = $options[$name];
             if (!is_array($elementOptions)) {
                 $data = [];
                 $using = $this->getOption('using');
@@ -74,7 +76,7 @@ class Radio extends AbstractElement implements ElementInterface
             }
         }
 
-        return $this->_options[$name];
+        return $options[$name];
     }
 
     /**
