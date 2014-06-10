@@ -56,7 +56,12 @@ class Schema
         /**
          * Default table collation.
          */
-        DEFAULT_TABLE_COLLATION = 'utf8_general_ci';
+        DEFAULT_TABLE_COLLATION = 'utf8_general_ci',
+
+        /**
+         * Default index type.
+         */
+        DEFAULT_INDEX_TYPE = 'UNIQUE';
 
     /**
      * Update database according to models metadata.
@@ -243,7 +248,9 @@ class Schema
                  */
                 if ($collection->has('Index')) {
                     $arguments = $collection->get('Index')->getArguments();
-                    $indexes[$arguments[0]][] = $columnName;
+                    $type = isset($arguments[1]) ? $arguments[1] : self::DEFAULT_INDEX_TYPE;
+
+                    $indexes[$arguments[0]][$type][] = $columnName;
                 }
 
                 $metadata['columns'][] = new Column($columnName, $columnData);
@@ -254,8 +261,10 @@ class Schema
          * Setup indexes objects.
          */
         $metadata['indexes'][] = new Index('PRIMARY', $primary);
-        foreach ($indexes as $indexName => $fields) {
-            $metadata['indexes'][implode('_', $fields)] = new Index($indexName, $fields);
+        foreach ($indexes as $indexName => $types) {
+            foreach ($types as $type => $fields) {
+                $metadata['indexes'][implode('_', $fields)] = new Index($indexName, $fields, $type);
+            }
         }
 
         /**
@@ -360,7 +369,6 @@ class Schema
          * Check if the attribute is marked as identity.
          */
         if ($collection->has('Identity')) {
-            $columnData['identity'] = true;
             $columnData['first'] = true;
             if (isset($columnData['isNumeric']) && $columnData['isNumeric'] == true) {
                 $columnData['autoIncrement'] = true;
@@ -408,18 +416,31 @@ class Schema
                 $db->addColumn($tableName, $tableColumn->getSchemaName(), $tableColumn);
                 $counter++;
             } else {
-
+                $currentField = $localFields[$fieldName];
                 $changed = false;
 
-                if ($localFields[$fieldName]->getType() != $tableColumn->getType()) {
+                // Hack boolean type.
+                if ($currentField->getType() == Column::TYPE_INTEGER && $currentField->getSize() === "1") {
+                    $currentField = new Column(
+                        $fieldName,
+                        [
+                            'type' => Column::TYPE_BOOLEAN,
+                            'size' => 0,
+                            'notNull' => $currentField->isNotNull(),
+                            'first' => $currentField->isFirst()
+                        ]
+                    );
+                }
+
+                if ($currentField->getType() != $tableColumn->getType()) {
                     $changed = true;
                 }
 
-                if ($localFields[$fieldName]->getSize() != $tableColumn->getSize()) {
+                if ($currentField->getSize() != $tableColumn->getSize()) {
                     $changed = true;
                 }
 
-                if ($tableColumn->isNotNull() != $localFields[$fieldName]->isNotNull()) {
+                if ($tableColumn->isNotNull() != $currentField->isNotNull()) {
                     $changed = true;
                 }
 

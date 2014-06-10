@@ -46,6 +46,7 @@ class Widget extends AbstractModel
 
     /**
      * @Column(type="string", nullable=false, column="name", size="150")
+     * @Index("ix_name")
      */
     public $name;
 
