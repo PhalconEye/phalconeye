@@ -67,7 +67,6 @@ abstract class AbstractForm implements ElementContainerInterface
          */
         METHOD_PUT = 'PUT';
 
-
     const
         /**
          * Encoding type - normal.
@@ -454,6 +453,9 @@ abstract class AbstractForm implements ElementContainerInterface
             $data = $this->getDI()->getRequest()->getPost();
         }
 
+        // Check identity.
+        $data = $this->parseDataByIdentity($data);
+
         /**
          * Check token.
          */
@@ -539,6 +541,9 @@ abstract class AbstractForm implements ElementContainerInterface
      */
     protected function _validateElements($container, &$data, $isValid)
     {
+        // Check identity.
+        $data = $this->parseDataByIdentity($data);
+
         /** @var AbstractElement|FieldSet $element */
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {

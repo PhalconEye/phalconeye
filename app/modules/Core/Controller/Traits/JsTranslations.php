@@ -41,7 +41,7 @@ trait JsTranslations
     public function addDefaultJsTranslations()
     {
         I18n::getInstance($this->getDI())
-            ->add('Are you really want to delete this item?')
+            ->add('Do you really want to delete this item?')
             ->add('Close this window?');
     }
 }
