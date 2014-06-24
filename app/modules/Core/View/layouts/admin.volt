@@ -12,9 +12,9 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
-
 <!DOCTYPE html>
 <html>
 <head>
@@ -41,11 +41,12 @@
 
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
-        <a class="brand" href="{{ url("admin") }}"><img alt="Phalcon Eye"
-                                                        src="{{ url('assets/img/core/pe_logo_white.png') }}"/></a>
+        <a class="brand" href="{{ url("admin") }}">
+            <img alt="Phalcon Eye" src="{{ url('assets/img/core/pe_logo_white.png') }}"/>
+        </a>
 
         <div class="nav-collapse">
-            {{ headerNavigation.render() }}
+            {{ adminNavigation.render() }}
         </div>
     </div>
 

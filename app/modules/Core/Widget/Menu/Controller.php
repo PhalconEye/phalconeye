@@ -20,9 +20,7 @@
 namespace Core\Widget\Menu;
 
 use Core\Api\Acl;
-use Core\Model\Menu;
-use Core\Model\MenuItem;
-use Engine\Navigation;
+use Core\Navigation\MenuNavigation;
 use Engine\Widget\Controller as WidgetController;
 use User\Model\Role;
 use User\Model\User;
@@ -31,7 +29,7 @@ use User\Model\User;
  * Menu widget controller.
  *
  * @category  PhalconEye
- * @package   Core\Widget\Header
+ * @package   Core\Widget\Menu
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
@@ -44,101 +42,30 @@ class Controller extends WidgetController
         /**
          * Cache prefix.
          */
-        CACHE_PREFIX = 'menu_cache_key_';
+        CACHE_PREFIX = 'menu_cache_key_',
+
+        /**
+         * Default List class name
+         */
+        DEFAULT_LIST_CLASS = 'nav';
 
     /**
      * Main action.
-     *
-     * @return mixed
      */
     public function indexAction()
     {
+        $listClass = $this->getParam('class');
         $this->view->title = $this->getParam('title');
+        $this->view->navigation = $navigation = new MenuNavigation;
 
-        $menuId = $this->getParam('menu_id');
-        $menu = null;
-        if ($menuId) {
-            $menu = Menu::findFirst($menuId);
-        }
-        if (!$menu) {
-            return $this->setNoRender();
-        }
-
-
-        $menuClass = $this->getParam('class', 'nav');
-        if (empty($menuClass)) {
-            $menuClass = 'nav';
-        }
-
-        $items = $this->_composeNavigationItems(
-            $menu->getMenuItems(['parent_id IS NULL', 'order' => 'item_order ASC'])
-        );
-
-        if (empty($items)) {
-            return $this->setNoRender();
-        }
-
-        $navigation = new Navigation();
         $navigation
-            ->setId($menuId)
-            ->setListClass($menuClass)
-            ->setItems($items)
-            ->setActiveItem($this->dispatcher->getActionName());
+            ->setMenuId($this->getParam('menu_id'))
+            ->setActiveItem($this->dispatcher->getActionName())
+            ->setParameter('listClass', $listClass ?: static::DEFAULT_LIST_CLASS);
 
-        $this->view->navigation = $navigation;
-    }
-
-    /**
-     * Compose navigation items.
-     *
-     * @param MenuItem[] $items Menu items objects.
-     *
-     * @return array
-     */
-    private function _composeNavigationItems($items)
-    {
-        $navigationItems = [];
-        $index = 1;
-        foreach ($items as $item) {
-            /** @var MenuItem $item */
-            if (!$item->isAllowed() || !$item->is_enabled) {
-                continue;
-            }
-            $subItems = $item->getMenuItems(['order' => 'item_order ASC']);
-            $navigationItems[$index] = ['title' => $item->title];
-
-            if ($subItems && $subItems->count() > 0) {
-                $navigationItems[$index]['items'] = $this->_composeNavigationItems($subItems);
-            } else {
-                $navigationItems[$index]['href'] = $item->getHref();
-                $navigationItems[$index]['target'] = $item->target;
-            }
-
-            $navigationItems[$index]['onclick'] = $item->getOnclick();
-
-            $tooltip = $item->getTooltip();
-            if (!empty($tooltip)) {
-                $navigationItems[$index]['tooltip'] = $item->getTooltip();
-                $navigationItems[$index]['tooltip_position'] = $item->tooltip_position;
-            }
-
-
-            if (!empty($item->icon)) {
-                $iconTemplate = '<img class="nav-icon nav-icon-%s" alt="%s" src="%s"/>';
-                $url = $this->getDI()->getUrl();
-                if ($item->icon_position == 'left') {
-                    $navigationItems[$index]['prepend'] =
-                        sprintf($iconTemplate, 'left', $item->title, $url->get($item->icon));
-                } else {
-                    $navigationItems[$index]['append'] =
-                        sprintf($iconTemplate, 'right', $item->title, $url->get($item->icon));
-                }
-            }
-
-            $index++;
+        if (count($navigation) === 0) {
+            $this->setNoRender();
         }
-
-        return $navigationItems;
     }
 
     /**
