@@ -21,7 +21,15 @@ Installation
 
 Note: If you want to reinstall, set option 'installed' to 'false' in /app/var/data/app.php.
 
-Coding Style [![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
+Contribution
+------------
+Feel free to contribute.
+
+* Found a bug? Try to find it in issue tracker https://github.com/PhalconEye/cms/issues ... If this bug is missing - you can add an issue about it.
+* Want to discuss? Visit http://forum.phalconeye.com/ and create topic that is interesting for you.
+* Can/want/like develop? Create pull request and we will check it in nearest time! Just don't forget to check code styling (you can run it via command "ant check") and please don't miss file and class headers (also add yourself as an author if you have changed something).
+
+Coding Style [![Build Status](https://secure.travis-ci.org/PhalconEye/cms.png?branch=master)](http://travis-ci.org/PhalconEye/cms)
 ------------
 PhalconEye CMS code style is checked via Travis CI service. Every commit pushed to this repository will queue a build
 into the continuous integration service to run phpmd and phpcs checks.

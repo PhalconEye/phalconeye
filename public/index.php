@@ -31,9 +31,9 @@ if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
 /**
  * Versions.
  */
-define('PHALCONEYE_VERSION', '0.4.0');
+define('PHALCONEYE_VERSION', '0.4.1');
 define('PHALCON_VERSION_REQUIRED', '1.3.1');
-define('PHP_VERSION_REQUIRED', '5.4.0');
+define('PHP_VERSION_REQUIRED', '5.4.14');
 
 /**
  * Check phalcon framework installation.
