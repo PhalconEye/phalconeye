@@ -1,0 +1,19 @@
+{
+    "name": "phalconeye/cms",
+    "description" : "Phalcon Eye - CMS based on Phalcon PHP Framework",
+    "keywords" : [ "phalcon", "php", "cms" ],
+    "homepage" : "http://phalconeye.com",
+    "license" : "BSD-3-Clause",
+    "require" : {
+        "php" : ">=5.4.20",
+        "phalconeye/composer-installer-plugin": "0.5.*@dev",
+        "phalconeye/module-blog": "1.0.0.*@dev",
+        "leafo/lessphp": "0.4.0"
+    },
+    "support" : {
+        "documentation" : "http://docs.phalconeye.com/latest/en/",
+        "forum" : "http://forum.phalconeye.com/",
+        "source" : "https://github.com/lantian/PhalconEye"
+    },
+    "minimum-stability": "dev"
+}

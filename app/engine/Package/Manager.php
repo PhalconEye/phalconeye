@@ -19,8 +19,8 @@
 namespace Engine\Package;
 
 use Engine\Application;
-use Engine\Config;
 use Engine\Behaviour\DIBehaviour;
+use Engine\Config;
 use Engine\Package\Exception\InvalidManifest;
 use Engine\Package\Model\AbstractPackage;
 use Phalcon\DI;
@@ -154,19 +154,31 @@ class Manager
             $type = $package;
         }
 
-        $locations = [
-            self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
-            self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
-            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
-            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets,
-            self::PACKAGE_TYPE_LIBRARY => $registry->directories->libraries
-        ];
+        $locations = $this->getPackageLocations();
         if (isset($locations[$type])) {
             // fix crossplatform issue directories paths that saved in config.
             return str_replace('/', DS, $locations[$type]);
         }
 
         return '';
+    }
+
+    /**
+     * Get package locations array.
+     *
+     * @return array
+     */
+    public function getPackageLocations()
+    {
+        $registry = $this->getDI()->get('registry');
+
+        return [
+            self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
+            self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
+            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
+            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets,
+            self::PACKAGE_TYPE_LIBRARY => $registry->directories->libraries
+        ];
     }
 
     /**
