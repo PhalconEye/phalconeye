@@ -21,7 +21,7 @@ Installation
 
 Note: If you want to reinstall, set option 'installed' to 'false' in /app/var/data/app.php.
 
-Coding Style [![Build Status](https://secure.travis-ci.org/lantian/PhalconEye.png?branch=master)](http://travis-ci.org/lantian/PhalconEye)
+Coding Style [![Build Status](https://secure.travis-ci.org/PhalconEye/cms.png?branch=master)](https://travis-ci.org/PhalconEye/cms)
 ------------
 PhalconEye CMS code style is checked via Travis CI service. Every commit pushed to this repository will queue a build
 into the continuous integration service to run phpmd and phpcs checks.
