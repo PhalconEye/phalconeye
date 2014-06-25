@@ -55,6 +55,7 @@ return array (
   array (
     'local' => 'assets/',
     'remote' => false,
+    'lifetime' => 0,
   ),
   'metadata' => 
   array (
@@ -65,5 +66,9 @@ return array (
   array (
     'adapter' => 'Files',
     'annotationsDir' => ROOT_PATH . '/app/var/cache/annotations/',
+  ),
+  'languages' =>
+  array(
+    'cacheDir' => ROOT_PATH . '/app/var/cache/languages/',
   ),
 );

@@ -34,6 +34,12 @@ use Phalcon\DiInterface;
  */
 class Navigation
 {
+    const
+        /**
+         * Regexp Menu Item pattern.
+         */
+        ITEM_LINK_PATTERN = "/^((http|https|mailto|ftp):\/\/|javascript:|\/)/";
+
     use DIBehaviour {
         DIBehaviour::__construct as protected __DIConstruct;
     }
@@ -431,7 +437,7 @@ class Navigation
             $active = ($name == $this->_activeItem || $key == $this->_activeItem ? ' class="active"' : '');
             $content .= "<{$lit}{$active}>";
             $link = '#';
-            if (strpos($key, 'http') === false && strpos($key, 'javascript:') === false && $key != '/') {
+            if (preg_match("/^(http|https|mailto|ftp|javascript:|\/):\/\//", $key) === 0) {
                 $link = $url->get($key);
             }
             $linkTarget = (!empty($item['target']) ? 'target="' . $item['target'] . '"' : '');
@@ -487,11 +493,7 @@ class Navigation
 
         if (
             is_array($item['href']) ||
-            (
-                strpos($item['href'], 'http') === false &&
-                strpos($item['href'], 'javascript:') === false &&
-                $item['href'] != '/'
-            )
+            preg_match(static::ITEM_LINK_PATTERN, $item['href']) === 0
         ) {
             $item['href'] = $this->getDI()->get('url')->get($item['href']);
         }

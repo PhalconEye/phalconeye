@@ -123,11 +123,8 @@ class Image extends Validator implements ValidatorInterface
      */
     protected function _addMessage($msg, $args = null)
     {
-        $args = func_get_args();
-        $msg = call_user_func_array('sprintf', $args);
-
         $this->_currentValidator->appendMessage(
-            new Validation\Message($msg, $this->_currentAttribute)
+            new Validation\Message(vsprintf($msg, $args), $this->_currentAttribute)
         );
     }
 }

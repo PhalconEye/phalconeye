@@ -18,6 +18,7 @@
 
 namespace Engine\Helper;
 
+use Engine\Asset\Manager;
 use Engine\Helper;
 use Phalcon\DI;
 use Phalcon\Tag;
@@ -42,7 +43,7 @@ class Assets extends Helper
      *
      * @return void
      */
-    protected function _addJs($file, $collection = 'js')
+    public function addJs($file, $collection = Manager::DEFAULT_COLLECTION_JS)
     {
         $this->getDI()->get('assets')->get($collection)->addJs($file);
     }
@@ -55,7 +56,7 @@ class Assets extends Helper
      *
      * @return void
      */
-    protected function _addCss($file, $collection = 'css')
+    public function addCss($file, $collection = Manager::DEFAULT_COLLECTION_CSS)
     {
         $this->getDI()->get('assets')->get($collection)->addCss($file);
     }

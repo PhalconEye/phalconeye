@@ -125,7 +125,7 @@ abstract class AbstractCommand implements CommandInterface
         if (!empty($this->_actions[$actionName]['params'])) {
             foreach ($this->_actions[$actionName]['params'] as $key => $param) {
                 if (!$this->hasParameter($param['name'])) {
-                    $actionParams[$key] = null;
+                    $actionParams[$key] = $param['defaultValue'];
                     continue;
                 }
 
@@ -241,7 +241,12 @@ abstract class AbstractCommand implements CommandInterface
             }
 
             print ConsoleUtil::headLine('Help for "' . $commandName . ' ' . $action . '":');
-            print ConsoleUtil::textLine($this->getDescription());
+            if (isset($this->_actions[$action]) && isset($this->_actions[$action]['description'])) {
+                print ConsoleUtil::textLine($this->_actions[$action]['description']);
+            } else {
+                print ConsoleUtil::textLine($this->getDescription());
+            }
+
             $this->printParameters($action);
             return;
         } else {
@@ -283,8 +288,8 @@ abstract class AbstractCommand implements CommandInterface
             $cmd = ' --' . $parameter['name'];
             $type = '';
 
-            if ($parameter['default'] != 'boolean') {
-                $cmd .= '=' . $parameter['default'];
+            if ($parameter['defaultValueType'] != 'boolean') {
+                $cmd .= '=' . $parameter['defaultValueType'];
                 $type = ' (' . $parameter['type'] . ')';
             }
 
@@ -380,7 +385,10 @@ abstract class AbstractCommand implements CommandInterface
             foreach ($this->_actions[$action]['params'] as $actionParams) {
 
                 // Check required param.
-                if ($actionParams['default'] == '<required>' && empty($this->_parameters[$actionParams['name']])) {
+                if (
+                    $actionParams['defaultValueType'] == '<required>' &&
+                    empty($this->_parameters[$actionParams['name']])
+                ) {
                     print ConsoleUtil::error(
                         sprintf(
                             'Parameter "%s" is required!',
@@ -393,7 +401,7 @@ abstract class AbstractCommand implements CommandInterface
 
                 // Check required value of param.
                 if (
-                    $actionParams['default'] != 'boolean' &&
+                    $actionParams['defaultValueType'] != 'boolean' &&
                     in_array($actionParams['name'], $withoutValue)
                 ) {
                     print ConsoleUtil::error(
@@ -460,51 +468,81 @@ abstract class AbstractCommand implements CommandInterface
 
             // Method annotations.
             $reflection = new \ReflectionMethod(get_class($this), $method);
-            $docComment = $reflection->getDocComment();
 
             // Method name.
             $method = str_replace('Action', '', $method);
             $this->_actions[$method] = [];
 
             // Get action description and params metadata.
-            $paramsMetadata = [];
-            $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
-            $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
-            if (!empty($actionComment)) {
-                foreach ($actionComment as $comment) {
-                    if (strpos($comment, '@') === false) {
-                        if (empty($this->_actions[$method]['description'])) {
-                            $this->_actions[$method]['description'] = $comment;
-                        } else {
-                            $this->_actions[$method]['description'] .= $comment;
-                        }
-                    } elseif (strpos($comment, '@param') !== false) {
-                        $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
-                        $paramOptions = explode(' ', $comment);
-                        if (!empty($paramOptions[2])) {
-                            $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
-                                'type' => $paramOptions[1],
-                                'description' => (!empty($paramOptions[3]) ? $paramOptions[3] : '')
-                            ];
-                        }
-                    }
-                }
-            }
+            $paramsMetadata = $this->_getActionMetadata($reflection, $method);
 
             // Get action params.
             $this->_actions[$method]['params'] = [];
             foreach ($reflection->getParameters() as $parameter) {
                 $name = $parameter->getName();
-                $defaultValue = $parameter->isDefaultValueAvailable() ?
-                    gettype($parameter->getDefaultValue()) : '<required>';
+                $defaultValue = $parameter->getDefaultValue();
+                $defaultValueType = $parameter->isDefaultValueAvailable() ?
+                    gettype($defaultValue) : '<required>';
 
                 $this->_actions[$method]['params'][] = [
                     'name' => $name,
-                    'default' => $defaultValue,
+                    'defaultValueType' => $defaultValueType,
+                    'defaultValue' => $defaultValue,
                     'type' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['type'] : ''),
                     'description' => (isset($paramsMetadata[$name]) ? $paramsMetadata[$name]['description'] : '')
                 ];
             }
         }
+    }
+
+    /**
+     * Get action metadata.
+     *
+     * @param \ReflectionMethod $reflection Reflection object.
+     * @param string            $method     Method name.
+     *
+     * @return array
+     */
+    private function _getActionMetadata($reflection, $method)
+    {
+        $docComment = $reflection->getDocComment();
+        $paramsMetadata = [];
+        $actionComment = preg_replace('#[ \t]*(?:\/\*\*|\*\/|\*)?[ ]{0,1}(.*)?#', '$1', $docComment);
+        $actionComment = explode("\n", str_replace("\n\n", "\n", trim($actionComment, "\r\n")));
+
+        if (!empty($actionComment)) {
+            foreach ($actionComment as $comment) {
+                if (strpos($comment, '@') === false) {
+                    if (empty($this->_actions[$method]['description'])) {
+                        $this->_actions[$method]['description'] = $comment;
+                    } else {
+                        $this->_actions[$method]['description'] .= $comment;
+                    }
+                } elseif (strpos($comment, '@param') !== false) {
+                    $comment = preg_replace("/(?:\s)+/", " ", $comment, -1);
+                    $paramOptions = explode(' ', $comment);
+                    $description = '';
+
+                    if (!empty($paramOptions[0]) && !empty($paramOptions[1]) && !empty($paramOptions[2])) {
+                        $description = trim(
+                            str_replace(
+                                implode(' ', [$paramOptions[0], $paramOptions[1], $paramOptions[2]]),
+                                '',
+                                $comment
+                            )
+                        );
+                    }
+
+                    if (!empty($paramOptions[2])) {
+                        $paramsMetadata[str_replace('$', '', $paramOptions[2])] = [
+                            'type' => $paramOptions[1],
+                            'description' => $description
+                        ];
+                    }
+                }
+            }
+        }
+
+        return $paramsMetadata;
     }
 }

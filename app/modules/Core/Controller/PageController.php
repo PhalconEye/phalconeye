@@ -39,7 +39,7 @@ class PageController extends AbstractController
      *
      * @return void
      *
-     * @Route("/{url:[a-zA-Z0-9_-]+}", methods={"GET"}, name="page")
+     * @Route("/{url:[a-zA-Z0-9_-]+}", methods={"GET", "POST"}, name="page")
      */
     public function indexAction($url)
     {

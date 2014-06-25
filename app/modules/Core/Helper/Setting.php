@@ -42,7 +42,7 @@ class Setting extends Helper
      *
      * @return null|string
      */
-    protected function _get($name, $default = null)
+    public function get($name, $default = null)
     {
         return Settings::getSetting($name, $default);
     }

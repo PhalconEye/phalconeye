@@ -57,7 +57,7 @@ INSERT INTO `content` (`id`, `page_id`, `widget_id`, `widget_order`, `layout`, `
   (8, 3, 1, 2, 'left', '{"title":"Left2","html_en":"<p>Left2<\\/p>\\r\\n","html_ru":"","html":null,"roles":null}'),
   (9, 1, 3, 1, 'middle', '{"logo":"assets\\/img\\/core\\/pe_logo.png","show_title":null,"show_auth":"1","roles":null,"content_id":"112"}'),
   (10, 1, 2, 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null}'),
-  (11, 2, 1, 1, 'middle', '{"title":"","html_en":"<p style=\\"text-align: center;\\">PhalconEye v.0.4.0<\\/p>\\r\\n","roles":null}');
+  (11, 2, 1, 1, 'middle', '{"title":"","html_en":"<p style=\\"text-align: center;\\">PhalconEye v.0.4.1<\\/p>\\r\\n","roles":null}');
 
 --
 -- Dumping data for table `languages`

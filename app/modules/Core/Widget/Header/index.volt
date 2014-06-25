@@ -39,7 +39,7 @@
         {% else %}
             {{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}&nbsp;
             |
-            {% if helper('security', 'core').isAllowed('AdminArea', 'access') %}
+            {% if helper('acl', 'core').isAllowed('AdminArea', 'access') %}
                 <a href="{{ url('admin') }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
             <a href="{{ url('logout') }}">{{ 'Logout' |i18n }}</a>

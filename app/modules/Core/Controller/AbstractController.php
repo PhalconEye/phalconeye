@@ -13,14 +13,18 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
 namespace Core\Controller;
 
 use Core\Controller\Traits\JsTranslations;
+use Core\Helper\Renderer;
 use Core\Model\Page;
+use Engine\Asset\Manager as AssetManager;
 use Engine\Behaviour\DIBehaviour;
+use Engine\Exception;
 use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
@@ -32,6 +36,7 @@ use Phalcon\Mvc\View;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -139,8 +144,9 @@ abstract class AbstractController extends PhalconController
 
         // Resort content by sides.
         $content = [];
+        $renderer = Renderer::getInstance($this->getDI());
         foreach ($page->getWidgets() as $widget) {
-            $content[$widget->layout][] = $widget;
+            $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
         }
 
         $this->view->content = $content;
@@ -199,7 +205,7 @@ abstract class AbstractController extends PhalconController
     protected function _setupAssets()
     {
         $this->assets->set(
-            'css',
+            AssetManager::DEFAULT_COLLECTION_CSS,
             $this->assets->getEmptyCssCollection()
                 ->addCss('external/jquery/jquery-ui.css')
                 ->addCss('assets/css/constants.css')
@@ -207,7 +213,7 @@ abstract class AbstractController extends PhalconController
         );
 
         $this->assets->set(
-            'js',
+            AssetManager::DEFAULT_COLLECTION_JS,
             $this->assets->getEmptyJsCollection()
                 ->addJs('external/jquery/jquery-2.1.0.js')
                 ->addJs('external/jquery/jquery-ui-1.10.4.js')
@@ -224,11 +230,11 @@ abstract class AbstractController extends PhalconController
 
         if ($this->di->has('profiler')) {
             $this->di->get('assets')
-                ->collection('css')
+                ->collection(AssetManager::DEFAULT_COLLECTION_CSS)
                 ->addCss('assets/css/core/profiler.css');
 
             $this->di->get('assets')
-                ->collection('js')
+                ->collection(AssetManager::DEFAULT_COLLECTION_JS)
                 ->addCss('assets/js/core/profiler.js');
         }
 

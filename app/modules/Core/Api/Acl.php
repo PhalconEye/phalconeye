@@ -136,17 +136,17 @@ class Acl extends AbstractApi
     }
 
     /**
-     * Forward methods to acl object.
+     * Wrapper to real isAllowed method.
      *
-     * @param string $name      Method name.
-     * @param array  $arguments Method arguments.
+     * @param string $role     Role name.
+     * @param string $resource Resource name.
+     * @param string $access   Access name.
      *
-     * @return mixed
+     * @return boolean
      */
-    public function __call($name, $arguments)
+    public function isAllowed($role, $resource, $access)
     {
-        $acl = $this->getAcl();
-        return call_user_func_array(array($acl, $name), $arguments);
+        return $this->getAcl()->isAllowed($role, $resource, $access);
     }
 
     /**
@@ -227,6 +227,16 @@ class Acl extends AbstractApi
     public function clearAcl()
     {
         $this->getDI()->get('cacheData')->delete(self::CACHE_KEY_ACL);
+    }
+
+    /**
+     * Return an array with every resource registered in the list.
+     *
+     * @return \Phalcon\Acl\Resource[]
+     */
+    public function getResources()
+    {
+        return $this->getAcl()->getResources();
     }
 
     /**

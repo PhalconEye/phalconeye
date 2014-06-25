@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -28,6 +29,7 @@ use Phalcon\Mvc\Model\Query\Builder;
  * @category  PhalconEye
  * @package   Engine\Db
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -66,7 +68,7 @@ abstract class AbstractModel extends PhalconModel
      */
     public static function get($condition, $params, $order = null, $limit = null)
     {
-        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $condition = vsprintf($condition, $params);
         $parameters = [$condition];
 
         if ($order) {
@@ -92,7 +94,7 @@ abstract class AbstractModel extends PhalconModel
      */
     public static function getFirst($condition, $params, $order = null)
     {
-        $condition = call_user_func_array('sprintf', array_merge([0 => $condition], $params));
+        $condition = vsprintf($condition, $params);
         $parameters = [$condition];
 
         if ($order) {
@@ -125,10 +127,28 @@ abstract class AbstractModel extends PhalconModel
     /**
      * Get identity.
      *
-     * @return int
+     * @return mixed
      */
     public function getId()
     {
-        return $this->id;
+        if (property_exists($this, 'id')) {
+            return $this->id;
+        }
+
+        $primaryKeys = $this->getDI()->get('modelsMetadata')->getPrimaryKeyAttributes($this);
+
+        switch (count($primaryKeys)) {
+            case 0:
+                return null;
+                break;
+            case 1:
+                return $this->{$primaryKeys[0]};
+                break;
+            default:
+                return array_intersect_key(
+                    get_object_vars($this),
+                    array_flip($primaryKeys)
+                );
+        }
     }
 }

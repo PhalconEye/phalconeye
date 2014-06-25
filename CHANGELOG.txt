@@ -1,3 +1,25 @@
+Version 0.4.1
+ - Added more flexible manifest.json support for packages, thanks to @WooDzu.
+ - Fixed #30, thanks to @WooDzu.
+ - Cache clearing optimizations, added "Clear cache" button to dashboard, thanks to @WooDzu.
+ - Fixed minor problems with cache path detection.
+ - Added method "php" to view. Allows to use php code inside volt.
+ - Header widget: do not display logo if empty.
+ - Fixed escaping in CkEditor form element.
+ - Helper "Security" renamed to "Acl".
+ - Console commands: fixed command description output.
+ - Removed ACL wrapper, for performance reason.
+ - Helpers implementation was reworked.
+ - Added languages cache location to config.
+ - Removed call_user_func_array where it is possible.
+ - Fixed bug with cacheDir that can be missing in config.
+ - Reworked cache adapters creation.
+ - Added strtolower method to dispatcher for action (this is for Phalcon 1.3.2).
+ - Fixed possible error with form validation message (Phalcon 1.3.2).
+ - Added caching mechanism for assets generation tool.
+ - Fixed bugs: #64, #49, #67, #26.
+ - Implemented: #55.
+
 Version 0.4.0
  - Implemented isCached, getCacheKey, getCacheLifeTime, clearCache methods for widgets caching.
  - Implemented modules system.

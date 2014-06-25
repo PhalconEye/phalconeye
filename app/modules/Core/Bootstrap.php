@@ -144,12 +144,15 @@ class Bootstrap extends EngineBootstrap
 
         if (!$config->application->debug || !$config->installed) {
             $messages = [];
-            if (file_exists(ROOT_PATH . "/app/var/cache/languages/" . $language . ".php")) {
-                require ROOT_PATH . "/app/var/cache/languages/" . $language . ".php";
+            $directory = $config->application->languages->cacheDir;
+            $extension = ".php";
+
+            if (file_exists($directory . $language . $extension)) {
+                require $directory . $language . $extension;
             } else {
-                if (file_exists(ROOT_PATH . "/app/var/cache/languages/en.php")) {
+                if (file_exists($directory . Config::CONFIG_DEFAULT_LANGUAGE . $extension)) {
                     // fallback to default
-                    require ROOT_PATH . "/app/var/cache/languages/en.php";
+                    require $directory . Config::CONFIG_DEFAULT_LANGUAGE . $extension;
                 }
             }
 

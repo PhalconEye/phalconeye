@@ -21,7 +21,6 @@ namespace Core\Helper;
 use Engine\Config;
 use Engine\Helper;
 use Engine\Profiler as EngineProfiler;
-use Phalcon\Acl;
 use Phalcon\DI;
 use Phalcon\Mvc\View;
 use Phalcon\Tag;
@@ -58,7 +57,7 @@ class Profiler extends Helper
      *
      * @return string
      */
-    protected function _render()
+    public function render()
     {
         $di = $this->getDI();
         $this->_config = $di->get('config');

@@ -200,7 +200,7 @@
             initSession: function () {
                 // Init some additional actions.
                 $(this.options.css.actionDelete, this.element).click(function (e) {
-                    return confirm(root.i18n._('Are you really want to delete this item?'));
+                    return confirm(root.i18n._('Do you really want to delete this item?'));
                 });
 
                 if (!this.options.useSession) {
