@@ -77,6 +77,7 @@ class Select extends AbstractElement implements ElementInterface
                 }
 
                 $this->setOption('elementOptions', $data);
+                return $data;
             }
         }
 
