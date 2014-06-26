@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -29,9 +30,9 @@ use Core\Model\Package;
 use Core\Model\PackageDependency;
 use Core\Model\Settings;
 use Core\Model\Widget;
+use Core\Navigation\AdminPackagesNavigation;
 use Engine\Db\Schema;
 use Engine\Exception;
-use Engine\Navigation;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
 use Phalcon\Config;
@@ -42,6 +43,7 @@ use Phalcon\Config;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -57,53 +59,7 @@ class AdminPackagesController extends AbstractAdminController
      */
     public function init()
     {
-        $navigation = new Navigation();
-        $navigation
-            ->setItems(
-                [
-                    'index' => [
-                        'href' => 'admin/packages',
-                        'title' => 'Modules',
-                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-                    ],
-                    'themes' => [
-                        'href' => 'admin/packages/themes',
-                        'title' => 'Themes',
-                        'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
-                    ],
-                    'widgets' => [
-                        'href' => 'admin/packages/widgets',
-                        'title' => 'Widgets',
-                        'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
-                    ],
-                    'plugins' => [
-                        'href' => ['for' => 'admin-packages-plugins'],
-                        'title' => 'Plugins',
-                        'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
-                    ],
-                    'libraries' => [
-                        'href' => ['for' => 'admin-packages-libraries'],
-                        'title' => 'Libraries',
-                        'prepend' => '<i class="glyphicon glyphicon-book"></i>'
-                    ],
-                    2 => [
-                        'href' => 'javascript:;',
-                        'title' => '|'
-                    ],
-                    'upload' => [
-                        'href' => 'admin/packages/upload',
-                        'title' => 'Upload new package',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ],
-                    'create' => [
-                        'href' => 'admin/packages/create',
-                        'title' => 'Create new package',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ]
-                ]
-            );
-
-        $this->view->navigation = $navigation;
+        $this->view->navigation = new AdminPackagesNavigation;
     }
 
     /**

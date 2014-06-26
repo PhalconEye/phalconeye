@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -21,7 +22,6 @@ namespace User\Controller;
 use Core\Controller\AbstractAdminController;
 use Core\Form\EntityForm;
 use Core\Form\TextForm;
-use Engine\Navigation;
 use User\Controller\Grid\Admin\RoleGrid;
 use User\Controller\Grid\Admin\UserGrid;
 use User\Form\Admin\Create as CreateForm;
@@ -30,6 +30,7 @@ use User\Form\Admin\RoleCreate as RoleCreateForm;
 use User\Form\Admin\RoleEdit as RoleEditForm;
 use User\Model\Role;
 use User\Model\User;
+use User\Navigation\AdminUsersNavigation;
 
 /**
  * Manage users.
@@ -37,6 +38,7 @@ use User\Model\User;
  * @category  PhalconEye
  * @package   User\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -52,39 +54,7 @@ class AdminUsersController extends AbstractAdminController
      */
     public function init()
     {
-        $navigation = new Navigation();
-        $navigation
-            ->setItems(
-                [
-                    'index' => [
-                        'href' => 'admin/users',
-                        'title' => 'Users',
-                        'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-                    ],
-                    'roles' => [
-                        'href' => 'admin/users/roles',
-                        'title' => 'Roles',
-                        'prepend' => '<i class="glyphicon glyphicon-share"></i>'
-                    ],
-                    2 => [
-                        'href' => 'javascript:;',
-                        'title' => '|'
-                    ],
-                    'create' => [
-                        'href' => 'admin/users/create',
-                        'title' => 'Create new user',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ],
-                    'rolesCreate' => [
-                        'href' => 'admin/users/roles-create',
-                        'title' => 'Create new role',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ]
-                ]
-            );
-
-        $this->view->navigation = $navigation;
-
+        $this->view->navigation = new AdminUsersNavigation;
     }
 
     /**

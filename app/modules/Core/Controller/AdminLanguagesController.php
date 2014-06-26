@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -29,9 +30,9 @@ use Core\Form\Admin\Language\Upload;
 use Core\Form\Admin\Language\Wizard;
 use Core\Model\Language;
 use Core\Model\LanguageTranslation;
+use Core\Navigation\AdminLanguagesNavigation;
 use Engine\Config;
 use Engine\Exception;
-use Engine\Navigation;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use Phalcon\Validation\Message;
@@ -42,6 +43,7 @@ use Phalcon\Validation\Message;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -57,28 +59,7 @@ class AdminLanguagesController extends AbstractAdminController
      */
     public function init()
     {
-        $navigation = new Navigation();
-        $navigation
-            ->setItems(
-                [
-                    'index' => [
-                        'href' => 'admin/languages',
-                        'title' => 'Browse',
-                        'prepend' => '<i class="glyphicon glyphicon-list"></i>'
-                    ],
-                    1 => [
-                        'href' => 'javascript:;',
-                        'title' => '|'
-                    ],
-                    'create' => [
-                        'href' => 'admin/languages/create',
-                        'title' => 'Create new language',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ]
-                ]
-            );
-
-        $this->view->navigation = $navigation;
+        $this->view->navigation = new AdminLanguagesNavigation;
     }
 
     /**

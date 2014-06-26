@@ -13,15 +13,14 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
 namespace Core\Controller;
 
-use Core\Model\Package;
 use Core\Model\Settings;
-use Engine\Navigation;
-use Engine\Package\Manager;
+use Core\Navigation\AdminNavigation;
 use Engine\Asset\Manager as AssetManager;
 
 /**
@@ -30,6 +29,7 @@ use Engine\Asset\Manager as AssetManager;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -49,126 +49,9 @@ abstract class AbstractAdminController extends AbstractController
             return;
         }
 
-        $this->_setupNavigation();
+        $this->view->adminNavigation = new AdminNavigation();
+
         $this->_setupAssets();
-    }
-
-    /**
-     * Setup navigation.
-     *
-     * @return void
-     */
-    protected function _setupNavigation()
-    {
-        $path = explode('/', $this->request->get('_url'));
-
-        $activeItem = '';
-        $limit = (count($path) > 3 ? 1 : 0);
-        for ($i = 1, $count = count($path); $i < $count - $limit && $i < 3; $i++) {
-            $activeItem .= $path[$i] . '/';
-        }
-        $activeItem = substr($activeItem, 0, -1);
-
-        $menuItems = [
-            'admin' => [
-                'href' => 'admin',
-                'title' => 'Dashboard',
-                'prepend' => '<i class="glyphicon glyphicon-home"></i>'
-            ],
-            'users' => [
-                'title' => 'Manage',
-                'items' => [ // type - dropdown
-                    'admin/users' => [
-                        'title' => 'Users and Roles',
-                        'href' => 'admin/users',
-                        'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-                    ],
-                    'admin/pages' => [
-                        'title' => 'Pages',
-                        'href' => 'admin/pages',
-                        'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
-                    ],
-                    'admin/menus' => [
-                        'title' => 'Menus',
-                        'href' => 'admin/menus',
-                        'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
-                    ],
-                    'admin/languages' => [
-                        'title' => 'Languages',
-                        'href' => 'admin/languages',
-                        'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
-                    ],
-                    'admin/files' => [
-                        'title' => 'Files',
-                        'href' => 'admin/files',
-                        'prepend' => '<i class="glyphicon glyphicon-file"></i>'
-                    ],
-                    'admin/packages' => [
-                        'title' => 'Packages',
-                        'href' => 'admin/packages',
-                        'prepend' => '<i class="glyphicon glyphicon-th"></i>'
-                    ]
-                ]
-            ],
-            'settings' => [ // type - dropdown
-                'title' => 'Settings',
-                'items' => [
-                    'admin/settings' => [
-                        'title' => 'System',
-                        'href' => 'admin/settings',
-                        'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
-                    ],
-                    'admin/settings/performance' => [
-                        'title' => 'Performance',
-                        'href' => 'admin/performance',
-                        'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
-                    ],
-                    'admin/access' => [
-                        'title' => 'Access Rights',
-                        'href' => 'admin/access',
-                        'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
-                    ]
-                ]
-            ]
-        ];
-
-        $modules = Package::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
-        if ($modules->count()) {
-            $modulesMenuItems = [];
-            foreach ($modules as $module) {
-                if ($module->is_system) {
-                    continue;
-                }
-                $href = 'admin/module/' . $module->name;
-                $modulesMenuItems[$href] = [
-                    'title' => $module->title,
-                    'href' => $href,
-                    'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-                ];
-                if ($activeItem == 'admin/module' && (string) $path[3] == $module->name) {
-                    $activeItem = $href;
-                }
-            }
-
-            if (!empty($modulesMenuItems)) {
-                $menuItems['modules'] = [
-                    'title' => 'Modules',
-                    'items' => $modulesMenuItems
-                ];
-            }
-        }
-
-        $navigation = new Navigation();
-        $navigation
-            ->setItems($menuItems)
-            ->setActiveItem($activeItem)
-            ->setListClass('nav nav-categories')
-            ->setDropDownItemClass('nav-category')
-            ->setDropDownItemMenuClass('nav')
-            ->setDropDownIcon('')
-            ->setEnabledDropDownHighlight(false);
-
-        $this->view->headerNavigation = $navigation;
     }
 
     /**

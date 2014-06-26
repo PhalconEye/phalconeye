@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -24,7 +25,7 @@ use Core\Form\Admin\Page\Edit as EditForm;
 use Core\Form\CoreForm;
 use Core\Model\Page;
 use Core\Model\Widget;
-use Engine\Navigation;
+use Core\Navigation\AdminPagesNavigation;
 use Engine\Widget\Controller as WidgetController;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
@@ -36,6 +37,7 @@ use User\Model\Role;
  * @category  PhalconEye
  * @package   Core\Controller
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -51,28 +53,7 @@ class AdminPagesController extends AbstractAdminController
      */
     public function init()
     {
-        $navigation = new Navigation();
-        $navigation
-            ->setItems(
-                [
-                    'index' => [
-                        'href' => 'admin/pages',
-                        'title' => 'Browse',
-                        'prepend' => '<i class="glyphicon glyphicon-list"></i>'
-                    ],
-                    1 => [
-                        'href' => 'javascript:;',
-                        'title' => '|'
-                    ],
-                    'create' => [
-                        'href' => 'admin/pages/create',
-                        'title' => 'Create new page',
-                        'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                    ]
-                ]
-            );
-
-        $this->view->navigation = $navigation;
+        $this->view->navigation = new AdminPagesNavigation;
     }
 
     /**
