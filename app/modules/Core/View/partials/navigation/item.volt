@@ -15,8 +15,8 @@
  +------------------------------------------------------------------------+
 #}
 
-    <{{ navigation.getOption('listItemTag') }}{% for name,value in navigation.buildItemAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
-        <a{% for name,value in navigation.buildLinkAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
+    <{{ navigation.getOption('listItemTag') }}{% for name,value in navigation.getItemAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
+        <a{% for name,value in navigation.getLinkAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
             {{
                 item.getOption('prepend') ~
                 item.getOption('itemPrependContent') ~

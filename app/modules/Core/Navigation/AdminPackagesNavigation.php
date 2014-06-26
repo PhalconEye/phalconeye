@@ -32,7 +32,7 @@ use Engine\Navigation\Item;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AdminPackagesNavigation extends Core
+class AdminPackagesNavigation extends CoreNavigation
 {
     /**
      * {@inheritdoc}

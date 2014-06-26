@@ -34,7 +34,7 @@ use Engine\Package\Manager;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AdminNavigation extends Core
+class AdminNavigation extends CoreNavigation
 {
     /**
      * {@inheritdoc}

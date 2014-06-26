@@ -179,9 +179,10 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
      */
     public function setOption($name, $value)
     {
-        if (array_key_exists($name, $this->_options)) {
-            $this->_options[$name] = $value;
+        if (!array_key_exists($name, $this->_options)) {
+            throw new \UnexpectedValueException("Unrecognized option $name");
         }
+        $this->_options[$name] = $value;
     }
 
     /**

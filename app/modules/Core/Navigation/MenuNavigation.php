@@ -34,7 +34,7 @@ use Engine\Navigation\Item as NavigationItem;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class MenuNavigation extends Core
+class MenuNavigation extends CoreNavigation
 {
     const
         /**

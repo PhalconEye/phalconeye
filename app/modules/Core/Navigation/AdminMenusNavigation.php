@@ -32,7 +32,7 @@ use Engine\Navigation\Item;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AdminMenusNavigation extends Core
+class AdminMenusNavigation extends CoreNavigation
 {
     /**
      * {@inheritdoc}

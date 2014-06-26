@@ -35,7 +35,7 @@ use Engine\Navigation\AbstractNavigation;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Core extends AbstractNavigation implements NavigationInterface
+class CoreNavigation extends AbstractNavigation implements NavigationInterface
 {
     use ViewBehaviour;
 
@@ -70,7 +70,7 @@ class Core extends AbstractNavigation implements NavigationInterface
      *
      * @return array
      */
-    public function buildItemAttributes(Item $item)
+    public function getItemAttributes(Item $item)
     {
         $attributes = [];
         $classes = [];
@@ -100,7 +100,7 @@ class Core extends AbstractNavigation implements NavigationInterface
      *
      * @return array
      */
-    public function buildLinkAttributes(Item $item)
+    public function getLinkAttributes(Item $item)
     {
         $link = $item->getLink();
         $tooltip = $item->getOption('tooltip');
