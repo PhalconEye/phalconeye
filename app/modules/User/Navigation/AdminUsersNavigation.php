@@ -41,19 +41,19 @@ class AdminUsersNavigation extends Core
     public function initialize()
     {
         $this->setItems([
-            new Item('Users', 'admin/users', [
+            ['Users', 'admin/users', [
                 'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-            ]),
-            new Item('Roles', 'admin/users/roles', [
+            ]],
+            ['Roles', 'admin/users/roles', [
                 'prepend' => '<i class="glyphicon glyphicon-share"></i>'
-            ]),
-            new Item('|'),
-            new Item('Create new user', 'admin/users/create', [
+            ]],
+            null,
+            ['Create new user', 'admin/users/create', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]),
-            new Item('Create new role', 'admin/users/roles-create', [
+            ]],
+            ['Create new role', 'admin/users/roles-create', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]),
+            ]],
         ]);
     }
 }

@@ -32,13 +32,10 @@ namespace Engine\Navigation;
  */
 class Item implements \IteratorAggregate, \Countable
 {
-    const
-        /**
-         * Regexp Menu Item pattern.
-         */
-        ITEM_LINK_PATTERN = "/^((http|https|mailto|ftp):\/\/|javascript:|\/)/";
-
     use ItemsContainer;
+
+    /** @var NavigationInterface|Item|null **/
+    protected $_parentContainer = null;
 
     /** @var string Item label **/
     protected $_label = '';
@@ -46,13 +43,9 @@ class Item implements \IteratorAggregate, \Countable
     /** @var string|null Item link **/
     protected $_link = null;
 
-    /** @var bool Active flag */
-    protected $_isActive = false;
-
-    /** @var array Allowed parameters */
-    protected $_parameters = [
-        'target' => '',
-        'onclick' => '',
+    /** @var array Default options **/
+    protected $_options = [
+        'active' => false,
         'tooltip' => '',
         'tooltip_position' => '',
         'prepend' => '',
@@ -61,27 +54,32 @@ class Item implements \IteratorAggregate, \Countable
         'itemAppendContent' => ''
     ];
 
+    /** @var array Default Item link attributes **/
+    protected $_attributes = [
+        'target' => '',
+        'onclick' => ''
+    ];
+
     /**
      * Constructor
      *
      * @param string $label      Link name
      * @param mixed  $link       Optional link target
-     * @param array  $parameters Item options
+     * @param array  $options    Item options
+     * @param array  $attributes Item Link attributes
      */
-    public function __construct($label, $link = null, $parameters = [])
+    public function __construct($label = '', $link = null, $options = [], $attributes = [])
     {
-        // todo: inject di or move this to view
-        $di = \Phalcon\DI::getDefault();
+        $this->_label = $label;
+        $this->_link = $link;
 
-        $this->_label =  $di->get('i18n')->query($label);
-
-        if ($link && (is_array($link) || preg_match(static::ITEM_LINK_PATTERN, $link) === 0)) {
-            $this->_link = $di->get('url')->get($link);
-        } else {
-            $this->_link = $link;
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
         }
 
-        $this->setParameters($parameters);
+        $this->setAttributes($attributes);
+
+        return $this;
     }
 
     /**
@@ -105,6 +103,38 @@ class Item implements \IteratorAggregate, \Countable
     }
 
     /**
+     * Get Item option
+     *
+     * @param string $name Option name
+     *
+     * @return mixed
+     */
+    public function getOption($name)
+    {
+        if (isset($this->_options[$name])) {
+            return $this->_options[$name];
+        }
+        return null;
+    }
+
+    /**
+     * Set Item option
+     *
+     * @param string $name  Option name
+     * @param string $value Option value
+     *
+     * @return $this
+     */
+    public function setOption($name, $value)
+    {
+        if (array_key_exists($name, $this->_options)) {
+            $this->_options[$name] = $value;
+        }
+
+        return $this;
+    }
+
+    /**
      * Set item (in)active
      *
      * @param bool $active Active flag
@@ -113,97 +143,117 @@ class Item implements \IteratorAggregate, \Countable
      */
     public function setActive($active = true)
     {
-        $this->_isActive = $active;
+        $this->_options['active'] = $active;
     }
 
     /**
      * Get active flag
      *
-     * @return string
+     * @return bool
      */
     public function isActive()
     {
-        return $this->_isActive;
+        return $this->_options['active'];
     }
 
     /**
-     * Get parameters that will be passed through to View
+     * Does Item belong to another Item?
      *
-     * @return array
+     * @return bool
      */
-    public function getParameters()
+    public function isNested()
     {
-        return $this->_parameters;
+        return ($this->_parentContainer instanceof Item);
     }
 
     /**
-     * Set parameters that will be passed through to View
+     * Get navigation container the Item belongs to
+     *
+     * @param NavigationInterface|Item|null $container Instance
      *
      * @return $this
      */
-    public function setParameters(array $parameters)
+    public function setParentContainer($container)
     {
-        foreach ($parameters as $name => $value) {
-            $this->setParameter($name, $value);
+        $this->_parentContainer = $container;
+
+        return $this;
+    }
+
+    /**
+     * Get navigation container the Item belongs to
+     *
+     * @return NavigationInterface|Item|null
+     */
+    public function getParentContainer()
+    {
+        return $this->_parentContainer;
+    }
+
+    /**
+     * Get top level NavigationInterface instance
+     *
+     * @return NavigationInterface|null
+     */
+    public function getNavigation()
+    {
+        if ($this->_parentContainer instanceof NavigationInterface) {
+            return $this->_parentContainer;
+        } elseif ($this->_parentContainer instanceof Item) {
+            return $this->_parentContainer->getNavigation();
+        }
+
+        return null;
+    }
+
+    /**
+     * Get Item Link attributes
+     *
+     * @return array
+     */
+    public function getAttributes()
+    {
+        return $this->_attributes;
+    }
+
+    /**
+     * Set Item link attributes
+     *
+     * @return $this
+     */
+    public function setAttributes(array $attributes)
+    {
+        foreach ($attributes as $name => $value) {
+            $this->setAttribute($name, $value);
         }
         return $this;
     }
 
     /**
-     * Get value of a parameter
+     * Get Item link attribute
      *
-     * @param string $name  Parameter name
+     * @param string $name Attribute name
      *
      * @return mixed
      */
-    public function getParameter($name)
+    public function getAttribute($name)
     {
-        if (isset($this->_parameters[$name])) {
-            return $this->_parameters[$name];
+        if (isset($this->_attributes[$name])) {
+            return $this->_attributes[$name];
         }
         return null;
     }
 
     /**
-     * Change a parameter
+     * Set Item link attribute
      *
-     * @param string $name  Parameter name
-     * @param mixed  $value Parameter value
+     * @param string $name  Attribute name
+     * @param mixed  $value Attribute value
      *
      * @return $this
      */
-    public function setParameter($name, $value)
+    public function setAttribute($name, $value)
     {
-        if (array_key_exists($name, $this->_parameters)) {
-            $this->_parameters[$name] = $value;
-        }
-    }
-
-    /**
-     * Renders Link
-     */
-    public function buildLinkParameters()
-    {
-        $params = $this->getParameters();
-        $result = [];
-
-        if (!empty($this->_link)) {
-            $result['href'] = $this->_link;
-        }
-
-        if (!empty($params['onclick'])) {
-            $result['onclick'] = $params['onclick'];
-        }
-
-        if (!empty($params['target'])) {
-            $result['target'] = $params['target'];
-        }
-
-        if (!empty($params['tooltip'])) {
-            $result['title'] = $params['tooltip'];
-            $result['data-tooltip-position'] = $params['tooltip_position'];
-        }
-
-        return $result;
+        $this->_attributes[$name] = $value;
     }
 }

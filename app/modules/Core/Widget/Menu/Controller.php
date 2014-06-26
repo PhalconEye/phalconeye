@@ -61,7 +61,7 @@ class Controller extends WidgetController
         $navigation
             ->setMenuId($this->getParam('menu_id'))
             ->setActiveItem($this->dispatcher->getActionName())
-            ->setParameter('listClass', $listClass ?: static::DEFAULT_LIST_CLASS);
+            ->setOption('listClass', $listClass ?: static::DEFAULT_LIST_CLASS);
 
         if (count($navigation) === 0) {
             $this->setNoRender();

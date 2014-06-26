@@ -34,18 +34,20 @@ use Engine\Package\Manager;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Admin extends Core
+class AdminNavigation extends Core
 {
     /**
      * {@inheritdoc}
      */
-    public function getParameters()
+    public function __construct($di = null)
     {
-        return array_merge(parent::getParameters(), [
+        $this->_options = array_merge($this->_options, [
             'listClass' => 'nav nav-categories',
             'dropDownItemClass' => 'nav-category',
             'dropDownItemMenuClass' => 'nav'
         ]);
+
+        parent::__construct($di = null);
     }
 
     /**
@@ -62,7 +64,6 @@ class Admin extends Core
             $activeItem .= $path[$i] . '/';
         }
         $activeItem = substr($activeItem, 0, -1);
-        // $this->setActiveItem($activeItem);
 
         // Dashboard
         $this->appendItem(new Item('Dashboard', 'admin', [
@@ -73,39 +74,39 @@ class Admin extends Core
         $this->appendItem($mangeItem = new Item('Manage'));
 
         $mangeItem->setItems([
-            new Item('Users and Roles', 'admin/users', [
+            ['Users and Roles', 'admin/users', [
                 'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-            ]),
-            new Item('Pages', 'admin/pages', [
+            ]],
+            ['Pages', 'admin/pages', [
                 'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
-            ]),
-            new Item('Menus', 'admin/menus', [
+            ]],
+            ['Menus', 'admin/menus', [
                 'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
-            ]),
-            new Item('Languages', 'admin/languages', [
+            ]],
+            ['Languages', 'admin/languages', [
                 'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
-            ]),
-            new Item('Files', 'admin/files', [
+            ]],
+            ['Files', 'admin/files', [
                 'prepend' => '<i class="glyphicon glyphicon-file"></i>'
-            ]),
-            new Item('Packages', 'admin/packages', [
+            ]],
+            ['Packages', 'admin/packages', [
                 'prepend' => '<i class="glyphicon glyphicon-th"></i>'
-            ])
+            ]]
         ]);
 
         // Settings
         $this->appendItem($settingsItem = new Item('Settings'));
 
         $settingsItem->setItems([
-            new Item('System', 'admin/settings', [
+            ['System', 'admin/settings', [
                 'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
-            ]),
-            new Item('Performance', 'admin/performance', [
+            ]],
+            ['Performance', 'admin/performance', [
                 'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
-            ]),
-            $acl = new Item('Access Rights', 'admin/access', [
+            ]],
+            ['Access Rights', 'admin/access', [
                 'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
-            ])
+            ]]
         ]);
 
         // Dynamic modules

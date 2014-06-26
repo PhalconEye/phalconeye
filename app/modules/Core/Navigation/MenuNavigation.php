@@ -105,14 +105,14 @@ class MenuNavigation extends Core
 
             // Set tooltip
             if ($tooltip = $item->getTooltip()) {
-                $navItem->setParameter('tooltip', $item->getTooltip());
-                $navItem->setParameter('tooltip_position', $item->tooltip_position);
+                $navItem->setOption('tooltip', $tooltip);
+                $navItem->setOption('tooltip_position', $item->tooltip_position);
             }
 
             // Set icon
             if (!empty($item->icon)) {
 
-                $navItem->setParameter(
+                $navItem->setOption(
                     ($item->icon_position == MenuItem::ITEM_ICON_POSITION_LEFT? 'prepend' : 'append'),
                     sprintf(static::ITEM_ICON_TEMPLATE, $item->icon_position, $item->title, $url->get($item->icon))
                 );

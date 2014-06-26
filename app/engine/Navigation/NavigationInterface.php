@@ -77,37 +77,37 @@ interface  NavigationInterface
     public function getActiveItem();
 
     /**
-     * Get parameters that will be passed through to View
+     * Get Navigation Options
      *
      * @return array
      */
-    public function getParameters();
+    public function getOptions();
 
     /**
-     * Set parameters that will be passed through to View
+     * Set Navigation Options
      *
      * @return $this
      */
-    public function setParameters(array $parameters);
+    public function setOptions(array $options);
 
     /**
-     * Get value of a parameter
+     * Get value of Navigation option
      *
-     * @param string $name  Parameter name
+     * @param string $name  Option name
      *
      * @return mixed
      */
-    public function getParameter($name);
+    public function getOption($name);
 
     /**
-     * Change a parameter
+     * Set Navigation option
      *
-     * @param string $name  Parameter name
-     * @param mixed  $value Parameter value
+     * @param string $name  Option name
+     * @param mixed  $value Option value
      *
      * @return $this
      */
-    public function setParameter($name, $value);
+    public function setOption($name, $value);
 
     /**
      * Render Navigation.

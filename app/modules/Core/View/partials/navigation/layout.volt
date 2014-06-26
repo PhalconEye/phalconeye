@@ -15,8 +15,8 @@
  +------------------------------------------------------------------------+
 #}
 
-<{{ params['listTag'] }} {% if params['listClass'] %} class="{{ params['listClass'] }}"{% endif %}>
-{%  for item in items %}
-{{    partial('Core/View/partials/navigation/item', ['item': item, 'params': params, 'nested': false]) }}
+<{{ navigation.getOption('listTag') }} class="{{ navigation.getOption('listClass') }}">
+{%  for item in navigation.getItems() %}
+{{    partial('Core/View/partials/navigation/item', ['item': item, 'navigation': navigation]) }}
 {%  endfor %}
-</{{ params['listTag'] }}>
+</{{ navigation.getOption('listTag') }}>

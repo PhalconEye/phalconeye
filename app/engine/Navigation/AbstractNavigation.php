@@ -34,6 +34,12 @@ use Phalcon\DiInterface;
  */
 abstract class AbstractNavigation implements NavigationInterface, \IteratorAggregate, \Countable
 {
+    const
+        /**
+         * Regexp Menu Item pattern.
+         */
+        ITEM_LINK_PATTERN = "/^((http|https|mailto|ftp):\/\/|javascript:|\/)/";
+
     use ItemsContainer,
         DIBehaviour {
         DIBehaviour::__construct as protected __DIConstruct;
@@ -45,8 +51,8 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
     /** @var string Currently active item, it can be name or href. */
     protected $_activeItem = '';
 
-    /** @var array Default parameters **/
-    protected $_parameters = [];
+    /** @var array Default options **/
+    protected $_options = [];
 
     /**
      * Navigation constructor.
@@ -126,55 +132,55 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
     }
 
     /**
-     * Get parameters that will be passed through to View
+     * Get Navigation Options
      *
      * @return array
      */
-    public function getParameters()
+    public function getOptions()
     {
-        return $this->_parameters;
+        return $this->_options;
     }
 
     /**
-     * Set parameters that will be passed through to View
+     * Set Navigation Options
      *
      * @return $this
      */
-    public function setParameters(array $parameters)
+    public function setOptions(array $options)
     {
-        foreach ($parameters as $name => $value) {
-            $this->setParameter($name, $value);
+        foreach ($options as $name => $value) {
+            $this->setOption($name, $value);
         }
         return $this;
     }
 
     /**
-     * Get value of a parameter
+     * Get value of Navigation option
      *
-     * @param string $name  Parameter name
+     * @param string $name  Option name
      *
      * @return mixed
      */
-    public function getParameter($name)
+    public function getOption($name)
     {
-        if (isset($this->_parameters[$name])) {
-            return $this->_parameters[$name];
+        if (isset($this->_options[$name])) {
+            return $this->_options[$name];
         }
         return null;
     }
 
     /**
-     * Change a parameter
+     * Set Navigation option
      *
-     * @param string $name  Parameter name
-     * @param mixed  $value Parameter value
+     * @param string $name  Option name
+     * @param mixed  $value Option value
      *
      * @return $this
      */
-    public function setParameter($name, $value)
+    public function setOption($name, $value)
     {
-        if (array_key_exists($name, $this->_parameters)) {
-            $this->_parameters[$name] = $value;
+        if (array_key_exists($name, $this->_options)) {
+            $this->_options[$name] = $value;
         }
     }
 
@@ -202,8 +208,7 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
         ob_start();
         $view->partial($viewName, [
             'id' => $this->getId(),
-            'items' => $this->getItems(),
-            'params' => $this->getParameters()
+            'navigation' => $this,
         ]);
         $html = ob_get_clean();
 

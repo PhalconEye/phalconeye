@@ -40,13 +40,13 @@ class AdminLanguagesNavigation extends Core
     public function initialize()
     {
         $this->setItems([
-            new Item('Browse', 'admin/languages', [
+            ['Browse', 'admin/languages', [
                 'prepend' => '<i class="glyphicon glyphicon-list"></i>'
-            ]),
-            new Item('|'),
-            new Item('Create new', 'admin/languages/create', [
+            ]],
+            null,
+            ['Create new', 'admin/languages/create', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ])
+            ]]
         ]);
     }
 }

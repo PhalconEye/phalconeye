@@ -40,29 +40,29 @@ class AdminPackagesNavigation extends Core
     public function initialize()
     {
         $this->setItems([
-            new Item('Modules', 'admin/packages', [
+            ['Modules', 'admin/packages', [
                 'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-            ]),
-            new Item('|'),
-            new Item('Themes', 'admin/packages/themes', [
+            ]],
+            null,
+            ['Themes', 'admin/packages/themes', [
                 'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
-            ]),
-            new Item('Widgets', 'admin/packages/widgets', [
+            ]],
+            ['Widgets', 'admin/packages/widgets', [
                 'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
-            ]),
-            new Item('Plugins', 'admin/packages/plugins', [
+            ]],
+            ['Plugins', 'admin/packages/plugins', [
                 'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
-            ]),
-            new Item('Libraries', 'admin/packages/libraries', [
+            ]],
+            ['Libraries', 'admin/packages/libraries', [
                 'prepend' => '<i class="glyphicon glyphicon-book"></i>'
-            ]),
-            new Item('|'),
-            new Item('Upload', 'admin/packages/upload', [
+            ]],
+            null,
+            ['Upload', 'admin/packages/upload', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]),
-            new Item('Create new', 'admin/packages/create', [
+            ]],
+            ['Create new', 'admin/packages/create', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]),
+            ]],
         ]);
     }
 }

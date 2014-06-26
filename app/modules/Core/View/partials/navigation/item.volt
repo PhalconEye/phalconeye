@@ -15,42 +15,21 @@
  +------------------------------------------------------------------------+
 #}
 
-{# todo: Split or move this logic off here #}
-
-{% set class = '', subItems = item.getItems() %}
-
-{% if subItems|length %}
-    {% if nested %}
-       {% set class = params['dropDownSubItemMenuClass'] %}
-   {% else %}
-       {% set class = params['dropDownItemClass'] %}
-   {% endif %}
-{% endif %}
-
-{% if item.isActive() %}
-    {% if nested %}
-        {% set class = class ~ ( params['highlightActiveDropDownItem'] ? ' active' : '' ) %}
-    {% else %}
-        {% set class = class ~ ' active' %}
-    {% endif %}
-{% endif %}
-
-    <{{ params['listItemTag'] }}{% if class %} class="{{ class }}" {% endif %}>
-        <a class="system-tooltip {{ subItems|length ? params['dropDownItemToggleClass'] : '' }} {{ nested ? params['dropDownItemHeaderClass'] : '' }} {% if item.getLabel() == '' %}{{ params['dropDownItemDividerClass'] }}{% endif %}"
-           {% if subItems|length %}data-toggle="dropdown"{% endif %} {% for name,value in item.buildLinkParameters() %}{{ name }}="{{ value }}" {% endfor %}>
+    <{{ navigation.getOption('listItemTag') }}{% for name,value in navigation.buildItemAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
+        <a{% for name,value in navigation.buildLinkAttributes(item) %} {{ name }}="{{ value }}"{% endfor %}>
             {{
-                item.getParameter('prepend') ~
-                item.getParameter('itemPrependContent') ~
-                item.getLabel() ~
-                item.getParameter('itemAppendContent') ~
-                item.getParameter('append')
+                item.getOption('prepend') ~
+                item.getOption('itemPrependContent') ~
+                item.getLabel()|i18n ~
+                item.getOption('itemAppendContent') ~
+                item.getOption('append')
             }}</a>
 
-        {% if subItems|length %}
-        <{{ params['listTag'] }} class="{{ params['dropDownItemMenuClass'] }}">
-            {% for item in subItems %}
-            {{ partial('Core/View/partials/navigation/item', ['item': item, 'params': params, 'nested': true]) }}
+        {% if item|length %}
+        <{{ navigation.getOption('listTag') }} class="{{ navigation.getOption('dropDownItemMenuClass') }}">
+            {% for item in item.getItems() %}
+            {{ partial('Core/View/partials/navigation/item', ['item': item, 'navigation': navigation]) }}
             {% endfor %}
-        </{{ params['listTag'] }}>
+        </{{ navigation.getOption('listTag') }}>
         {% endif %}
-    </{{ params['listItemTag'] }}>
+    </{{ navigation.getOption('listItemTag') }}>

@@ -20,7 +20,7 @@
 namespace Core\Controller;
 
 use Core\Model\Settings;
-use Core\Navigation\Admin as AdminNavigation;
+use Core\Navigation\AdminNavigation;
 use Engine\Asset\Manager as AssetManager;
 
 /**

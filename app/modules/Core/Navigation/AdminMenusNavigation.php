@@ -40,13 +40,13 @@ class AdminMenusNavigation extends Core
     public function initialize()
     {
         $this->setItems([
-            new Item('Browse', 'admin/menus', [
+            ['Browse', 'admin/menus', [
                 'prepend' => '<i class="glyphicon glyphicon-list"></i>'
-            ]),
-            new Item('|'),
-            new Item('Create new', 'admin/menus/create', [
+            ]],
+            null,
+            ['Create new', 'admin/menus/create', [
                 'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ])
+            ]]
         ]);
     }
 }
