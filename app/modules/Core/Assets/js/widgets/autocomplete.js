@@ -12,6 +12,7 @@
  | to license@phalconeye.com so we can send you a copy immediately.       |
  +------------------------------------------------------------------------+
  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+ | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
  +------------------------------------------------------------------------+
  */
 
@@ -21,6 +22,7 @@
  * @category  PhalconEye
  * @package   PhalconEye Core Module
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright Copyright (c) 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -31,12 +33,19 @@
             'PhalconEye.widget.autocomplete',
             {
                 /**
+                 * If provided, will be fired once a dropdown element is selected
+                 */
+                onSelectCallback: null,
+
+                /**
                  * Init autocomplete.
                  *
                  * @param element Element object.
                  */
                 init: function (element) {
-                    var result = element.autocomplete({
+                    var result, targetElement, ul;
+
+                    result = element.autocomplete({
                         source: function (request, response) {
                             $.ajax({
                                 url: $(this)[0].element[0].dataset.link,
@@ -53,10 +62,10 @@
                                 }
                             });
                         },
-                        select: function (event, ui) {
+                        select: this.onSelectCallback || function (event, ui) {
                             $(event.target).val(ui.item.label);
 
-                            var targetElement = $(event.target)[0].dataset.target;
+                            targetElement = $(event.target)[0].dataset.target;
 
                             if (targetElement) {
                                 $(targetElement).val(ui.item.value);
@@ -67,7 +76,7 @@
 
                     if (result) {
                         result._resizeMenu = function () { // fix position of dropdown
-                            var ul = this.menu.element;
+                            ul = this.menu.element;
                             ul.outerWidth(this.element.outerWidth());
                         }
                     }
@@ -76,4 +85,3 @@
         );
     });
 }(window, jQuery, PhalconEye));
-
