@@ -19,8 +19,7 @@
 
 namespace User\Navigation;
 
-use Core\Navigation\Core;
-use Engine\Navigation\Item;
+use Core\Navigation\CoreNavigation;
 
 /**
  * User Admin Navigation
@@ -33,7 +32,7 @@ use Engine\Navigation\Item;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class AdminUsersNavigation extends Core
+class AdminUsersNavigation extends CoreNavigation
 {
     /**
      * {@inheritdoc}
