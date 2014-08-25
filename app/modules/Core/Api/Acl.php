@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -22,6 +23,7 @@ use Core\Model\Access;
 use Engine\Api\AbstractApi;
 use Engine\Application;
 use Engine\Behaviour\DIBehaviour;
+use Engine\Package\Utilities;
 use Phalcon\Acl\Adapter\Memory as AclMemory;
 use Phalcon\Acl\Resource as AclResource;
 use Phalcon\Acl as PhalconAcl;
@@ -38,6 +40,7 @@ use User\Model\User;
  * @category  PhalconEye
  * @package   Core\Api
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -284,19 +287,17 @@ class Acl extends AbstractApi
             $module = ucfirst($module);
             $modelsPath = $registry->directories->modules . $module . '/Model';
             if (file_exists($modelsPath)) {
-                $files = scandir($modelsPath);
+                $files = Utilities::fsRecursiveGlob($modelsPath, '*.php');
                 foreach ($files as $file) {
-                    if ($file == "." || $file == "..") {
-                        continue;
-                    }
-                    $class = sprintf('\%s\Model\%s', $module, ucfirst(str_replace('.php', '', $file)));
-                    $object = $this->getObject($class);
+                    $modelName = str_replace([$modelsPath, '/', '.php'], ['', '\\', ''], $file);
+                    $modelClass = sprintf('\%s\Model%s', $module, ucfirst($modelName));
+                    $object = $this->getObject($modelClass);
                     if ($object == null) {
                         continue;
                     }
 
-                    $objects[$class]['actions'] = $object->actions;
-                    $objects[$class]['options'] = $object->options;
+                    $objects[$modelClass]['actions'] = $object->actions;
+                    $objects[$modelClass]['options'] = $object->options;
                 }
 
                 // Add objects to resources.
