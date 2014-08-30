@@ -65,7 +65,7 @@ class Settings extends AbstractModel
      */
     public function save($data=null, $whiteList=null)
     {
-        if (!empty($this->value) && !isset($data['value'])) {
+        if (strlen($this->value) && !isset($data['value'])) {
             parent::save($data, $whiteList) and $this->_clearCache();
         } else {
             $this->delete();
