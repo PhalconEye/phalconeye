@@ -128,7 +128,7 @@ class FileForm extends CoreForm
             foreach ($this->_transformations as $field => $transform) {
                 $file = $this->getFiles($field);
 
-                if (!$file) {
+                if ($file == null) {
                     continue;
                 }
 
