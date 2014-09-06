@@ -72,7 +72,7 @@ class FileForm extends CoreForm
             return $this->getDI()->get('request')->hasFiles($withoutErrors);
         }
 
-        return $this->getFiles($name, $withoutErrors) == null;
+        return is_object($this->getFiles($name, $withoutErrors));
     }
 
     /**
