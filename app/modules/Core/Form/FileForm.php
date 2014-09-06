@@ -13,6 +13,7 @@
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
 
@@ -36,6 +37,7 @@ use Phalcon\Validation;
  * @category  PhalconEye
  * @package   Core\Form
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
+ * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -70,7 +72,7 @@ class FileForm extends CoreForm
             return $this->getDI()->get('request')->hasFiles($withoutErrors);
         }
 
-        return (bool)$this->getFiles($name, $withoutErrors);
+        return $this->getFiles($name, $withoutErrors) == null;
     }
 
     /**
