@@ -22,6 +22,7 @@ use Phalcon\Db\Column;
 use Phalcon\DiInterface;
 use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
 use Phalcon\Mvc\ModelInterface;
+use Phalcon\Mvc\Model\MetaData\StrategyInterface;
 
 /**
  * Annotations metadata reader.
@@ -33,7 +34,7 @@ use Phalcon\Mvc\ModelInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Metadata
+class Metadata implements StrategyInterface
 {
     /**
      * Initializes the model's meta-data.
