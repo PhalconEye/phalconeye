@@ -328,7 +328,9 @@ class Metadata implements StrategyInterface
      */
     protected function _getColumnName($name, $arguments)
     {
-        if (isset($arguments['column'])) {
+        if (isset($arguments['name'])) {
+            return $arguments['name'];
+        } else if (isset($arguments['column'])) {
             return $arguments['column'];
         } else {
             return $name;
