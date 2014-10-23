@@ -24,7 +24,7 @@ use Engine\Exception;
  * Current url helper.
  *
  * @category  PhalconEye
- * @package   Engine\Helper
+ * @package   Engine\Package
  * @author    Ivan Vorontsov <ivan.vorontsov@phalconeye.com>
  * @copyright 2013-2014 PhalconEye Team
  * @license   New BSD License

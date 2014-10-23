@@ -90,19 +90,24 @@ class Utilities
     /**
      * Remove directory recursively.
      *
-     * @param string $path        Path to remove.
-     * @param bool   $includeSelf Including root dir.
+     * @param string $path         Path to remove.
+     * @param bool   $includeSelf  Including root dir.
+     * @param array  $excludeNames Exclude names from coping.
      *
      * @throws Exception
      */
-    static public function fsRmdirRecursive($path, $includeSelf = false)
+    static public function fsRmdirRecursive($path, $includeSelf = false, $excludeNames = [])
     {
         $it = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::KEY_AS_PATHNAME),
             \RecursiveIteratorIterator::CHILD_FIRST
         );
         foreach ($it as $key => $child) {
-            if ($child->getFilename() == '.' || $child->getFilename() == '..') {
+            if (
+                $child->getFilename() == '.' ||
+                $child->getFilename() == '..' ||
+                in_array($child->getFilename(), $excludeNames)
+            ) {
                 continue;
             }
             if ($it->isDir()) {

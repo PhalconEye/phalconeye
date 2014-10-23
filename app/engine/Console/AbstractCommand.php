@@ -76,12 +76,20 @@ abstract class AbstractCommand implements CommandInterface
     protected $_parameters = [];
 
     /**
+     * Console arguments.
+     *
+     * @var String[]
+     */
+    private $_arguments;
+
+    /**
      * Final constructor.
      *
      * @param DiInterface $di Dependency injection container.
      */
-    final public function __construct($di)
+    final public function __construct($di, $arguments)
     {
+        $this->_arguments = $arguments;
         $this->__DIConstruct($di);
         $this->_setupCommandMetadata();
         $this->_setupActionsMetadata();
@@ -311,11 +319,11 @@ abstract class AbstractCommand implements CommandInterface
     protected function _parseParameters()
     {
         $this->_parameters = [];
-        $argumentsCount = count($_SERVER['argv']);
+        $argumentsCount = count($this->_arguments);
         $withoutValue = [];
 
         for ($i = 1; $i < $argumentsCount; $i++) {
-            $argv = $_SERVER['argv'][$i];
+            $argv = $this->_arguments[$i];
 
             // Set initial data.
             if (in_array($argv, $this->_commands) && empty($this->_parameters)) {

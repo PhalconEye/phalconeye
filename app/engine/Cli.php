@@ -45,6 +45,13 @@ class Cli extends Application
     private $_commands = [];
 
     /**
+     * Console arguments.
+     *
+     * @var String[]
+     */
+    private $_arguments;
+
+    /**
      * Run application.
      *
      * @param string $mode Run mode.
@@ -53,6 +60,7 @@ class Cli extends Application
      */
     public function run($mode = 'console')
     {
+        $this->_arguments = $_SERVER['argv'];
         parent::run($mode);
 
         // Init commands.
@@ -105,7 +113,7 @@ class Cli extends Application
             }
 
             $commandClass = $commandsNamespace . str_replace('.php', '', $file);
-            $this->_commands[] = new $commandClass($this->getDI());
+            $this->_commands[] = new $commandClass($this->getDI(), $this->_arguments);
         }
     }
 
@@ -136,7 +144,7 @@ class Cli extends Application
         }
 
         // Not arguments?
-        if (!isset($_SERVER['argv'][1])) {
+        if (!isset($this->_arguments[1])) {
             $this->printAvailableCommands();
             die();
         }
@@ -165,15 +173,15 @@ class Cli extends Application
         }
 
         // Show exception with/without alternatives.
-        $soundex = soundex($_SERVER['argv'][1]);
+        $soundex = soundex($this->_arguments[1]);
         if (isset($available[$soundex])) {
             print ConsoleUtil::warningLine(
-                'Command "' . $_SERVER['argv'][1] .
+                'Command "' . $this->_arguments[1] .
                 '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
             );
             $this->printAvailableCommands();
         } else {
-            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][1] . '" not found.');
+            print ConsoleUtil::warningLine('Command "' . $this->_arguments[1] . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -202,7 +210,7 @@ class Cli extends Application
     protected function _getRequiredCommand($input = null)
     {
         if (!$input) {
-            $input = $_SERVER['argv'][1];
+            $input = $this->_arguments[1];
         }
 
         foreach ($this->_commands as $command) {
@@ -222,22 +230,22 @@ class Cli extends Application
      */
     protected function _helpIsRequired()
     {
-        if ($_SERVER['argv'][1] != 'help') {
+        if ($this->_arguments[1] != 'help') {
             return false;
         }
 
-        if (empty($_SERVER['argv'][2])) {
+        if (empty($this->_arguments[2])) {
             $this->printAvailableCommands();
             return true;
         }
 
-        $command = $this->_getRequiredCommand($_SERVER['argv'][2]);
+        $command = $this->_getRequiredCommand($this->_arguments[2]);
         if (!$command) {
-            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][2] . '" not found.');
+            print ConsoleUtil::warningLine('Command "' . $this->_arguments[2] . '" not found.');
             return true;
         }
 
-        $command->getHelp((!empty($_SERVER['argv'][3]) ? $_SERVER['argv'][3] : null));
+        $command->getHelp((!empty($this->_arguments[3]) ? $this->_arguments[3] : null));
         return true;
     }
 }

@@ -54,8 +54,8 @@ class DispatchErrorHandler extends PhalconPlugin
         if ($exception instanceof DispatchException) {
             $dispatcher->forward(
                 [
-                    'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
-                    'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
+                    'module' => EngineApplication::DEFAULT_MODULE_CORE,
+                    'namespace' => ucfirst(EngineApplication::DEFAULT_MODULE_CORE) . '\Controller',
                     'controller' => 'Error',
                     'action' => 'show404'
                 ]
@@ -73,8 +73,8 @@ class DispatchErrorHandler extends PhalconPlugin
         // Handle other exceptions.
         $dispatcher->forward(
             [
-                'module' => EngineApplication::SYSTEM_DEFAULT_MODULE,
-                'namespace' => ucfirst(EngineApplication::SYSTEM_DEFAULT_MODULE) . '\Controller',
+                'module' => EngineApplication::DEFAULT_MODULE_CORE,
+                'namespace' => ucfirst(EngineApplication::DEFAULT_MODULE_CORE) . '\Controller',
                 'controller' => 'Error',
                 'action' => 'show500'
             ]

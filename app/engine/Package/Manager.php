@@ -18,6 +18,7 @@
 
 namespace Engine\Package;
 
+use Composer\Package\CompletePackage;
 use Engine\Application;
 use Engine\Behaviour\DIBehaviour;
 use Engine\Config;
@@ -46,22 +47,22 @@ class Manager
         /**
          * Module package.
          */
-        PACKAGE_TYPE_MODULE = 'module',
+        PACKAGE_TYPE_MODULE = 'phalconeye-module',
 
         /**
          * Plugin package.
          */
-        PACKAGE_TYPE_PLUGIN = 'plugin',
+        PACKAGE_TYPE_PLUGIN = 'phalconeye-plugin',
 
         /**
          * Theme package.
          */
-        PACKAGE_TYPE_THEME = 'theme',
+        PACKAGE_TYPE_THEME = 'phalconeye-theme',
 
         /**
          * Widget package.
          */
-        PACKAGE_TYPE_WIDGET = 'widget',
+        PACKAGE_TYPE_WIDGET = 'phalconeye-widget',
 
         /**
          * Library package.
@@ -100,6 +101,8 @@ class Manager
         'version',
     ];
 
+    protected $_composerManager = null;
+
     /**
      * Versions of each package.
      *
@@ -117,13 +120,12 @@ class Manager
     /**
      * Create package manager.
      *
-     * @param AbstractPackage[] $packages Packages.
-     * @param DI                $di       Dependency injection.
+     * @param DI $di Dependency injection.
      */
-    public function __construct($packages = [], $di = null)
+    public function __construct($di = null)
     {
         $this->__DIConstruct($di);
-        $this->_installedPackages = $packages;
+        $this->_composerManager = ComposerManager::factory();
         if (!empty($packages)) {
             foreach ($packages as $package) {
                 $this->_packagesVersions[$package->type][$package->name] = $package->version;
@@ -190,7 +192,7 @@ class Manager
      */
     public function createPackage($data)
     {
-        $data['defaultModuleUpper'] = ucfirst(Application::SYSTEM_DEFAULT_MODULE);
+        $data['defaultModuleUpper'] = ucfirst(Application::DEFAULT_MODULE_CORE);
         $data['nameUpper'] = ucfirst($data['name']);
         $data['moduleNamespace'] = '';
 
@@ -483,48 +485,48 @@ class Manager
     }
 
     /**
-     * Generate packages metadata.
-     * Events and modules files.
+     * Get composer manager.
      *
-     * @param AbstractPackage[] $packages      Packages array.
-     * @param bool              $checkManifest Check manifest if it can not be just overwritten.
+     * @return ComposerManager|null
+     */
+    public function getComposerManager()
+    {
+        return $this->_composerManager;
+    }
+
+    /**
+     * Generate packages metadata.
+     * Events, modules, widgets data...
      *
      * @return void
      */
-    public function generateMetadata($packages = null, $checkManifest = false)
+    public function generateMetadata()
     {
-        if (empty($packages)) {
-            $packages = $this->_installedPackages;
-        }
-
-        if (empty($packages)) {
-            return;
-        }
+        $packages = $this->getComposerManager()->getInstalledPackages();
 
         // Check packages metadata directory.
         $packagesMetadataDirectory = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES;
         Utilities::fsCheckLocation($packagesMetadataDirectory);
 
         $config = ['installed' => PHALCONEYE_VERSION, 'events' => [], 'modules' => [], 'widgets' => []];
+        /** @var CompletePackage $package */
         foreach ($packages as $package) {
-            if (!$package->enabled) {
+            $data = $package->getExtra();
+            if (!isset($data['name'])) {
                 continue;
             }
-            $data = $package->getData();
+            $name = strtolower($data['name']);
 
-            if ($package->type == self::PACKAGE_TYPE_MODULE && !$package->is_system) {
-                $config['modules'][] = $package->name;
+            if ($package->getType() == self::PACKAGE_TYPE_MODULE) {
+                $config['modules'][] = $name;
             }
 
-            if ($package->type == self::PACKAGE_TYPE_WIDGET) {
-                $config['widgets'][] = $package->name;
+            if ($package->getType() == self::PACKAGE_TYPE_WIDGET) {
+                $config['widgets'][] = $name;
             }
 
             // Get package events.
-            if (
-                (in_array($package->type, [self::PACKAGE_TYPE_PLUGIN, self::PACKAGE_TYPE_MODULE])) &&
-                !$package->is_system
-            ) {
+            if ((in_array($package->getType(), [self::PACKAGE_TYPE_PLUGIN, self::PACKAGE_TYPE_MODULE]))) {
                 if (!empty($data) && !empty($data['events'])) {
                     $config['events'] = array_merge($config['events'], $data['events']);
                 }
@@ -532,17 +534,32 @@ class Manager
 
             // If widget is related to module - it has no manifest file.
             if (
-                $package->type == self::PACKAGE_TYPE_WIDGET &&
+                $package->getType() == self::PACKAGE_TYPE_WIDGET &&
                 !empty($data) &&
                 !empty($data['module'])
             ) {
                 continue;
             }
-
-            $packageMetadataFile = $packagesMetadataDirectory . '/' .
-                $this->_getPackageFullName($package) . '.json';
-            $this->_createManifest($packageMetadataFile, $package->toJson(), $checkManifest);
         }
+
+        // Sort modules to define their load priority.
+        $modulesPriority = [
+            Application::DEFAULT_MODULE_CORE => 2,
+            Application::DEFAULT_MODULE_USER => 1
+        ];
+        usort(
+            $config['modules'],
+            function ($value1, $value2) use ($modulesPriority) {
+                $priority1 = array_key_exists($value1, $modulesPriority) ? $modulesPriority[$value1] : 0;
+                $priority2 = array_key_exists($value2, $modulesPriority) ? $modulesPriority[$value2] : 0;
+
+                if ($priority1 == $priority2) {
+                    return 0;
+                }
+
+                return ($priority1 > $priority2) ? -1 : 1;
+            }
+        );
 
         file_put_contents(
             ROOT_PATH . Config::CONFIG_METADATA_APP,

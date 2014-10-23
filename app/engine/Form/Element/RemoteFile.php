@@ -42,7 +42,7 @@ class RemoteFile extends AbstractElement implements ElementInterface
         /**
          * Ajaxplorer url.
          */
-        EDITOR_URL = 'external/pydio/?external_selector_type=popup&amp;relative_path=/files';
+        EDITOR_URL = 'ui/phalconeye/pydio/?external_selector_type=popup&amp;relative_path=/files';
 
     /**
      * Get allowed options for this element.

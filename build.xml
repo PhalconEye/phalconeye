@@ -11,10 +11,11 @@
             build - Prepares environment for distribution.
             dist - Generates distributable package.
             assets - Install modules assets.
-            clean - Deletes previously generated files under build/ and dist/.
+            clean - Deletes previously generated files under build/ and dist/, and files installed by composer.
             doc - Generates the project documentation using PHP Documentor.
             check - Executes the tasks: phpmd, phpcs.
             analyze - Executes the tasks: phpcpd, pdepend, phpcb, phploc.
+            reinit - Remove all composer data, packages and run "composer.phar install" command.
 
             =============================
             Code tools
@@ -30,8 +31,65 @@
 
     <!-- clean - Deletes previously generated files under build/ and dist/ -->
     <target name="clean">
+        <echo>
+            ====================================================
+            | Removing build and dist directories content.     |
+            ====================================================
+        </echo>
         <delete dir="${build.dir}"/>
         <delete dir="${dist.dir}"/>
+
+        <echo>
+            ====================================================
+            | Removing composer data and packages...           |
+            ====================================================
+        </echo>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${src.dir}/modules" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${src.dir}/libraries" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${src.dir}/plugins" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${src.dir}/widgets" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${public.dir}/themes" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete includeemptydirs="true">
+            <fileset dir="${public.dir}/ui" includes="**/*" defaultexcludes="false" excludes=".gitignore"/>
+        </delete>
+
+        <delete dir="composer.lock"/>
+    </target>
+
+    <target name="reinit" depends="clean">
+        <echo>
+            ====================================================
+            | Composer: self-update...                         |
+            ====================================================
+        </echo>
+        <exec executable="./composer.phar">
+            <arg value="self-update" />
+        </exec>
+
+        <echo>
+            ====================================================
+            | Composer: install...                             |
+            ====================================================
+        </echo>
+        <exec executable="./composer.phar">
+            <arg value="install" />
+        </exec>
     </target>
 
     <target name="assets">
@@ -71,7 +129,7 @@
 
         <!-- Clear temp data -->
         <delete>
-            <fileset dir="${build.src.dir}/public/external/pydio/data/cache" includes="*.ser,diag_result.php" />
+            <fileset dir="${build.src.dir}/public/ui/pydio/data/cache" includes="*.ser,diag_result.php" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.php" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.cache" />
             <fileset dir="${build.src.dir}/app/var" includes="**/*.log" />

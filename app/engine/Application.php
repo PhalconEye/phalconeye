@@ -37,9 +37,14 @@ class Application extends PhalconApplication
 {
     const
         /**
-         * Default module.
+         * Default CORE module.
          */
-        SYSTEM_DEFAULT_MODULE = 'core';
+        DEFAULT_MODULE_CORE = 'core',
+
+        /**
+         * Default USER module.
+         */
+        DEFAULT_MODULE_USER = 'user';
 
     use ApplicationInitialization;
 
@@ -105,11 +110,7 @@ class Application extends PhalconApplication
          * Setup Registry.
          */
         $registry = new Registry();
-        $registry->modules = array_merge(
-            [self::SYSTEM_DEFAULT_MODULE, 'user'],
-            $this->_config->modules->toArray()
-        );
-
+        $registry->modules = array('core', 'user');
         $registry->widgets = $this->_config->widgets->toArray();
 
         $registry->directories = (object)[
@@ -147,9 +148,13 @@ class Application extends PhalconApplication
         $eventsManager = new EventsManager();
         $this->setEventsManager($eventsManager);
 
+
         // Init base systems first.
         $this->_initLogger($di, $config);
         $this->_initLoader($di, $config, $eventsManager);
+
+        $pm = new \Engine\Package\Manager($di);
+        $pm->generateMetadata();
 
         $this->_attachEngineEvents($eventsManager, $config);
 

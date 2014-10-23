@@ -1,7 +1,7 @@
-Phalcon Eye CMS
-=====================
+PhalconEye CMS
+==============
 
-Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cphalcon).
+PhalconEye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cphalcon).
 
 * Version: 0.4.1
 * Requirements: PHP >= 5.4, Phalcon = 1.3.0, mod_rewrite, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
@@ -40,8 +40,11 @@ Third Party
 * CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
 * Pydio: http://pyd.io/ (Affero GPL)
 * lessphp: http://leafo.net/lessphp/ (GPL3/MIT)
+* bxslider: http://bxslider.com/ (MIT)
+* bootstrap: http://getbootstrap.com/ (MIT)
+* bootstrap-switch: www.bootstrap-switch.org (Apache License, Version 2.0)
 
 License
 -------
-Phalcon Eye CMS is open-source software licensed under the New BSD License. See the LICENSE.txt file for more information.
+PhalconEye CMS is open-source software licensed under the New BSD License. See the LICENSE.txt file for more information.
 

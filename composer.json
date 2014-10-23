@@ -1,19 +1,74 @@
 {
     "name": "phalconeye/cms",
-    "description" : "Phalcon Eye - CMS based on Phalcon PHP Framework",
+    "description" : "PhalconEye - CMS based on Phalcon PHP Framework",
+    "version": "0.5.0",
     "keywords" : [ "phalcon", "php", "cms" ],
     "homepage" : "http://phalconeye.com",
     "license" : "BSD-3-Clause",
+    "repositories": [
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/installer.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/module-core.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/module-user.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/module-blog.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/ui-libraries.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/theme-default.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/theme-light.git"
+        },
+        {
+            "type": "git",
+            "url": "https://github.com/PhalconEye/widget-demo.git"
+        }
+    ],
     "require" : {
         "php" : ">=5.4.20",
-        "phalconeye/composer-installer-plugin": "0.5.*@dev",
-        "phalconeye/module-blog": "1.0.0.*@dev",
-        "leafo/lessphp": "0.4.0"
+
+        "phalconeye/installer": "0.5.*@dev",
+        "phalconeye/module-core": "0.5.*@dev",
+        "phalconeye/module-user": "0.5.*@dev",
+        "phalconeye/ui-libraries": "0.5.*@dev",
+        "phalconeye/theme-default": "0.5.*@dev",
+        "leafo/lessphp": "0.4.0",
+        "twbs/bootstrap": "3.1.*@dev",
+        "components/bootstrap-switch": "dev-master",
+
+        "phalconeye/theme-light": "0.5.*@dev",
+        "phalconeye/module-blog": "1.0.*@dev",
+        "phalconeye/widget-demo": "master"
     },
     "support" : {
         "documentation" : "http://docs.phalconeye.com/latest/en/",
         "forum" : "http://forum.phalconeye.com/",
-        "source" : "https://github.com/lantian/PhalconEye"
+        "source" : "https://github.com/PhalconEye/cms"
     },
-    "minimum-stability": "dev"
+    "minimum-stability": "dev",
+    "config": {
+        "vendor-dir": "app/libraries"
+    },
+    "extra": {
+        "ui-libraries": {
+            "twbs/bootstrap": "bootstrap",
+            "components/bootstrap-switch": "bootstrap-switch"
+        }
+    }
 }
+

@@ -137,7 +137,7 @@ abstract class AbstractPackage extends AbstractModel
             'website' => $this->website,
             'dependencies' => [
                 [
-                    'name' => Application::SYSTEM_DEFAULT_MODULE,
+                    'name' => Application::DEFAULT_MODULE_CORE,
                     'type' => Manager::PACKAGE_TYPE_MODULE,
                     'version' => PHALCONEYE_VERSION,
                 ],

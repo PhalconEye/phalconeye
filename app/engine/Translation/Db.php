@@ -96,7 +96,7 @@ class Db implements AdapterInterface
      */
     public function query($index, $placeholders = null)
     {
-        if (!$this->_languageId || empty($index) || strlen($index) == 1) {
+        if (!$this->_languageId || empty($index) || !is_string($index) || strlen($index) == 1) {
             return $index;
         }
 
@@ -185,8 +185,8 @@ class Db implements AdapterInterface
     private function _getCurrentScope()
     {
         $trace = debug_backtrace();
-        $scope = Application::SYSTEM_DEFAULT_MODULE;
-        $skipScopes = ['Engine', 'Phalcon', ucfirst(Application::SYSTEM_DEFAULT_MODULE)];
+        $scope = Application::DEFAULT_MODULE_CORE;
+        $skipScopes = ['Engine', 'Phalcon', ucfirst(Application::DEFAULT_MODULE_CORE)];
         $viewSeparator = $this->getDI()->getConfig()->application->view->compiledSeparator;
 
         foreach ($trace as $item) {
