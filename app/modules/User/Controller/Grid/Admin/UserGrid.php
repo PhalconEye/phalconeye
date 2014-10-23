@@ -47,8 +47,8 @@ class UserGrid extends CoreGrid
     {
         $builder = new Builder();
         $builder
+            ->from(['User\Model\User', 'u' => 'User\Model\User'])
             ->columns(['u.*', 'r.name'])
-            ->addFrom('User\Model\User', 'u')
             ->leftJoin('User\Model\Role', 'u.role_id = r.id', 'r')
             ->orderBy('u.id DESC');
 
