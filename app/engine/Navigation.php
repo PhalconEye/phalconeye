@@ -275,6 +275,16 @@ class Navigation
 
         return $this;
     }
+    
+    /**
+     * Get navigation list.
+     *
+     * @return array $items Navigation items.
+     */
+    public function getItems()
+    {
+        return $this->_items;
+    }
 
     /**
      * Set active item. It can be name or href.
