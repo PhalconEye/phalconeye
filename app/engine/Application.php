@@ -187,12 +187,12 @@ class Application extends PhalconApplication
     /**
      * Init modules and register them.
      *
-     * @param array $modules Modules bootstrap classes.
-     * @param null  $merge   Merge with existing.
+     * @param array   $modules Modules bootstrap classes.
+     * @param boolean $merge   Merge with existing.
      *
      * @return $this
      */
-    public function registerModules($modules, $merge = null)
+    public function registerModules($modules, $merge = false)
     {
         $bootstraps = [];
         $di = $this->getDI();
