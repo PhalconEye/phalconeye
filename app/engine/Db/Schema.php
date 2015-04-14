@@ -228,33 +228,35 @@ class Schema
 
         $properties = $reflector->getPropertiesAnnotations();
         foreach ($properties as $name => $collection) {
-            if ($collection->has('Column')) {
-                $arguments = $collection->get('Column')->getArguments();
-                /**
-                 * Get the column's name.
-                 */
-                $columnName = $this->_getColumnName($name, $arguments);
-                $columnData = $this->_getModelColumnData($arguments, $collection);
-
-                /**
-                 * Check if the attribute is marked as primary.
-                 */
-                if ($collection->has('Primary')) {
-                    $primary[] = $columnName;
-                }
-
-                /**
-                 * Check index.
-                 */
-                if ($collection->has('Index')) {
-                    $arguments = $collection->get('Index')->getArguments();
-                    $type = isset($arguments[1]) ? $arguments[1] : self::DEFAULT_INDEX_TYPE;
-
-                    $indexes[$arguments[0]][$type][] = $columnName;
-                }
-
-                $metadata['columns'][] = new Column($columnName, $columnData);
+            if (!$collection->has('Column')) {
+                continue;
             }
+
+            $arguments = $collection->get('Column')->getArguments();
+            /**
+             * Get the column's name.
+             */
+            $columnName = $this->_getColumnName($name, $arguments);
+            $columnData = $this->_getModelColumnData($arguments, $collection);
+
+            /**
+             * Check if the attribute is marked as primary.
+             */
+            if ($collection->has('Primary')) {
+                $primary[] = $columnName;
+            }
+
+            /**
+             * Check index.
+             */
+            if ($collection->has('Index')) {
+                $arguments = $collection->get('Index')->getArguments();
+                $type = isset($arguments[1]) ? $arguments[1] : self::DEFAULT_INDEX_TYPE;
+
+                $indexes[$arguments[0]][$type][] = $columnName;
+            }
+
+            $metadata['columns'][] = new Column($columnName, $columnData);
         }
 
         /**
@@ -273,7 +275,6 @@ class Schema
         foreach ($references as $reference) {
             if (empty($reference[0]) || empty($reference[1]) || empty($reference[2]) || !class_exists($reference[1])) {
                 throw new EngineException("Bad reference for model {$modelClass}: (" . implode(', ', $reference) . ')');
-                continue;
             }
 
             $uniqName = $modelClass::getTableName() . '-' .
