@@ -39,7 +39,27 @@ class Application extends PhalconApplication
         /**
          * Default module.
          */
-        SYSTEM_DEFAULT_MODULE = 'core';
+        SYSTEM_DEFAULT_MODULE = 'core',
+
+        /**
+         * User module.
+         */
+        USER_DEFAULT_MODULE = 'user',
+
+        /**
+         * Normal run mode
+         */
+        MODE_NORMAL = 'normal',
+
+        /**
+         * Console run mode
+         */
+        MODE_CONSOLE = 'console',
+
+        /**
+         * Session run mode
+         */
+        MODE_SESSION = 'session';
 
     use ApplicationInitialization;
 
@@ -57,7 +77,7 @@ class Application extends PhalconApplication
      */
     private $_loaders =
         [
-            'normal' => [
+            self::MODE_NORMAL => [
                 'environment',
                 'cache',
                 'annotations',
@@ -68,13 +88,13 @@ class Application extends PhalconApplication
                 'view',
                 'engine'
             ],
-            'console' => [
+            self::MODE_CONSOLE => [
                 'environment',
                 'database',
                 'cache',
                 'engine'
             ],
-            'session' => [
+            self::MODE_SESSION => [
                 'cache',
                 'database',
                 'session'
@@ -106,7 +126,7 @@ class Application extends PhalconApplication
          */
         $registry = new Registry();
         $registry->offsetSet('modules', array_merge(
-            [self::SYSTEM_DEFAULT_MODULE, 'user'],
+            [self::SYSTEM_DEFAULT_MODULE, self::USER_DEFAULT_MODULE],
             $this->_config->modules->toArray()
         ));
 
@@ -134,10 +154,10 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    public function run($mode = 'normal')
+    public function run($mode = self::MODE_NORMAL)
     {
         if (!isset($this->_loaders[$mode])) {
-            $mode = 'normal';
+            $mode = self::MODE_NORMAL;
         }
 
         // Set application main objects.
