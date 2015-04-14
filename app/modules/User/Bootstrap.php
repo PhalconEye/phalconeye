@@ -32,5 +32,5 @@ use Engine\Bootstrap as EngineBootstrap;
  */
 class Bootstrap extends EngineBootstrap
 {
-    protected $_moduleName = "User";
+    protected $_moduleName = __NAMESPACE__;
 }

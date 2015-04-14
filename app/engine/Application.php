@@ -105,20 +105,20 @@ class Application extends PhalconApplication
          * Setup Registry.
          */
         $registry = new Registry();
-        $registry->modules = array_merge(
+        $registry->offsetSet('modules', array_merge(
             [self::SYSTEM_DEFAULT_MODULE, 'user'],
             $this->_config->modules->toArray()
-        );
+        ));
 
         $registry->widgets = $this->_config->widgets->toArray();
 
-        $registry->directories = (object)[
+        $registry->offsetSet('directories', (object)[
             'engine' => ROOT_PATH . '/app/engine/',
             'modules' => ROOT_PATH . '/app/modules/',
             'plugins' => ROOT_PATH . '/app/plugins/',
             'widgets' => ROOT_PATH . '/app/widgets/',
             'libraries' => ROOT_PATH . '/app/libraries/'
-        ];
+        ]);
 
         $di->set('registry', $registry);
 
@@ -136,7 +136,7 @@ class Application extends PhalconApplication
      */
     public function run($mode = 'normal')
     {
-        if (empty($this->_loaders[$mode])) {
+        if (!isset($this->_loaders[$mode])) {
             $mode = 'normal';
         }
 
