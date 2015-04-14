@@ -82,7 +82,7 @@ class Config extends PhalconConfig
      * @param array|null  $arrayConfig Configuration data.
      * @param string|null $stage       Configuration stage.
      */
-    public function __construct($arrayConfig = null, $stage = null)
+    public function __construct($arrayConfig = null, $stage)
     {
         $this->_currentStage = $stage;
         parent::__construct($arrayConfig);
@@ -191,7 +191,7 @@ class Config extends PhalconConfig
         }
 
         $data = include_once($appPath);
-        $config->merge(new Config($data));
+        $config->merge(new Config($data, $stage));
 
         return $config;
     }

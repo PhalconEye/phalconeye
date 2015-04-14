@@ -51,7 +51,7 @@ class Bootstrap extends EngineBootstrap
      *
      * @var string
      */
-    protected $_moduleName = "Core";
+    protected $_moduleName = __NAMESPACE__;
 
     /**
      * Bootstrap construction.

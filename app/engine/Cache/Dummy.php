@@ -20,6 +20,7 @@ namespace Engine\Cache;
 
 use Phalcon\Cache\Backend;
 use Phalcon\Cache\BackendInterface;
+use Phalcon\Cache\FrontendInterface;
 
 /**
  * Dummy cache.
@@ -38,10 +39,10 @@ class Dummy extends Backend implements BackendInterface
     /**
      * Backend constructor.
      *
-     * @param \Phalcon\Cache\FrontendInterface $frontend Frontend cache object.
-     * @param array                            $options  Cache options.
+     * @param FrontendInterface $frontend Frontend cache object.
+     * @param array             $options  Cache options.
      */
-    public function __construct($frontend, $options = null)
+    public function __construct(FrontendInterface $frontend, $options = null)
     {
 
     }
@@ -50,7 +51,7 @@ class Dummy extends Backend implements BackendInterface
      * Starts a cache. The $keyname allows to identify the created fragment.
      *
      * @param int|string $keyName  Key naming.
-     * @param double     $lifetime Cache lifetime.
+     * @param int        $lifetime Cache lifetime.
      *
      * @return null
      */
@@ -136,7 +137,7 @@ class Dummy extends Backend implements BackendInterface
      * Returns a cached content.
      *
      * @param int|string $keyName  Key naming.
-     * @param double     $lifetime Cache lifetime.
+     * @param int        $lifetime Cache lifetime.
      *
      * @return  mixed
      */
@@ -150,7 +151,7 @@ class Dummy extends Backend implements BackendInterface
      *
      * @param int|string $keyName    Key naming.
      * @param string     $content    Content data.
-     * @param double     $lifetime   Cache lifetime.
+     * @param int        $lifetime   Cache lifetime.
      * @param boolean    $stopBuffer Stop buffering?
      */
     public function save($keyName = null, $content = null, $lifetime = null, $stopBuffer = null)
@@ -186,7 +187,7 @@ class Dummy extends Backend implements BackendInterface
      * Checks if cache exists and it hasn't expired.
      *
      * @param string $keyName  Key naming.
-     * @param double $lifetime Cache lifetime.
+     * @param int    $lifetime Cache lifetime.
      *
      * @return boolean
      */
