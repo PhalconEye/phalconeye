@@ -29,6 +29,7 @@ use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
+use Phalcon\Cache\Frontend\None as CacheNone;
 use Phalcon\Db\Adapter;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Profiler as DatabaseProfiler;
@@ -460,23 +461,22 @@ trait ApplicationInitialization
             $backEndOptions = $config->application->cache->toArray();
             $frontOutputCache = new CacheOutput($frontEndOptions);
             $frontDataCache = new CacheData($frontEndOptions);
-
             $cacheOutputAdapter = new $cacheAdapter($frontOutputCache, $backEndOptions);
-            $di->set('viewCache', $cacheOutputAdapter, true);
-            $di->set('cacheOutput', $cacheOutputAdapter, true);
-
             $cacheDataAdapter = new $cacheAdapter($frontDataCache, $backEndOptions);
-            $di->set('cacheData', $cacheDataAdapter, true);
-            $di->set('modelsCache', $cacheDataAdapter, true);
+
         } else {
             // Create a dummy cache for system.
             // System will work correctly and the data will be always current for all adapters.
-            $dummyCache = new Dummy(null);
-            $di->set('viewCache', $dummyCache);
-            $di->set('cacheOutput', $dummyCache);
-            $di->set('cacheData', $dummyCache);
-            $di->set('modelsCache', $dummyCache);
+            $frontOutputCache = new CacheNone;
+            $frontDataCache = new CacheNone;
+            $cacheOutputAdapter = new Dummy($frontOutputCache);
+            $cacheDataAdapter = new Dummy($frontDataCache);
         }
+
+        $di->set('viewCache', $cacheOutputAdapter, true);
+        $di->set('cacheOutput', $cacheOutputAdapter, true);
+        $di->set('cacheData', $cacheDataAdapter, true);
+        $di->set('modelsCache', $cacheDataAdapter, true);
     }
 
     /**
