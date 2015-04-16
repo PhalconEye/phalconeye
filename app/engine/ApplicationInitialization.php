@@ -215,7 +215,7 @@ trait ApplicationInitialization
      */
     protected function _initAnnotations($di, $config)
     {
-        $di->set(
+        $di->setShared(
             'annotations',
             function () use ($config) {
                 if (!$config->application->debug && isset($config->application->annotations)) {
@@ -226,8 +226,7 @@ trait ApplicationInitialization
                 }
 
                 return $adapter;
-            },
-            true
+            }
         );
     }
 
@@ -384,7 +383,7 @@ trait ApplicationInitialization
         }
 
         $di->set('db', $connection);
-        $di->set(
+        $di->setShared(
             'modelsManager',
             function () use ($config, $eventsManager) {
                 $modelsManager = new ModelsManager();
@@ -394,14 +393,13 @@ trait ApplicationInitialization
                 $eventsManager->attach('modelsManager', new ModelAnnotationsInitializer());
 
                 return $modelsManager;
-            },
-            true
+            }
         );
 
         /**
          * If the configuration specify the use of metadata adapter use it or use memory otherwise.
          */
-        $di->set(
+        $di->setShared(
             'modelsMetadata',
             function () use ($config) {
                 if (!$config->application->debug && isset($config->application->metadata)) {
@@ -415,8 +413,7 @@ trait ApplicationInitialization
                 $metaData->setStrategy(new StrategyAnnotations());
 
                 return $metaData;
-            },
-            true
+            }
         );
 
         return $connection;
