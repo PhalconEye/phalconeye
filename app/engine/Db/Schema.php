@@ -27,6 +27,7 @@ use Phalcon\Db\Index;
 use Phalcon\Db\Reference;
 use Phalcon\DI;
 use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
+use Phalcon\Annotations\Reflection;
 
 /**
  * Schema generator.
@@ -213,8 +214,7 @@ class Schema
         $references = [];
 
         // Get table name and references data.
-        $annotations = $reflector->getClassAnnotations();
-        if ($annotations) {
+        if ($annotations = $reflector->getClassAnnotations()) {
             /** @var \Phalcon\Annotations\Annotation $annotation */
             foreach ($annotations as $annotation) {
                 if ($annotation->getName() == 'Source') {
@@ -226,38 +226,10 @@ class Schema
             }
         }
 
-        $properties = $reflector->getPropertiesAnnotations();
-        foreach ($properties as $name => $collection) {
-            if (!$collection->has('Column')) {
-                continue;
-            }
-
-            $arguments = $collection->get('Column')->getArguments();
-            /**
-             * Get the column's name.
-             */
-            $columnName = $this->_getColumnName($name, $arguments);
-            $columnData = $this->_getModelColumnData($arguments, $collection);
-
-            /**
-             * Check if the attribute is marked as primary.
-             */
-            if ($collection->has('Primary')) {
-                $primary[] = $columnName;
-            }
-
-            /**
-             * Check index.
-             */
-            if ($collection->has('Index')) {
-                $arguments = $collection->get('Index')->getArguments();
-                $type = isset($arguments[1]) ? $arguments[1] : self::DEFAULT_INDEX_TYPE;
-
-                $indexes[$arguments[0]][$type][] = $columnName;
-            }
-
-            $metadata['columns'][] = new Column($columnName, $columnData);
-        }
+        $data = $this->getPropertiesAnnotations($reflector, $metadata, $primary, $indexes);
+        $metadata = $data['metadata'];
+        $primary = $data['primary'];
+        $indexes = $data['indexes'];
 
         /**
          * Setup indexes objects.
@@ -294,6 +266,47 @@ class Schema
         }
 
         return $metadata;
+    }
+
+    protected function getPropertiesAnnotations(Reflection $reflector, array $metadata, array $primary, array $indexes)
+    {
+        foreach ($reflector->getPropertiesAnnotations() as $name => $collection) {
+            if (!$collection->has('Column')) {
+                continue;
+            }
+
+            $arguments = $collection->get('Column')->getArguments();
+            /**
+             * Get the column's name.
+             */
+            $columnName = $this->_getColumnName($name, $arguments);
+            $columnData = $this->_getModelColumnData($arguments, $collection);
+
+            /**
+             * Check if the attribute is marked as primary.
+             */
+            if ($collection->has('Primary')) {
+                $primary[] = $columnName;
+            }
+
+            /**
+             * Check index.
+             */
+            if ($collection->has('Index')) {
+                $arguments = $collection->get('Index')->getArguments();
+                $type = isset($arguments[1]) ? $arguments[1] : self::DEFAULT_INDEX_TYPE;
+
+                $indexes[$arguments[0]][$type][] = $columnName;
+            }
+
+            $metadata['columns'][] = new Column($columnName, $columnData);
+        }
+
+        return [
+            'metadata' => $metadata,
+            'primary' => $primary,
+            'indexes' => $indexes
+        ];
     }
 
     /**
