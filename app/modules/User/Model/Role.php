@@ -21,6 +21,7 @@ namespace User\Model;
 use Core\Model\Access;
 use Engine\Db\AbstractModel;
 use Phalcon\Mvc\Model\Validator\Uniqueness;
+use Phalcon\Validation;
 
 /**
  * Role.
@@ -197,7 +198,8 @@ class Role extends AbstractModel
      */
     public function validation()
     {
-        $this->validate(new Uniqueness(["field" => "name"]));
-        return $this->validationHasFailed() !== true;
+        $validator = new Validation();
+        $validator->add("name", new Uniqueness(['message' => 'This name already exists']));
+        return $this->validate($validator);
     }
 }

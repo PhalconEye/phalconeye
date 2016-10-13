@@ -15,7 +15,6 @@
   | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
   +------------------------------------------------------------------------+
 */
-
 /**
  * Stages.
  */
@@ -31,9 +30,9 @@ if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
 /**
  * Versions.
  */
-define('PHALCONEYE_VERSION', '0.4.1');
-define('PHALCON_VERSION_REQUIRED', '1.3.1');
-define('PHP_VERSION_REQUIRED', '5.4.14');
+define('PHALCONEYE_VERSION', '0.5.0');
+define('PHALCON_VERSION_REQUIRED', '3.0.1');
+define('PHP_VERSION_REQUIRED', '7.0.11');
 
 /**
  * Check phalcon framework installation.

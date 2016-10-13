@@ -33,48 +33,19 @@ use Phalcon\Mvc\Dispatcher as PhalconDispatcher;
 class Dispatcher extends PhalconDispatcher
 {
     /**
-     * Dispatch.
-     * Override it to use own logic.
+     * Gets last dispatched controller name
      *
-     * @throws \Exception
-     * @return object
+     * @return string
      */
-    public function dispatch()
+    public function getControllerName()
     {
-        try {
-            $parts = explode('_', $this->_handlerName);
-            $finalHandlerName = '';
+        $parts = explode('_', parent::getControllerName());
+        $finalHandlerName = '';
 
-            foreach ($parts as $part) {
-                $finalHandlerName .= ucfirst($part);
-            }
-            $this->_handlerName = $finalHandlerName;
-            $this->_actionName = strtolower($this->_actionName);
-
-            return parent::dispatch();
-        } catch (\Exception $e) {
-            $this->_handleException($e);
-
-            if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
-                throw $e;
-            } else {
-                $id = Exception::logError(
-                    'Exception',
-                    $e->getMessage(),
-                    $e->getFile(),
-                    $e->getLine(),
-                    $e->getTraceAsString()
-                );
-
-                $this->getDI()->setShared(
-                    'currentErrorCode',
-                    function () use ($id) {
-                        return $id;
-                    }
-                );
-            }
+        foreach ($parts as $part) {
+            $finalHandlerName .= ucfirst($part);
         }
-
-        return parent::dispatch();
+        return $finalHandlerName;
     }
+
 }

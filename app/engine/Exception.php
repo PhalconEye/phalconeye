@@ -49,11 +49,11 @@ class Exception extends PhalconException
     /**
      * Log exception.
      *
-     * @param \Exception $e Exception object.
+     * @param \Exception|\TypeError $e Exception object.
      *
      * @return string
      */
-    public static function logException(\Exception $e)
+    public static function logException($e)
     {
         return self::logError(
             'Exception',

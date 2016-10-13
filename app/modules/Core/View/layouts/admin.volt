@@ -24,8 +24,7 @@
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
 
     {{ assets.outputCss() }}
-
-    {{ assets.outputInline() }}
+    {{ assets.outputInline(assets.collection('inlineCss'), 'css') }}
 
     <script type="text/javascript">
         {{ helper('i18n', 'core').render() }}
@@ -42,7 +41,7 @@
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
         <a class="brand" href="{{ url("admin") }}">
-            <img alt="Phalcon Eye" src="{{ url('assets/img/core/pe_logo_white.png') }}"/>
+            <img alt="Phalcon Eye" src="{{ url('assets/application/img/core/pe_logo_white.png') }}"/>
         </a>
 
         <div class="nav-collapse">
@@ -81,6 +80,6 @@
 </div>
 
 {{ assets.outputJs() }}
-
+{{ assets.outputInline(assets.collection('inlineJs'), 'js') }}
 </body>
 </html>

@@ -20,8 +20,7 @@ namespace Engine\Form;
 
 use Engine\Db\AbstractModel;
 use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FieldSetBehaviour;
-use Engine\Form;
+use Phalcon\Mvc\Model\ValidatorInterface;
 use Phalcon\Validation as PhalconValidation;
 
 
@@ -54,8 +53,8 @@ class Validation extends PhalconValidation
     /**
      * Create validation.
      *
-     * @param ContainerBehaviour $container  Form object.
-     * @param array|null         $validators prepared validators.
+     * @param ContainerBehaviour $container Form object.
+     * @param array|null $validators prepared validators.
      */
     public function __construct($container, $validators = null)
     {
@@ -66,13 +65,13 @@ class Validation extends PhalconValidation
     /**
      * Add validator to validation.
      *
-     * @param string                      $attribute Attribute name.
-     * @param PhalconValidation\Validator $validator Validator object.
+     * @param string $attribute Attribute name.
+     * @param ValidatorInterface $validator Validator object.
      *
      * @throws Exception
      * @return $this
      */
-    public function add($attribute, $validator)
+    public function add($attribute, PhalconValidation\ValidatorInterface $validator)
     {
         if (!$this->_container->has($attribute)) {
             throw new Exception(sprintf('Element "%s" not found in current elements container.', $attribute));
@@ -97,7 +96,7 @@ class Validation extends PhalconValidation
     /**
      * Validate.
      *
-     * @param array|null         $data   Data to validate.
+     * @param array|null $data Data to validate.
      * @param AbstractModel|null $entity Entity to validate.
      *
      * @return PhalconValidation\Message\Group|void

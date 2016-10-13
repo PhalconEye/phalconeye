@@ -339,66 +339,66 @@
                                 </div>
                                 <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT')~'.png') }}"
                                              alt="3 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT')~'.png') }}"
                                              alt="2 columns - Left"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE')~'.png') }}"
                                              alt="2 columns - Right"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE')~'.png') }}"
                                              alt="1 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_MIDDLE') }}');">
                                     </li>
                                 </ul>
                                 <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE_LEFT')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE_LEFT')~'.png') }}"
                                              alt="3 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE_LEFT') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE_LEFT')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE_LEFT')~'.png') }}"
                                              alt="2 columns - Left"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE_LEFT') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE')~'.png') }}"
                                              alt="2 columns - Right"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_TOP_RIGHT_MIDDLE') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE')~'.png') }}"
                                              alt="1 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_TOP_MIDDLE') }}');">
                                     </li>
                                 </ul>
                                 <ul class="admin_layoutbox_menu_columnchoices_thumbs">
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT_BOTTOM')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT_BOTTOM')~'.png') }}"
                                              alt="3 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_LEFT_BOTTOM') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT_BOTTOM')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT_BOTTOM')~'.png') }}"
                                              alt="2 columns - Left"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_MIDDLE_LEFT_BOTTOM') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_BOTTOM')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_BOTTOM')~'.png') }}"
                                              alt="2 columns - Right"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_RIGHT_MIDDLE_BOTTOM') }}');">
                                     </li>
                                     <li>
-                                        <img src="{{ url('assets/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_BOTTOM')~'.png') }}"
+                                        <img src="{{ url('assets/application/img/core/admin/content/'~constant('\Core\Model\Page::LAYOUT_MIDDLE_BOTTOM')~'.png') }}"
                                              alt="1 columns"
                                              onclick="changeCurrentLayoutType('{{ constant('\Core\Model\Page::LAYOUT_MIDDLE_BOTTOM') }}');">
                                     </li>

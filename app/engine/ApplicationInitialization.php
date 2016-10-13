@@ -156,7 +156,7 @@ trait ApplicationInitialization
 
                 if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
                     $p = new PrettyExceptions($di);
-                    $p->setBaseUri('assets/js/core/pretty-exceptions/');
+                    $p->setBaseUri('assets/application/js/core/pretty-exceptions/');
                     return $p->handleException($e);
                 }
 

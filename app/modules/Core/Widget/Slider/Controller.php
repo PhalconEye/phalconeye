@@ -57,17 +57,17 @@ class Controller extends WidgetController
         /**
          * Slider Css file
          */
-        ASSET_CSS_URL = 'external/bxslider-4/jquery.bxslider.css',
+        ASSET_CSS_URL = 'libs/bxslider-4/jquery.bxslider.css',
 
         /**
          * Slider Js file
          */
-        ASSET_JS_URL = 'external/bxslider-4/jquery.bxslider.min.js',
+        ASSET_JS_URL = 'libs/bxslider-4/jquery.bxslider.min.js',
 
         /**
          * Slider Js video handler file
          */
-        ASSET_JS_VIDEO_URL = 'external/bxslider-4/plugins/jquery.fitvids.js';
+        ASSET_JS_VIDEO_URL = 'libs/bxslider-4/plugins/jquery.fitvids.js';
 
 
     /**

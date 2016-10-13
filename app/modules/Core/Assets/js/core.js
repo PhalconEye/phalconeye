@@ -63,7 +63,7 @@
     PhalconEye.baseUrl = function (path) {
         return $('body').data('baseUrl') + path;
     };
-    CKEDITOR_BASEPATH = PhalconEye.baseUrl('external/ckeditor/');
+    CKEDITOR_BASEPATH = PhalconEye.baseUrl('assets/libs/ckeditor/');
 
     //////////////////////////
     // Public methods.

@@ -22,9 +22,11 @@ use Core\Api\Acl;
 use Engine\Db\AbstractModel;
 use Engine\Db\Model\Behavior\Timestampable;
 use Phalcon\DI;
-use Phalcon\Mvc\Model\Validator\Email;
-use Phalcon\Mvc\Model\Validator\StringLength;
-use Phalcon\Mvc\Model\Validator\Uniqueness;
+use Phalcon\Validation;
+use Phalcon\Validation\Validator\Uniqueness;
+use Phalcon\Validation\Validator\PresenceOf;
+use Phalcon\Validation\Validator\Email;
+use Phalcon\Validation\Validator\StringLength;
 
 /**
  * User.
@@ -174,11 +176,13 @@ class User extends AbstractModel
             $this->_errorMessages = [];
         }
 
-        $this->validate(new Uniqueness(["field" => "username"]));
-        $this->validate(new Uniqueness(["field" => "email"]));
-        $this->validate(new Email(["field" => "email", "required" => true]));
-        $this->validate(new StringLength(["field" => "password", "min" => 6]));
+        $validator = new Validation();
+        $validator->add("username", new Uniqueness(['message' => 'This username already exists']));
+        $validator->add('email', new Uniqueness(['message' => 'This email already exists']));
+        $validator->add("email", new PresenceOf(['message' => 'Email is required']));
+        $validator->add("email", new Email(['message' => 'Wrong email entered']));
+        $validator->add("password", new StringLength(['messageMinimum' => 'Password is too short', "min" => 6]));
 
-        return $this->validationHasFailed() !== true;
+        return $this->validate($validator);
     }
 }

@@ -26,6 +26,8 @@ use Phalcon\DiInterface;
 use Phalcon\Translate\Adapter;
 use Phalcon\Translate\AdapterInterface;
 use Phalcon\Translate\Exception;
+use Phalcon\Translate\placeholders;
+use Phalcon\Translate\translateKey;
 
 /**
  * Database translation.
@@ -82,6 +84,21 @@ class Db implements AdapterInterface
      * @return string
      */
     public function _($translateKey, $placeholders = null)
+    {
+        return $this->query($translateKey, $placeholders);
+    }
+
+    /**
+     * Returns the translation string of the given key
+     *
+     * @param        string translateKey
+     * @param        array placeholders
+     * @return    string
+     * @param string $translateKey
+     * @param mixed  $placeholders
+     * @return string
+     */
+    public function t($translateKey, $placeholders = null)
     {
         return $this->query($translateKey, $placeholders);
     }

@@ -67,17 +67,16 @@ abstract class AbstractAdminController extends AbstractController
         $this->assets->set(
             AssetManager::DEFAULT_COLLECTION_CSS,
             $this->assets->getEmptyCssCollection()
-                ->addCss('external/bootstrap/css/bootstrap.min.css')
-                ->addCss('external/bootstrap/css/bootstrap-switch.min.css')
-                ->addCss('external/jquery/jquery-ui.css')
-                ->addCss('assets/css/core/admin/main.css')
-                ->join(false)
+                ->addCss('libs/bootstrap/css/bootstrap.css')
+                ->addCss('libs/bootstrap/css/bootstrap-switch.css')
+                ->addCss('libs/jquery/jquery-ui.css')
+                ->addCss('application/css/core/admin/main.css')
         );
 
         $this->assets->get(AssetManager::DEFAULT_COLLECTION_JS)
-            ->addJs('external/bootstrap/js/bootstrap.min.js')
-            ->addJs('external/bootstrap/js/bootstrap-switch.min.js')
-            ->addJs('external/ckeditor/ckeditor.js');
+            ->addJs('libs/bootstrap/js/bootstrap.js')
+            ->addJs('libs/bootstrap/js/bootstrap-switch.js')
+            ->addJs('libs/ckeditor/ckeditor.js');
     }
 
     /**

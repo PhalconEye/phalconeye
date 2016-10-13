@@ -82,7 +82,7 @@ class Config extends PhalconConfig
      * @param array|null  $arrayConfig Configuration data.
      * @param string|null $stage       Configuration stage.
      */
-    public function __construct($arrayConfig = null, $stage)
+    public function __construct($arrayConfig = null, $stage = null)
     {
         $this->_currentStage = $stage;
         parent::__construct($arrayConfig);
@@ -162,7 +162,7 @@ class Config extends PhalconConfig
      */
     protected static function _getConfiguration($stage)
     {
-        $config = new Config(null, $stage);
+        $config = new Config([], $stage);
         $configDirectory = ROOT_PATH . self::CONFIG_PATH . $stage;
         $configFiles = glob($configDirectory .'/*.php');
 

@@ -56,8 +56,8 @@ class InstallController extends AbstractController
      */
     protected $_requirements = [
         'php' => [
-            'version' => '5.4.0',
-            'title' => 'PHP v.5.4+'
+            'version' => PHP_VERSION_REQUIRED,
+            'title' => "PHP v."
         ],
         'phalcon' => [
             'version' => PHALCON_VERSION_REQUIRED,
@@ -169,7 +169,7 @@ class InstallController extends AbstractController
                 $version = $version['version'];
             }
 
-            if ($req == 'phalcon') {
+            if ($req == 'phalcon' || $req == 'php') {
                 $title .= $version;
             }
 

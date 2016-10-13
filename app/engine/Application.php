@@ -192,7 +192,7 @@ class Application extends PhalconApplication
      *
      * @return $this
      */
-    public function registerModules($modules, $merge = false)
+    public function registerModules(array $modules, $merge = false)
     {
         $bootstraps = [];
         $di = $this->getDI();

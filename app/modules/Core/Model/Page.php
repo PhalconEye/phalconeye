@@ -23,6 +23,7 @@ use Phalcon\Mvc\Model\ResultsetInterface;
 use Phalcon\Mvc\Model\Validator\PresenceOf;
 use Phalcon\Mvc\Model\Validator\StringLength;
 use Phalcon\Mvc\Model\Validator\Uniqueness;
+use Phalcon\Validation;
 use User\Model\User;
 
 /**
@@ -64,7 +65,7 @@ class Page extends AbstractModel
         /**
          * Layout icon path
          */
-        LAYOUT_ICON_PATH = 'assets/img/core/admin/content/',
+        LAYOUT_ICON_PATH = 'assets/application/img/core/admin/content/',
 
         /**
          * Icon extension name.
@@ -290,16 +291,16 @@ class Page extends AbstractModel
      */
     public function validation()
     {
+        $validator = new Validation();
+
         if ($this->url !== null) {
-            $this->validate(new StringLength(["field" => "url", 'min' => 1]));
+            $validator->add("url", new StringLength(['messageMinimum' => 'URL is too short', "min" => 1]));
         }
 
-        $this->validate(new PresenceOf(['field' => 'title']));
-        $this->validate(new Uniqueness(['field' => 'url']));
+        $validator->add("title", new PresenceOf(['message' => 'Title is required']));
+        $validator->add("url", new Uniqueness(['message' => 'This url already exists']));
 
-        if ($this->validationHasFailed() == true) {
-            return false;
-        }
+        return $this->validate($validator);
     }
 
     /**

@@ -59,7 +59,7 @@ class Wizard extends CoreForm
                 [
                     'class' => 'form-control textarea-readonly',
                     'readonly' => 'readonly',
-                    'style' => "background: url('/assets/img/core/loader/black.gif')
+                    'style' => "background: url('/assets/application/img/core/loader/black.gif')
                                 #E0E0E0 no-repeat center center !important;"
                 ]
             );

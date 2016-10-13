@@ -20,7 +20,7 @@
 {% block title %}{{ 'Languages'|i18n }}{% endblock %}
 
 {% block head %}
-    {{ helper('assets').addJs('assets/js/core/admin/languages.js') }}
+    {{ helper('assets').addJs('application/js/core/admin/languages.js') }}
 {% endblock %}
 
 {% block header %}

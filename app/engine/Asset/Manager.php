@@ -21,21 +21,16 @@ namespace Engine\Asset;
 
 use Engine\Asset\Css\Less;
 use Engine\Behaviour\DIBehaviour;
-use Engine\Exception;
 use Engine\Package\Utilities as FsUtilities;
-use Phalcon\Assets\Collection;
 use Phalcon\Assets\Filters\Cssmin;
 use Phalcon\Assets\Filters\Jsmin;
 use Phalcon\Assets\Manager as AssetManager;
-use Phalcon\Cache\Backend;
 use Phalcon\Config;
-use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Registry;
-use Phalcon\Tag;
 
 /**
- * Assets initializer.
+ * Assets manager.
  *
  * @category  PhalconEye
  * @package   Engine\Asset
@@ -48,14 +43,9 @@ class Manager extends AssetManager
 {
     const
         /**
-         * Style file name in url.
+         * Assets path.
          */
-        FILENAME_PATTERN_CSS = 'style-%s.css',
-
-        /**
-         * Javascript file name in url.
-         */
-        FILENAME_PATTERN_JS = 'javascript-%s.js';
+        ASSETS_PATH = '/assets/';
 
     const
         /**
@@ -88,13 +78,6 @@ class Manager extends AssetManager
     protected $_config;
 
     /**
-     * Cache.
-     *
-     * @var Backend
-     */
-    protected $_cache;
-
-    /**
      * Inline <head> code.
      *
      * @var array
@@ -104,14 +87,13 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di      Dependency injection.
+     * @param DiInterface $di Dependency injection.
      * @param bool        $prepare Prepare manager (install assets if in debug and create default collections).
      */
     public function __construct($di, $prepare = true)
     {
         $this->__DIConstruct($di);
         $this->_config = $di->getConfig();
-        $this->_cache = $di->getCacheData();
         if ($prepare) {
             $this->set(self::DEFAULT_COLLECTION_CSS, $this->getEmptyCssCollection());
             $this->set(self::DEFAULT_COLLECTION_JS, $this->getEmptyJsCollection());
@@ -201,7 +183,7 @@ class Manager extends AssetManager
     /**
      * Clear assets cache.
      *
-     * @param bool   $refresh        Install and compile new assets?
+     * @param bool   $refresh Install and compile new assets?
      * @param string $themeDirectory Theme directory.
      *
      * @return void
@@ -229,18 +211,27 @@ class Manager extends AssetManager
      */
     public function getEmptyJsCollection()
     {
-        $collection = new Collection();
+        $collection = new Collection($this->_di);
+        $collection
+            ->setTargetPath(PUBLIC_PATH . "/assets/compiled.js")
+            ->setTargetUri("assets/compiled.js?" . time());
 
         $remote = $this->_config->application->assets->get('remote');
         if ($remote) {
             $collection
                 ->setPrefix($remote)
                 ->setLocal(false);
+        } else {
+            $collection->setLocal(true);
         }
 
-        return $collection
-            ->addFilter(new Jsmin())
-            ->join(!$this->_config->application->debug);
+        if (!$this->_config->application->debug) {
+            $collection
+                ->addFilter(new Jsmin())
+                ->join(true);
+        }
+
+        return $collection;
     }
 
     /**
@@ -250,128 +241,34 @@ class Manager extends AssetManager
      */
     public function getEmptyCssCollection()
     {
-        $collection = new Collection();
+        $collection = new Collection($this->_di);
+        $collection
+            ->setTargetPath(PUBLIC_PATH . "/assets/compiled.css")
+            ->setTargetUri("assets/compiled.css?" . time());
+
         $remote = $this->_config->application->assets->get('remote');
         if ($remote) {
             $collection
                 ->setPrefix($remote)
                 ->setLocal(false);
+        } else {
+            $collection->setLocal(true);
         }
 
-        return $collection
-            ->addFilter(new Cssmin())
-            ->join(!$this->_config->application->debug);
-    }
-
-    /**
-     * Add <head> inline code.
-     *
-     * @param string $name Identification.
-     * @param string $code Code to add to <head> tag.
-     *
-     * @return $this
-     */
-    public function addInline($name, $code)
-    {
-        $this->_inline[$name] = $code;
-        return $this;
-    }
-
-    /**
-     * Remove inline code.
-     *
-     * @param string $name Identification.
-     *
-     * @return $this
-     */
-    public function removeInline($name)
-    {
-        unset($this->_inline[$name]);
-        return $this;
-    }
-
-    /**
-     * Get <head> tag inline code.
-     *
-     * @return string
-     */
-    public function outputInline()
-    {
-        return implode('\n', $this->_inline);
-    }
-
-    /**
-     * Prints the HTML for JS resources.
-     *
-     * @param string $collectionName the name of the collection
-     *
-     * @return string
-     **/
-    public function outputJs($collectionName = self::DEFAULT_COLLECTION_JS)
-    {
-        $remote = $this->_config->application->assets->get('remote');
-        $collection = $this->collection($collectionName);
-        if (!$remote && $collection->getJoin()) {
-
-            $local = $this->_config->application->assets->get('local');
-            $lifetime = $this->_config->application->assets->get('lifetime', 0);
-
-            $filepath = $local . self::GENERATED_STORAGE_PATH . $filename = $filename =
-                    $this->getCollectionFileName($collection, self::FILENAME_PATTERN_JS);
+        if (!$this->_config->application->debug) {
             $collection
-                ->setTargetPath($filepath)
-                ->setTargetUri($filepath);
-
-            if ($this->_cache->exists($filename)) {
-                return Tag::javascriptInclude($collection->getTargetUri());
-            }
-            $res = parent::outputJs($collectionName);
-            $this->_cache->save($filename, true, $lifetime);
-            return $res;
+                ->addFilter(new Cssmin())
+                ->join(true);
         }
-        return parent::outputJs($collectionName);
 
-    }
-
-    /**
-     * Prints the HTML for CSS resources.
-     *
-     * @param string $collectionName the name of the collection
-     *
-     * @return string
-     **/
-    public function outputCss($collectionName = self::DEFAULT_COLLECTION_CSS)
-    {
-        $remote = $this->_config->application->assets->get('remote');
-        $collection = $this->collection($collectionName);
-        if (!$remote && $collection->getJoin()) {
-
-            $local = $this->_config->application->assets->get('local');
-            $lifetime = $this->_config->application->assets->get('lifetime', 0);
-
-            $filepath = $local . self::GENERATED_STORAGE_PATH . $filename = $filename =
-                    $this->getCollectionFileName($collection, self::FILENAME_PATTERN_CSS);
-
-            $collection
-                ->setTargetPath($filepath)
-                ->setTargetUri($filepath);
-
-            if ($this->_cache->exists($filename)) {
-                return Tag::stylesheetLink($collection->getTargetUri());
-            }
-            $res = parent::outputCss($collectionName);
-            $this->_cache->save($filename, true, $lifetime);
-            return $res;
-        }
-        return parent::outputCss($collectionName);
-
+        return $collection;
     }
 
     /**
      * Get file name by collection using pattern.
      *
      * @param Collection $collection Asset collection.
-     * @param string     $pattern    File name pattern.
+     * @param string     $pattern File name pattern.
      *
      * @return string
      */

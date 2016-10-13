@@ -26,8 +26,7 @@
     <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"/>
 
     {{ assets.outputCss() }}
-
-    {{ assets.outputInline() }}
+    {{ assets.outputInline(assets.collection('inlineCss'), 'css') }}
 
     <script type="text/javascript">
         {{ helper('i18n', 'core').render() }}
@@ -70,6 +69,7 @@
 </div>
 
 {{ assets.outputJs() }}
+{{ assets.outputInline(assets.collection('inlineJs'), 'js') }}
 {{ helper('profiler', 'core').render() }}
 </body>
 </html>

@@ -24,7 +24,7 @@ if (version_compare(phpversion(), PHP_VERSION_REQUIRED, '<')) {
     printf('PHP %s is required, you have %s.', PHP_VERSION_REQUIRED, phpversion());
     exit(1);
 }
-if (version_compare(phpversion('phalcon'), PHALCON_VERSION_REQUIRED, '<')) {
+if (version_compare(phpversion('phalcon'), PHALCON_VERSION_REQUIRED, '!=')) {
     printf('Phalcon Framework %s is required, you have %s.', PHALCON_VERSION_REQUIRED, phpversion('phalcon'));
     exit(1);
 }
