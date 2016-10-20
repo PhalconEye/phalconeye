@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  | Copyright (c) 2013-2016 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -26,13 +26,12 @@ use Engine\Widget\Controller as WidgetController;
  * @category  PhalconEye
  * @package   Widget\Demo
  * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
- * @copyright 2013-2014 PhalconEye Team
+ * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
 class Controller extends WidgetController
 {
-
     /**
      * Index action.
      *

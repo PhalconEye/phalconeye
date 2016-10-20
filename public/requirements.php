@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
+  | Copyright (c) 2013-2016 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <ivan.vorontsov@phalconeye.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
   +------------------------------------------------------------------------+
 */
 

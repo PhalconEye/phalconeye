@@ -1,0 +1,3 @@
+- move controllers from Core to Main
+- dynamic modules navigation in backoffice
+- check that all type of resources can be overrided from app folder

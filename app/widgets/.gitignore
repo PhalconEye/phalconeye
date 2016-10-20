@@ -1,8 +1,0 @@
-
-# Ignore everything in this directory
-*
-# Except this file and Demo widget
-*
-!.gitignore
-!Demo
-!Demo/*
