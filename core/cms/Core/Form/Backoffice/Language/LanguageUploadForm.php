@@ -19,7 +19,8 @@
 namespace Core\Form\Backoffice\Language;
 
 use Core\Form\FileForm;
-use Engine\Form\Validator\MimeType;
+use Engine\Form\Validator\JsonValidator;
+use Engine\Form\Validator\MimeTypeValidator;
 
 /**
  * Upload form.
@@ -45,6 +46,7 @@ class LanguageUploadForm extends FileForm
             ->setAttribute('id', 'languages-import-form')
             ->addFile('file')
             ->getValidation()
-            ->add('file', new MimeType(['type' => 'application/json']));
+            ->add('file', new MimeTypeValidator(['type' => ['application/json', 'text/plain']]))
+            ->add('file', new JsonValidator());
     }
 }

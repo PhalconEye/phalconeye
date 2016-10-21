@@ -99,42 +99,42 @@ class MainNavigation extends CoreNavigation
         $this->appendItem($settingsItem = new Item('Settings'));
 
         $settingsItem->setItems([
-            ['System', 'admin/settings', [
+            ['System', 'backoffice/settings', [
                 'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
             ]],
-            ['Performance', 'admin/performance', [
+            ['Performance', 'backoffice/performance', [
                 'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
             ]],
-            ['Access Rights', 'admin/access', [
+            ['Access Rights', 'backoffice/access', [
                 'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
             ]]
         ]);
 
         // Dynamic modules
         // @TODO: refactor
-//        $modules = PackageModel::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
-//        if ($modules->count()) {
-//            $modulesMenuItem = null;
-//            foreach ($modules as $module) {
-//                if ($module->is_system) {
-//                    continue;
-//                }
-//
-//                if (!$modulesMenuItem) {
-//                    $modulesMenuItem = new Item('Modules');
-//                    $this->appendItem($modulesMenuItem);
-//                }
-//
-//                $modulesMenuItem->appendItem(
-//                    new Item($module->title, 'admin/module/' . $module->name, [
-//                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-//                    ])
-//                );
-//
-//                if ($activeItem == 'admin/module' && (string) $path[3] == $module->name) {
-//                    $this->setActiveItem('admin/module/' . $module->name);
-//                }
-//            }
-//        }
+        $modules = PackageModel::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
+        if ($modules->count()) {
+            $modulesMenuItem = null;
+            foreach ($modules as $module) {
+                if ($module->is_system) {
+                    continue;
+                }
+
+                if (!$modulesMenuItem) {
+                    $modulesMenuItem = new Item('Modules');
+                    $this->appendItem($modulesMenuItem);
+                }
+
+                $modulesMenuItem->appendItem(
+                    new Item($module->title, 'backoffice/module/' . $module->name, [
+                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
+                    ])
+                );
+
+                if ($activeItem == 'backoffice/module' && (string) $path[3] == $module->name) {
+                    $this->setActiveItem('backoffice/module/' . $module->name);
+                }
+            }
+        }
     }
 }

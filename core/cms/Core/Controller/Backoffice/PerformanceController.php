@@ -18,7 +18,7 @@
 
 namespace Core\Controller\Backoffice;
 
-use Core\Form\Admin\Setting\PerformanceForm as PerformanceForm;
+use Core\Form\Backoffice\Setting\SettingPerformanceForm;
 use Core\Model\SettingsModel;
 use Phalcon\Config;
 
@@ -45,7 +45,7 @@ class PerformanceController extends AbstractBackofficeController
      */
     public function indexAction()
     {
-        $form = new PerformanceForm();
+        $form = new SettingPerformanceForm();
         $this->view->form = $form;
 
         $cacheData = $this->config->application->cache->toArray();

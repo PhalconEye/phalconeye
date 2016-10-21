@@ -269,7 +269,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
     protected function _getPackage($type, $name)
     {
         $query = $this->getDI()->get('modelsManager')->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
+            ->from(['t' => '\Core\Model\PackageModel'])
             ->where("t.type = :type: AND t.name = :name:", ['type' => $type, 'name' => $name]);
 
         return $query->getQuery()->execute()->getFirst();

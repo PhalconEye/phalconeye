@@ -35,7 +35,7 @@ use Phalcon\Validation\ValidatorInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Image extends Validator implements ValidatorInterface
+class ImageValidator extends Validator implements ValidatorInterface
 {
     /**
      * Current validation object.

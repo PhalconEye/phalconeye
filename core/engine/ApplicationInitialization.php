@@ -504,7 +504,7 @@ trait ApplicationInitialization
             'flash',
             function () use ($flashData) {
                 $flash = new FlashDirect($flashData);
-
+                $flash->setAutoescape(false);
                 return $flash;
             }
         );
@@ -513,7 +513,7 @@ trait ApplicationInitialization
             'flashSession',
             function () use ($flashData) {
                 $flash = new FlashSession($flashData);
-
+                $flash->setAutoescape(false);
                 return $flash;
             }
         );

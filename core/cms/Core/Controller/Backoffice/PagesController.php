@@ -286,6 +286,7 @@ class PagesController extends AbstractBackofficeController
             } else {
                 $widgetClass = '\Widget\\' . $widgetName . '\Controller';
             }
+
             $widgetController = new $widgetClass();
             $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module), $widgetParams);
             $widgetController->prepare();
@@ -320,6 +321,7 @@ class PagesController extends AbstractBackofficeController
             $this->view->form = $form;
             $this->view->id = $id;
             $this->view->name = $widgetMetadata->name;
+            $this->view->setIsBackoffice(true);
 
             return;
         }

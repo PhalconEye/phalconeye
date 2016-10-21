@@ -28,7 +28,7 @@ require_once('../classes/class.AbstractTest.php');
  */
 class Zlib extends AbstractTest
 {
-    public function Zlib() { parent::AbstractTest("Zlib extension (ZIP)", "Extension enabled : ".(function_exists('gzopen')?"1":"0")); }
+    public function __construct() { parent::__construct("Zlib extension (ZIP)", "Extension enabled : ".(function_exists('gzopen')?"1":"0")); }
     public function doTest()
     {
         $this->testedParams["Zlib Enabled"] = (function_exists('gzopen')?"Yes":"No");

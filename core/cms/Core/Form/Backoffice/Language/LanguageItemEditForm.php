@@ -32,7 +32,7 @@ use Engine\Form\Form;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class LanguageItemEditCreateForm extends LanguageItemCreateForm
+class LanguageItemEditForm extends LanguageItemCreateForm
 {
     /**
      * Create form.

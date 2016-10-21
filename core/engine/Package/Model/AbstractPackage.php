@@ -106,7 +106,7 @@ abstract class AbstractPackage extends AbstractModel
     {
         /** @var \Phalcon\Mvc\Model\Query\Builder $query */
         $query = DI::getDefault()->get('modelsManager')->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
+            ->from(['t' => '\Core\Model\PackageModel'])
             ->where("t.type = '{$type}'");
 
         if ($enabled !== null) {

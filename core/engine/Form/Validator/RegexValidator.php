@@ -32,7 +32,7 @@ use Phalcon\Validation\ValidatorInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Regex extends PhalconRegexValidator implements ValidatorInterface
+class RegexValidator extends PhalconRegexValidator implements ValidatorInterface
 {
     /**
      * Create regex validator.

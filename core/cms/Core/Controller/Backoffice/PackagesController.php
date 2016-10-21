@@ -19,23 +19,23 @@
 
 namespace Core\Controller\Backoffice;
 
-use Core\Form\Admin\Package\CreateForm as CreateForm;
-use Core\Form\Admin\Package\EditForm as EditForm;
-use Core\Form\Admin\Package\EventsForm as EventsForm;
-use Core\Form\Admin\Package\ExportForm as ExportForm;
-use Core\Form\Admin\Package\UploadForm as UploadForm;
+use Core\Form\Backoffice\Package\PackageCreateForm;
+use Core\Form\Backoffice\Package\PackageEditForm;
+use Core\Form\Backoffice\Package\PackageEventsForm;
+use Core\Form\Backoffice\Package\PackageExportForm;
+use Core\Form\Backoffice\Package\PackageUploadForm;
 use Core\Form\CoreForm;
 use Core\Model\LanguageModel;
 use Core\Model\PackageModel;
 use Core\Model\PackageDependencyModel;
 use Core\Model\SettingsModel;
 use Core\Model\WidgetModel;
-use Core\Navigation\PackagesNavigation;
+use Core\Navigation\Backoffice\PackagesNavigation;
 use Engine\Db\Schema;
 use Engine\Exception;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
-use Phalcon\Config;
+
 
 /**
  * Admin packages controller.
@@ -59,7 +59,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function init()
     {
-        $this->view->navigation = new PackagesNavigation;
+        $this->view->navigation = new PackagesNavigation();
     }
 
     /**
@@ -129,7 +129,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function uploadAction()
     {
-        $this->view->form = $form = new UploadForm();
+        $this->view->form = $form = new PackageUploadForm();
 
         if (!$this->request->isPost() || !$form->isValid()) {
             return;
@@ -240,7 +240,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function createAction()
     {
-        $this->view->form = $form = new CreateForm();
+        $this->view->form = $form = new PackageCreateForm();
         if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }
@@ -307,7 +307,7 @@ class PackagesController extends AbstractBackofficeController
             return $this->response->redirect(['for' => $return]);
         }
 
-        $this->view->form = $form = new EditForm($package, $return);
+        $this->view->form = $form = new PackageEditForm($package, $return);
 
         if (!$this->request->isPost() || !$form->isValid()) {
             return;
@@ -367,7 +367,7 @@ class PackagesController extends AbstractBackofficeController
             $data = ['events' => $preparedData];
         }
 
-        $this->view->form = $form = new EventsForm($data, $package, $return);
+        $this->view->form = $form = new PackageEventsForm($data, $package, $return);
 
         if (!$this->request->isPost() || !$form->isEventsDataValid()) {
             return;
@@ -407,7 +407,7 @@ class PackagesController extends AbstractBackofficeController
         }
 
         $this->hideFooter();
-        $this->view->form = $form = new ExportForm($package, ['name' => $name, 'type' => $type]);
+        $this->view->form = $form = new PackageExportForm($package, ['name' => $name, 'type' => $type]);
 
         $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
         if (!$skipForm && (!$this->request->isPost() || !$form->isValid())) {
@@ -594,7 +594,7 @@ class PackagesController extends AbstractBackofficeController
     protected function _getPackage($type, $name)
     {
         $query = $this->modelsManager->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
+            ->from(['t' => '\Core\Model\PackageModel'])
             ->where("t.type = :type: AND t.name = :name:", ['type' => $type, 'name' => $name]);
 
         return $query->getQuery()->execute()->getFirst();

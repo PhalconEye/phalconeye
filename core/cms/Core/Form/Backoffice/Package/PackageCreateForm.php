@@ -24,7 +24,7 @@ use Core\Model\PackageModel;
 use Core\Model\WidgetModel as WidgetModel;
 use Engine\Config;
 use Engine\Db\AbstractModel;
-use Engine\Form\Validator\Regex;
+use Engine\Form\Validator\RegexValidator;
 use Engine\Package\Manager;
 
 /**
@@ -123,7 +123,7 @@ class PackageCreateForm extends CoreForm
         $fieldSet->getValidation()
             ->add(
                 'name',
-                new Regex(
+                new RegexValidator(
                     [
                         'pattern' => '/[a-z]+/',
                         'message' => 'Name must be in lowercase and contains only letters.'
@@ -132,7 +132,7 @@ class PackageCreateForm extends CoreForm
             )
             ->add(
                 'version',
-                new Regex(
+                new RegexValidator(
                     [
                         'pattern' => '/\d+(\.\d+)+/',
                         'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'

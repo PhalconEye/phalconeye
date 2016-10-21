@@ -74,7 +74,7 @@ class PackageExportForm extends CoreForm
 
         if ($this->_exclude['type'] != Manager::PACKAGE_TYPE_LIBRARY) {
             $query = $this->getDI()->get('modelsManager')->createBuilder()
-                ->from(['t' => '\Core\Model\Package'])
+                ->from(['t' => '\Core\Model\PackageModel'])
                 ->where("t.type = :type:", ['type' => Manager::PACKAGE_TYPE_MODULE])
                 ->andWhere("t.enabled = :enabled:", ['enabled' => true]);
 
@@ -93,7 +93,7 @@ class PackageExportForm extends CoreForm
         }
 
         $query = $this->getDI()->get('modelsManager')->createBuilder()
-            ->from(['t' => '\Core\Model\Package'])
+            ->from(['t' => '\Core\Model\PackageModel'])
             ->where("t.type = :type:", ['type' => Manager::PACKAGE_TYPE_LIBRARY])
             ->andWhere("t.enabled = :enabled:", ['enabled' => true]);
 

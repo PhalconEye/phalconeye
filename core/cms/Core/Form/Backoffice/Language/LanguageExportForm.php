@@ -43,7 +43,7 @@ class LanguageExportForm extends CoreForm
         $builder = new Builder();
         $builder
             ->columns(['scope'])
-            ->from('Core\Model\LanguageTranslation')
+            ->from('Core\Model\LanguageTranslationModel')
             ->distinct(true);
 
         $result = $builder->getQuery()->execute();

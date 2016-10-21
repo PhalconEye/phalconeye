@@ -225,7 +225,7 @@ class ftpAccessDriver extends fsAccessDriver
 
     }
 
-    public function deldir($location)
+    public function deldir($location, $repoData)
     {
         if (is_dir($location)) {
             $dirsToRecurse = array();

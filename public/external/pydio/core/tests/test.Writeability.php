@@ -28,7 +28,7 @@ require_once('../classes/class.AbstractTest.php');
  */
 class Writeability extends AbstractTest
 {
-    public function Writeability() { parent::AbstractTest("Required writeable folder", "One of the following folder should be writeable and is not : "); }
+    public function __construct() { parent::__construct("Required writeable folder", "One of the following folder should be writeable and is not : "); }
     public function doTest()
     {
         //include(AJXP_CONF_PATH."/bootstrap_plugins.php");

@@ -26,7 +26,7 @@ use Phalcon\Validation\Validator;
 use Phalcon\Validation\ValidatorInterface;
 
 /**
- * Form validator - Mime.
+ * Check content is json.
  *
  * @category  PhalconEye
  * @package   Engine\Form\Validator
@@ -35,80 +35,52 @@ use Phalcon\Validation\ValidatorInterface;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class MimeType extends Validator implements ValidatorInterface
+class JsonValidator extends Validator implements ValidatorInterface
 {
-    /**
-     * Current validation object.
-     *
-     * @var Validation
-     */
-    protected $_currentValidator;
-
-    /**
-     * Current field name.
-     *
-     * @var string
-     */
-    protected $_currentAttribute;
-
     /**
      * Executes the validation
      *
      * @param Validation $validator Validator object.
      * @param string     $attribute Attribute name.
      *
-     * @return Group
+     * @return bool
      */
     public function validate(Validation $validator, $attribute)
     {
-        $this->_currentValidator = $validator;
-        $this->_currentAttribute = $attribute;
-
         /** @var Request $request */
-        $request = DI::getDefault()->get('request');
-        $isValid = true;
+        $request = Di::getDefault()->get('request');
 
-        if ($request->hasFiles(true)) {
-            $fInfo = finfo_open(FILEINFO_MIME_TYPE);
-            $types = [];
-
-            if ($this->isSetOption('type')) {
-                $types = $this->getOption('type');
-                if (!is_array($types)) {
-                    $types = [$types];
-                }
+        /** @var Request\File $file */
+        foreach ($request->getUploadedFiles(true) as $file) {
+            if ($file->getKey() != $attribute) {
+                continue;
             }
 
-            foreach ($request->getUploadedFiles(true) as $file) {
-                if ($file->getKey() != $attribute) {
-                    continue;
-                }
+            $content = file_get_contents($file->getTempName());
+            $result = $this->_isJson($content);
 
-                if (!empty($types)) {
-                    $mime = finfo_file($fInfo, $file->getTempName());
-                    if (!in_array($mime, $types)) {
-                        $isValid = false;
-                        $this->_addMessage('Incorrect file type, allowed types: %s', implode(',', $types));
-                    }
-                }
+            if (!$result) {
+                $validator->appendMessage(
+                    new Validation\Message('Please, provide correct JSON file.', $attribute)
+                );
             }
+
+            return $result;
         }
 
-        return $isValid;
+        return false;
     }
 
     /**
-     * Add error message.
+     * Check string is json.
      *
-     * @param string     $msg  Message text.
-     * @param array|null $args Message params.
+     * @param $string String to check.
      *
-     * @return void
+     * @return bool Check result.
      */
-    protected function _addMessage($msg, $args = null)
+    private function _isJson($string) : bool
     {
-        $this->_currentValidator->appendMessage(
-            new Validation\Message(vsprintf($msg, $args), $this->_currentAttribute)
-        );
+        json_decode($string);
+        return (json_last_error() == JSON_ERROR_NONE);
     }
 }

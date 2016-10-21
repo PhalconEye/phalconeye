@@ -114,7 +114,7 @@ class remoteAuthDriver extends AbstractAuthDriver
         return true;
     }
 
-    public function listUsers()
+    public function listUsers($baseGroup = "/")
     {
         $users = AJXP_Utils::loadSerialFile($this->usersSerFile);
         if (AuthService::ignoreUserCase()) {

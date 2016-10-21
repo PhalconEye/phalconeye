@@ -45,14 +45,13 @@ abstract class AbstractBackofficeController extends AbstractController
     public function initialize()
     {
         parent::initialize();
+        $this->view->setIsBackoffice(true);
 
         if ($this->request->isAjax()) {
             return;
         }
 
-        $this->view->setIsBackoffice(true);
         $this->view->adminNavigation = new MainNavigation();
-
         $this->_setupAssets();
     }
 

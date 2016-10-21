@@ -20,6 +20,7 @@ namespace Core\Model;
 
 use Engine\Db\AbstractModel;
 use Engine\Translation\TranslationModelInterface;
+use Phalcon\Di;
 
 /**
  * Language translation.
@@ -138,5 +139,28 @@ class LanguageTranslationModel extends AbstractModel implements TranslationModel
     public function getLanguage($arguments = [])
     {
         return $this->getRelated('LanguageModel', $arguments);
+    }
+
+    /**
+     * Copy translations from one language to another.
+     *
+     * @param $id Destination language.
+     * @param $defaultLanguageId Source language.
+     *
+     * @return mixed Rows.
+     */
+    public static function copyTranslations($id, $defaultLanguageId)
+    {
+        $di = Di::getDefault();
+        $table = self::getTableName();
+
+        return $di->getDb()->query(
+            "
+            INSERT INTO `{$table}` (language_id, original, translated, scope, checked)
+            SELECT {$id}, original, translated, scope, checked FROM `{$table}`
+            WHERE language_id = {$defaultLanguageId} AND original NOT IN
+              (SELECT original FROM `{$table}` WHERE language_id = {$id});
+            "
+        );
     }
 }

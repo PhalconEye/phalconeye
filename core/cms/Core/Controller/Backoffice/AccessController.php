@@ -19,8 +19,8 @@
 namespace Core\Controller\Backoffice;
 
 use Core\Api\AclApi;
-use Core\Controller\Grid\Admin\AccessGrid;
 use Core\Form\CoreForm;
+use Core\Grid\Backoffice\AccessGrid;
 use Core\Model\AccessModel;
 use Phalcon\Http\ResponseInterface;
 use User\Model\RoleModel;

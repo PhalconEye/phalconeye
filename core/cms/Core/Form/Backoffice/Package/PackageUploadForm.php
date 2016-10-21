@@ -19,7 +19,7 @@
 namespace Core\Form\Backoffice\Package;
 
 use Core\Form\FileForm;
-use Engine\Form\Validator\MimeType;
+use Engine\Form\Validator\MimeTypeValidator;
 
 /**
  * Upload package.
@@ -47,7 +47,7 @@ class PackageUploadForm extends FileForm
         $this->addContentFieldSet()
             ->addFile('package')
             ->getValidation()
-            ->add('package', new MimeType(['type' => 'application/zip']));
+            ->add('package', new MimeTypeValidator(['type' => 'application/zip']));
 
         $this->addFooterFieldSet()
             ->addButton('upload')

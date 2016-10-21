@@ -23,12 +23,10 @@
     <style type="text/css">
         iframe{
             min-width: 800px;
-            min-height: 500px;
-            width: 90%;
-            height: 90%;
+            min-height: 700px;
             border: 1px solid #cccccc;
-            width: 90%;
-            height: 90%;
+            width: 100%;
+            height: 100%;
         }
 
         .row-fluid{

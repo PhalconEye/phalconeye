@@ -39,7 +39,7 @@ class UserSelection
     /**
      * Construction selector
      */
-    public function UserSelection()
+    public function __construct()
     {
         $this->files = array();
     }

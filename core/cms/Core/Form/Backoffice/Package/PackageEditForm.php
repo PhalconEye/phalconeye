@@ -19,7 +19,7 @@
 namespace Core\Form\Backoffice\Package;
 
 use Core\Model\PackageModel;
-use Engine\Form\Validator\Regex;
+use Engine\Form\Validator\RegexValidator;
 use Engine\Package\Manager;
 
 /**
@@ -107,7 +107,7 @@ class PackageEditForm extends PackageCreateForm
         $fieldSet->getValidation()
             ->add(
                 'version',
-                new Regex(
+                new RegexValidator(
                     [
                         'pattern' => '/\d+(\.\d+)+/',
                         'message' => 'Version must be in correct format: 1.0.0 or 1.0.0.0'

@@ -18,10 +18,6 @@
 
 namespace Engine\Helper;
 
-use Engine\AbstractHelper;
-use Phalcon\DI;
-use Phalcon\Tag;
-
 /**
  * Current url helper.
  *

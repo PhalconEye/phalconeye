@@ -148,12 +148,14 @@ abstract class AbstractController extends PhalconController
 
 
         if (!$page || !$page->isAllowed()) {
-            return $this->dispatcher->forward(
+            $this->dispatcher->forward(
                 [
                     'controller' => 'Error',
                     'action' => 'show404'
                 ]
             );
+
+            return;
         }
 
         // Resort content by sides.
@@ -207,9 +209,10 @@ abstract class AbstractController extends PhalconController
             $params['hide'] = true;
         }
 
+        $this->view->setIsBackoffice(false);
         $this->view->setVars($params, false);
         $this->view->hideSave = true;
-        $this->view->pick('utils/modal', 'core', true);
+        $this->view->pick('partials/modal', 'core', true);
     }
 
     /**

@@ -28,10 +28,10 @@ class phalconeyeAuthDriver extends AbstractAuthDriver
         parent::init($options);
 
         // run Phalcon Eye to get session from database
-        require_once ROOT_PATH . "/app/engine/Config.php";
-        require_once ROOT_PATH . "/app/engine/Exception.php";
-        require_once ROOT_PATH . "/app/engine/ApplicationInitialization.php";
-        require_once ROOT_PATH . "/app/engine/Application.php";
+        require_once ROOT_PATH . "/core/engine/Config.php";
+        require_once ROOT_PATH . "/core/engine/Exception.php";
+        require_once ROOT_PATH . "/core/engine/ApplicationInitialization.php";
+        require_once ROOT_PATH . "/core/engine/Application.php";
         $application = new \Engine\Application();
         $application->run('session');
 

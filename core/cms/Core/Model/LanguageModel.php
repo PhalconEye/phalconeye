@@ -49,7 +49,7 @@ class LanguageModel extends AbstractModel
         /**
          * Compiled languages location.
          */
-        LANGUAGE_CACHE_LOCATION = '/app/var/cache/languages/';
+        LANGUAGE_CACHE_LOCATION = '/data/cache/languages/';
 
     const
         /**
@@ -119,6 +119,7 @@ class LanguageModel extends AbstractModel
         /**
          * Import into database.
          */
+        $db = $di->getDb();
         $table = LanguageTranslationModel::getTableName();
         $sql = "INSERT IGNORE INTO `{$table}` (language_id, scope, original, translated) VALUES ";
         $sqlValues = [];
@@ -131,23 +132,23 @@ class LanguageModel extends AbstractModel
                     sprintf(
                         '(%d, "%s", "%s", "%s")',
                         $language->getId(),
-                        mysql_real_escape_string($scope),
-                        mysql_real_escape_string($original),
-                        mysql_real_escape_string($translated)
+                        $db->escapeString($scope),
+                        $db->escapeString($original),
+                        $db->escapeString($translated)
                     );
 
                 $counter++;
                 $totals[$scope]++;
                 if ($counter == self::LANGUAGE_IMPORT_BATCH_SIZE) {
                     $counter = 0;
+                    $db->execute($sql . implode(',', $sqlValues));
                     $sqlValues = '';
-                    $di->getModelsManager()->execute($sql . implode(',', $sqlValues));
                 }
             }
         }
 
         if (!empty($sqlValues)) {
-            $di->getDb()->execute($sql . implode(',', $sqlValues));
+            $db->execute($sql . implode(',', $sqlValues));
         }
 
         return [$language, $totals];

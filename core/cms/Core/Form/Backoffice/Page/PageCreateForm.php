@@ -21,7 +21,7 @@ namespace Core\Form\Backoffice\Page;
 use Core\Form\CoreForm;
 use Core\Model\PageModel;
 use Engine\Db\AbstractModel;
-use Engine\Form\Validator\Regex;
+use Engine\Form\Validator\RegexValidator;
 use User\Model\RoleModel;
 
 /**
@@ -111,7 +111,7 @@ class PageCreateForm extends CoreForm
         $content->getValidation()
             ->add(
                 'controller',
-                new Regex(
+                new RegexValidator(
                     [
                         'pattern' => '/$|(.*)Controller->(.*)Action/',
                         'message' => 'Wrong controller name. Example: NameController->someAction'

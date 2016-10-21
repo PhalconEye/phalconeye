@@ -19,12 +19,12 @@
 
 namespace Core\Controller\Backoffice;
 
+use Core\Form\Backoffice\Language\LanguageCreateForm;
 use Core\Grid\Backoffice\LanguageGrid;
 use Core\Grid\Backoffice\LanguageTranslationGrid;
-use Core\Form\Backoffice\Language\CreateForm;
 use Core\Form\Backoffice\Language\LanguageItemCreateForm;
 use Core\Form\Backoffice\Language\LanguageEditForm;
-use Core\Form\Backoffice\Language\LanguageItemEditCreateForm;
+use Core\Form\Backoffice\Language\LanguageItemEditForm;
 use Core\Form\Backoffice\Language\LanguageExportForm;
 use Core\Form\Backoffice\Language\LanguageUploadForm;
 use Core\Form\Backoffice\Language\LanguageWizardForm;
@@ -87,7 +87,7 @@ class LanguagesController extends AbstractBackofficeController
      */
     public function createAction()
     {
-        $this->view->form = $form = new CreateForm();
+        $this->view->form = $form = new LanguageCreateForm();
 
         if (!$this->request->isPost() || !$form->isValid()) {
             return;
@@ -220,18 +220,7 @@ class LanguagesController extends AbstractBackofficeController
         }
 
         $defaultLanguage = LanguageModel::findFirstByLanguage(Config::CONFIG_DEFAULT_LANGUAGE);
-
-        $table = LanguageTranslationModel::getTableName();
-        $defaultLanguageId = $defaultLanguage->getId();
-
-        $result = $this->db->query(
-            "
-            INSERT INTO `{$table}` (language_id, original, translated, scope)
-            SELECT {$id}, original, translated, scope FROM `{$table}`
-            WHERE language_id = {$defaultLanguageId} AND original NOT IN
-              (SELECT original FROM `{$table}` WHERE language_id = {$id});
-            "
-        );
+        $result = LanguageTranslationModel::copyTranslations($id, $defaultLanguage->getId());
 
         $this->flashSession->success(
             $this->i18n->_('Synchronization finished! Added translations: %count%', ['count' => $result->numRows()])
@@ -249,18 +238,23 @@ class LanguagesController extends AbstractBackofficeController
     public function importAction()
     {
         $form = new LanguageUploadForm();
-        if (!$this->request->isPost() || !$form->isValid()) {
+        $file = $this->request->getUploadedFiles();
+        if (!$this->request->isPost() || !$form->isValid() || empty($file)) {
             $messages = [];
+
+            if (empty($file)) {
+                $messages[] = $this->i18n->_("Missing file.");
+            }
+
             foreach ($form->getErrors() as $error) {
                 if ($error instanceof Message) {
                     $error = $error->getMessage();
                 }
                 $messages[] = $this->i18n->_($error);
             }
-            $this->flashSession->error($this->i18n->_('There are errors:') . '<br/>' . implode('<br/>', $messages));
+            $this->flashSession->error($this->i18n->_('There are errors:') . '<br>' . implode('<br>', $messages));
             return $this->response->redirect(['for' => "backoffice-languages"]);
         }
-        $file = $this->request->getUploadedFiles();
 
         try {
             /**
@@ -313,7 +307,7 @@ class LanguagesController extends AbstractBackofficeController
 
         $scope = $this->request->get('scope', null, []);
         header("Content-disposition: attachment; filename=language-{$item->language}-{$item->locale}.json");
-        header('Content - type: application / json');
+        header('Content-type: application/json');
 
         $response = new Response();
         $response->setContent($item->toJson($scope));
@@ -397,7 +391,7 @@ class LanguagesController extends AbstractBackofficeController
     public function editItemAction($id)
     {
         $item = LanguageTranslationModel::findFirst($id);
-        $form = new LanguageItemEditCreateForm($item);
+        $form = new LanguageItemEditForm($item);
         $this->view->form = $form;
 
         $data = [

@@ -70,7 +70,7 @@ class ftpAuthDriver extends AbstractAuthDriver
     }
 
 
-    public function listUsers()
+    public function listUsers($baseGroup = "/")
     {
         $adminUser = $this->options["AJXP_ADMIN_LOGIN"];
         if (isSet($this->options["ADMIN_USER"])) {

@@ -53,7 +53,7 @@ class radiusAuthDriver extends AbstractAuthDriver
                 return "ERROR: Server responded with an unknown code.";
         }
     }
-    public function listUsers()
+    public function listUsers($baseGroup = "/")
     {
         $adminUser = $this->options["AJXP_ADMIN_LOGIN"];
         return array(

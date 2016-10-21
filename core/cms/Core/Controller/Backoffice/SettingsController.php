@@ -18,7 +18,7 @@
 
 namespace Core\Controller\Backoffice;
 
-use Core\Form\Admin\Setting\SystemForm as SystemSettingsForm;
+use Core\Form\Backoffice\Setting\SettingSystemForm;
 use Core\Model\SettingsModel;
 
 /**
@@ -44,7 +44,7 @@ class SettingsController extends AbstractBackofficeController
      */
     public function indexAction()
     {
-        $form = new SystemSettingsForm();
+        $form = new SettingSystemForm();
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid()) {
