@@ -30,8 +30,7 @@ Feel free to contribute.
 * Want to discuss? Visit http://forum.phalconeye.com/ and create topic that is interesting for you.
 * Can/want/like develop? Create pull request and we will check it in nearest time! Just don't forget to check code styling (you can run it via command "ant check") and please don't miss file and class headers (also add yourself as an author if you have changed something).
 
-Coding Style [![Build Status](https://secure.travis-ci.org/PhalconEye/phalconeye.png?branch=master)](http://travis-ci
-.org/PhalconEye/phalconeye)
+Coding Style [![Build Status](https://secure.travis-ci.org/PhalconEye/phalconeye.png?branch=master)](http://travis-ci.org/PhalconEye/phalconeye)
 ------------
 PhalconEye CMS code style is checked via Travis CI service. Every commit pushed to this repository will queue a build
 into the continuous integration service to run phpmd and phpcs checks.
