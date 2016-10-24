@@ -31,7 +31,7 @@
 
     <target name="install">
         <exec executable="php">
-            <arg value="./composer.php" />
+            <arg value="./composer.phar" />
             <arg value="install" />
         </exec>
     </target>

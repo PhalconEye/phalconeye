@@ -3,9 +3,6 @@ language: php
 php:
   - 7.0.11
 
-before_script:
-  - phpenv rehash
-
 script: ant check
 
 notifications:
