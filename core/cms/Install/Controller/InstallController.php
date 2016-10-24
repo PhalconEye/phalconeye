@@ -70,6 +70,7 @@ class InstallController extends AbstractController
         'gd' => false,
         'fileinfo' => false,
         'zip' => false,
+        'intl' => false,
     ];
 
     /**
