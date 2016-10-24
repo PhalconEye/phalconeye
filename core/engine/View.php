@@ -78,7 +78,7 @@ class View extends PhalconView
             ->registerEngines([".volt" => $volt])
             ->setRenderLevel(View::LEVEL_ACTION_VIEW);
 
-        if ($viewsDirectory) {
+        if (!empty($viewsDirectory)) {
             $view->setViewsDir($viewsDirectory);
         }
 

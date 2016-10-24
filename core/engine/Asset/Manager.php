@@ -160,6 +160,11 @@ class Manager extends AssetManager
             $path = $location . 'img/' . $packageName . '/';
             FsUtilities::fsCheckLocation($path);
             FsUtilities::fsCopyRecursive($assetsPath . 'img', $path, true);
+
+            // FONTS
+            $path = $location . 'fonts/' . $packageName . '/';
+            FsUtilities::fsCheckLocation($path);
+            FsUtilities::fsCopyRecursive($assetsPath . 'fonts', $path, true);
         }
     }
 
