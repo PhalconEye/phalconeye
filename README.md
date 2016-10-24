@@ -4,22 +4,23 @@ Phalcon Eye CMS
 Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cphalcon).
 
 * Version: 0.5.0
-* Requirements: PHP >= 5.4, Phalcon = 1.3.0, mod_rewrite, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
+* Requirements: PHP >= 7.0.11, Phalcon = 3.0.1, mod_rewrite, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
 * Website: http://phalconeye.com/
 
 Installation
 ------------
-1. Install Phalcon (1.3.1 version is required, how to do this: http://docs.phalconphp.com/en/latest/reference/install.html).
+1. Install Phalcon (how to do this: http://docs.phalconphp.com/en/latest/reference/install
+.html).
 2. If you cloned it PhalconEye from github you can run ant task (ant dist) and get package as zip.
 3. Unzip (or copy) CMS code to your webserver.
 4. 'public' directory must be set as server's web root.
 5. Go to http://youhost.com/ and you will see the installation process.
    If you installing CMS not in webroot (e.g.: http://youhost.com/phalconeye/)
-   you must edit configuration in /app/config/development/application.php and
+   you must edit configuration in /config/development/application.php and
    set value of 'baseUrl' to your subdirectory path (as for e.g.: '/phalconeye/'). Visit site.
 6. Follow the installation process.
 
-Note: If you want to reinstall, set option 'installed' to 'false' in /app/var/data/app.php.
+Note: If you want to reinstall, set option 'installed' to 'false' in /data/app.php.
 
 Contribution
 ------------
