@@ -637,11 +637,11 @@ abstract class AbstractForm implements ElementContainerInterface
                 foreach ($this->_entities as $entity) {
                     if ($skipEntityCreation) {
                         $entity->assign($data);
-                        if (method_exists($entity, 'validation')) {
-                            $isValid = $entity->validation();
+                        if (method_exists($entity, 'validation') && !$entity->validation()) {
+                            $isValid = false;
                         }
-                    } else {
-                        $isValid = $entity->save($data);
+                    } elseif (!$entity->save($data)) {
+                        $isValid = false;
                     }
                 }
 
