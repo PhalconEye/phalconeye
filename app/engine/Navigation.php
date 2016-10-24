@@ -275,6 +275,16 @@ class Navigation
 
         return $this;
     }
+    
+    /**
+     * Get navigation list.
+     *
+     * @return array $items Navigation items.
+     */
+    public function getItems()
+    {
+        return $this->_items;
+    }
 
     /**
      * Set active item. It can be name or href.
@@ -348,11 +358,6 @@ class Navigation
      */
     protected function _renderDropDown($content, $name, $item, $isSubMenu)
     {
-        /**
-         * Short names.
-         */
-        $i18n = $this->getDI()->getI18n();
-
         $lt = $this->_listTag;
         $lit = $this->_listItemTag;
         $pc = $this->_itemPrependContent;
@@ -374,6 +379,11 @@ class Navigation
         $content .= "<{$lit} class='{$ddic}{$active}'>";
         $prependHTML = (!empty($item['prepend']) ? $item['prepend'] : '');
         $appendHTML = (!empty($item['append']) ? $item['append'] : '');
+        
+        if(empty($item['non_i18n'])) {
+            $item['title'] = $this->getDI()->get('i18n')->query($item['title']);
+        }
+        
         $content .= sprintf(
             '<a %s %s href="javascript:;" class="%s system-tooltip" data-toggle="dropdown">%s%s%s%s%s%s</a>',
             $linkOnclick,
@@ -381,7 +391,7 @@ class Navigation
             $dditc,
             $prependHTML,
             $pc,
-            $i18n->_($item['title']),
+            $item['title'],
             $ac,
             $ddmc,
             $appendHTML
@@ -427,8 +437,12 @@ class Navigation
             if ($subitem == 'divider') {
                 $content .= "<{$lit} class='{$ddidc}'></{$lit}>";
             } else {
+                if(empty($item['non_i18n'])) {
+                    $subitem = $i18n->_($subitem);
+                }
+        
                 $content .= "<{$lit} class='{$ddihc}'>";
-                $content .= $i18n->_($subitem);
+                $content .= $subitem;
                 $content .= "</{$lit}>";
             }
         } elseif (is_array($subitem)) {
@@ -444,6 +458,10 @@ class Navigation
             $linkOnclick = (!empty($item['onclick']) ? 'onclick="' . $item['onclick'] . '"' : '');
             $linkTooltip = (!empty($item['tooltip']) ?
                 'title="' . $item['tooltip'] . '" data-tooltip-position="' . $item['tooltip_position'] . '"' : '');
+            
+            if(empty($item['non_i18n'])) {
+                $subitem = $i18n->_($subitem);
+            }
 
             $content .= sprintf(
                 '<a class="system-tooltip" %s %s %s href="%s">%s%s%s</a>',
@@ -452,7 +470,7 @@ class Navigation
                 $linkOnclick,
                 $link,
                 $pc,
-                $i18n->_($subitem),
+                $subitem,
                 $ac
             );
             $content .= "</{$lit}>";
@@ -497,6 +515,10 @@ class Navigation
         ) {
             $item['href'] = $this->getDI()->get('url')->get($item['href']);
         }
+        
+        if(empty($item['non_i18n'])) {
+            $item['title'] = $this->getDI()->get('i18n')->query($item['title']);
+        }
 
         $content .= "<{$lit}{$active}>";
         $content .= sprintf(
@@ -507,7 +529,7 @@ class Navigation
             $item['href'],
             $prependHTML,
             $pc,
-            $this->getDI()->get('i18n')->query($item['title']),
+            $item['title'],
             $ac,
             $appendHTML
         );
