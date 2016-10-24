@@ -1,17 +1,10 @@
 language: php
 
 php:
-  - 5.4
-  - 5.5
-
-before_script:
-  - pyrus install pear/PHP_CodeSniffer
-  - pear channel-discover pear.phpmd.org
-  - pear install phpmd/PHP_PMD
-  - phpenv rehash
+  - 7.0.11
 
 script: ant check
 
 notifications:
   email:
-    - ivan.vorontsov@phalconeye.com
+    - lantian.ivan@gmail.com

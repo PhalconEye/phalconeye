@@ -41,7 +41,7 @@ class I18nHelper extends AbstractHelper
      * Add translations to temporary storage.
      *
      * @param array|string $translations Translations that must be converted.
-     * @param array        $params Concatenation params.
+     * @param array        $params       Concatenation params.
      *
      * @return $this
      */
@@ -59,7 +59,7 @@ class I18nHelper extends AbstractHelper
      * Output javascript translation scope.
      *
      * @param array|string $translations Translations that must be converted.
-     * @param array        $params Concatenation params.
+     * @param array        $params       Concatenation params.
      *
      * @return string
      */

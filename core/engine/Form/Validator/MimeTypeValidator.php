@@ -88,7 +88,10 @@ class MimeTypeValidator extends Validator implements ValidatorInterface
                     $mime = finfo_file($fInfo, $file->getTempName());
                     if (!in_array($mime, $types)) {
                         $isValid = false;
-                        $this->_addMessage('Incorrect file type (%s), allowed types: %s', [$mime, implode(',', $types)]);
+                        $this->_addMessage(
+                            'Incorrect file type (%s), allowed types: %s',
+                            [$mime, implode(',', $types)]
+                        );
                     }
                 }
             }

@@ -96,9 +96,9 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Find package by type.
      *
-     * @param string $type Package type.
-     * @param null|bool $enabled Is enabled.
-     * @param null|string $order Order by field.
+     * @param string      $type    Package type.
+     * @param null|bool   $enabled Is enabled.
+     * @param null|string $order   Order by field.
      *
      * @return Simple
      */
@@ -212,9 +212,9 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Add additional data to package.
      *
-     * @param string $name Data name.
-     * @param mixed $value Data value.
-     * @param bool $asArray Add data to array.
+     * @param string $name    Data name.
+     * @param mixed  $value   Data value.
+     * @param bool   $asArray Add data to array.
      *
      * @return $this
      */
@@ -240,13 +240,12 @@ abstract class AbstractPackage extends AbstractModel
     /**
      * Assign package data.
      *
-     * @param array $data Package data.
+     * @param array      $data      Package data.
      * @param array|null $columnMap Column map.
-     * @param mixed $whiteList Whie list.
      *
      * @return $this
      */
-    public function assign(array $data, $columnMap = null, $whiteList = null)
+    public function assignData(array $data, $columnMap = null)
     {
         $events = !empty($data['events']) ? $data['events'] : [];
         $widgets = !empty($data['widgets']) ? $data['widgets'] : [];

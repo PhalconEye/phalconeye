@@ -34,16 +34,16 @@ class Item implements \IteratorAggregate, \Countable
 {
     use ItemsContainer;
 
-    /** @var NavigationInterface|Item|null **/
+    /** @var NavigationInterface|Item|null * */
     protected $_parentContainer = null;
 
-    /** @var string Item label **/
+    /** @var string Item label * */
     protected $_label = '';
 
-    /** @var string|null Item link **/
+    /** @var string|null Item link * */
     protected $_link = null;
 
-    /** @var array Default options **/
+    /** @var array Default options * */
     protected $_options = [
         'active' => false,
         'tooltip' => '',
@@ -54,7 +54,7 @@ class Item implements \IteratorAggregate, \Countable
         'itemAppendContent' => ''
     ];
 
-    /** @var array Default Item link attributes **/
+    /** @var array Default Item link attributes * */
     protected $_attributes = [
         'target' => '',
         'onclick' => ''
@@ -218,6 +218,8 @@ class Item implements \IteratorAggregate, \Countable
 
     /**
      * Set Item link attributes
+     *
+     * @param array $attributes Attributes to set.
      *
      * @return $this
      */

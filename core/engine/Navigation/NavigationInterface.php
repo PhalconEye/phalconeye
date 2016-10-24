@@ -86,6 +86,8 @@ interface  NavigationInterface
     /**
      * Set Navigation Options
      *
+     * @param array $options Options to set.
+     *
      * @return $this
      */
     public function setOptions(array $options);
@@ -93,7 +95,7 @@ interface  NavigationInterface
     /**
      * Get value of Navigation option
      *
-     * @param string $name  Option name
+     * @param string $name Option name
      *
      * @return mixed
      */

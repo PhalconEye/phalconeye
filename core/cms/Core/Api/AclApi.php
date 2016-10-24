@@ -281,7 +281,7 @@ class AclApi extends AbstractApi
     protected function _addResources($acl, $objects)
     {
         $registry = $this->getDI()->get('registry');
-        foreach ($registry->modules as $module => $path) {
+        foreach (array_keys($registry->modules) as $module) {
             $module = ucfirst($module);
             $modelsPath = $registry->directories->modules . $module . '/Model';
             if (file_exists($modelsPath)) {

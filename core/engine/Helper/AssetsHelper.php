@@ -35,7 +35,7 @@ class AssetsHelper extends AbstractHelper
     /**
      * Add javascript file to assets.
      *
-     * @param string $file File path.
+     * @param string $file       File path.
      * @param string $collection Collection name.
      *
      * @return void
@@ -48,7 +48,7 @@ class AssetsHelper extends AbstractHelper
     /**
      * Add css file to assets.
      *
-     * @param string $file File path.
+     * @param string $file       File path.
      * @param string $collection Collection name.
      *
      * @return void

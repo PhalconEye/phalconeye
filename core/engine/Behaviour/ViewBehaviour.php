@@ -46,7 +46,7 @@ trait ViewBehaviour
      * Resolve view path.
      *
      * @param string $viewPath Path to view.
-     * @param null   $module Module name.
+     * @param null   $module   Module name.
      *
      * @return string
      */
@@ -77,7 +77,7 @@ trait ViewBehaviour
     /**
      * Set that engine must render backoffice views.
      *
-     * @param boolean $isBackoffice
+     * @param boolean $isBackoffice Is backoffice view?
      */
     public function setIsBackoffice(bool $isBackoffice)
     {

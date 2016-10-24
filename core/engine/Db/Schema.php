@@ -226,7 +226,7 @@ class Schema
             }
         }
 
-        $data = $this->getPropertiesAnnotations($reflector, $metadata, $primary, $indexes);
+        $data = $this->_getPropertiesAnnotations($reflector, $metadata, $primary, $indexes);
         $metadata = $data['metadata'];
         $primary = $data['primary'];
         $indexes = $data['indexes'];
@@ -268,7 +268,17 @@ class Schema
         return $metadata;
     }
 
-    protected function getPropertiesAnnotations(Reflection $reflector, array $metadata, array $primary, array $indexes)
+    /**
+     * Get properties annotations.
+     *
+     * @param Reflection $reflector Reflector object.
+     * @param array      $metadata  Metadata.
+     * @param array      $primary   Primary keys.
+     * @param array      $indexes   Indexes.
+     *
+     * @return array
+     */
+    protected function _getPropertiesAnnotations(Reflection $reflector, array $metadata, array $primary, array $indexes)
     {
         foreach ($reflector->getPropertiesAnnotations() as $name => $collection) {
             if (!$collection->has('Column')) {

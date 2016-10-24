@@ -545,7 +545,7 @@ trait ApplicationInitialization
      */
     protected function _initEngine($di)
     {
-        foreach ($di->get('registry')->modules as $module => $path) {
+        foreach (array_keys($di->get('registry')->modules) as $module) {
             // Initialize module api.
             $di->setShared(
                 strtolower($module),

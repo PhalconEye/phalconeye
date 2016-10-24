@@ -142,9 +142,9 @@ abstract class AbstractElement implements ElementInterface
     {
         $options = $this->getOptions();
         return isset(
-        $options['dynamic'],
-        $options['dynamic']['min'],
-        $options['dynamic']['max']
+            $options['dynamic'],
+            $options['dynamic']['min'],
+            $options['dynamic']['max']
         );
     }
 

@@ -79,7 +79,7 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di Dependency injection.
+     * @param DiInterface $di      Dependency injection.
      * @param bool        $prepare Prepare manager (install assets if in debug and create default collections).
      */
     public function __construct($di, $prepare = true)
@@ -171,7 +171,7 @@ class Manager extends AssetManager
     /**
      * Clear assets cache.
      *
-     * @param bool   $refresh Install and compile new assets?
+     * @param bool   $refresh        Install and compile new assets?
      * @param string $themeDirectory Theme directory.
      *
      * @return void
@@ -256,7 +256,7 @@ class Manager extends AssetManager
      * Get file name by collection using pattern.
      *
      * @param Collection $collection Asset collection.
-     * @param string     $pattern File name pattern.
+     * @param string     $pattern    File name pattern.
      *
      * @return string
      */

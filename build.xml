@@ -8,6 +8,7 @@
             Main commands
             =============================
             info - Shows this help
+            install - Run's composer install command.
             build - Prepares environment for distribution.
             dist - Generates distributable package.
             assets - Install modules assets.
@@ -26,6 +27,13 @@
             phploc - Calculates the size of the code using phploc.
             phpcs - Detects standard violations on the code.
         </echo>
+    </target>
+
+    <target name="install">
+        <exec executable="php">
+            <arg value="./composer.php" />
+            <arg value="install" />
+        </exec>
     </target>
 
     <!-- clean - Deletes previously generated files under build/ and dist/ -->
@@ -60,7 +68,16 @@
 
         <!-- Copy files -->
         <copy todir="${build.src.dir}/app">
-            <fileset dir="${src.dir}"/>
+            <fileset dir="${app.dir}"/>
+        </copy>
+        <copy todir="${build.src.dir}/config">
+            <fileset dir="${config.dir}"/>
+        </copy>
+        <copy todir="${build.src.dir}/core">
+            <fileset dir="${core.dir}"/>
+        </copy>
+        <copy todir="${build.src.dir}/data">
+            <fileset dir="${data.dir}"/>
         </copy>
         <copy todir="${build.src.dir}/public">
             <fileset dir="${public.dir}"/>
@@ -71,16 +88,15 @@
 
         <!-- Clear temp data -->
         <delete>
-            <fileset dir="${build.src.dir}/public/external/pydio/data/cache" includes="*.ser,diag_result.php" />
-            <fileset dir="${build.src.dir}/app/var" includes="**/*.php" />
-            <fileset dir="${build.src.dir}/app/var" includes="**/*.cache" />
-            <fileset dir="${build.src.dir}/app/var" includes="**/*.log" />
+            <fileset dir="${build.src.dir}/data" includes="**/*.php" />
+            <fileset dir="${build.src.dir}/data" includes="**/*.cache" />
+            <fileset dir="${build.src.dir}/data" includes="**/*.log" />
         </delete>
-        <delete dir="${build.src.dir}/app/var/temp/packages" />
+        <delete dir="${build.src.dir}/data/temp/packages" />
     </target>
 
     <!-- dist - Generates distributable package -->
-    <target name="dist" depends="build,assets">
+    <target name="dist" depends="check,assets">
         <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/${project.name}.tar.gz" basedir="${build.src.dir}" compression="gzip"
              longfile="gnu"/>
@@ -97,25 +113,25 @@
     </target>
 
     <!-- check  -->
-    <target name="check" depends="phpmd,phpcs"/>
+    <target name="check" depends="install,phpmd,phpcs"/>
 
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
     <target name="phpmd" depends="build">
-        <exec executable="phpmd" failonerror="true">
+        <exec executable="./vendor/bin/phpmd" failonerror="true">
             <arg path="${check.dir}"/>
             <arg value="text"/>
             <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
             <arg value="--exclude"/>
-            <arg value="${ignor.dir}"/>
+            <arg value="${ignore.dir}"/>
         </exec>
     </target>
 
     <!-- phpcs - Detects standard violations on the code. -->
     <target name="phpcs" depends="build">
-        <exec executable="phpcs" failonerror="true">
+        <exec executable="./vendor/bin/phpcs" failonerror="true">
             <arg value="--extensions=php"/>
             <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
-            <arg value="--ignore=${ignor.dir}"/>
+            <arg value="--ignore=${ignore.dir}"/>
             <arg path="${check.dir}"/>
         </exec>
     </target>
@@ -139,7 +155,7 @@
             <arg value="--jdepend-xml=${report.dir}/jdepend.xml"/>
             <arg value="--jdepend-chart=${report.dir}/dependencies.svg"/>
             <arg value="--overview-pyramid=${report.dir}/dependencies-pyramid.svg"/>
-            <arg value="--ignore=/${ignor.dir}"/>
+            <arg value="--ignore=/${ignore.dir}"/>
             <arg value="${check.dir}"/>
         </exec>
     </target>
@@ -162,7 +178,7 @@
             <arg value="--log-csv"/>
             <arg value="${report.dir}/phploc.csv"/>
             <arg value="--exclude"/>
-            <arg value="${ignor.dir}"/>
+            <arg value="${ignore.dir}"/>
             <arg path="${check.dir}"/>
         </exec>
     </target>

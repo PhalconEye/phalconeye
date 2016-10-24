@@ -105,7 +105,7 @@ class Bootstrap extends AbstractBootstrap
     /**
      * Init locale.
      *
-     * @param DIBehaviour|DI $di Dependency injection.
+     * @param DIBehaviour|DI $di     Dependency injection.
      * @param Config         $config Dependency injection.
      *
      * @return void
@@ -123,7 +123,9 @@ class Bootstrap extends AbstractBootstrap
                 $language = SettingsModel::getValue('system', 'default_language');
                 if ($language == 'auto') {
                     $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-                    $languageObject = LanguageModel::findFirst("language = '" . $locale . "' OR locale = '" . $locale . "'");
+                    $languageObject = LanguageModel::findFirst(
+                        "language = '" . $locale . "' OR locale = '" . $locale . "'"
+                    );
                 } else {
                     $languageObject = LanguageModel::findFirst("language = '" . $language . "'");
                 }

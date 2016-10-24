@@ -5,10 +5,10 @@
     "homepage" : "http://phalconeye.com",
     "license" : "BSD-3-Clause",
     "require" : {
-        "php" : ">=5.4.20",
+        "php" : ">=7.0.11",
         "phalconeye/composer-installer-plugin": "0.5.*@dev",
-        "phalconeye/module-blog": "dev-master",
-        "leafo/lessphp": "0.4.0"
+        "phpmd/phpmd" : "@stable",
+        "squizlabs/php_codesniffer": "2.*"
     },
     "support" : {
         "documentation" : "http://docs.phalconeye.com/latest/en/",

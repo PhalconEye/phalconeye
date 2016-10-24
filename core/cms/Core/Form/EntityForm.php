@@ -45,8 +45,8 @@ trait EntityForm
     /**
      * Create form according to entity specifications.
      *
-     * @param AbstractModel|AbstractModel[] $entities Models.
-     * @param array                         $fieldTypes Field types.
+     * @param AbstractModel|AbstractModel[] $entities      Models.
+     * @param array                         $fieldTypes    Field types.
      * @param array                         $excludeFields Exclude fields from form.
      *
      * @return AbstractForm

@@ -291,7 +291,10 @@ class PageModel extends AbstractModel
         $validator = new Validation();
 
         if ($this->url !== null) {
-            $validator->add("url", new Validation\Validator\StringLength(['messageMinimum' => 'URL is too short', "min" => 1]));
+            $validator->add(
+                "url",
+                new Validation\Validator\StringLength(['messageMinimum' => 'URL is too short', "min" => 1])
+            );
         }
 
         $validator->add("title", new Validation\Validator\PresenceOf(['message' => 'Title is required']));

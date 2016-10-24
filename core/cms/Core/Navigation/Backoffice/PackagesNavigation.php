@@ -39,30 +39,32 @@ class PackagesNavigation extends CoreNavigation
      */
     public function initialize()
     {
-        $this->setItems([
-            ['Modules', 'backoffice/packages', [
-                'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-            ]],
-            null,
-            ['Themes', 'backoffice/packages/themes', [
-                'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
-            ]],
-            ['Widgets', 'backoffice/packages/widgets', [
-                'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
-            ]],
-            ['Plugins', 'backoffice/packages/plugins', [
-                'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
-            ]],
-            ['Libraries', 'backoffice/packages/libraries', [
-                'prepend' => '<i class="glyphicon glyphicon-book"></i>'
-            ]],
-            null,
-            ['Upload', 'backoffice/packages/upload', [
-                'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]],
-            ['Create new', 'backoffice/packages/create', [
-                'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]],
-        ]);
+        $this->setItems(
+            [
+                ['Modules', 'backoffice/packages', [
+                    'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
+                ]],
+                null,
+                ['Themes', 'backoffice/packages/themes', [
+                    'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
+                ]],
+                ['Widgets', 'backoffice/packages/widgets', [
+                    'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
+                ]],
+                ['Plugins', 'backoffice/packages/plugins', [
+                    'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
+                ]],
+                ['Libraries', 'backoffice/packages/libraries', [
+                    'prepend' => '<i class="glyphicon glyphicon-book"></i>'
+                ]],
+                null,
+                ['Upload', 'backoffice/packages/upload', [
+                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
+                ]],
+                ['Create new', 'backoffice/packages/create', [
+                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
+                ]],
+            ]
+        );
     }
 }

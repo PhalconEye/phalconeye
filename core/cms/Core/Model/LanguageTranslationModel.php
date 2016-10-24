@@ -144,8 +144,8 @@ class LanguageTranslationModel extends AbstractModel implements TranslationModel
     /**
      * Copy translations from one language to another.
      *
-     * @param $id Destination language.
-     * @param $defaultLanguageId Source language.
+     * @param long $id                Destination language.
+     * @param long $defaultLanguageId Source language.
      *
      * @return mixed Rows.
      */

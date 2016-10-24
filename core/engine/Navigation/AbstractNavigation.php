@@ -45,13 +45,13 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
         DIBehaviour::__construct as protected __DIConstruct;
     }
 
-    /** @var int Navigation id **/
+    /** @var int Navigation id * */
     protected $_id = 0;
 
     /** @var string Currently active item, it can be name or href. */
     protected $_activeItem = '';
 
-    /** @var array Default options **/
+    /** @var array Default options * */
     protected $_options = [];
 
     /**
@@ -144,6 +144,8 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
     /**
      * Set Navigation Options
      *
+     * @param array $options Options to set.
+     *
      * @return $this
      */
     public function setOptions(array $options)
@@ -157,7 +159,7 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
     /**
      * Get value of Navigation option
      *
-     * @param string $name  Option name
+     * @param string $name Option name
      *
      * @return mixed
      */
@@ -207,10 +209,13 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
         $view = $di->get('view');
 
         ob_start();
-        $view->partial($viewName, [
-            'id' => $this->getId(),
-            'navigation' => $this,
-        ]);
+        $view->partial(
+            $viewName,
+            [
+                'id' => $this->getId(),
+                'navigation' => $this,
+            ]
+        );
         $html = ob_get_clean();
 
         if ($di->getRequest()->isAjax()) {

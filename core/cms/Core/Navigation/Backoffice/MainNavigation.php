@@ -42,11 +42,14 @@ class MainNavigation extends CoreNavigation
      */
     public function __construct($di = null)
     {
-        $this->_options = array_merge($this->_options, [
-            'listClass' => 'nav nav-categories',
-            'dropDownItemClass' => 'nav-category',
-            'dropDownItemMenuClass' => 'nav'
-        ]);
+        $this->_options = array_merge(
+            $this->_options,
+            [
+                'listClass' => 'nav nav-categories',
+                'dropDownItemClass' => 'nav-category',
+                'dropDownItemMenuClass' => 'nav'
+            ]
+        );
 
         parent::__construct($di = null);
     }
@@ -67,48 +70,58 @@ class MainNavigation extends CoreNavigation
         $activeItem = substr($activeItem, 0, -1);
 
         // Dashboard
-        $this->appendItem(new Item('Dashboard', 'admin', [
-            'prepend' => '<i class="glyphicon glyphicon-home"></i>'
-        ]));
+        $this->appendItem(
+            new Item(
+                'Dashboard',
+                'admin',
+                [
+                    'prepend' => '<i class="glyphicon glyphicon-home"></i>'
+                ]
+            )
+        );
 
         // Manage
         $this->appendItem($mangeItem = new Item('Manage'));
 
-        $mangeItem->setItems([
-            ['Users and Roles', 'backoffice/users', [
-                'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-            ]],
-            ['Pages', 'backoffice/pages', [
-                'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
-            ]],
-            ['Menus', 'backoffice/menus', [
-                'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
-            ]],
-            ['Languages', 'backoffice/languages', [
-                'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
-            ]],
-            ['Files', 'backoffice/files', [
-                'prepend' => '<i class="glyphicon glyphicon-file"></i>'
-            ]],
-            ['Packages', 'backoffice/packages', [
-                'prepend' => '<i class="glyphicon glyphicon-th"></i>'
-            ]]
-        ]);
+        $mangeItem->setItems(
+            [
+                ['Users and Roles', 'backoffice/users', [
+                    'prepend' => '<i class="glyphicon glyphicon-user"></i>'
+                ]],
+                ['Pages', 'backoffice/pages', [
+                    'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
+                ]],
+                ['Menus', 'backoffice/menus', [
+                    'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
+                ]],
+                ['Languages', 'backoffice/languages', [
+                    'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
+                ]],
+                ['Files', 'backoffice/files', [
+                    'prepend' => '<i class="glyphicon glyphicon-file"></i>'
+                ]],
+                ['Packages', 'backoffice/packages', [
+                    'prepend' => '<i class="glyphicon glyphicon-th"></i>'
+                ]]
+            ]
+        );
 
         // Settings
         $this->appendItem($settingsItem = new Item('Settings'));
 
-        $settingsItem->setItems([
-            ['System', 'backoffice/settings', [
-                'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
-            ]],
-            ['Performance', 'backoffice/performance', [
-                'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
-            ]],
-            ['Access Rights', 'backoffice/access', [
-                'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
-            ]]
-        ]);
+        $settingsItem->setItems(
+            [
+                ['System', 'backoffice/settings', [
+                    'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
+                ]],
+                ['Performance', 'backoffice/performance', [
+                    'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
+                ]],
+                ['Access Rights', 'backoffice/access', [
+                    'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
+                ]]
+            ]
+        );
 
         // Dynamic modules
         // @TODO: refactor
@@ -126,12 +139,16 @@ class MainNavigation extends CoreNavigation
                 }
 
                 $modulesMenuItem->appendItem(
-                    new Item($module->title, 'backoffice/module/' . $module->name, [
-                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-                    ])
+                    new Item(
+                        $module->title,
+                        'backoffice/module/' . $module->name,
+                        [
+                            'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
+                        ]
+                    )
                 );
 
-                if ($activeItem == 'backoffice/module' && (string) $path[3] == $module->name) {
+                if ($activeItem == 'backoffice/module' && (string)$path[3] == $module->name) {
                     $this->setActiveItem('backoffice/module/' . $module->name);
                 }
             }

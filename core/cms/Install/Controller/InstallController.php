@@ -244,7 +244,7 @@ class InstallController extends AbstractController
 
                 // Run modules installation scripts.
                 $packageManager = new PackageManager([], $this->di);
-                foreach ($this->di->get('registry')->modules as $moduleName => $path) {
+                foreach (array_keys($this->di->get('registry')->modules) as $moduleName) {
                     $packageManager->runInstallScript(
                         new Config(
                             [

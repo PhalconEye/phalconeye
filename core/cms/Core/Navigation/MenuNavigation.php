@@ -42,7 +42,7 @@ class MenuNavigation extends CoreNavigation
          */
         ITEM_ICON_TEMPLATE = '<img class="nav-icon nav-icon-%s" alt="%s" src="%s"/>';
 
-    /** @var MenuModel Instance **/
+    /** @var MenuModel Instance * */
     protected $_menu = null;
 
     /**
@@ -91,10 +91,14 @@ class MenuNavigation extends CoreNavigation
                 continue;
             }
 
-            $navItem = new NavigationItem($item->title, $item->getHref(), [
-                'target' => $item->target,
-                'onclick' => $item->getOnclick()
-            ]);
+            $navItem = new NavigationItem(
+                $item->title,
+                $item->getHref(),
+                [
+                    'target' => $item->target,
+                    'onclick' => $item->getOnclick()
+                ]
+            );
 
             // Fetch Sub Items
             $subItems = $item->getMenuItems(['order' => 'item_order ASC']);
@@ -113,7 +117,7 @@ class MenuNavigation extends CoreNavigation
             if (!empty($item->icon)) {
 
                 $navItem->setOption(
-                    ($item->icon_position == MenuItemModel::ITEM_ICON_POSITION_LEFT? 'prepend' : 'append'),
+                    ($item->icon_position == MenuItemModel::ITEM_ICON_POSITION_LEFT ? 'prepend' : 'append'),
                     sprintf(static::ITEM_ICON_TEMPLATE, $item->icon_position, $item->title, $url->get($item->icon))
                 );
             }

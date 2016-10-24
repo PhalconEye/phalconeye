@@ -138,7 +138,7 @@ class PackageModel extends AbstractPackage
     public function fromJson($content)
     {
         $data = json_decode($content, true);
-        $this->assign($data);
+        $this->assignData($data);
     }
 
     /**

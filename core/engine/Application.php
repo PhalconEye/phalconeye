@@ -137,14 +137,17 @@ class Application extends PhalconApplication
         $registry = new Registry();
         $registry->widgets = $this->_config->packages->widgets->toArray();
 
-        $registry->offsetSet('directories', (object)[
-            'engine' => ROOT_PATH . '/core/engine/',
-            'cms' => ROOT_PATH . '/core/cms/',
-            'modules' => ROOT_PATH . '/app/modules/',
-            'plugins' => ROOT_PATH . '/app/plugins/',
-            'widgets' => ROOT_PATH . '/app/widgets/',
-            'libraries' => ROOT_PATH . '/app/libraries/'
-        ]);
+        $registry->offsetSet(
+            'directories',
+            (object)[
+                'engine' => ROOT_PATH . '/core/engine/',
+                'cms' => ROOT_PATH . '/core/cms/',
+                'modules' => ROOT_PATH . '/app/modules/',
+                'plugins' => ROOT_PATH . '/app/plugins/',
+                'widgets' => ROOT_PATH . '/app/widgets/',
+                'libraries' => ROOT_PATH . '/app/libraries/'
+            ]
+        );
 
         $sysmodules = [
             self::CMS_MODULE_CORE => $registry->directories->cms,

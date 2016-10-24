@@ -107,8 +107,6 @@ class Element
         }
 
         if ($output === null) {
-            $registry = $this->getDI()->getRegistry();
-
             // Collect profiler info.
             $hasProfiler = $this->getDI()->has('profiler');
             if ($hasProfiler) {

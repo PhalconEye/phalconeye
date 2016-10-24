@@ -91,11 +91,9 @@ class Db implements AdapterInterface
     /**
      * Returns the translation string of the given key
      *
-     * @param        string translateKey
-     * @param        array placeholders
-     * @return    string
-     * @param string $translateKey
-     * @param mixed  $placeholders
+     * @param string $translateKey Key.
+     * @param mixed  $placeholders Placeholders.
+     *
      * @return string
      */
     public function t($translateKey, $placeholders = null)
@@ -179,17 +177,17 @@ class Db implements AdapterInterface
             [
                 'conditions' => 'original = :content: AND language_id = :id:',
                 'bind' => (
-                    [
-                        "content" => $index,
-                        "id" => $this->_languageId
-                    ]
-                    ),
+                [
+                    "content" => $index,
+                    "id" => $this->_languageId
+                ]
+                ),
                 'bindTypes' => (
-                    [
-                        "content" => PhalconColumn::BIND_PARAM_STR,
-                        "id" => PhalconColumn::BIND_PARAM_INT
-                    ]
-                    )
+                [
+                    "content" => PhalconColumn::BIND_PARAM_STR,
+                    "id" => PhalconColumn::BIND_PARAM_INT
+                ]
+                )
             ]
         );
     }

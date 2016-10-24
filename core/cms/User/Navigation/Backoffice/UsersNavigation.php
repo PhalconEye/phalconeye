@@ -39,20 +39,22 @@ class UsersNavigation extends CoreNavigation
      */
     public function initialize()
     {
-        $this->setItems([
-            ['Users', 'backoffice/users', [
-                'prepend' => '<i class="glyphicon glyphicon-user"></i>'
-            ]],
-            ['Roles', 'backoffice/users/roles', [
-                'prepend' => '<i class="glyphicon glyphicon-share"></i>'
-            ]],
-            null,
-            ['Create new user', 'backoffice/users/create', [
-                'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]],
-            ['Create new role', 'backoffice/users/roles-create', [
-                'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]],
-        ]);
+        $this->setItems(
+            [
+                ['Users', 'backoffice/users', [
+                    'prepend' => '<i class="glyphicon glyphicon-user"></i>'
+                ]],
+                ['Roles', 'backoffice/users/roles', [
+                    'prepend' => '<i class="glyphicon glyphicon-share"></i>'
+                ]],
+                null,
+                ['Create new user', 'backoffice/users/create', [
+                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
+                ]],
+                ['Create new role', 'backoffice/users/roles-create', [
+                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
+                ]],
+            ]
+        );
     }
 }

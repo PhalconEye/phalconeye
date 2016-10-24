@@ -39,14 +39,16 @@ class MenusNavigation extends CoreNavigation
      */
     public function initialize()
     {
-        $this->setItems([
-            ['Browse', 'backoffice/menus', [
-                'prepend' => '<i class="glyphicon glyphicon-list"></i>'
-            ]],
-            null,
-            ['Create new', 'backoffice/menus/create', [
-                'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-            ]]
-        ]);
+        $this->setItems(
+            [
+                ['Browse', 'backoffice/menus', [
+                    'prepend' => '<i class="glyphicon glyphicon-list"></i>'
+                ]],
+                null,
+                ['Create new', 'backoffice/menus/create', [
+                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
+                ]]
+            ]
+        );
     }
 }

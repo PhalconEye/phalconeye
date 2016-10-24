@@ -40,14 +40,14 @@ class Collection extends PhalconCollection
     /**
      * Application config.
      *
-     * @var Config
+     * @var Config Config object.
      */
     protected $_config;
 
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di      Dependency injection.
+     * @param DiInterface $di Dependency injection.
      */
     public function __construct($di)
     {
@@ -58,10 +58,11 @@ class Collection extends PhalconCollection
     /**
      * Adds a CSS resource to the collection
      *
-     * @param string $path
-     * @param mixed $local
-     * @param bool $filter
-     * @param mixed $attributes
+     * @param string $path       Path of asset file.
+     * @param bool   $local      Is file local?
+     * @param bool   $filter     Filter flag.
+     * @param mixed  $attributes Asset link attributes.
+     *
      * @return Collection
      */
     public function addCss($path, $local = null, $filter = true, $attributes = null)
@@ -79,10 +80,11 @@ class Collection extends PhalconCollection
     /**
      * Adds a javascript resource to the collection
      *
-     * @param string $path
-     * @param boolean $local
-     * @param boolean $filter
-     * @param array $attributes
+     * @param string $path       Path of asset file.
+     * @param bool   $local      Is file local?
+     * @param bool   $filter     Filter flag.
+     * @param mixed  $attributes Asset link attributes.
+     *
      * @return Collection
      */
     public function addJs($path, $local = null, $filter = true, $attributes = null)

@@ -30,13 +30,13 @@ namespace Engine\Navigation;
  */
 trait ItemsContainer
 {
-    /** @var Item[] Items in navigation **/
+    /** @var Item[] Items in navigation * */
     protected $_items = [];
 
     /**
-     * Append Item to current container
+     * Append Item to current container.
      *
-     * @param Item $item
+     * @param Item $item Navigation item.
      *
      * @return $this
      */
@@ -50,9 +50,9 @@ trait ItemsContainer
     }
 
     /**
-     * Prepend Item to current container
+     * Prepend Item to current container.
      *
-     * @param Item $item
+     * @param Item $item Navigation item.
      *
      * @return $this
      */
@@ -66,9 +66,12 @@ trait ItemsContainer
     }
 
     /**
-     * Append Multiple Items
+     * Append Multiple Items.
      *
-     * @param array $items
+     * @param array $items Navigation items.
+     *
+     * @return $this
+     *
      * @throws \InvalidArgumentException when trying to append invalid Item
      */
     public function setItems(array $items)
@@ -78,10 +81,10 @@ trait ItemsContainer
         foreach ($items as $item) {
 
             if (is_array($item) || is_null($item)) {
-                $itemLabel = isset($item[0])? $item[0] : '';
-                $itemLink = isset($item[1])? $item[1] : null;
-                $itemOptions = isset($item[2])? $item[2] : [];
-                $itemAttributes = isset($item[3])? $item[3] : [];
+                $itemLabel = isset($item[0]) ? $item[0] : '';
+                $itemLink = isset($item[1]) ? $item[1] : null;
+                $itemOptions = isset($item[2]) ? $item[2] : [];
+                $itemAttributes = isset($item[3]) ? $item[3] : [];
 
                 $item = new Item($itemLabel, $itemLink, $itemOptions, $itemAttributes);
             } elseif (($item instanceof Item) == false) {
@@ -133,7 +136,7 @@ trait ItemsContainer
     {
         $activeItem = trim($activeItem, '/');
 
-        foreach($this->_items as $item) {
+        foreach ($this->_items as $item) {
             if (trim($item->getLink(), '/') == $activeItem) {
                 $item->setActive();
                 return;

@@ -95,7 +95,11 @@ class LanguageTranslationGrid extends CoreGrid
         return [
             'Edit' => ['attr' => ['onclick' => 'editItem(' . $item['id'] . ');return false;']],
             'Delete' => [
-                'href' => ['for' => 'backoffice-languages-delete-item', 'id' => $item['id'], 'lang' => $item['language_id']],
+                'href' => [
+                    'for' => 'backoffice-languages-delete-item',
+                    'id' => $item['id'],
+                    'lang' => $item['language_id']
+                ],
                 'attr' => ['class' => 'grid-action-delete']
             ]
         ];
