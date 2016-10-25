@@ -22,6 +22,8 @@ use Engine\Behaviour\DIBehaviour;
 use Phalcon\Config;
 use Phalcon\DiInterface;
 use Phalcon\Filter;
+use Phalcon\Mvc\Model\ValidatorInterface;
+use Phalcon\Validation;
 
 /**
  * Abstract command.
@@ -303,6 +305,37 @@ abstract class AbstractCommand implements CommandInterface
     }
 
     /**
+     * Readline from console input.
+     *
+     * @param string|null          $prompt     Prompt message.
+     * @param Validation\Validator $validation Validation function.
+     *
+     * @return string
+     */
+    protected function _readline($prompt = null, Validation\Validator $validation = null)
+    {
+        if ($prompt) {
+            echo $prompt;
+        }
+        $fp = fopen("php://stdin", "r");
+        $line = rtrim(fgets($fp, 1024));
+
+        if ($validation != null) {
+            $validator = new Validation();
+            $validator->add('value', $validation);
+            $result = $validator->validate(['value' => $line]);
+            if ($result && $result->count() > 0) {
+                foreach ($result as $message) {
+                    print ConsoleUtil::error($message) . PHP_EOL;
+                }
+                return $this->_readline($prompt, $validation);
+            }
+        }
+
+        return $line;
+    }
+
+    /**
      * Parse the parameters passed to the script.
      *
      * @throws CommandsException
@@ -480,9 +513,12 @@ abstract class AbstractCommand implements CommandInterface
             $this->_actions[$method]['params'] = [];
             foreach ($reflection->getParameters() as $parameter) {
                 $name = $parameter->getName();
-                $defaultValue = $parameter->getDefaultValue();
-                $defaultValueType = $parameter->isDefaultValueAvailable() ?
-                    gettype($defaultValue) : '<required>';
+                $defaultValueType = '<required>';
+                $defaultValue = '<none>';
+                if ($parameter->isDefaultValueAvailable()) {
+                    $defaultValue = $parameter->getDefaultValue();
+                    $defaultValueType = gettype($defaultValue);
+                }
 
                 $this->_actions[$method]['params'][] = [
                     'name' => $name,

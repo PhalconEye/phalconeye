@@ -61,12 +61,7 @@ class Manager
         /**
          * Widget package.
          */
-        PACKAGE_TYPE_WIDGET = 'widget',
-
-        /**
-         * Library package.
-         */
-        PACKAGE_TYPE_LIBRARY = 'library';
+        PACKAGE_TYPE_WIDGET = 'widget';
 
     const
         /**
@@ -83,8 +78,7 @@ class Manager
         self::PACKAGE_TYPE_MODULE => 'Module',
         self::PACKAGE_TYPE_PLUGIN => 'Plugin',
         self::PACKAGE_TYPE_THEME => 'Theme',
-        self::PACKAGE_TYPE_WIDGET => 'Widget',
-        self::PACKAGE_TYPE_LIBRARY => 'Library'
+        self::PACKAGE_TYPE_WIDGET => 'Widget'
     ];
 
     /**
@@ -176,8 +170,7 @@ class Manager
             self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
             self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
             self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
-            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets,
-            self::PACKAGE_TYPE_LIBRARY => $registry->directories->libraries
+            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets
         ];
     }
 
