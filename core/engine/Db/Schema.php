@@ -101,11 +101,16 @@ class Schema
                 $counter++;
             }
 
-            $executedStatements[$model['class']] = $counter;
+            if ($counter > 0) {
+                $executedStatements[$model['class']] = $counter;
+            }
         }
 
         // Process references
-        $executedStatements['References'] = $this->_processReferences($defaultSchema, $references);
+        $referencesResult = $this->_processReferences($defaultSchema, $references);
+        if ($referencesResult > 0) {
+            $executedStatements['References'] = $referencesResult;
+        }
 
         if ($cleanup) {
             // Drop not existing tables.
@@ -444,7 +449,7 @@ class Schema
                 $changed = false;
 
                 // Hack boolean type.
-                if ($currentField->getType() == Column::TYPE_INTEGER && $currentField->getSize() === "1") {
+                if ($currentField->getType() == Column::TYPE_INTEGER && $currentField->getSize() == 1) {
                     $currentField = new Column(
                         $fieldName,
                         [
@@ -561,7 +566,7 @@ class Schema
      * @param string $schemaName           Database name.
      * @param array  $referencesDefinition References.
      *
-     * @return array
+     * @return integer
      */
     protected function _processReferences($schemaName, $referencesDefinition)
     {
@@ -570,7 +575,7 @@ class Schema
         }
 
         $counter = 0;
-        $db = $this->getDI()->get('db');
+        $db = $this->getDI()->getDb();
 
         foreach ($referencesDefinition as $tableName => $definition) {
             if (empty($definition)) {
