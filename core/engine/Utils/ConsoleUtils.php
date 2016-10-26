@@ -32,19 +32,19 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Console;
+namespace Engine\Utils;
 
 /**
  * Console utils.
  *
  * @category  PhalconEye
- * @package   Engine\Console
+ * @package   Engine\Utils
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-final class ConsoleUtil
+final class ConsoleUtils
 {
     const COMMENT_START_POSITION = 42;
 
@@ -188,17 +188,17 @@ final class ConsoleUtil
         $msg = 'Error: ' . $msg;
         $space = strlen($msg) + 4;
         $out = self::colorize(
-            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
         );
         $out .= PHP_EOL;
 
         $out .= self::colorize(
-            '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+            '  ' . $msg . '  ', ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
         );
         $out .= PHP_EOL;
 
         $out .= self::colorize(
-            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_RED
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
         );
         $out .= PHP_EOL . PHP_EOL;
 
@@ -279,17 +279,17 @@ final class ConsoleUtil
         $msg = 'Success: ' . $msg;
         $space = strlen($msg) + 4;
         $out = self::colorize(
-            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_GREEN
         );
         $out .= PHP_EOL;
 
         $out .= self::colorize(
-            '  ' . $msg . '  ', ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+            '  ' . $msg . '  ', ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_GREEN
         );
         $out .= PHP_EOL;
 
         $out .= self::colorize(
-            str_pad(' ', $space), ConsoleUtil::FG_WHITE, ConsoleUtil::AT_BOLD, ConsoleUtil::BG_GREEN
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_GREEN
         );
         $out .= PHP_EOL;
 
@@ -305,7 +305,7 @@ final class ConsoleUtil
      */
     public static function warningLine($msg)
     {
-        return self::colorize($msg, ConsoleUtil::FG_RED, ConsoleUtil::AT_BOLD) . PHP_EOL . PHP_EOL;
+        return self::colorize($msg, ConsoleUtils::FG_RED, ConsoleUtils::AT_BOLD) . PHP_EOL . PHP_EOL;
     }
 
     /**
@@ -318,14 +318,14 @@ final class ConsoleUtil
      *
      * @return string
      */
-    public static function info($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtil::FG_GREEN)
+    public static function info($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtils::FG_GREEN)
     {
         $out = '';
         if ($lineBefore) {
             $out .= PHP_EOL;
         }
 
-        $out .= self::colorize($msg, $color, ConsoleUtil::AT_BOLD);
+        $out .= self::colorize($msg, $color, ConsoleUtils::AT_BOLD);
 
         if ($afterLinesCount) {
             for ($i = 0; $i < $afterLinesCount; $i++) {
@@ -345,7 +345,7 @@ final class ConsoleUtil
      */
     public static function head($msg)
     {
-        return self::colorize($msg, ConsoleUtil::FG_BROWN) . PHP_EOL;
+        return self::colorize($msg, ConsoleUtils::FG_BROWN) . PHP_EOL;
     }
 
     /**
@@ -361,8 +361,8 @@ final class ConsoleUtil
     public static function command(
         $cmd,
         $comment = '',
-        $commentColor = ConsoleUtil::FG_BROWN,
-        $cmdColor = ConsoleUtil::FG_GREEN
+        $commentColor = ConsoleUtils::FG_BROWN,
+        $cmdColor = ConsoleUtils::FG_GREEN
     )
     {
         $messageLength = strlen($cmd) + 3;

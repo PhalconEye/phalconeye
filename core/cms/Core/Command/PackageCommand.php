@@ -18,13 +18,9 @@
 
 namespace Core\Command;
 
-use Core\Model\PackageModel;
-use Core\Model\WidgetModel;
-use Engine\Config;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
-use Engine\Console\ConsoleUtil;
-use Engine\Exception;
+use Engine\Utils\ConsoleUtils;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
 use Phalcon\Validation\Validator\StringLength;
@@ -54,7 +50,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     public function generateAction($type)
     {
         if (!$this->_checkType($type)) {
-            print ConsoleUtil::error("Wrong package type '$type'. Allowed types: module, plugin, widget, theme.") .
+            print ConsoleUtils::error("Wrong package type '$type'. Allowed types: module, plugin, widget, theme.") .
                 PHP_EOL;
             return;
         }
@@ -65,11 +61,11 @@ class PackageCommand extends AbstractCommand implements CommandInterface
         try {
             $packageManager->createPackage($data);
         } catch (PackageException $ex) {
-            print ConsoleUtil::error($ex->getMessage()) . PHP_EOL;
+            print ConsoleUtils::error($ex->getMessage()) . PHP_EOL;
             return;
         }
 
-        print PHP_EOL . ConsoleUtil::success("Package generation completed!") . PHP_EOL;
+        print PHP_EOL . ConsoleUtils::success("Package generation completed!") . PHP_EOL;
     }
 
     /**

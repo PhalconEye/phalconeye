@@ -24,6 +24,7 @@ use Engine\Config;
 use Engine\Package\Exception\InvalidManifestException;
 use Engine\Package\Exception\PackageExistsException;
 use Engine\Package\Model\AbstractPackage;
+use Engine\Utils\FileUtils;
 use Phalcon\DI;
 use Phalcon\Filter as PhalconFilter;
 
@@ -211,10 +212,10 @@ class Manager
             $packageLocation = $this->getPackageLocation($data['type']) . $data['nameUpper'];
         }
 
-        Utilities::fsCheckLocation($packageLocation);
+        FileUtils::fsCheckLocation($packageLocation);
 
         // copy package structure
-        Utilities::fsCopyRecursive(
+        FileUtils::fsCopyRecursive(
             self::PACKAGE_STRUCTURE_LOCATION . $data['type'],
             $packageLocation,
             false,
@@ -244,7 +245,7 @@ class Manager
 
         }
 
-        foreach (Utilities::fsRecursiveGlob($packageLocation . DS, '*.*') as $filename) {
+        foreach (FileUtils::fsRecursiveGlob($packageLocation . DS, '*.*') as $filename) {
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
@@ -328,8 +329,8 @@ class Manager
         } else {
             $destinationDirectory = $this->getPackageLocation($manifest->type) . ucfirst($manifest->name);
         }
-        Utilities::fsCheckLocation($destinationDirectory);
-        Utilities::fsCopyRecursive($packageDirectory, $destinationDirectory);
+        FileUtils::fsCheckLocation($destinationDirectory);
+        FileUtils::fsCopyRecursive($packageDirectory, $destinationDirectory);
 
         return $manifest;
     }
@@ -370,7 +371,7 @@ class Manager
         if (!is_dir($path)) {
             throw new PackageException("Package '{$package->name}' not found in path '{$path}'.");
         }
-        Utilities::fsRmdirRecursive($path, true);
+        FileUtils::fsRmdirRecursive($path, true);
     }
 
     /**
@@ -397,12 +398,12 @@ class Manager
 
 
         if (is_dir($temporaryDir)) {
-            Utilities::fsRmdirRecursive($temporaryDir);
+            FileUtils::fsRmdirRecursive($temporaryDir);
         }
         mkdir($temporaryPackageCopyDir, 0755, true);
 
         if (is_dir($location)) {
-            Utilities::fsCopyRecursive($location, $temporaryPackageCopyDir);
+            FileUtils::fsCopyRecursive($location, $temporaryPackageCopyDir);
         } else {
             copy($location, $temporaryPackageCopyDir . basename($location));
         }
@@ -473,7 +474,7 @@ class Manager
     {
         $directory = ROOT_PATH . str_replace('_', DS, '_app_var_temp_packages_');
         if ($checkDir) {
-            Utilities::fsCheckLocation($directory);
+            FileUtils::fsCheckLocation($directory);
         }
 
         return $directory;
@@ -486,7 +487,7 @@ class Manager
      */
     public function clearTempDirectory()
     {
-        Utilities::fsRmdirRecursive($this->getTempDirectory());
+        FileUtils::fsRmdirRecursive($this->getTempDirectory());
     }
 
     /**
@@ -510,7 +511,7 @@ class Manager
 
         // Check packages metadata directory.
         $packagesMetadataDirectory = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES;
-        Utilities::fsCheckLocation($packagesMetadataDirectory);
+        FileUtils::fsCheckLocation($packagesMetadataDirectory);
 
         $config = ['installed' => PHALCONEYE_VERSION, 'events' => [], 'modules' => [], 'widgets' => []];
         foreach ($packages as $package) {

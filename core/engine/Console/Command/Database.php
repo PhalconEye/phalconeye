@@ -20,9 +20,8 @@ namespace Engine\Console\Command;
 
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
-use Engine\Console\ConsoleUtil;
+use Engine\Utils\ConsoleUtils;
 use Engine\Db\Schema;
-use Phalcon\DI;
 
 /**
  * Database command.
@@ -52,27 +51,27 @@ class Database extends AbstractCommand implements CommandInterface
         $schema = new Schema($this->getDI());
         if ($model) {
             if (!class_exists($model)) {
-                print ConsoleUtil::error('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
+                print ConsoleUtils::error('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
 
                 return;
             }
             $count = current($schema->updateTable($model));
             if ($count) {
-                print ConsoleUtil::head('Table update for model: ' . $model);
-                print ConsoleUtil::command('Executed queries:', $count, ConsoleUtil::FG_CYAN);
+                print ConsoleUtils::head('Table update for model: ' . $model);
+                print ConsoleUtils::command('Executed queries:', $count, ConsoleUtils::FG_CYAN);
             } else {
-                print ConsoleUtil::success('Table is up to date');
+                print ConsoleUtils::success('Table is up to date');
             }
             print PHP_EOL;
         } else {
             $queriesCount = $schema->updateDatabase($cleanup);
             if (!empty($queriesCount)) {
-                print ConsoleUtil::head('Database update:');
+                print ConsoleUtils::head('Database update:');
                 foreach ($queriesCount as $model => $count) {
-                    print ConsoleUtil::command($model . ':', $count, ConsoleUtil::FG_CYAN);
+                    print ConsoleUtils::command($model . ':', $count, ConsoleUtils::FG_CYAN);
                 }
             } else {
-                print ConsoleUtil::success('Database is up to date');
+                print ConsoleUtils::success('Database is up to date');
             }
             print PHP_EOL;
         }

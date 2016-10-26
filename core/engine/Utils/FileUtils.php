@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Package;
+namespace Engine\Utils;
 
 use Engine\Exception;
 
@@ -30,7 +30,7 @@ use Engine\Exception;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Utilities
+class FileUtils
 {
     /**
      * Create path if it doesn't exists.

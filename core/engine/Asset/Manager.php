@@ -21,7 +21,7 @@ namespace Engine\Asset;
 
 use Engine\Asset\Css\Less;
 use Engine\Behaviour\DIBehaviour;
-use Engine\Package\Utilities as FsUtilities;
+use Engine\Utils\FileUtils;
 use Phalcon\Assets\Filters\Cssmin;
 use Phalcon\Assets\Filters\Jsmin;
 use Phalcon\Assets\Manager as AssetManager;
@@ -112,7 +112,7 @@ class Manager extends AssetManager
             $lessCompileFunction = $this->_config->application->assets->get('lessCompileAlways') ?
                 'compileFile' : 'checkedCompile';
             $themeFiles = glob($themeDirectory . '/*.less');
-            FsUtilities::fsCheckLocation($location . 'css/');
+            FileUtils::fsCheckLocation($location . 'css/');
             foreach ($themeFiles as $file) {
                 $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
                 $less->{$lessCompileFunction}($file, $newFileName);
@@ -132,8 +132,8 @@ class Manager extends AssetManager
             // CSS
             $assetsPath = $sourcePath . ucfirst($packageName) . '/Assets/';
             $path = $location . 'css/' . $packageName . '/';
-            FsUtilities::fsCheckLocation($path);
-            $cssFiles = FsUtilities::fsRecursiveGlob($assetsPath . 'css/*');
+            FileUtils::fsCheckLocation($path);
+            $cssFiles = FileUtils::fsRecursiveGlob($assetsPath . 'css/*');
             $less->addImportDir($themeDirectory);
             foreach ($cssFiles as $file) {
                 if (!is_file($file)) {
@@ -143,7 +143,7 @@ class Manager extends AssetManager
                 $fileNameWithoutExt = basename($file, '.less');
                 $additionalPath = str_replace($fileName, '', str_replace($assetsPath . 'css/', '', $file));
                 if (pathinfo($file, PATHINFO_EXTENSION) == 'less') {
-                    FsUtilities::fsCheckLocation($path . $additionalPath);
+                    FileUtils::fsCheckLocation($path . $additionalPath);
                     $newFileName = $path . $additionalPath . $fileNameWithoutExt . '.css';
                     $less->checkedCompile($file, $newFileName);
                 } else {
@@ -153,18 +153,18 @@ class Manager extends AssetManager
 
             // JS
             $path = $location . 'js/' . $packageName . '/';
-            FsUtilities::fsCheckLocation($path);
-            FsUtilities::fsCopyRecursive($assetsPath . 'js', $path, true);
+            FileUtils::fsCheckLocation($path);
+            FileUtils::fsCopyRecursive($assetsPath . 'js', $path, true);
 
             // IMAGES
             $path = $location . 'img/' . $packageName . '/';
-            FsUtilities::fsCheckLocation($path);
-            FsUtilities::fsCopyRecursive($assetsPath . 'img', $path, true);
+            FileUtils::fsCheckLocation($path);
+            FileUtils::fsCopyRecursive($assetsPath . 'img', $path, true);
 
             // FONTS
             $path = $location . 'fonts/' . $packageName . '/';
-            FsUtilities::fsCheckLocation($path);
-            FsUtilities::fsCopyRecursive($assetsPath . 'fonts', $path, true);
+            FileUtils::fsCheckLocation($path);
+            FileUtils::fsCopyRecursive($assetsPath . 'fonts', $path, true);
         }
     }
 
@@ -179,7 +179,7 @@ class Manager extends AssetManager
     public function clear($refresh = true, $themeDirectory = '')
     {
         $location = $this->_getLocation();
-        $files = FsUtilities::fsRecursiveGlob($location, '*'); // get all file names
+        $files = FileUtils::fsRecursiveGlob($location, '*'); // get all file names
         // iterate files
         foreach ($files as $file) {
             if (is_file($file)) {

@@ -18,12 +18,9 @@
 
 namespace Engine;
 
-use Core\Command\Test;
-use Core\Command\Test2;
 use Engine\Console\AbstractCommand;
-use Engine\Console\Command\Assets;
-use Engine\Console\CommandsListener;
-use Engine\Console\ConsoleUtil;
+use Engine\Utils\ConsoleUtils;
+use Engine\Utils\StringUtils;
 
 /**
  * Console class.
@@ -100,7 +97,7 @@ class Cli extends Application
 
         // Iterate files.
         foreach ($files as $file) {
-            if ($file == "." || $file == "..") {
+            if (!StringUtils::endsWith($file, '.php')) {
                 continue;
             }
 
@@ -117,8 +114,8 @@ class Cli extends Application
      */
     public function getOutput()
     {
-        print ConsoleUtil::info('================================================================', true, 0);
-        print ConsoleUtil::info(
+        print ConsoleUtils::info('================================================================', true, 0);
+        print ConsoleUtils::info(
             "
            ___  __       __              ____
           / _ \/ / ___ _/ _______  ___  / ____ _____
@@ -127,11 +124,11 @@ class Cli extends Application
                                           /___/
                                           Commands Manager", false, 1
         );
-        print ConsoleUtil::info('================================================================', false, 2);
+        print ConsoleUtils::info('================================================================', false, 2);
 
         // Installation is required.
         if (!$this->_config->installed) {
-            print ConsoleUtil::error('Please, install system first.') . PHP_EOL;
+            print ConsoleUtils::error('Please, install system first.') . PHP_EOL;
             die();
         }
 
@@ -167,13 +164,13 @@ class Cli extends Application
         // Show exception with/without alternatives.
         $soundex = soundex($_SERVER['argv'][1]);
         if (isset($available[$soundex])) {
-            print ConsoleUtil::warningLine(
+            print ConsoleUtils::warningLine(
                 'Command "' . $_SERVER['argv'][1] .
                 '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
             );
             $this->printAvailableCommands();
         } else {
-            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][1] . '" not found.');
+            print ConsoleUtils::warningLine('Command "' . $_SERVER['argv'][1] . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -185,9 +182,9 @@ class Cli extends Application
      */
     public function printAvailableCommands()
     {
-        print ConsoleUtil::head('Available commands:');
+        print ConsoleUtils::head('Available commands:');
         foreach ($this->_commands as $command) {
-            print ConsoleUtil::command(join(', ', $command->getCommands()), $command->getDescription());
+            print ConsoleUtils::command(join(', ', $command->getCommands()), $command->getDescription());
         }
         print PHP_EOL;
     }
@@ -233,7 +230,7 @@ class Cli extends Application
 
         $command = $this->_getRequiredCommand($_SERVER['argv'][2]);
         if (!$command) {
-            print ConsoleUtil::warningLine('Command "' . $_SERVER['argv'][2] . '" not found.');
+            print ConsoleUtils::warningLine('Command "' . $_SERVER['argv'][2] . '" not found.');
             return true;
         }
 

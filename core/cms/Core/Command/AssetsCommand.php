@@ -22,7 +22,7 @@ use Core\Model\SettingsModel;
 use Engine\Asset\Manager;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
-use Engine\Console\ConsoleUtil;
+use Engine\Utils\ConsoleUtils;
 
 /**
  * Assets command.
@@ -49,6 +49,6 @@ class AssetsCommand extends AbstractCommand implements CommandInterface
         $assetsManager = new Manager($this->getDI(), false);
         $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
 
-        print ConsoleUtil::success('Assets successfully installed.') . PHP_EOL;
+        print ConsoleUtils::success('Assets successfully installed.') . PHP_EOL;
     }
 }

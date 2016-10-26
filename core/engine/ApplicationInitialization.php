@@ -25,6 +25,7 @@ use Engine\Cache\Dummy;
 use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception\PrettyExceptions;
+use Engine\Utils\StringUtils;
 use Engine\Widget\Catalog;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
@@ -302,7 +303,7 @@ trait ApplicationInitialization
 
                     // Iterate files.
                     foreach ($files as $file) {
-                        if ($file == "." || $file == ".." || strpos($file, 'Controller.php') === false) {
+                        if (!StringUtils::endsWith($file, 'Controller.php')) {
                             continue;
                         }
                         $controllerFile = str_replace('Controller.php', '', $file);

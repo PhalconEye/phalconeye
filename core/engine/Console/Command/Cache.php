@@ -20,8 +20,7 @@ namespace Engine\Console\Command;
 
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
-use Engine\Console\ConsoleUtil;
-use Phalcon\DI;
+use Engine\Utils\ConsoleUtils;
 
 /**
  * Cache command.
@@ -47,6 +46,6 @@ class Cache extends AbstractCommand implements CommandInterface
     {
         $this->getDI()->get('app')->clearCache();
 
-        print ConsoleUtil::success('Cache successfully removed.') . PHP_EOL;
+        print ConsoleUtils::success('Cache successfully removed.') . PHP_EOL;
     }
 }

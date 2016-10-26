@@ -238,27 +238,27 @@ abstract class AbstractCommand implements CommandInterface
         $commandName = $this->getName();
         if ($action) {
             if (empty($this->_actions[$action])) {
-                print ConsoleUtil::warningLine("Action '$action' not found in this command.");
+                print ConsoleUtils::warningLine("Action '$action' not found in this command.");
                 return;
             }
 
-            print ConsoleUtil::head('Help for "' . $commandName . ' ' . $action . '":');
+            print ConsoleUtils::head('Help for "' . $commandName . ' ' . $action . '":');
             if (isset($this->_actions[$action]) && isset($this->_actions[$action]['description'])) {
-                print ConsoleUtil::text($this->_actions[$action]['description']);
+                print ConsoleUtils::text($this->_actions[$action]['description']);
             } else {
-                print ConsoleUtil::text($this->getDescription());
+                print ConsoleUtils::text($this->getDescription());
             }
 
             $this->printParameters($action);
             return;
         } else {
-            print ConsoleUtil::head('Help:');
-            print ConsoleUtil::text($this->getDescription());
+            print ConsoleUtils::head('Help:');
+            print ConsoleUtils::text($this->getDescription());
         }
 
         foreach ($this->getActions() as $actionName => $metadata) {
             $description = isset($metadata['description']) ? $metadata['description'] : '';
-            print ConsoleUtil::command($commandName . ' ' . $actionName, $description);
+            print ConsoleUtils::command($commandName . ' ' . $actionName, $description);
         }
         print PHP_EOL;
     }
@@ -285,7 +285,7 @@ abstract class AbstractCommand implements CommandInterface
             return;
         }
 
-        print ConsoleUtil::head('Available parameters:');
+        print ConsoleUtils::head('Available parameters:');
         foreach ($this->_actions[$action]['params'] as $parameter) {
             $cmd = ' --' . $parameter['name'];
             $type = '';
@@ -296,10 +296,10 @@ abstract class AbstractCommand implements CommandInterface
             }
 
             print '  ';
-            print ConsoleUtil::colorize($cmd, ConsoleUtil::FG_CYAN);
-            print ConsoleUtil::colorize($type, ConsoleUtil::FG_YELLOW);
-            print ConsoleUtil::tab(ConsoleUtil::COMMENT_START_POSITION, strlen($cmd . $type) + 6);
-            print ConsoleUtil::colorize($parameter['description'], ConsoleUtil::FG_BROWN);
+            print ConsoleUtils::colorize($cmd, ConsoleUtils::FG_CYAN);
+            print ConsoleUtils::colorize($type, ConsoleUtils::FG_YELLOW);
+            print ConsoleUtils::tab(ConsoleUtils::COMMENT_START_POSITION, strlen($cmd . $type) + 6);
+            print ConsoleUtils::colorize($parameter['description'], ConsoleUtils::FG_BROWN);
             print PHP_EOL;
         }
     }
@@ -326,7 +326,7 @@ abstract class AbstractCommand implements CommandInterface
             $result = $validator->validate(['value' => $line]);
             if ($result && $result->count() > 0) {
                 foreach ($result as $message) {
-                    print ConsoleUtil::error($message) . PHP_EOL;
+                    print ConsoleUtils::error($message) . PHP_EOL;
                 }
                 return $this->_readline($prompt, $validation);
             }
@@ -370,7 +370,7 @@ abstract class AbstractCommand implements CommandInterface
 
                 // If wee entered unavailable method wee need to show an error and help info.
                 if (!array_key_exists($argv, $this->_actions)) {
-                    print ConsoleUtil::error(
+                    print ConsoleUtils::error(
                         sprintf(
                             'Action "%s" not found in command "%s"...',
                             $argv,
@@ -422,7 +422,7 @@ abstract class AbstractCommand implements CommandInterface
                     $actionParams['defaultValueType'] == '<required>' &&
                     empty($this->_parameters[$actionParams['name']])
                 ) {
-                    print ConsoleUtil::error(
+                    print ConsoleUtils::error(
                         sprintf(
                             'Parameter "%s" is required!',
                             $actionParams['name']
@@ -437,7 +437,7 @@ abstract class AbstractCommand implements CommandInterface
                     $actionParams['defaultValueType'] != 'boolean' &&
                     in_array($actionParams['name'], $withoutValue)
                 ) {
-                    print ConsoleUtil::error(
+                    print ConsoleUtils::error(
                         sprintf(
                             'Parameter "%s" must have value!',
                             $actionParams['name']
