@@ -21,7 +21,8 @@ namespace Engine\Package;
 use Engine\Application;
 use Engine\Behaviour\DIBehaviour;
 use Engine\Config;
-use Engine\Package\Exception\InvalidManifest;
+use Engine\Package\Exception\InvalidManifestException;
+use Engine\Package\Exception\PackageExistsException;
 use Engine\Package\Model\AbstractPackage;
 use Phalcon\DI;
 use Phalcon\Filter as PhalconFilter;
@@ -67,7 +68,12 @@ class Manager
         /**
          * Package manifest file name.
          */
-        PACKAGE_MANIFEST_NAME = 'manifest.json';
+        PACKAGE_MANIFEST_NAME = 'manifest.json',
+
+        /**
+         * Packages structure location.
+         */
+        PACKAGE_STRUCTURE_LOCATION = ROOT_PATH . DS . 'core' . DS . 'engine' . DS . 'Package' . DS . 'Structure' . DS;
 
     /**
      * Allowed types of packages.
@@ -183,6 +189,13 @@ class Manager
      */
     public function createPackage($data)
     {
+        // Check that package doesn't exists.
+        $config = $this->getDI()->getConfig();
+        $existingPackages = $config->packages->{$data['type']}->toArray();
+        if (in_array($data['name'], $existingPackages)) {
+            throw new PackageExistsException("Package with that name already exists!");
+        }
+
         $data['defaultModuleUpper'] = ucfirst(Application::CMS_MODULE_CORE);
         $data['nameUpper'] = ucfirst($data['name']);
         $data['moduleNamespace'] = '';
@@ -202,10 +215,7 @@ class Manager
 
         // copy package structure
         Utilities::fsCopyRecursive(
-            __DIR__ .
-            DIRECTORY_SEPARATOR .
-            DIRECTORY_SEPARATOR .
-            $data['type'],
+            self::PACKAGE_STRUCTURE_LOCATION . $data['type'],
             $packageLocation,
             false,
             ['.gitignore']
@@ -238,6 +248,11 @@ class Manager
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
+
+        // Update packages config.
+        $existingPackages[] = $data['name'];
+        $config->packages->{$data['type']} = $existingPackages;
+        $config->save(Config::CONFIG_SECTION_PACKAGES);
     }
 
     /**
@@ -582,14 +597,14 @@ class Manager
      *
      * @param string $manifestLocation Manifest path.
      *
-     * @throws InvalidManifest
+     * @throws InvalidManifestException
      * @return Config
      */
     private function _readPackageManifest($manifestLocation)
     {
         // check manifest existence
         if (!file_exists($manifestLocation)) {
-            throw new InvalidManifest('Missing manifest file in uploaded package.');
+            throw new InvalidManifestException('Missing manifest file in uploaded package.');
         }
 
         // check manifest is correct
@@ -598,7 +613,7 @@ class Manager
             !($manifest = json_decode($manifest, true)) ||
             !$this->_checkPackageManifest($manifest)
         ) {
-            throw new InvalidManifest('Manifest file is invalid or damaged.');
+            throw new InvalidManifestException('Manifest file is invalid or damaged.');
         }
 
         return new Config($manifest);

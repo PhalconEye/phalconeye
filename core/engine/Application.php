@@ -135,7 +135,7 @@ class Application extends PhalconApplication
          * Setup Registry.
          */
         $registry = new Registry();
-        $registry->widgets = $this->_config->packages->widgets->toArray();
+        $registry->widgets = $this->_config->packages->widget->toArray();
 
         $registry->offsetSet(
             'directories',
@@ -152,8 +152,8 @@ class Application extends PhalconApplication
         $sysmodules = [
             self::CMS_MODULE_CORE => $registry->directories->cms,
             self::CMS_MODULE_USER => $registry->directories->cms];
-        $modules = array_fill_keys($this->_config->packages->modules->toArray(), $registry->directories->modules);
-        $registry->offsetSet('modules', array_merge($modules, $sysmodules));
+        $modules = array_fill_keys($this->_config->packages->module->toArray(), $registry->directories->modules);
+        $registry->offsetSet('modules', array_merge($sysmodules, $modules));
 
         $di->set('registry', $registry);
 
@@ -307,7 +307,8 @@ class Application extends PhalconApplication
     protected function _attachEngineEvents($eventsManager, $config)
     {
         // Attach modules plugins events.
-        $events = $config->packages->events->toArray();
+        // @TODO: fix this after refactoring.
+        $events = $config->packages->plugin->toArray();
         $cache = [];
         foreach ($events as $item) {
             list ($class, $event) = explode('=', $item);

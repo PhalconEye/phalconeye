@@ -318,7 +318,7 @@ final class ConsoleUtil
      *
      * @return string
      */
-    public static function infoLine($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtil::FG_GREEN)
+    public static function info($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtil::FG_GREEN)
     {
         $out = '';
         if ($lineBefore) {
@@ -343,7 +343,7 @@ final class ConsoleUtil
      *
      * @return string
      */
-    public static function headLine($msg)
+    public static function head($msg)
     {
         return self::colorize($msg, ConsoleUtil::FG_BROWN) . PHP_EOL;
     }
@@ -358,7 +358,7 @@ final class ConsoleUtil
      *
      * @return string
      */
-    public static function commandLine(
+    public static function command(
         $cmd,
         $comment = '',
         $commentColor = ConsoleUtil::FG_BROWN,
@@ -381,7 +381,7 @@ final class ConsoleUtil
      *
      * @return string
      */
-    public static function textLine($msg)
+    public static function text($msg)
     {
         return self::colorize('  ' . $msg) . PHP_EOL . PHP_EOL;
     }

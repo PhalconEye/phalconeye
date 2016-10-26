@@ -23,9 +23,10 @@
 */
 
 return array(
-    'modules' =>
-        array(),
-    'widgets' =>
+    'module' => array(0 => 'main'),
+    'plugin' => array(),
+    'theme' => array(),
+    'widget' =>
         array(
             0 => 'demo',
         )

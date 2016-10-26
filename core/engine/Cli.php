@@ -117,8 +117,8 @@ class Cli extends Application
      */
     public function getOutput()
     {
-        print ConsoleUtil::infoLine('================================================================', true, 0);
-        print ConsoleUtil::infoLine(
+        print ConsoleUtil::info('================================================================', true, 0);
+        print ConsoleUtil::info(
             "
            ___  __       __              ____
           / _ \/ / ___ _/ _______  ___  / ____ _____
@@ -127,7 +127,7 @@ class Cli extends Application
                                           /___/
                                           Commands Manager", false, 1
         );
-        print ConsoleUtil::infoLine('================================================================', false, 2);
+        print ConsoleUtil::info('================================================================', false, 2);
 
         // Installation is required.
         if (!$this->_config->installed) {
@@ -185,9 +185,9 @@ class Cli extends Application
      */
     public function printAvailableCommands()
     {
-        print ConsoleUtil::headLine('Available commands:');
+        print ConsoleUtil::head('Available commands:');
         foreach ($this->_commands as $command) {
-            print ConsoleUtil::commandLine(join(', ', $command->getCommands()), $command->getDescription());
+            print ConsoleUtil::command(join(', ', $command->getCommands()), $command->getDescription());
         }
         print PHP_EOL;
     }

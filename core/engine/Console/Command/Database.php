@@ -58,8 +58,8 @@ class Database extends AbstractCommand implements CommandInterface
             }
             $count = current($schema->updateTable($model));
             if ($count) {
-                print ConsoleUtil::headLine('Table update for model: ' . $model);
-                print ConsoleUtil::commandLine('Executed queries:', $count, ConsoleUtil::FG_CYAN);
+                print ConsoleUtil::head('Table update for model: ' . $model);
+                print ConsoleUtil::command('Executed queries:', $count, ConsoleUtil::FG_CYAN);
             } else {
                 print ConsoleUtil::success('Table is up to date');
             }
@@ -67,9 +67,9 @@ class Database extends AbstractCommand implements CommandInterface
         } else {
             $queriesCount = $schema->updateDatabase($cleanup);
             if (!empty($queriesCount)) {
-                print ConsoleUtil::headLine('Database update:');
+                print ConsoleUtil::head('Database update:');
                 foreach ($queriesCount as $model => $count) {
-                    print ConsoleUtil::commandLine($model . ':', $count, ConsoleUtil::FG_CYAN);
+                    print ConsoleUtil::command($model . ':', $count, ConsoleUtil::FG_CYAN);
                 }
             } else {
                 print ConsoleUtil::success('Database is up to date');

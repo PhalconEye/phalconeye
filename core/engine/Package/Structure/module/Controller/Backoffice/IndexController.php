@@ -1,39 +1,24 @@
 <?php
-/*
-  +------------------------------------------------------------------------+
-  | PhalconEye CMS                                                         |
-  +------------------------------------------------------------------------+
-  | Copyright (c) 2013-2014 PhalconEye Team (http://phalconeye.com/)       |
-  +------------------------------------------------------------------------+
-  | This source file is subject to the New BSD License that is bundled     |
-  | with this package in the file LICENSE.txt.                             |
-  |                                                                        |
-  | If you did not receive a copy of the license and are unable to         |
-  | obtain it through the world-wide-web, please send an email             |
-  | to license@phalconeye.com so we can send you a copy immediately.       |
-  +------------------------------------------------------------------------+
-*/
-%header%
-namespace %nameUpper%\Controller;
+namespace %nameUpper%\Controller\Backoffice;
 
-use %defaultModuleUpper%\Controller\AbstractController;
+use %defaultModuleUpper%\Controller\Backoffice\AbstractBackofficeController;
 
 /**
- * Index controller.
+ * Backoffice Index controller.
  *
  * @category PhalconEye\Module
  * @package  Controller
  *
- * @RoutePrefix("/backoffice/%name%s", name="%name%s")
+ * @RoutePrefix("/backoffice/%name%")
  */
-class IndexController extends AbstractController
+class IndexController extends AbstractBackofficeController
 {
     /**
      * Module index action.
      *
      * @return void
      *
-     * @Route("/", methods={"GET"}, name="%name%s")
+     * @Route("/", methods={"GET"}, name="backoffice-%name%")
      */
     public function indexAction()
     {

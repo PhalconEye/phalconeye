@@ -242,23 +242,23 @@ abstract class AbstractCommand implements CommandInterface
                 return;
             }
 
-            print ConsoleUtil::headLine('Help for "' . $commandName . ' ' . $action . '":');
+            print ConsoleUtil::head('Help for "' . $commandName . ' ' . $action . '":');
             if (isset($this->_actions[$action]) && isset($this->_actions[$action]['description'])) {
-                print ConsoleUtil::textLine($this->_actions[$action]['description']);
+                print ConsoleUtil::text($this->_actions[$action]['description']);
             } else {
-                print ConsoleUtil::textLine($this->getDescription());
+                print ConsoleUtil::text($this->getDescription());
             }
 
             $this->printParameters($action);
             return;
         } else {
-            print ConsoleUtil::headLine('Help:');
-            print ConsoleUtil::textLine($this->getDescription());
+            print ConsoleUtil::head('Help:');
+            print ConsoleUtil::text($this->getDescription());
         }
 
         foreach ($this->getActions() as $actionName => $metadata) {
             $description = isset($metadata['description']) ? $metadata['description'] : '';
-            print ConsoleUtil::commandLine($commandName . ' ' . $actionName, $description);
+            print ConsoleUtil::command($commandName . ' ' . $actionName, $description);
         }
         print PHP_EOL;
     }
@@ -285,7 +285,7 @@ abstract class AbstractCommand implements CommandInterface
             return;
         }
 
-        print ConsoleUtil::headLine('Available parameters:');
+        print ConsoleUtil::head('Available parameters:');
         foreach ($this->_actions[$action]['params'] as $parameter) {
             $cmd = ' --' . $parameter['name'];
             $type = '';

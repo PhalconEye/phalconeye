@@ -2,4 +2,5 @@
 - dynamic modules navigation in backoffice
 - cleanup package manager.
 - check that all type of resources can be overrided from app folder
-- update system
+- update system + check schema update flow.
+- composer stuff

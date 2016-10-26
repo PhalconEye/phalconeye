@@ -21,7 +21,7 @@ namespace Engine\Package;
 use Engine\Exception;
 
 /**
- * Current url helper.
+ * Global package exception.
  *
  * @category  PhalconEye
  * @package   Engine\Helper

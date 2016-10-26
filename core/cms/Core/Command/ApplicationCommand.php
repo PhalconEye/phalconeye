@@ -100,7 +100,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
         $packages = [];
         $widgets = [];
 
-        print ConsoleUtil::headLine('Checking packages existence...');
+        print ConsoleUtil::head('Checking packages existence...');
         foreach (scandir(ROOT_PATH . Config::CONFIG_METADATA_PACKAGES) as $file) {
             if ($file == '.' || $file == '..' || substr($file, -5) != '.json') {
                 continue;
@@ -131,9 +131,9 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
             if (!$packageInDB) {
                 if ($packageFromManifest->save()) {
                     $packages[] = $packageFromManifest->type . '.' . $packageFromManifest->name;
-                    print ConsoleUtil::infoLine('Created', false, 1);
+                    print ConsoleUtil::info('Created', false, 1);
                 } else {
-                    print ConsoleUtil::infoLine('Failed', false, 1, ConsoleUtil::FG_RED);
+                    print ConsoleUtil::info('Failed', false, 1, ConsoleUtil::FG_RED);
                     $messages = iterator_to_array($packageFromManifest->getMessages());
                     $this->getDI()->getLogger()->error(
                         'Failed to created package "' . $packageParts[1] . '": ' .
@@ -142,7 +142,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
                 }
             } else {
                 $packages[] = $packageFromManifest->type . '.' . $packageFromManifest->name;
-                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
+                print ConsoleUtil::info('Exists.', false, 1, ConsoleUtil::FG_GREEN);
             }
         }
 
@@ -160,7 +160,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
      */
     protected function _checkMissingWidgets($modulesWidgets, $notFoundWidgets)
     {
-        print ConsoleUtil::headLine('Checking widgets existence...');
+        print ConsoleUtil::head('Checking widgets existence...');
         foreach ($modulesWidgets as $module => $widgets) {
             foreach ($widgets as $widgetObject) {
                 $this->_info('Widget ' . $module . '.' . $widgetObject['name'] . ': ');
@@ -169,9 +169,9 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
                 if (!$widget) {
                     $widget = new WidgetModel();
                     if ($widget->save($widgetObject)) {
-                        print ConsoleUtil::infoLine('Created.', false, 1);
+                        print ConsoleUtil::info('Created.', false, 1);
                     } else {
-                        print ConsoleUtil::infoLine('Failed.', false, 1, ConsoleUtil::FG_RED);
+                        print ConsoleUtil::info('Failed.', false, 1, ConsoleUtil::FG_RED);
                         $messages = iterator_to_array($widget->getMessages());
                         $this->getDI()->getLogger()->error(
                             'Failed to created widget "' . $module . '"."' . $widgetObject . '": ' .
@@ -179,7 +179,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
                         );
                     }
                 } else {
-                    print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
+                    print ConsoleUtil::info('Exists.', false, 1, ConsoleUtil::FG_GREEN);
                 }
             }
         }
@@ -189,15 +189,15 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
 
             $widget = WidgetModel::findFirstByName($widgetObject->name);
             if ($widget) {
-                print ConsoleUtil::infoLine('Exists.', false, 1, ConsoleUtil::FG_GREEN);
+                print ConsoleUtil::info('Exists.', false, 1, ConsoleUtil::FG_GREEN);
                 continue;
             }
 
             $widget = new WidgetModel();
             if ($widget->save($widgetObject->toArray())) {
-                print ConsoleUtil::infoLine('Created.', false, 1);
+                print ConsoleUtil::info('Created.', false, 1);
             } else {
-                print ConsoleUtil::infoLine('Failed.', false, 1, ConsoleUtil::FG_RED);
+                print ConsoleUtil::info('Failed.', false, 1, ConsoleUtil::FG_RED);
                 $messages = iterator_to_array($widget->getMessages());
                 $this->getDI()->getLogger()->error(
                     'Failed to created widget "' . $widgetObject . '": ' .
@@ -219,7 +219,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
     protected function _removeUnusedPackages($packages)
     {
         // Get packages from databases.
-        print ConsoleUtil::headLine('Checking unused packages...');
+        print ConsoleUtil::head('Checking unused packages...');
         foreach (PackageModel::find() as $package) {
             if (!in_array($package->type . '.' . $package->name, $packages)) {
                 // Check that this is not a widget that is related to module.
@@ -247,7 +247,7 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
     protected function _removeUnusedWidgets($widgets)
     {
         // Get widgets from databases.
-        print ConsoleUtil::headLine('Checking unused widgets...');
+        print ConsoleUtil::head('Checking unused widgets...');
         foreach (WidgetModel::find() as $widget) {
             if (!in_array($widget->name, $widgets)) {
                 $this->_info('Removing unused widget: ' . $widget->name . PHP_EOL);
@@ -298,6 +298,6 @@ class ApplicationCommand extends AbstractCommand implements CommandInterface
      */
     protected function _info($msg)
     {
-        print ConsoleUtil::infoLine($msg, false, 0, ConsoleUtil::FG_CYAN);
+        print ConsoleUtil::info($msg, false, 0, ConsoleUtil::FG_CYAN);
     }
 }

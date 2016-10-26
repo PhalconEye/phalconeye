@@ -67,7 +67,17 @@ class Config extends PhalconConfig
         /**
          * Default configuration section.
          */
-        CONFIG_DEFAULT_SECTION = 'application';
+        CONFIG_SECTION_APPLICATION = 'application',
+
+        /**
+         * Default configuration section.
+         */
+        CONFIG_SECTION_DATABASE = 'database',
+
+        /**
+         * Default configuration section.
+         */
+        CONFIG_SECTION_PACKAGES = 'packages';
 
     /**
      * Current config stage.
@@ -132,7 +142,7 @@ class Config extends PhalconConfig
      *
      * @return void
      */
-    public function save($sections = self::CONFIG_DEFAULT_SECTION)
+    public function save($sections = self::CONFIG_SECTION_APPLICATION)
     {
         if (!$this->_currentStage) {
             return;

@@ -3,7 +3,7 @@
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
-  | Copyright (c) 2016 PhalconEye Team (http://phalconeye.com/)            |
+  | Copyright (c) 2013-2016 PhalconEye Team (http://phalconeye.com/)       |
   +------------------------------------------------------------------------+
   | This source file is subject to the New BSD License that is bundled     |
   | with this package in the file LICENSE.txt.                             |
@@ -15,17 +15,26 @@
 */
 
 /**
- * WARNING
- *
- * Manual changes to this file may cause a malfunction of the system.
- * Be careful when changing settings!
- *
- */
+* WARNING
+*
+* Manual changes to this file may cause a malfunction of the system.
+* Be careful when changing settings!
+*
+*/
 
-return array(
-    'modules' => array(),
-    'events' => array(),
-    'widgets' => array(
-        0 => 'demo',
-    )
+return array (
+  'module' => 
+  array (
+    0 => 'main',
+  ),
+  'plugin' => 
+  array (
+  ),
+  'theme' => 
+  array (
+  ),
+  'widget' => 
+  array (
+    0 => 'demo',
+  ),
 );

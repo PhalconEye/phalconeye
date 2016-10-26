@@ -26,6 +26,7 @@ use Engine\Console\CommandInterface;
 use Engine\Console\ConsoleUtil;
 use Engine\Exception;
 use Engine\Package\Manager;
+use Engine\Package\PackageException;
 use Phalcon\Validation\Validator\StringLength;
 
 /**
@@ -60,8 +61,15 @@ class PackageCommand extends AbstractCommand implements CommandInterface
 
         $packageManager = new Manager();
         $data = $this->_collectGenerationData($type);
-        $packageManager->createPackage($data);
-        var_dump($data);
+
+        try {
+            $packageManager->createPackage($data);
+        } catch (PackageException $ex) {
+            print ConsoleUtil::error($ex->getMessage()) . PHP_EOL;
+            return;
+        }
+
+        print PHP_EOL . ConsoleUtil::success("Package generation completed!") . PHP_EOL;
     }
 
     /**
@@ -87,7 +95,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     {
         $data = ['type' => $type];
         $data['name'] = $this->_readline(
-            "Package name: ",
+            "Package name (lower case): ",
             new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3])
         );
         $data['nameUpper'] = ucfirst($data['name']);

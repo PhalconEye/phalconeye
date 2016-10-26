@@ -111,7 +111,6 @@ trait ApplicationInitialization
         $namespaces['Engine'] = $registry->directories->engine;
         $namespaces['Plugin'] = $registry->directories->plugins;
         $namespaces['Widget'] = $registry->directories->widgets;
-        $namespaces['Library'] = $registry->directories->libraries;
 
         $loader = new Loader();
         $loader->registerNamespaces($namespaces);

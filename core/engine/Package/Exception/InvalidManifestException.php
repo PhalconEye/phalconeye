@@ -30,6 +30,6 @@ use Engine\Package\PackageException;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class InvalidManifest extends PackageException
+class InvalidManifestException extends PackageException
 {
 }

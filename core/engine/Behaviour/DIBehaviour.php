@@ -40,12 +40,12 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Router getRouter()
  * @method \Phalcon\Db\Adapter\Pdo\Mysql getDb()
  * @method \Phalcon\Mvc\Model\Manager getModelsManager()
- * @method \Phalcon\Config getConfig()
  * @method \Phalcon\Translate\Adapter getI18n()
  * @method \Phalcon\Events\Manager getEventsManager()
  * @method \Phalcon\Session\Adapter getSession()
  * @method \Phalcon\Registry getRegistry()
  *
+ * @method \Engine\Config getConfig()
  * @method \Engine\Asset\Manager getAssets()
  * @method \Engine\View getView()
  * @method \Engine\Profiler getProfiler()
