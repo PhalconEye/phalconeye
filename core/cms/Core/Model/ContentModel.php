@@ -19,6 +19,7 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
+use Engine\Package\WidgetData;
 
 /**
  * Content.
@@ -31,9 +32,6 @@ use Engine\Db\AbstractModel;
  * @link      http://phalconeye.com/
  *
  * @Source("content")
- * @BelongsTo("widget_id", "\Core\Model\WidgetModel", "id", {
- *  "alias": "WidgetModel"
- * })
  * @BelongsTo("page_id", "\Core\Model\PageModel", "id", {
  *  "alias": "PageModel"
  * })
@@ -53,9 +51,9 @@ class ContentModel extends AbstractModel
     public $page_id;
 
     /**
-     * @Column(type="integer", nullable=false, column="widget_id", size="11")
+     * @Column(type="string", nullable=false, column="widget_code", size="50")
      */
-    public $widget_id;
+    public $widget_code;
 
     /**
      * @Column(type="integer", nullable=false, column="widget_order", size="5")
@@ -73,15 +71,14 @@ class ContentModel extends AbstractModel
     public $params;
 
     /**
-     * Return the related "Widget" model.
+     * Get widget data.
      *
-     * @param array $arguments Model arguments.
-     *
-     * @return WidgetModel
+     * @return WidgetData
      */
-    public function getWidget($arguments = [])
+    public function getWidget() : WidgetData
     {
-        return $this->getRelated('WidgetModel', $arguments);
+        // @TODO;
+        return null;
     }
 
     /**

@@ -35,17 +35,6 @@ INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywor
 (4, 'Forms', NULL, 'forms', 'Test Page', NULL, 'middle', NULL, NULL, 0);
 
 --
--- Dumping data for table `widgets`
---
-
-INSERT IGNORE INTO `widgets` (`id`, `name`, `module`, `description`, `is_paginated`, `is_acl_controlled`, `admin_form`, `enabled`) VALUES
-(1, 'HtmlBlock', 'core', 'Insert any HTML of you choice', 0, 1, 'action', 1),
-(2, 'Menu', 'core', 'Render menu', 0, 1, '\\Core\\Form\\Backoffice\\Widget\\WidgetMenuForm', 1),
-(3, 'Header', 'core', 'Settings for header of you site.', 0, 1, '\\Core\\Form\\Backoffice\\Widget\\WidgetHeaderForm', 1),
-(4, 'Slider', 'core', 'Dynamic content slider', 0, 1, 'action', 1),
-(5, 'Demo', NULL, 'Displays forms and other structures', 0, 0, NULL, 1);
-
---
 -- Dumping data for table `content`
 --
 
@@ -87,16 +76,6 @@ INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id
 (4, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'right', 'files/github.png', 'left', NULL, NULL, 1, 2),
 (5, 'Control elements', 1, 2, NULL, 'page/forms#color', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 1),
 (6, 'File elements', 1, 2, NULL, 'page/forms#scheme', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 2);
-
---
--- Dumping data for table `packages`
---
-
-INSERT IGNORE INTO `packages` (`id`, `name`, `type`, `title`, `description`, `version`, `author`, `website`, `enabled`, `is_system`, `data`) VALUES
-(1, 'core', 'module', 'Core', 'PhalconEye Core', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 1, NULL),
-(2, 'user', 'module', 'Users', 'PhalconEye Users', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 1, NULL),
-(3, 'demo', 'widget', 'Demo Widget', 'Displays forms and other structures', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 0, '{"widget_id":"5"}'),
-(4, 'light', 'theme', 'LightEye', 'Lighter version of the default theme.', '0.4.0', 'PhalconEye Team', 'http://phalconeye.com/', 1, 0, NULL);
 
 --
 -- Dumping data for table `settings`

@@ -26,7 +26,8 @@ use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception\PrettyExceptions;
 use Engine\Utils\StringUtils;
-use Engine\Widget\Catalog;
+use Engine\Widget\WidgetCatalog;
+use Engine\Widget\WidgetData;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
 use Phalcon\Cache\Frontend\Output as CacheOutput;
@@ -537,6 +538,44 @@ trait ApplicationInitialization
     }
 
     /**
+     * Prepare widgets metadata for Engine.
+     *
+     * @param DIBehaviour|DI $di Dependency injection.
+     *
+     * @return void
+     */
+    protected function _initWidgets($di)
+    {
+        if ($di->getApp()->isConsole()) {
+            return;
+        }
+
+        $cache = $di->getCacheData();
+        $widgets = $cache->get(System::CACHE_KEY_WIDGETS_METADATA);
+        $widgetsCatalog = new WidgetCatalog();
+
+        if ($widgets === null) {
+            $widgets = [];
+
+            // Add external widgets.
+            foreach ($di->getRegistry()->widgets as $widget) {
+                $widgets[] = new WidgetData($widget, null, $di);
+            }
+
+            // Iterate through modules and get widgets.
+            foreach ($di->getRegistry()->modules as $module => $path) {
+                $widgets = array_merge($widgets, WidgetCatalog::getWidgetsFromModule($module, $path));
+            }
+
+            $cache->save(System::CACHE_KEY_WIDGETS_METADATA, $widgets, 0); // Unlimited.
+        }
+
+        // Collect widgets.
+        $widgetsCatalog->addAll($widgets);
+        $di->setShared('widgets', $widgetsCatalog);
+    }
+
+    /**
      * Init engine.
      *
      * @param DIBehaviour|DI $di Dependency Injection.
@@ -562,6 +601,5 @@ trait ApplicationInitialization
             }
         );
         $di->setShared('assets', new AssetsManager($di));
-        $di->setShared('widgets', new Catalog());
     }
 }

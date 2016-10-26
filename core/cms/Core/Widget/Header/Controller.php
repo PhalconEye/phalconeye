@@ -45,4 +45,14 @@ class Controller extends WidgetController
         $this->view->show_title = $this->getParam('show_title');
         $this->view->show_auth = $this->getParam('show_auth');
     }
+
+    /**
+     * Is widget display controlled by ACL?
+     *
+     * @return bool
+     */
+    public function isAclControlled()
+    {
+        return true;
+    }
 }

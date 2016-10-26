@@ -48,7 +48,7 @@ use Phalcon\Mvc\Controller as PhalconController;
  * @property \Phalcon\Translate\Adapter $i18n
  * @property DIBehaviour|DI             $di
  *
- * @method \Engine\DIBehaviour|\Phalcon\DI getDI()
+ * @method DIBehaviour|Di getDI()
  */
 abstract class AbstractController extends PhalconController
 {
@@ -162,7 +162,7 @@ abstract class AbstractController extends PhalconController
         $content = [];
         $renderer = RendererHelper::getInstance($this->getDI());
         foreach ($page->getWidgets() as $widget) {
-            $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_id, $widget->getParams());
+            $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_code, $widget->getParams());
         }
 
         $this->renderParts($renderer);

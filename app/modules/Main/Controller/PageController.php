@@ -23,8 +23,8 @@ use Core\Controller\PageController as CorePageController;
 /**
  * Page selection controller.
  *
- * @category  PhalconEye
- * @package   Core\Controller
+ * @category  PhalconEye\Module
+ * @package   Main\Controller
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

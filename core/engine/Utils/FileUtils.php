@@ -37,7 +37,7 @@ class FileUtils
      *
      * @param string $path Path.
      */
-    static public function fsCheckLocation($path)
+    static public function createIfMissing($path)
     {
         if (!is_dir($path)) {
             @mkdir($path, 0755, true);
@@ -54,7 +54,7 @@ class FileUtils
      *
      * @throws \Engine\Exception
      */
-    static public function fsCopyRecursive($source, $dest, $statFiles = false, $excludeNames = [])
+    static public function copyRecursive($source, $dest, $statFiles = false, $excludeNames = [])
     {
         if (!is_dir($source)) {
             return;
@@ -95,7 +95,7 @@ class FileUtils
      *
      * @throws Exception
      */
-    static public function fsRmdirRecursive($path, $includeSelf = false)
+    static public function removeRecursive($path, $includeSelf = false)
     {
         $it = new \RecursiveIteratorIterator(
             new \RecursiveDirectoryIterator($path, \RecursiveDirectoryIterator::KEY_AS_PATHNAME),
@@ -132,7 +132,7 @@ class FileUtils
      *
      * @return array
      */
-    static public function fsRecursiveGlob($defaultPath = '', $pattern = '*', $flags = 0)
+    static public function globRecursive($defaultPath = '', $pattern = '*', $flags = 0)
     {
         $paths = glob($defaultPath . '*', GLOB_MARK | GLOB_ONLYDIR | GLOB_NOSORT);
         $files = glob($defaultPath . $pattern, $flags);
@@ -143,7 +143,7 @@ class FileUtils
             return $files; // error or empty match for sub directories.
         }
         foreach ($paths as $path) {
-            $files = array_merge($files, self::fsRecursiveGlob($path, $pattern, $flags));
+            $files = array_merge($files, self::globRecursive($path, $pattern, $flags));
         }
 
         return $files;

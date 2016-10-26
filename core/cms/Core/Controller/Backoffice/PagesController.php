@@ -24,9 +24,9 @@ use Core\Form\Backoffice\Page\PageCreateForm;
 use Core\Form\Backoffice\Page\PageEditForm;
 use Core\Form\CoreForm;
 use Core\Model\PageModel;
-use Core\Model\WidgetModel;
 use Core\Navigation\Backoffice\PagesNavigation;
 use Engine\Widget\Controller as WidgetController;
+use Engine\Widget\WidgetData;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use User\Model\RoleModel;
@@ -35,7 +35,7 @@ use User\Model\RoleModel;
  * Admin pages.
  *
  * @category  PhalconEye
- * @package   Core\Controller
+ * @package   Core\Backoffice\Controller
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2016 PhalconEye Team
@@ -172,40 +172,32 @@ class PagesController extends AbstractBackofficeController
             return $this->response->redirect(['for' => "backoffice-pages"]);
         }
 
-        // Collecting widgets info.
-        $query = $this->modelsManager->createBuilder()
-            ->from(['t' => '\Core\Model\WidgetModel'])
-            ->where("t.enabled = :enabled:", ['enabled' => 1]);
-        $widgets = $query->getQuery()->execute();
-
-        $modulesDefinition = $this->getDI()->get('registry')->modules;
-        $modules = [];
-        foreach ($modulesDefinition as $module) {
-            $modules[$module] = ucfirst($module);
-        }
+        $widgets = $this->getDI()->getWidgets()->getAll();
+        $modules = array_keys($this->getDI()->getRegistry()->modules);
         $bundlesWidgetsMetadata = [];
-        foreach ($widgets as $widget) {
-            $moduleName = $widget->module;
-            if (!$moduleName || empty($modules[$moduleName])) {
-                $moduleName = 'Other';
+        /** @var WidgetData $widget */
+        foreach ($widgets as $code => $widget) {
+            $moduleName = $widget->getModule();
+            if (!in_array($moduleName, $modules)) {
+                $moduleName = '_External_';
             } else {
-                $moduleName = $modules[$moduleName];
+                $moduleName = ucfirst($moduleName);
             }
-            $bundlesWidgetsMetadata[$moduleName][$widget->id] = [
-                'widget_id' => $widget->id,
-                'description' => $widget->description ? $widget->description : '',
-                'name' => $widget->name
+            $bundlesWidgetsMetadata[$moduleName][$code] = [
+                'code' => $code,
+                'name' => $widget->getName(),
+                'description' => $widget->getMetadata(WidgetData::METADATA_DESCRIPTION),
             ];
         }
 
         // Creating Widgets List data.
         $widgetsListData = [];
         foreach ($bundlesWidgetsMetadata as $key => $widgetsMeta) {
-            foreach ($widgetsMeta as $wId => $wMeta) {
-                $widgetsListData[$wId] = $wMeta;
-                $widgetsListData[$wId]["name"] = $widgetsMeta[$wId]["name"] = $wMeta['name'];
-                $widgetsListData[$wId]["widget_id"] = $widgetsMeta[$wId]["widget_id"] = $wId;
-                unset($widgetsListData[$wId]['adminAction']); // this throw exception in parseJSON
+            foreach ($widgetsMeta as $code => $meta) {
+                $widgetsListData[$code] = $meta;
+                $widgetsListData[$code]["name"] = $widgetsMeta[$code]["name"] = $meta['name'];
+                $widgetsListData[$code]["code"] = $widgetsMeta[$code]["code"] = $code;
+                unset($widgetsListData[$code]['adminAction']); // this throw exception in parseJSON
 
             }
             $bundlesWidgetsMetadata[$key] = $widgetsMeta;
@@ -219,7 +211,7 @@ class PagesController extends AbstractBackofficeController
                 'widget_index' => $widgetIndex, // Identification for this array.
                 'id' => $widget->id,
                 'layout' => $widget->layout,
-                'widget_id' => $widget->widget_id,
+                'code' => $widget->widget_code,
                 'params' => $widget->getParams()
             ];
             $widgetIndex++;
@@ -257,7 +249,7 @@ class PagesController extends AbstractBackofficeController
                 'widget_index' => $widgetIndex, // identification for this array.
                 'id' => 0,
                 'layout' => $this->request->get('layout', 'string', 'middle'),
-                'widget_id' => $this->request->get('widget_id', 'int'),
+                'code' => $this->request->get('code', 'int'),
                 'params' => []
             ];
         }
@@ -271,8 +263,8 @@ class PagesController extends AbstractBackofficeController
         $id = $widgetData['id'];
         $widgetParams = $widgetData['params'];
         $widgetParams['content_id'] = $id;
-        $widget_id = $widgetData['widget_id'];
-        $widgetMetadata = WidgetModel::findFirstById($widget_id);
+        $widgetCode = $widgetData['widget_code'];
+        $widgetMetadata = $this->getDI()->getWidgets()->get($widgetCode);
         $form = new CoreForm();
 
         // building widget form
@@ -287,6 +279,7 @@ class PagesController extends AbstractBackofficeController
                 $widgetClass = '\Widget\\' . $widgetName . '\Controller';
             }
 
+            /** @var WidgetController $widgetController */
             $widgetController = new $widgetClass();
             $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module), $widgetParams);
             $widgetController->prepare();
@@ -295,12 +288,12 @@ class PagesController extends AbstractBackofficeController
             $form = new $adminForm();
         }
 
-        if ($widgetMetadata->is_paginated == 1) {
+        if ($widgetController->isPaginated() == 1) {
             $form->addText('count', 'Items count', null, 10);
             $form->setOrder('count', 1000);
         }
 
-        if ($widgetMetadata->is_acl_controlled == 1) {
+        if ($widgetController->isAclControlled()) {
             $form->addMultiSelect(
                 'roles',
                 'Roles',

@@ -173,4 +173,14 @@ class Controller extends WidgetController
     {
         return true;
     }
+
+    /**
+     * Is widget display controlled by ACL?
+     *
+     * @return bool
+     */
+    public function isAclControlled()
+    {
+        return true;
+    }
 }

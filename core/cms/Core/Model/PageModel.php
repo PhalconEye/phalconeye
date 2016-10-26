@@ -212,7 +212,7 @@ class PageModel extends AbstractModel
                     // Insert with empty parameters.
                     $content = new ContentModel();
                     $content->page_id = $this->id;
-                    $content->widget_id = $item["widget_id"];
+                    $content->widget_code = $item["widget_code"];
                     $content->layout = $item["layout"];
                     $content->setParams([]);
                     $content->widget_order = $orders[$item["layout"]];
@@ -226,7 +226,7 @@ class PageModel extends AbstractModel
                 // Need to be inserted.
                 $content = new ContentModel();
                 $content->page_id = $this->id;
-                $content->widget_id = $item["widget_id"];
+                $content->widget_code = $item["widget_code"];
                 $content->layout = $item["layout"];
                 $content->setParams($itemData["params"]);
                 $content->widget_order = $orders[$item["layout"]];

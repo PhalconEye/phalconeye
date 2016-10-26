@@ -208,6 +208,26 @@ class Controller extends PhalconController
     }
 
     /**
+     * Is widget display controlled by ACL?
+     *
+     * @return bool
+     */
+    public function isAclControlled()
+    {
+        return false;
+    }
+
+    /**
+     * Does widget has pagination?
+     *
+     * @return bool
+     */
+    public function isPaginated()
+    {
+        return false;
+    }
+
+    /**
      * Get js assets.
      *
      * @return array

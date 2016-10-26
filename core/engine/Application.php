@@ -96,6 +96,7 @@ class Application extends PhalconApplication
                 'session',
                 'flash',
                 'view',
+                'widgets',
                 'engine'
             ],
             self::MODE_CONSOLE => [
@@ -135,8 +136,6 @@ class Application extends PhalconApplication
          * Setup Registry.
          */
         $registry = new Registry();
-        $registry->widgets = $this->_config->packages->widget->toArray();
-
         $registry->offsetSet(
             'directories',
             (object)[
@@ -149,11 +148,20 @@ class Application extends PhalconApplication
             ]
         );
 
+        /**
+         * Collect modules.
+         */
         $sysmodules = [
             self::CMS_MODULE_CORE => $registry->directories->cms,
-            self::CMS_MODULE_USER => $registry->directories->cms];
+            self::CMS_MODULE_USER => $registry->directories->cms
+        ];
         $modules = array_fill_keys($this->_config->packages->module->toArray(), $registry->directories->modules);
         $registry->offsetSet('modules', array_merge($sysmodules, $modules));
+
+        /**
+         * Collect widgets.
+         */
+        $registry->widgets = $this->_config->packages->widget->toArray();
 
         $di->set('registry', $registry);
 
@@ -252,7 +260,6 @@ class Application extends PhalconApplication
 
         $cacheOutput->flush();
         $cacheData->flush();
-
 
         // Files deleter helper.
         $deleteFiles = function ($files) {

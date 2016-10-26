@@ -18,10 +18,6 @@
 
 namespace Install;
 
-use Core\Model\LanguageModel;
-use Core\Model\LanguageTranslationModel;
-use Core\Model\SettingsModel;
-use Core\Model\WidgetModel;
 use Engine\AbstractBootstrap;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;

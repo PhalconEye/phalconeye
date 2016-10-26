@@ -28,7 +28,7 @@ use Engine\Asset\Manager as AssetManager;
  * Base admin controller.
  *
  * @category  PhalconEye
- * @package   Core\Controller
+ * @package   Core\Backoffice\Controller
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2016 PhalconEye Team

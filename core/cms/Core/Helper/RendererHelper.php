@@ -71,7 +71,7 @@ class RendererHelper extends AbstractHelper
          */
         if (!$layout) {
             foreach ($widgets as $widget) {
-                $content .= $this->renderWidgetId($widget->widget_id, $widget->getParams());
+                $content .= $this->renderWidgetId($widget->widget_code, $widget->getParams());
             }
 
             return $content;
@@ -80,7 +80,7 @@ class RendererHelper extends AbstractHelper
         // Resort content by sides.
         $content = [];
         foreach ($widgets as $widget) {
-            $content[$widget->layout][] = $this->renderWidgetId($widget->widget_id, $widget->getParams());
+            $content[$widget->layout][] = $this->renderWidgetId($widget->widget_code, $widget->getParams());
         }
 
         /** @var \Phalcon\Mvc\View $view */
@@ -129,7 +129,7 @@ class RendererHelper extends AbstractHelper
      */
     public function renderWidgetId($id, $params = [], $action = 'index')
     {
-        return $this->renderWidget((int)$id, $params, $action);
+        return $this->renderWidget($id, $params, $action);
     }
 
     /**

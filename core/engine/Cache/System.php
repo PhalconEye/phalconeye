@@ -18,8 +18,6 @@
 
 namespace Engine\Cache;
 
-use Phalcon\Cache\Backend;
-
 /**
  * System cache keys.
  *

@@ -18,10 +18,8 @@
 
 namespace Engine\Widget;
 
-use Engine\Application;
 use Engine\Behaviour\DIBehaviour;
 use Phalcon\DI;
-use Phalcon\DiInterface;
 
 /**
  * Widget element.
@@ -42,7 +40,7 @@ class Element
     /**
      * Widget object.
      *
-     * @var \stdClass
+     * @var WidgetData
      */
     protected $_widget;
 
@@ -56,9 +54,9 @@ class Element
     /**
      * Create widget element.
      *
-     * @param mixed       $id     Widget id in widgets table.
-     * @param array       $params Widgets params in page.
-     * @param DiInterface $di     Dependency injection.
+     * @param mixed          $id     Widget id in widgets table.
+     * @param array          $params Widgets params in page.
+     * @param DIBehaviour|Di $di     Dependency injection.
      */
     public function __construct($id, $params = [], $di = null)
     {
@@ -66,7 +64,7 @@ class Element
 
         // get all widgets metadata and cache it
         $this->_widgetParams = $params;
-        $this->_widget = $di->get('widgets')->get($id);
+        $this->_widget = $di->getWidgets()->get($id);
     }
 
     /**
@@ -78,13 +76,13 @@ class Element
      */
     public function render($action = 'index')
     {
-        if (!$this->_widget || !$this->_widget->enabled) {
+        if (!$this->_widget || $this->_widget->isDisabled()) {
             return '';
         }
 
-        $widgetName = $this->_widget->name;
-        if ($this->_widget->module !== null) {
-            $widgetModule = ucfirst($this->_widget->module);
+        $widgetName = $this->_widget->getName();
+        if ($this->_widget->getModule() !== null) {
+            $widgetModule = ucfirst($this->_widget->getModule());
             $controllerClass = "\\{$widgetModule}\\Widget\\{$widgetName}\\Controller";
         } else {
             $widgetModule = null;

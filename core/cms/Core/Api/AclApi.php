@@ -285,7 +285,7 @@ class AclApi extends AbstractApi
             $module = ucfirst($module);
             $modelsPath = $registry->directories->modules . $module . '/Model';
             if (file_exists($modelsPath)) {
-                $files = FileUtils::fsRecursiveGlob($modelsPath, '*.php');
+                $files = FileUtils::globRecursive($modelsPath, '*.php');
                 foreach ($files as $file) {
                     $modelName = str_replace([$modelsPath, '/', '.php'], ['', '\\', ''], $file);
                     $modelClass = sprintf('\%s\Model%s', $module, ucfirst($modelName));

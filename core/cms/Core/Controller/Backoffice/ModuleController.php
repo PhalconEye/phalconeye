@@ -27,7 +27,7 @@ use Phalcon\Mvc\Dispatcher\Exception as DispatcherAdminException;
  * Admin modules controller.
  *
  * @category  PhalconEye
- * @package   Core\Controller
+ * @package   Core\Backoffice\Controller
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

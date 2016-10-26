@@ -98,4 +98,14 @@ class Controller extends WidgetController
 
         return $key;
     }
+
+    /**
+     * Is widget display controlled by ACL?
+     *
+     * @return bool
+     */
+    public function isAclControlled()
+    {
+        return true;
+    }
 }

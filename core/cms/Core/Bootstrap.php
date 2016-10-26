@@ -21,14 +21,11 @@ namespace Core;
 use Core\Model\LanguageModel;
 use Core\Model\LanguageTranslationModel;
 use Core\Model\SettingsModel;
-use Core\Model\WidgetModel;
 use Engine\AbstractBootstrap;
 use Engine\Behaviour\DIBehaviour;
-use Engine\Cache\System;
 use Engine\Config;
 use Engine\Translation\Db as TranslationDb;
 use Phalcon\DI;
-use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
 use User\Model\UserModel;
@@ -85,9 +82,6 @@ class Bootstrap extends AbstractBootstrap
         if (!UserModel::getViewer()->id) {
             $di->remove('profiler');
         }
-
-        // Init widgets system.
-        $this->_initWidgets($di);
 
         /**
          * Listening to events in the dispatcher using the Acl.
@@ -184,32 +178,5 @@ class Bootstrap extends AbstractBootstrap
         }
 
         $di->set('i18n', $translate);
-    }
-
-    /**
-     * Prepare widgets metadata for Engine.
-     *
-     * @param DIBehaviour|DI $di Dependency injection.
-     *
-     * @return void
-     */
-    protected function _initWidgets($di)
-    {
-        if ($di->get('app')->isConsole()) {
-            return;
-        }
-
-        $cache = $di->get('cacheData');
-        $widgets = $cache->get(System::CACHE_KEY_WIDGETS_METADATA);
-
-        if ($widgets === null) {
-            $widgets = [];
-            foreach (WidgetModel::find() as $object) {
-                $widgets[] = [$object->id, $object->getKey(), $object];
-            }
-
-            $cache->save(System::CACHE_KEY_WIDGETS_METADATA, $widgets, 0); // Unlimited.
-        }
-        $di->get('widgets')->addWidgets($widgets);
     }
 }
