@@ -126,9 +126,6 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      * Collect data for widget.
      *
      * @return array Collected data.
-     *
-     * Suppress warning of phpmd - current version got exception on anonymous class.
-     * @SuppressWarnings(PHPMD)
      */
     private function _collectGenerationDataForWidget()
     {
