@@ -20,7 +20,7 @@ namespace Engine;
 
 use Engine\Console\AbstractCommand;
 use Engine\Utils\ConsoleUtils;
-use Engine\Utils\StringUtils;
+use Phalcon\Text;
 
 /**
  * Console class.
@@ -97,7 +97,7 @@ class Cli extends Application
 
         // Iterate files.
         foreach ($files as $file) {
-            if (!StringUtils::endsWith($file, '.php')) {
+            if (!Text::endsWith($file, '.php')) {
                 continue;
             }
 

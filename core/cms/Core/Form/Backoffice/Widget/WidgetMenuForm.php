@@ -51,7 +51,7 @@ class WidgetMenuForm extends CoreForm
                 null,
                 [],
                 [
-                    'data-link' => $this->getDI()->getUrl()->get('admin/menus/suggest'),
+                    'data-link' => $this->getDI()->getUrl()->get('backoffice/menus/suggest'),
                     'data-target' => '#menu_id',
                     'data-widget' => 'autocomplete',
                     'autocomplete' => 'off'

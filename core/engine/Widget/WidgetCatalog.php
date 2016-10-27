@@ -46,7 +46,12 @@ class WidgetCatalog
         /**
          * Widget metadata filename.
          */
-        WIDGET_METADATA_FILENAME = 'metadata.php';
+        WIDGET_METADATA_FILENAME = 'metadata.php',
+
+        /**
+         * Separator for widget key.
+         */
+        KEY_SEPARATOR = '|';
 
     /**
      * Widgets in catalog.
@@ -74,7 +79,8 @@ class WidgetCatalog
 
         foreach (new \DirectoryIterator($modulePath) as $file) {
             if ($file->isDir() && !$file->isDot()) {
-                $widgets[] = new WidgetData($file->getBasename(), $module, null, $file->getPath());
+                $baseName = $file->getBasename();
+                $widgets[] = new WidgetData($baseName, $module, null, $file->getPath() . DS . $baseName);
             }
         }
 
@@ -142,6 +148,18 @@ class WidgetCatalog
     }
 
     /**
+     * Check if widget present in widgets catalog.
+     *
+     * @param string $key Widget key.
+     *
+     * @return bool Check result.
+     */
+    public function has($key) : bool
+    {
+        return isset($this->_widgets[$key]);
+    }
+
+    /**
      * Get unique widget identifier.
      *
      * @param string      $name   Widget name.
@@ -155,6 +173,6 @@ class WidgetCatalog
             $module = self::WIDGET_EXTERNAL_NAMESPACE;
         }
 
-        return $module . '|' . $name;
+        return $module . self::KEY_SEPARATOR . $name;
     }
 }

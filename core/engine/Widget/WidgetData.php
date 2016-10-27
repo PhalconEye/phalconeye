@@ -160,10 +160,10 @@ class WidgetData
         if ($this->_module != null) {
             $modules = $di->getRegistry()->modules->toArray();
             if (isset($modules[$this->_module])) {
-                $widgetPath = $modules[$this->_module] . DS . WidgetCatalog::WIDGET_DIRECTORY;
+                $widgetPath = $modules[$this->_module] . DS . WidgetCatalog::WIDGET_DIRECTORY . DS;
             }
         }
-        $widgetPath .= DS . ucfirst($this->_name);
+        $widgetPath .= ucfirst($this->_name);
 
         return $widgetPath;
     }

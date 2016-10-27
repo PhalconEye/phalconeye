@@ -158,9 +158,15 @@ class Controller extends WidgetController
     }
 
     /**
-     * Cache this widget?
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function getAdminForm()
+    {
+        return 'admin';
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isCached()
     {
@@ -168,9 +174,7 @@ class Controller extends WidgetController
     }
 
     /**
-     * Is widget display controlled by ACL?
-     *
-     * @return bool
+     * {@inheritdoc}
      */
     public function isAclControlled()
     {

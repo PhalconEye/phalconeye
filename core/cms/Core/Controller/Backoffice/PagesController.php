@@ -184,7 +184,7 @@ class PagesController extends AbstractBackofficeController
                 $moduleName = ucfirst($moduleName);
             }
             $bundlesWidgetsMetadata[$moduleName][$code] = [
-                'code' => $code,
+                'widget_code' => $code,
                 'name' => $widget->getName(),
                 'description' => $widget->getMetadata(WidgetData::METADATA_DESCRIPTION),
             ];
@@ -211,7 +211,7 @@ class PagesController extends AbstractBackofficeController
                 'widget_index' => $widgetIndex, // Identification for this array.
                 'id' => $widget->id,
                 'layout' => $widget->layout,
-                'code' => $widget->widget_code,
+                'widget_code' => $widget->widget_code,
                 'params' => $widget->getParams()
             ];
             $widgetIndex++;
@@ -249,7 +249,7 @@ class PagesController extends AbstractBackofficeController
                 'widget_index' => $widgetIndex, // identification for this array.
                 'id' => 0,
                 'layout' => $this->request->get('layout', 'string', 'middle'),
-                'code' => $this->request->get('code', 'int'),
+                'widget_code' => $this->request->get('widget_code', 'string'),
                 'params' => []
             ];
         }
@@ -267,25 +267,29 @@ class PagesController extends AbstractBackofficeController
         $widgetMetadata = $this->getDI()->getWidgets()->get($widgetCode);
         $form = new CoreForm();
 
+        // Get widget controller class.
+        $widgetName = $widgetMetadata->getName();
+        $widgetModuleName = '';
+        if ($widgetMetadata->getModule() !== null) {
+            $widgetModuleName = ucfirst($widgetMetadata->getModule());
+            $widgetClass = '\\' . $widgetModuleName . '\Widget\\' . $widgetName . '\Controller';
+        } else {
+            $widgetClass = '\Widget\\' . $widgetName . '\Controller';
+        }
+
+        /** @var WidgetController $widgetController */
+        $widgetController = new $widgetClass();
+        $widgetController->setDefaults($widgetName, $widgetModuleName, $widgetParams);
+
         // building widget form
-        $adminForm = $widgetMetadata->admin_form;
+        $adminForm = $widgetController->getAdminForm();
         if (empty($adminForm)) {
             $form->addText('title');
-        } elseif ($adminForm == 'action') {
-            $widgetName = $widgetMetadata->name;
-            if ($widgetMetadata->module !== null) {
-                $widgetClass = '\\' . ucfirst($widgetMetadata->module) . '\Widget\\' . $widgetName . '\Controller';
-            } else {
-                $widgetClass = '\Widget\\' . $widgetName . '\Controller';
-            }
-
-            /** @var WidgetController $widgetController */
-            $widgetController = new $widgetClass();
-            $widgetController->setDefaults($widgetName, ucfirst($widgetMetadata->module), $widgetParams);
+        } elseif (is_string($adminForm)) {
             $widgetController->prepare();
-            $form = $widgetController->adminAction();
+            $form = $widgetController->{$adminForm . 'Action'}();
         } else {
-            $form = new $adminForm();
+            $form = $adminForm;
         }
 
         if ($widgetController->isPaginated() == 1) {
@@ -313,7 +317,7 @@ class PagesController extends AbstractBackofficeController
         if (!$this->request->isPost() || !$form->isValid()) {
             $this->view->form = $form;
             $this->view->id = $id;
-            $this->view->name = $widgetMetadata->name;
+            $this->view->name = $widgetMetadata->getName();
             $this->view->setIsBackoffice(true);
 
             return;

@@ -306,12 +306,12 @@ abstract class AbstractCommand implements CommandInterface
     /**
      * Readline from console input.
      *
-     * @param string|null          $prompt     Prompt message.
-     * @param Validation\Validator $validation Validation function.
+     * @param string|null $prompt     Prompt message.
+     * @param array       $validation Validation function.
      *
      * @return string
      */
-    protected function _readline($prompt = null, Validation\Validator $validation = null)
+    protected function _readline($prompt = null, $validators = null)
     {
         if ($prompt) {
             echo $prompt;
@@ -319,15 +319,17 @@ abstract class AbstractCommand implements CommandInterface
         $fp = fopen("php://stdin", "r");
         $line = rtrim(fgets($fp, 1024));
 
-        if ($validation != null) {
+        if ($validators != null) {
             $validator = new Validation();
-            $validator->add('value', $validation);
+            foreach ($validators as $validation) {
+                $validator->add('value', $validation);
+            }
             $result = $validator->validate(['value' => $line]);
             if ($result && $result->count() > 0) {
                 foreach ($result as $message) {
                     print ConsoleUtils::error($message) . PHP_EOL;
                 }
-                return $this->_readline($prompt, $validation);
+                return $this->_readline($prompt, $validators);
             }
         }
 

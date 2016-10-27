@@ -19,6 +19,7 @@
 namespace Engine\Widget;
 
 use Phalcon\DI;
+use Phalcon\Forms\Form;
 use Phalcon\Mvc\Controller as PhalconController;
 use Phalcon\Mvc\View;
 
@@ -225,6 +226,20 @@ class Controller extends PhalconController
     public function isPaginated()
     {
         return false;
+    }
+
+    /**
+     * Does widget has admin form?
+     * Can returns:
+     *  - null - means no admin settings.
+     *  - string - action name of controller method that fill handle admin settings.
+     *  - form - form object that will be shown on admin settings.
+     *
+     * @return null|string|Form
+     */
+    public function getAdminForm()
+    {
+        return null;
     }
 
     /**

@@ -11,7 +11,7 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 #}
@@ -82,6 +82,25 @@
         </aside>
     {% endif %}
 
+{# JUST LEFT OR/AND RIGHT #}
+{% else %}
+    {# RIGHT #}
+    {% if "left" in (content|keys) %}
+        <aside class="content-left">
+            {% for widget in content["left"] %}
+                {{ widget }}
+            {% endfor %}
+        </aside>
+    {% endif %}
+
+    {# RIGHT #}
+    {% if "right" in (content|keys) %}
+        <aside class="content-right">
+            {% for widget in content["right"] %}
+                {{ widget }}
+            {% endfor %}
+        </aside>
+    {% endif %}
 {% endif %}
 
 {# BOTTOM #}

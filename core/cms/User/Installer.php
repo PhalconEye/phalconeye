@@ -36,7 +36,7 @@ class Installer extends AbstractInstaller
         /**
          * Current package version.
          */
-        CURRENT_VERSION = '0.4.0';
+        CURRENT_VERSION = PHALCONEYE_VERSION;
 
     /**
      * Used to install specific database entities or other specific action.

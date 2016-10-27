@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace User\Form\Auth;
+namespace User\Form;
 
 use Core\Form\CoreForm;
 use Engine\Form\FieldSet;

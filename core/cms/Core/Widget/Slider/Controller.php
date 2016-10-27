@@ -169,6 +169,14 @@ class Controller extends WidgetController
     /**
      * {@inheritdoc}
      */
+    public function getAdminForm()
+    {
+        return 'admin';
+    }
+
+    /**
+     * {@inheritdoc}
+     */
     public function isCached()
     {
         return true;

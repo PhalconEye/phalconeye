@@ -45,7 +45,7 @@ class PagesNavigation extends CoreNavigation
                     'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                 ]],
                 null,
-                ['Create new', 'backoffice/languages/create', [
+                ['Create new', 'backoffice/pages/create', [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]]
             ]

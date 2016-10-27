@@ -32,12 +32,12 @@
 
     {{ partial(resolveView("partials/layout", 'core'), ['page': page, 'content': content]) }}
 
-
-    {#{% if helper('acl').isAllowed('\Core\Model\Page', 'show_views') %}#}
+    {#ACL Examples#}
+    {#{% if helper('acl', 'core').isAllowed('\Core\Model\Page', 'show_views') %}#}
         {#<div class="page_views">{{ 'View count:'|i18n }}{{ page.view_count }}</div>#}
     {#{% endif %}#}
 
-    {#{{ helper('acl').getAllowed('\Core\Model\Page', 'page_footer') }}#}
+    {#{{ helper('acl', 'core').getAllowed('\Core\Model\Page', 'page_footer') }}#}
 
 
     <div class="clear"></div>

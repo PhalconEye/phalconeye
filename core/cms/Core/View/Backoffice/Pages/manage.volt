@@ -63,8 +63,7 @@
     };
 
     var defaultWidgetControl = function (widget, hideEdit) {
-        var editLink = '<a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index +
-                '" code="' + widget.code + '">{{ "Edit" |i18n}}</a>&nbsp;|';
+        var editLink = '<a href="javascript:;" onclick="editAction($(this));" widget_index="' + widget.widget_index + '" widget_code="' + widget.widget_code + '">{{ "Edit" |i18n}}</a>&nbsp;|';
         if (hideEdit) {
             editLink = '';
         }
@@ -76,7 +75,7 @@
         $.each(bundlesWidgetsMetadata, function (i, l) {
             $("#widget_list ul").append('<li class="widget_seperator">' + i + '</li>');
             $.each(l, function (i, l) {
-                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" code="' + l.code + '" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
+                $("#widget_list ul").append('<li title="' + l.description + '" class="widget_tooltip widget" widget_code="' + l.widget_code + '" widget="' + l.name + '">' + l.name + defaultWidgetControl(l) + '</li>');
             });
             $("#widget_list ul").find('.delete_widget').css('display', 'none');
         });
@@ -117,7 +116,7 @@
         var url = '{{ url(['for':'backoffice-pages-widget-options'])}}';
         var data = {
             'widget_index': parseInt(element.attr('widget_index')),
-            'code': element.attr('code'),
+            'widget_code': element.attr('widget_code'),
             "layout": element.parent().attr("layout")
         };
 
@@ -169,7 +168,7 @@
                 items.push({
                     "content": (!$no_content ? $(this).html().trim() : ''),
                     "widget_index": parseInt($(this).attr("widget_index")),
-                    "code": $(this).attr('code'),
+                    "widget_code": $(this).attr('widget_code'),
                     "layout": $(this).parent().attr("layout")
                 });
             });
@@ -184,7 +183,7 @@
 
             $.each(list, function (i, l) {
                 if ($("#widgets_container_" + l.layout).length > 0) {
-                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" code="' + l.code + '">' + l.content + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_code="' + l.widget_code + '">' + l.content + '</div>');
                     elementIdCounter++;
                 }
                 else hasRemove = true;
@@ -199,14 +198,14 @@
                     var hideLink = false;
 
                     // Get widget real title.
-                    if (widgetsListData[l.code]) {
-                        var title = widgetsListData[l.code].name;
+                    if (widgetsListData[l.widget_code]) {
+                        var title = widgetsListData[l.widget_code].name;
                     }
                     else {
                         hideLink = true;
                         var title = "<b style='color: red;'>{{ "NOT FOUND" |i18n}}</b>";
                     }
-                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" code="' + l.code + '">' + title + defaultWidgetControl(l, hideLink) + '</div>');
+                    $("#widgets_container_" + l.layout).append('<li element_id="' + elementIdCounter + '" class="widget" widget_index="' + l.widget_index + '" widget_code="' + l.widget_code + '">' + title + defaultWidgetControl(l, hideLink) + '</div>');
                     elementIdCounter++;
                 }
             });

@@ -12,17 +12,19 @@
  | obtain it through the world-wide-web, please send an email             |
  | to license@phalconeye.com so we can send you a copy immediately.       |
  +------------------------------------------------------------------------+
- | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+ | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
  +------------------------------------------------------------------------+
 */
 
 namespace Core\Command;
 
+use Core\Command\Validation\WidgetModuleValidator;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
 use Engine\Utils\ConsoleUtils;
 use Engine\Package\Manager;
 use Engine\Package\PackageException;
+use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\StringLength;
 
 /**
@@ -89,15 +91,61 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      */
     private function _collectGenerationData($type)
     {
-        $data = ['type' => $type];
+        switch ($type) {
+            case Manager::PACKAGE_TYPE_MODULE:
+                return $this->_collectGenerationDataForModule();
+
+            case Manager::PACKAGE_TYPE_WIDGET:
+                return $this->_collectGenerationDataForWidget();
+        }
+
+        return [];
+    }
+
+    /**
+     * Collect data for module.
+     *
+     * @return array Collected data.
+     */
+    private function _collectGenerationDataForModule()
+    {
+        $data = ['type' => Manager::PACKAGE_TYPE_MODULE];
         $data['name'] = $this->_readline(
-            "Package name (lower case): ",
-            new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3])
+            "Package name: ",
+            [
+                new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3]),
+                new Regex(['message' => 'Name must be in lowercase, only letters.', 'pattern' => '/^[a-z]+$/'])
+            ]
         );
         $data['nameUpper'] = ucfirst($data['name']);
 
-        //@TODO:
-        // - if widget - as about module
+        return $data;
+    }
+
+    /**
+     * Collect data for widget.
+     *
+     * @return array Collected data.
+     *
+     * Suppress warning of phpmd - current version got exception on anonymous class.
+     * @SuppressWarnings(PHPMD)
+     */
+    private function _collectGenerationDataForWidget()
+    {
+        $data = ['type' => Manager::PACKAGE_TYPE_WIDGET];
+        $data['name'] = $this->_readline(
+            "Package name: ",
+            [
+                new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3])
+            ]
+        );
+        $data['nameUpper'] = ucfirst($data['name']);
+        $data['module'] = $this->_readline(
+            "Module name (leave empty for external widget): ",
+            [
+                new WidgetModuleValidator($this->getDI())
+            ]
+        );
 
         return $data;
     }

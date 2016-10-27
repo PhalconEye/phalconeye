@@ -25,7 +25,6 @@ use Engine\Cache\Dummy;
 use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception\PrettyExceptions;
-use Engine\Utils\StringUtils;
 use Engine\Widget\WidgetCatalog;
 use Engine\Widget\WidgetData;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
@@ -51,6 +50,7 @@ use Phalcon\Mvc\Router;
 use Phalcon\Mvc\Url;
 use Phalcon\Session\Adapter as SessionAdapter;
 use Phalcon\Session\Adapter\Files as SessionFiles;
+use Phalcon\Text;
 
 /**
  * Application initialization trait.
@@ -304,7 +304,7 @@ trait ApplicationInitialization
 
                     // Iterate files.
                     foreach ($files as $file) {
-                        if (!StringUtils::endsWith($file, 'Controller.php')) {
+                        if (!Text::endsWith($file, 'Controller.php')) {
                             continue;
                         }
                         $controllerFile = str_replace('Controller.php', '', $file);
@@ -546,10 +546,6 @@ trait ApplicationInitialization
      */
     protected function _initWidgets($di)
     {
-        if ($di->getApp()->isConsole()) {
-            return;
-        }
-
         $cache = $di->getCacheData();
         $widgets = $cache->get(System::CACHE_KEY_WIDGETS_METADATA);
         $widgetsCatalog = new WidgetCatalog();

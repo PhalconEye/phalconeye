@@ -15,27 +15,24 @@
 */
 
 /**
-* WARNING
-*
-* Manual changes to this file may cause a malfunction of the system.
-* Be careful when changing settings!
-*
-*/
+ * WARNING
+ *
+ * Manual changes to this file may cause a malfunction of the system.
+ * Be careful when changing settings!
+ *
+ */
 
-return array (
-  'module' => 
-  array (
-    0 => 'main',
-  ),
-  'plugin' => 
-  array (
-  ),
-  'theme' => 
-  array (
-  ),
-  'widget' => 
-  array (
-    0 => 'Demo',
-    1 => 'Test',
-  ),
+return array(
+    'module' =>
+        array(
+            0 => 'main'
+        ),
+    'plugin' =>
+        array(),
+    'theme' =>
+        array(),
+    'widget' =>
+        array(
+            0 => 'Demo',
+        ),
 );

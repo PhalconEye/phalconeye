@@ -110,7 +110,6 @@ class AclApi extends AbstractApi
                 $acl->addResource($adminArea, "access");
                 $acl->allow($roleAdmin->name, self::ACL_ADMIN_AREA, 'access');
 
-
                 // Getting objects that is in acl.
                 // Looking for all models in modelsDir and check @Acl annotation.
                 $objects = $this->_addResources($acl, [self::ACL_ADMIN_AREA => ['actions' => ['access']]]);
@@ -253,11 +252,9 @@ class AclApi extends AbstractApi
         $viewer = UserModel::getViewer();
         $acl = $this->getAcl();
 
-        $controller = $dispatcher->getControllerName();
-
         // Check admin area.
         if (
-            Text::startsWith($controller, 'Admin', true) &&
+            Text::endsWith($dispatcher->getNamespaceName(), 'Backoffice', true) &&
             $acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW
         ) {
             $this->getDI()->getEventsManager()->fire(

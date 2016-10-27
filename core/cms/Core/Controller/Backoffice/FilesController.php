@@ -17,6 +17,7 @@
 */
 
 namespace Core\Controller\Backoffice;
+use Phalcon\Di;
 
 /**
  * Admin files controller.

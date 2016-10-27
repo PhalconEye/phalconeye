@@ -103,6 +103,7 @@ class Application extends PhalconApplication
                 'environment',
                 'database',
                 'cache',
+                'widgets',
                 'engine'
             ],
             self::MODE_SESSION => [
@@ -156,6 +157,7 @@ class Application extends PhalconApplication
             self::CMS_MODULE_USER => $registry->directories->cms
         ];
         $modules = array_fill_keys($this->_config->packages->module->toArray(), $registry->directories->modules);
+        $registry->offsetSet('sysmodules', $sysmodules);
         $registry->offsetSet('modules', array_merge($sysmodules, $modules));
 
         /**

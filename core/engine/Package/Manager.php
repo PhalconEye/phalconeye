@@ -90,19 +90,6 @@ class Manager
     ];
 
     /**
-     * Minimum required data for correct manifest.
-     *
-     * @var array
-     */
-    private $_manifestMinimumData = [
-        'type',
-        'name',
-        'title',
-        'description',
-        'version',
-    ];
-
-    /**
      * Versions of each package.
      *
      * @var array
@@ -156,6 +143,7 @@ class Manager
             $location = $location . $name;
         } elseif (self::PACKAGE_TYPE_WIDGET == $type && !empty($data['module'])) {
             $module = ucfirst($data['module']);
+            $location = $locations[self::PACKAGE_TYPE_MODULE];
             $location = $location . $module . DS . WidgetCatalog::WIDGET_DIRECTORY . DS . $nameUpper;
         } else {
             $location = $location . $nameUpper;
@@ -191,19 +179,124 @@ class Manager
      */
     public function createPackage($data)
     {
-        // Check that package doesn't exists.
-        $config = $this->getDI()->getConfig();
-        $existingPackages = $config->packages->{$data['type']}->toArray();
-        if (in_array($data['name'], $existingPackages)) {
-            throw new PackageExistsException("Package with that name already exists!");
+        switch ($data['type']) {
+            case Manager::PACKAGE_TYPE_MODULE:
+                $this->createModule($data);
+                break;
+            case Manager::PACKAGE_TYPE_WIDGET:
+                $this->createWidget($data);
+                break;
         }
+    }
 
+    /**
+     * Create module package.
+     *
+     * @param array $data Package data.
+     *
+     * @throws PackageExistsException If package already exists.
+     *
+     * @return void
+     */
+    public function createModule($data)
+    {
+        $config = $this->getDI()->getConfig();
         $packageName = $data['name'];
         $packageLocation = $this->getPackageLocation($data);
-        $data['defaultModuleUpper'] = ucfirst(Application::CMS_MODULE_CORE);
-        $data['nameUpper'] = ucfirst($packageName);
-        $data['moduleNamespace'] = !isset($data['module']) ? '' : ucfirst($data['module']);
 
+        $this->_processData($data);
+        $this->_validateData($data, $config);
+        $this->_copyStructure($data, $packageLocation);
+        $this->_replaceVariables($data, $packageLocation);
+
+        // Update packages config.
+        $existingPackages = $config->packages->{$data['type']}->toArray();
+        $existingPackages[] = $packageName;
+        $config->packages->{$data['type']} = $existingPackages;
+        $config->save(Config::CONFIG_SECTION_PACKAGES);
+    }
+
+    /**
+     * Create widget package.
+     *
+     * @param array $data Package data.
+     *
+     * @throws PackageExistsException If package already exists.
+     *
+     * @return void
+     */
+    public function createWidget($data)
+    {
+        $config = $this->getDI()->getConfig();
+        $packageName = ucfirst($data['name']);
+        $packageLocation = $this->getPackageLocation($data);
+        $isExternalWidget = empty($data['module']);
+        $this->_processData($data);
+
+        // Validate widget existence.
+        if (!$isExternalWidget &&
+            $this->getDI()->getWidgets()->has($data['module'] . WidgetCatalog::KEY_SEPARATOR . $data['nameUpper'])
+        ) {
+            throw new PackageExistsException("Package with that name already exists!");
+        } else {
+            $this->_validateData($data, $config);
+        }
+
+        $this->_copyStructure($data, $packageLocation);
+        $this->_replaceVariables($data, $packageLocation);
+
+        // Update packages config if widget is external (not from module).
+        if ($isExternalWidget) {
+            $existingPackages = $config->packages->{$data['type']}->toArray();
+            $existingPackages[] = $packageName;
+            $config->packages->{$data['type']} = $existingPackages;
+            $config->save(Config::CONFIG_SECTION_PACKAGES);
+        }
+    }
+
+    /**
+     * Validate data.
+     *
+     * @param array          $data   Package data.
+     * @param \Engine\Config $config Config.
+     *
+     * @throws PackageExistsException If package already exists.
+     *
+     * @return void
+     */
+    private function _validateData($data, $config)
+    {
+        // Check that package doesn't exists.
+        $existingPackages = $config->packages->{$data['type']}->toArray();
+        if (in_array($data['name'], $existingPackages) || in_array($data['nameUpper'], $existingPackages)) {
+            throw new PackageExistsException("Package with that name already exists!");
+        }
+    }
+
+    /**
+     * Process data. Add required variables to data.
+     *
+     * @param array $data Package data.
+     *
+     * @return void
+     */
+    private function _processData($data)
+    {
+        $data['defaultModuleUpper'] = ucfirst(Application::CMS_MODULE_CORE);
+        $data['nameUpper'] = ucfirst($data['name']);
+        $data['moduleNamespace'] = !isset($data['module']) ? '' : ucfirst($data['module']);
+    }
+
+    /**
+     * Copy package structure.
+     *
+     * @param array  $data            Package data.
+     * @param string $packageLocation Package location.
+     *
+     * @return void
+     */
+    private function _copyStructure($data, $packageLocation)
+    {
         // Check path.
         FileUtils::createIfMissing($packageLocation);
 
@@ -214,15 +307,18 @@ class Manager
             false,
             ['.gitignore']
         );
+    }
 
-        if (self::PACKAGE_TYPE_PLUGIN == $data['type']) {
-            @rename($packageLocation . DS . 'plugin.php', $packageLocation . DS . $data['nameUpper'] . '.php');
-        }
-
-        if (self::PACKAGE_TYPE_WIDGET == $data['type']) {
-            $packageName = $data['nameUpper'];
-        }
-
+    /**
+     * Replace variables in files.
+     *
+     * @param array  $data            Package data.
+     * @param string $packageLocation Package location.
+     *
+     * @return void
+     */
+    private function _replaceVariables($data, $packageLocation)
+    {
         // Replace placeholders in package.
         $placeholders = array_keys($data);
         $placeholdersValues = array_values($data);
@@ -246,11 +342,6 @@ class Manager
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
-
-        // Update packages config.
-        $existingPackages[] = $packageName;
-        $config->packages->{$data['type']} = $existingPackages;
-        $config->save(Config::CONFIG_SECTION_PACKAGES);
     }
 
     /**

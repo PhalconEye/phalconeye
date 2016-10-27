@@ -20,6 +20,7 @@
 namespace Core\Widget\Menu;
 
 use Core\Api\AclApi;
+use Core\Form\Backoffice\Widget\WidgetMenuForm;
 use Core\Navigation\MenuNavigation;
 use Engine\Widget\Controller as WidgetController;
 use User\Model\RoleModel;
@@ -100,9 +101,15 @@ class Controller extends WidgetController
     }
 
     /**
-     * Is widget display controlled by ACL?
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function getAdminForm()
+    {
+        return new WidgetMenuForm();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isAclControlled()
     {

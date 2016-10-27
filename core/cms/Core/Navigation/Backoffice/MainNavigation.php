@@ -67,13 +67,12 @@ class MainNavigation extends CoreNavigation
         for ($i = 1, $count = count($path); $i < $count - $limit && $i < 3; $i++) {
             $activeItem .= $path[$i] . '/';
         }
-        $activeItem = substr($activeItem, 0, -1);
 
         // Dashboard
         $this->appendItem(
             new Item(
                 'Dashboard',
-                'admin',
+                'backoffice',
                 [
                     'prepend' => '<i class="glyphicon glyphicon-home"></i>'
                 ]

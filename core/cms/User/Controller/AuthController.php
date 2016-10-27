@@ -21,8 +21,8 @@ namespace User\Controller;
 use Core\Controller\AbstractController;
 use Phalcon\Db\Column;
 use Phalcon\Http\ResponseInterface;
-use User\Form\Auth\LoginForm as LoginForm;
-use User\Form\Auth\RegisterForm as RegisterForm;
+use User\Form\LoginForm;
+use User\Form\RegisterForm;
 use User\Model\RoleModel;
 use User\Model\UserModel;
 

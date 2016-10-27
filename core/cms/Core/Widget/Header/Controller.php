@@ -18,6 +18,7 @@
 
 namespace Core\Widget\Header;
 
+use Core\Form\Backoffice\Widget\WidgetHeaderForm;
 use Core\Model\SettingsModel;
 use Engine\Widget\Controller as WidgetController;
 
@@ -47,9 +48,15 @@ class Controller extends WidgetController
     }
 
     /**
-     * Is widget display controlled by ACL?
-     *
-     * @return bool
+     * {@inheritdoc}
+     */
+    public function getAdminForm()
+    {
+        return new WidgetHeaderForm();
+    }
+
+    /**
+     * {@inheritdoc}
      */
     public function isAclControlled()
     {

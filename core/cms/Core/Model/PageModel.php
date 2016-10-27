@@ -161,7 +161,7 @@ class PageModel extends AbstractModel
             $widgets = [];
         }
 
-        $currentPageWidgets = $this->getDI()->get('session')->get('admin-pages-manage', []);
+        $currentPageWidgets = $this->getDI()->get('session')->get('backoffice-pages-manage', []);
 
         // Updating.
         $existing_widgets = $this->getWidgets();

@@ -19,15 +19,15 @@
 
 namespace Core\Controller\Backoffice;
 
-use Core\Controller\Grid\Admin\MenuGrid;
-use Core\Form\Admin\Menu\CreateForm;
-use Core\Form\Admin\Menu\CreateItemForm;
-use Core\Form\Admin\Menu\EditForm;
-use Core\Form\Admin\Menu\EditItemForm;
+use Core\Grid\Backoffice\MenuGrid;
+use Core\Form\Backoffice\Menu\MenuCreateForm;
+use Core\Form\Backoffice\Menu\MenuItemCreateForm;
+use Core\Form\Backoffice\Menu\MenuEditForm;
+use Core\Form\Backoffice\Menu\MenuItemEditForm;
 use Core\Model\MenuModel;
 use Core\Model\MenuItemModel;
 use Core\Model\PageModel;
-use Core\Navigation\MenusNavigation;
+use Core\Navigation\Backoffice\MenusNavigation;
 use Engine\Widget\Controller as WidgetController;
 use Phalcon\Http\ResponseInterface;
 
@@ -80,7 +80,7 @@ class MenusController extends AbstractBackofficeController
      */
     public function createAction()
     {
-        $form = new CreateForm();
+        $form = new MenuCreateForm();
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid()) {
@@ -107,7 +107,7 @@ class MenusController extends AbstractBackofficeController
             return $this->response->redirect(['for' => "backoffice-menus"]);
         }
 
-        $form = new EditForm($item);
+        $form = new MenuEditForm($item);
         $this->view->form = $form;
 
         if (!$this->request->isPost() || !$form->isValid()) {
@@ -199,7 +199,7 @@ class MenusController extends AbstractBackofficeController
      */
     public function createItemAction()
     {
-        $form = new CreateItemForm();
+        $form = new MenuItemCreateForm();
         $this->view->form = $form;
 
         $data = [
@@ -255,7 +255,7 @@ class MenusController extends AbstractBackofficeController
     {
         $item = MenuItemModel::findFirst($id);
 
-        $form = new EditItemForm($item);
+        $form = new MenuItemEditForm($item);
         $this->view->form = $form;
 
         $data = [
@@ -315,7 +315,7 @@ class MenusController extends AbstractBackofficeController
             $parentLink = "?parent_id={$parentId}";
         }
         if ($menuId) {
-            return $this->response->redirect("admin/menus/manage/{$menuId}{$parentLink}");
+            return $this->response->redirect("backoffice/menus/manage/{$menuId}{$parentLink}");
         }
 
         return $this->response->redirect(['for' => "backoffice-menus"]);
