@@ -18,12 +18,12 @@
 
 namespace Engine\Form;
 
-use Engine\Behaviour\DIBehaviour;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\DIBehavior;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Db\AbstractModel;
-use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FieldSetBehaviour;
-use Engine\Form\Behaviour\FormBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
+use Engine\Form\Behavior\FieldSetBehavior;
+use Engine\Form\Behavior\FormBehavior;
 use Phalcon\Filter;
 use Phalcon\Mvc\Model\Transaction\Exception;
 use Phalcon\Mvc\View;
@@ -43,8 +43,8 @@ use Phalcon\Validation\Message\Group;
  */
 abstract class AbstractForm implements ElementContainerInterface
 {
-    use FieldSetBehaviour,
-        FormBehaviour;
+    use FieldSetBehavior,
+        FormBehavior;
 
     const
         /**
@@ -246,7 +246,7 @@ abstract class AbstractForm implements ElementContainerInterface
             $container = $this;
         }
 
-        /** @var AbstractElement|FieldSetBehaviour $element */
+        /** @var AbstractElement|FieldSetBehavior $element */
         foreach ($container->getAll() as $element) {
             $elementName = str_replace('[]', '', $element->getName());
             if ($element instanceof FieldSet) {
@@ -282,7 +282,7 @@ abstract class AbstractForm implements ElementContainerInterface
             $container = $this;
         }
 
-        /** @var AbstractElement|FieldSetBehaviour $element */
+        /** @var AbstractElement|FieldSetBehavior $element */
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
                 $found = $found || $this->setValue($name, $value, $element);
@@ -312,7 +312,7 @@ abstract class AbstractForm implements ElementContainerInterface
             $container = $this;
         }
 
-        /** @var AbstractElement|FieldSetBehaviour $element */
+        /** @var AbstractElement|FieldSetBehavior $element */
         $values = [];
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
@@ -343,7 +343,7 @@ abstract class AbstractForm implements ElementContainerInterface
             $container = $this;
         }
 
-        /** @var AbstractElement|FieldSetBehaviour $element */
+        /** @var AbstractElement|FieldSetBehavior $element */
         foreach ($container->getAll() as $element) {
             if ($element instanceof FieldSet) {
                 $value = $this->getValue($name, $element);
@@ -533,7 +533,7 @@ abstract class AbstractForm implements ElementContainerInterface
     /**
      * Validate all elements in container.
      *
-     * @param FieldSetBehaviour $container Elements container.
+     * @param FieldSetBehavior $container Elements container.
      * @param array             &$data     Form data.
      * @param bool              $isValid   Validation flag.
      *

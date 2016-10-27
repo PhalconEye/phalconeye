@@ -18,7 +18,7 @@
 
 namespace Engine\Grid\Source;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Grid\GridInterface;
 use Phalcon\DI;
 use Phalcon\Paginator\AdapterInterface;
@@ -27,7 +27,7 @@ use Phalcon\Paginator\AdapterInterface;
  * Abstract resolver
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Engine\Form\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

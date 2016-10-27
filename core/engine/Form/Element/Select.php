@@ -19,7 +19,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Form\AbstractElement;
 use Engine\Form\AbstractForm;
 use Engine\Form\ElementInterface;
@@ -39,7 +39,7 @@ use Engine\Form\Exception;
  */
 class Select extends AbstractElement implements ElementInterface
 {
-    use TranslationBehaviour;
+    use TranslationBehavior;
 
     /**
      * Returns the element's option.

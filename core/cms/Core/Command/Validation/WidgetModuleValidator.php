@@ -18,7 +18,7 @@
 
 namespace Core\Command\Validation;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\Di;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator;
@@ -40,7 +40,7 @@ class WidgetModuleValidator extends Validator
     /**
      * Validation constructor
      *
-     * @param DIBehaviour|Di $di Dependency injection.
+     * @param DIBehavior|Di $di Dependency injection.
      */
     public function __construct($di)
     {

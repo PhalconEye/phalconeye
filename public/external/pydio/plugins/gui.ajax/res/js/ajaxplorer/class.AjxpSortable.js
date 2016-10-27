@@ -46,7 +46,7 @@ Class.create("AjxpSortable", SortableTable, {
 	 * @param crtOrderName String The current column of ordering
 	 * @param crtOrderDir String ASC or DESC
 	 */
-	setPaginationBehaviour : function(loaderFunc, columnsDefs, crtOrderName, crtOrderDir){
+	setPaginationBehavior : function(loaderFunc, columnsDefs, crtOrderName, crtOrderDir){
 		this.paginationLoaderFunc = loaderFunc;
 		this.columnsDefs = columnsDefs;
 		var found = -1;

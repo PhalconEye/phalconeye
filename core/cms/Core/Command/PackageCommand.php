@@ -58,7 +58,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
         }
 
         $packageManager = new Manager();
-        $data = $this->_collectGenerationData($type);
+        $data = $this->_collectData($type);
 
         try {
             $packageManager->createPackage($data);
@@ -79,7 +79,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      */
     private function _checkType($type)
     {
-        return in_array($type, array_keys(Manager::$allowedTypes));
+        return in_array($type, array_keys(Manager::$ALLOWED_TYPES));
     }
 
     /**
@@ -89,14 +89,17 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      *
      * @return array
      */
-    private function _collectGenerationData($type)
+    private function _collectData($type)
     {
         switch ($type) {
             case Manager::PACKAGE_TYPE_MODULE:
-                return $this->_collectGenerationDataForModule();
+                return $this->_collectDataForModule();
 
             case Manager::PACKAGE_TYPE_WIDGET:
-                return $this->_collectGenerationDataForWidget();
+                return $this->_collectDataForWidget();
+
+            case Manager::PACKAGE_TYPE_PLUGIN:
+                return $this->_collectDataForPlugin();
         }
 
         return [];
@@ -107,7 +110,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      *
      * @return array Collected data.
      */
-    private function _collectGenerationDataForModule()
+    private function _collectDataForModule()
     {
         $data = ['type' => Manager::PACKAGE_TYPE_MODULE];
         $data['name'] = $this->_readline(
@@ -127,7 +130,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      *
      * @return array Collected data.
      */
-    private function _collectGenerationDataForWidget()
+    private function _collectDataForWidget()
     {
         $data = ['type' => Manager::PACKAGE_TYPE_WIDGET];
         $data['name'] = $this->_readline(
@@ -138,12 +141,24 @@ class PackageCommand extends AbstractCommand implements CommandInterface
         );
         $data['nameUpper'] = ucfirst($data['name']);
         $data['module'] = $this->_readline(
-            "Module name (leave empty for external widget): ",
+            "Module name (leave empty for external package): ",
             [
                 new WidgetModuleValidator($this->getDI())
             ]
         );
 
+        return $data;
+    }
+
+    /**
+     * Collect data for plugin.
+     *
+     * @return array Collected data.
+     */
+    private function _collectDataForPlugin()
+    {
+        $data = $this->_collectDataForWidget();
+        $data['type'] = Manager::PACKAGE_TYPE_PLUGIN;
         return $data;
     }
 }

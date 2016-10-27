@@ -1139,7 +1139,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		this._cacheHelperProportions();
 
 		//Prepare the droppable offsets
-		if ($.ui.ddmanager && !o.dropBehaviour) {
+		if ($.ui.ddmanager && !o.dropBehavior) {
 			$.ui.ddmanager.prepareOffsets(this, event);
 		}
 
@@ -1192,7 +1192,7 @@ $.widget("ui.draggable", $.ui.mouse, {
 		//If we are using droppables, inform the manager about the drop
 		var that = this,
 			dropped = false;
-		if ($.ui.ddmanager && !this.options.dropBehaviour) {
+		if ($.ui.ddmanager && !this.options.dropBehavior) {
 			dropped = $.ui.ddmanager.drop(this, event);
 		}
 
@@ -1788,7 +1788,7 @@ $.ui.plugin.add("draggable", "scroll", {
 
 		}
 
-		if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
+		if(scrolled !== false && $.ui.ddmanager && !o.dropBehavior) {
 			$.ui.ddmanager.prepareOffsets(i, event);
 		}
 
@@ -3794,7 +3794,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 			$.ui.ddmanager.current = this;
 		}
 
-		if ($.ui.ddmanager && !o.dropBehaviour) {
+		if ($.ui.ddmanager && !o.dropBehavior) {
 			$.ui.ddmanager.prepareOffsets(this, event);
 		}
 
@@ -3851,7 +3851,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 
 			}
 
-			if(scrolled !== false && $.ui.ddmanager && !o.dropBehaviour) {
+			if(scrolled !== false && $.ui.ddmanager && !o.dropBehavior) {
 				$.ui.ddmanager.prepareOffsets(this, event);
 			}
 		}
@@ -3934,7 +3934,7 @@ $.widget("ui.sortable", $.ui.mouse, {
 		}
 
 		//If we are using droppables, inform the manager about the drop
-		if ($.ui.ddmanager && !this.options.dropBehaviour) {
+		if ($.ui.ddmanager && !this.options.dropBehavior) {
 			$.ui.ddmanager.drop(this, event);
 		}
 

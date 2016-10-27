@@ -19,7 +19,7 @@
 namespace Engine\Form;
 
 use Engine\Db\AbstractModel;
-use Engine\Form\Behaviour\ContainerBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
 use Phalcon\Mvc\Model\ValidatorInterface;
 use Phalcon\Validation as PhalconValidation;
 
@@ -39,7 +39,7 @@ class Validation extends PhalconValidation
     /**
      * Related form object.
      *
-     * @var ContainerBehaviour
+     * @var ContainerBehavior
      */
     protected $_container;
 
@@ -53,7 +53,7 @@ class Validation extends PhalconValidation
     /**
      * Create validation.
      *
-     * @param ContainerBehaviour $container  Form object.
+     * @param ContainerBehavior $container  Form object.
      * @param array|null         $validators prepared validators.
      */
     public function __construct($container, $validators = null)

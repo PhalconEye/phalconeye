@@ -710,7 +710,7 @@ Class.create("FilesList", SelectableElements, {
 				ctxt.getMetadata().set("filesList.descending", this._sortableTable.descending);
 			}.bind(this);
 			if(this.paginationData && this.paginationData.get('remote_order') && parseInt(this.paginationData.get('total')) > 1){
-				this._sortableTable.setPaginationBehaviour(function(params){
+				this._sortableTable.setPaginationBehavior(function(params){
                     this.getCurrentContextNode().getMetadata().set("remote_order", params);
                     var oThis = this;
                     this.crtContext.observeOnce("loaded", function(){
@@ -1015,7 +1015,7 @@ Class.create("FilesList", SelectableElements, {
 	/**
 	 * Link focusing to ajaxplorer main
 	 */
-	setFocusBehaviour : function(){
+	setFocusBehavior : function(){
         var clickObserver = function(){
 			if(ajaxplorer) ajaxplorer.focusOn(this);
 		}.bind(this) ;

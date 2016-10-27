@@ -19,7 +19,7 @@
 namespace Core\Form\Backoffice\Language;
 
 use Engine\Db\AbstractModel;
-use Engine\Form\Behaviour\FieldSetBehaviour;
+use Engine\Form\Behavior\FieldSetBehavior;
 use Engine\Form\Form;
 
 /**

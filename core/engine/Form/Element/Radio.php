@@ -18,7 +18,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Form\AbstractElement;
 use Engine\Form\ElementInterface;
 use Engine\Form\Exception;
@@ -35,7 +35,7 @@ use Engine\Form\Exception;
  */
 class Radio extends AbstractElement implements ElementInterface
 {
-    use TranslationBehaviour;
+    use TranslationBehavior;
 
     /**
      * Returns the element's option.

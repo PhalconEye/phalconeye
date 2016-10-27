@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Behaviour;
+namespace Engine\Behavior;
 
 use Phalcon\DI;
 use Phalcon\DiInterface;
@@ -53,19 +53,19 @@ use Phalcon\DiInterface;
  * @method \Engine\Profiler getProfiler()
  * @method \Engine\Widget\WidgetCatalog getWidgets()
  */
-trait DIBehaviour
+trait DIBehavior
 {
     /**
      * Dependency injection container.
      *
-     * @var DIBehaviour|DI
+     * @var DIBehavior|DI
      */
     private $_di;
 
     /**
      * Create object.
      *
-     * @param DiInterface|DIBehaviour $di Dependency injection container.
+     * @param DiInterface|DIBehavior $di Dependency injection container.
      */
     public function __construct($di = null)
     {
@@ -90,7 +90,7 @@ trait DIBehaviour
     /**
      * Get DI.
      *
-     * @return DIBehaviour|DI
+     * @return DIBehavior|DI
      */
     public function getDI()
     {

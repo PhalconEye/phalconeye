@@ -119,7 +119,7 @@ Class.create("IMagickPreviewer", Diaporama, {
 		img.observe("mouseover", function(event){
 			var theImage = event.target;
 			if(theImage.up('.thumbnail_selectable_cell')) return;
-			if(!theImage.openBehaviour){
+			if(!theImage.openBehavior){
 				var opener = new Element('div').update(MessageHash[411]);
 				opener.setStyle({
 					width:styleObj.width, 
@@ -137,7 +137,7 @@ Class.create("IMagickPreviewer", Diaporama, {
 				img.previewOpener = opener;
 				theImage.insert({before:opener});
 				theImage.setStyle({cursor:'pointer'});
-				theImage.openBehaviour = true;
+				theImage.openBehavior = true;
 				theImage.observe("click", function(event){
 					ajaxplorer.actionBar.fireAction('open_with');
 				});

@@ -18,7 +18,7 @@
 
 namespace Engine\Api;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Exception;
 use Phalcon\DI;
 
@@ -34,8 +34,8 @@ use Phalcon\DI;
  */
 class Injector
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

@@ -22,7 +22,7 @@ namespace Engine\Db\Model\Behavior;
  * Sortable behaviour.
  *
  * @category  PhalconEye
- * @package   Engine\Db\Model\Behaviour
+ * @package   Engine\Db\Model\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

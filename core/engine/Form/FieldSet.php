@@ -18,8 +18,8 @@
 
 namespace Engine\Form;
 
-use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FieldSetBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
+use Engine\Form\Behavior\FieldSetBehavior;
 use Engine\Form;
 use Phalcon\Validation\Message\Group;
 
@@ -36,8 +36,8 @@ use Phalcon\Validation\Message\Group;
  */
 class FieldSet implements ElementContainerInterface
 {
-    use FieldSetBehaviour {
-        FieldSetBehaviour::getElements as protected _getElements;
+    use FieldSetBehavior {
+        FieldSetBehavior::getElements as protected _getElements;
     }
 
     /**

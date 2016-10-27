@@ -9,7 +9,7 @@ use Phalcon\Mvc\User\Plugin as PhalconPlugin;
  * @category PhalconEye\Package
  * @package  Plugin
  */
-class %nameUpper% extends PhalconPlugin
+class Plugin extends PhalconPlugin
 {
 
 }

@@ -36,7 +36,7 @@
 
 namespace Engine\Exception;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 
 /**
  * Prints exception/errors backtraces using a pretty visualization.
@@ -54,7 +54,7 @@ use Engine\Behaviour\DIBehaviour;
  */
 class PrettyExceptions
 {
-    use DIBehaviour;
+    use DIBehavior;
 
     /**
      * Print the backtrace.

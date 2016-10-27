@@ -19,7 +19,7 @@
 
 namespace Engine\Form;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Form;
 use Phalcon\Forms\Element as PhalconElement;
 
@@ -36,8 +36,8 @@ use Phalcon\Forms\Element as PhalconElement;
  */
 abstract class AbstractElement implements ElementInterface
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**
@@ -50,7 +50,7 @@ abstract class AbstractElement implements ElementInterface
     /**
      * Fieldset or Form object.
      *
-     * @var Form\Behaviour\ContainerBehaviour|Form|FieldSet
+     * @var Form\Behavior\ContainerBehavior|Form|FieldSet
      */
     protected $_container;
 
@@ -93,7 +93,7 @@ abstract class AbstractElement implements ElementInterface
     /**
      * Set element relation to container (fieldset or form).
      *
-     * @param Form\Behaviour\ContainerBehaviour|Form|FieldSet $container Form object.
+     * @param Form\Behavior\ContainerBehavior|Form|FieldSet $container Form object.
      *
      * @return $this
      */
@@ -106,7 +106,7 @@ abstract class AbstractElement implements ElementInterface
     /**
      * Get related object (fieldset or form).
      *
-     * @return Form\Behaviour\ContainerBehaviour|Form|FieldSet|null
+     * @return Form\Behavior\ContainerBehavior|Form|FieldSet|null
      */
     public function getContainer()
     {

@@ -18,12 +18,12 @@
 
 namespace Engine\Grid;
 
-use Engine\Behaviour\DIBehaviour;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\DIBehavior;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Db\AbstractModel;
 use Engine\Exception;
 use Engine\Form;
-use Engine\Grid\Behaviour\ColumnBehaviour;
+use Engine\Grid\Behavior\ColumnBehavior;
 use Engine\Grid\Source\BuilderResolver;
 use Engine\Grid\Source\ResolverInterface;
 use Phalcon\DI;
@@ -80,12 +80,12 @@ abstract class AbstractGrid implements GridInterface
         COLUMN_PARAM_OUTPUT_LOGIC = 'output_logic';
 
 
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
-    use ColumnBehaviour,
-        TranslationBehaviour;
+    use ColumnBehavior,
+        TranslationBehavior;
 
     /**
      * View object.
@@ -112,7 +112,7 @@ abstract class AbstractGrid implements GridInterface
      * Create grid.
      *
      * @param ViewInterface $view View object.
-     * @param DIBehaviour   $di   DI object.
+     * @param DIBehavior    $di   DI object.
      */
     public function __construct(ViewInterface $view, $di = null)
     {

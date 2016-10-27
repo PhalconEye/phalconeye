@@ -17,7 +17,8 @@
 */
 namespace Engine\Widget;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
+use Engine\Package\Manager;
 use Phalcon\Di;
 
 /**
@@ -50,10 +51,10 @@ class WidgetData
     /**
      * WidgetData constructor.
      *
-     * @param string              $_name      Widget name.
-     * @param string|null         $_module    Widget's module.
-     * @param DIBehaviour|Di|null $di         Provide DI to collect metadata.
-     * @param string              $widgetPath Widget path.
+     * @param string             $_name      Widget name.
+     * @param string|null        $_module    Widget's module.
+     * @param DIBehavior|Di|null $di         Provide DI to collect metadata.
+     * @param string             $widgetPath Widget path.
      */
     public function __construct($_name, $_module, $di = null, $widgetPath = null)
     {
@@ -150,7 +151,7 @@ class WidgetData
     /**
      * Get widget path.
      *
-     * @param DIBehaviour|Di $di Dependency injection.
+     * @param DIBehavior|Di $di Dependency injection.
      *
      * @return string Widget path.
      */
@@ -160,7 +161,7 @@ class WidgetData
         if ($this->_module != null) {
             $modules = $di->getRegistry()->modules->toArray();
             if (isset($modules[$this->_module])) {
-                $widgetPath = $modules[$this->_module] . DS . WidgetCatalog::WIDGET_DIRECTORY . DS;
+                $widgetPath = $modules[$this->_module] . DS . Manager::PACKAGE_DIRECTORY_WIDGET . DS;
             }
         }
         $widgetPath .= ucfirst($this->_name);

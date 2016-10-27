@@ -20,7 +20,7 @@
  * Description : focusable component / Tab navigation
  */
 Interface.create("IFocusable", {		
-	setFocusBehaviour : function(){},
+	setFocusBehavior : function(){},
 	focus : function(){},
 	blur : function(){}
 });

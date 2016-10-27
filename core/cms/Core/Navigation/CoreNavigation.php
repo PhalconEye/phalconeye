@@ -19,7 +19,7 @@
 
 namespace Core\Navigation;
 
-use Engine\Behaviour\ViewBehaviour;
+use Engine\Behavior\ViewBehavior;
 use Engine\Navigation\Item;
 use Engine\Navigation\NavigationInterface;
 use Engine\Navigation\AbstractNavigation;
@@ -37,7 +37,7 @@ use Engine\Navigation\AbstractNavigation;
  */
 class CoreNavigation extends AbstractNavigation implements NavigationInterface
 {
-    use ViewBehaviour;
+    use ViewBehavior;
 
     /** @var array Default parameters **/
     protected $_options = [

@@ -18,7 +18,7 @@
 
 namespace Engine\Console;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Utils\ConsoleUtils;
 use Phalcon\DiInterface;
 use Phalcon\Filter;
@@ -36,8 +36,8 @@ use Phalcon\Validation;
  */
 abstract class AbstractCommand implements CommandInterface
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

@@ -18,7 +18,7 @@
 
 namespace Engine\Navigation;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 
@@ -41,8 +41,8 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
         ITEM_LINK_PATTERN = "/^((http|https|mailto|ftp):\/\/|javascript:|\/)/";
 
     use ItemsContainer,
-        DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+        DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /** @var int Navigation id * */

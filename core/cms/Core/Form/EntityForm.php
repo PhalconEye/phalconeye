@@ -18,12 +18,12 @@
 
 namespace Core\Form;
 
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Db\AbstractModel;
 use Engine\Form\AbstractElement;
 use Engine\Form\AbstractForm;
-use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FormBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
+use Engine\Form\Behavior\FormBehavior;
 use Phalcon\DI;
 use Phalcon\Filter;
 use Phalcon\Tag as Tag;

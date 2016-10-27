@@ -19,6 +19,7 @@
 namespace Engine\Widget;
 
 use Engine\Exception as EngineException;
+use Engine\Package\Manager;
 
 /**
  * Widgets catalog.
@@ -37,11 +38,6 @@ class WidgetCatalog
          * Widget namespace when it is outside of any module.
          */
         WIDGET_EXTERNAL_NAMESPACE = '_external_',
-
-        /**
-         * Widget directory name.
-         */
-        WIDGET_DIRECTORY = 'Widget',
 
         /**
          * Widget metadata filename.
@@ -71,7 +67,7 @@ class WidgetCatalog
     public static function getWidgetsFromModule($module, $modulePath) : array
     {
         $widgets = [];
-        $modulePath .= ucfirst($module) . DS . self::WIDGET_DIRECTORY;
+        $modulePath .= ucfirst($module) . DS . Manager::$ALLOWED_TYPES[Manager::PACKAGE_TYPE_WIDGET];
 
         if (!file_exists($modulePath)) {
             return [];

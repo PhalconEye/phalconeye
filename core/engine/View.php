@@ -18,8 +18,8 @@
 
 namespace Engine;
 
-use Engine\Behaviour\DIBehaviour;
-use Engine\Behaviour\ViewBehaviour;
+use Engine\Behavior\DIBehavior;
+use Engine\Behavior\ViewBehavior;
 use Engine\View\Extension;
 use Phalcon\DI;
 use Phalcon\Events\Manager;
@@ -38,7 +38,7 @@ use Phalcon\Mvc\View\Engine\Volt;
  */
 class View extends PhalconView
 {
-    use ViewBehaviour;
+    use ViewBehavior;
 
     /**
      * Last picked view was final?
@@ -51,7 +51,7 @@ class View extends PhalconView
      * Create view instance.
      * If no events manager provided - events would not be attached.
      *
-     * @param DIBehaviour  $di             DI.
+     * @param DIBehavior   $di             DI.
      * @param Config       $config         Configuration.
      * @param string|null  $viewsDirectory Views directory location.
      * @param Manager|null $em             Events manager.

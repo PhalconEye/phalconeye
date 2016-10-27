@@ -19,7 +19,7 @@
 require_once "./public/init.php";
 require_once ROOT_PATH . "/core/engine/Config.php";
 require_once ROOT_PATH . "/core/engine/Exception.php";
-require_once ROOT_PATH . "/core/engine/ApplicationInitialization.php";
+require_once ROOT_PATH . "/core/engine/Behavior/ApplicationBehavior.php";
 require_once ROOT_PATH . "/core/engine/Application.php";
 require_once ROOT_PATH . "/core/engine/Cli.php";
 

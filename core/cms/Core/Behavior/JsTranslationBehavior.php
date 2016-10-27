@@ -16,33 +16,32 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Behaviour;
+namespace Core\Behavior;
 
-use Engine\Behaviour\DIBehaviour;
-use Phalcon\DI;
+use Engine\AbstractHelper;
+use Engine\Helper\I18nHelper;
 
 /**
- * Translation trait.
+ * Js translations.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Core\Controller\Traits
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait TranslationBehaviour
+trait JsTranslationBehavior
 {
     /**
-     * Translate message.
+     * Add default javascript translations.
      *
-     * @param string     $msg  Message to translate.
-     * @param array|null $args Message placeholder values.
-     *
-     * @return string
+     * @return void
      */
-    protected function _($msg, $args = null)
+    public function addDefaultJsTranslations()
     {
-        return $this->getDI()->get('i18n')->_($msg, $args);
+        I18nHelper::getInstance($this->getDI())
+            ->add('Do you really want to delete this item?')
+            ->add('Close this window?');
     }
 }

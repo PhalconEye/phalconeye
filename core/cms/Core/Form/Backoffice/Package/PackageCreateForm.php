@@ -87,7 +87,7 @@ class PackageCreateForm extends CoreForm
     {
         $this->addContentFieldSet()
             ->addText('name', 'Name', 'Name must be in lowercase and contains only letters.')
-            ->addSelect('type', 'Package type', null, Manager::$allowedTypes)
+            ->addSelect('type', 'Package type', null, Manager::$ALLOWED_TYPES)
             ->addText('title')
             ->addTextArea('description')
             ->addText('version', 'Version', 'Type package version. Ex.: 0.5.7')

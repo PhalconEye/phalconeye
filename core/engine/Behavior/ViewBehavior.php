@@ -16,32 +16,71 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Behaviour;
+namespace Engine\Behavior;
 
-use Engine\AbstractHelper;
-use Engine\Helper\I18nHelper;
+use Engine\Behavior\DIBehavior;
+use Phalcon\DI;
+use Phalcon\Mvc\View as PhalconView;
+use Phalcon\Mvc\View\Engine\Volt;
 
 /**
- * Js translations.
+ * View behavior.
  *
  * @category  PhalconEye
- * @package   Core\Controller\Traits
+ * @package   Engine
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait JsTranslationBehaviour
+trait ViewBehavior
 {
     /**
-     * Add default javascript translations.
+     * Is backoffice view.
      *
-     * @return void
+     * @var boolean
      */
-    public function addDefaultJsTranslations()
+    private $_isBackoffice = false;
+
+    /**
+     * Resolve view path.
+     *
+     * @param string $viewPath Path to view.
+     * @param null   $module   Module name.
+     *
+     * @return string
+     */
+    public function resolveView($viewPath, $module = null)
     {
-        I18nHelper::getInstance($this->getDI())
-            ->add('Do you really want to delete this item?')
-            ->add('Close this window?');
+        if (!$module) {
+            return $viewPath;
+        }
+
+        $backofficePath = '';
+        if ($this->isBackoffice()) {
+            $backofficePath = 'Backoffice/';
+        }
+
+        return ucfirst($module) . '/View/' . $backofficePath . $viewPath;
+    }
+
+    /**
+     * Check if current view must render backoffice views.
+     *
+     * @return boolean
+     */
+    public function isBackoffice(): bool
+    {
+        return $this->_isBackoffice;
+    }
+
+    /**
+     * Set that engine must render backoffice views.
+     *
+     * @param boolean $isBackoffice Is backoffice view?
+     */
+    public function setIsBackoffice(bool $isBackoffice)
+    {
+        $this->_isBackoffice = $isBackoffice;
     }
 }

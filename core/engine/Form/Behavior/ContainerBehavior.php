@@ -16,10 +16,10 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form\Behaviour;
+namespace Engine\Form\Behavior;
 
-use Engine\Behaviour\DIBehaviour;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\DIBehavior;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Form\AbstractElement;
 use Engine\Form;
 use Engine\Form\AbstractForm;
@@ -28,20 +28,20 @@ use Engine\Form\AbstractForm;
  * Element container trait.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Engine\Form\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait ContainerBehaviour
+trait ContainerBehavior
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
-    use ElementsBehaviour,
-        TranslationBehaviour;
+    use ElementsBehavior,
+        TranslationBehavior;
 
     /**
      * Form identity.

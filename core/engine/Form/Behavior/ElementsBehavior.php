@@ -17,7 +17,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Form\Behaviour;
+namespace Engine\Form\Behavior;
 
 use Engine\Form;
 use Engine\Form\AbstractElement;
@@ -30,7 +30,7 @@ use Phalcon\Mvc\View;
  * Method for simple element creation.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Engine\Form\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @author    Piotr Gasiorowski <p.gasiorowski@vipserv.org>
  * @copyright 2013-2016 PhalconEye Team
@@ -38,7 +38,7 @@ use Phalcon\Mvc\View;
  * @link      http://phalconeye.com/
  *
  */
-trait ElementsBehaviour
+trait ElementsBehavior
 {
     /**
      * Add element to form.

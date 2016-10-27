@@ -18,7 +18,7 @@
 
 namespace engine\Asset;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\Assets\Collection as PhalconCollection;
 
 /**
@@ -33,8 +33,8 @@ use Phalcon\Assets\Collection as PhalconCollection;
  */
 class Collection extends PhalconCollection
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

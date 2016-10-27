@@ -16,71 +16,33 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Behaviour;
+namespace Engine\Behavior;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
-use Phalcon\Mvc\View as PhalconView;
-use Phalcon\Mvc\View\Engine\Volt;
 
 /**
- * View behaviour.
+ * Translation trait.
  *
  * @category  PhalconEye
- * @package   Engine
+ * @package   Engine\Form\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait ViewBehaviour
+trait TranslationBehavior
 {
     /**
-     * Is backoffice view.
+     * Translate message.
      *
-     * @var boolean
-     */
-    private $_isBackoffice = false;
-
-    /**
-     * Resolve view path.
-     *
-     * @param string $viewPath Path to view.
-     * @param null   $module   Module name.
+     * @param string     $msg  Message to translate.
+     * @param array|null $args Message placeholder values.
      *
      * @return string
      */
-    public function resolveView($viewPath, $module = null)
+    protected function _($msg, $args = null)
     {
-        if (!$module) {
-            return $viewPath;
-        }
-
-        $backofficePath = '';
-        if ($this->isBackoffice()) {
-            $backofficePath = 'Backoffice/';
-        }
-
-        return ucfirst($module) . '/View/' . $backofficePath . $viewPath;
-    }
-
-    /**
-     * Check if current view must render backoffice views.
-     *
-     * @return boolean
-     */
-    public function isBackoffice(): bool
-    {
-        return $this->_isBackoffice;
-    }
-
-    /**
-     * Set that engine must render backoffice views.
-     *
-     * @param boolean $isBackoffice Is backoffice view?
-     */
-    public function setIsBackoffice(bool $isBackoffice)
-    {
-        $this->_isBackoffice = $isBackoffice;
+        return $this->getDI()->get('i18n')->_($msg, $args);
     }
 }

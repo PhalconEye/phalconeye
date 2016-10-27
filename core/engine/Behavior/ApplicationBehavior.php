@@ -16,15 +16,17 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine;
+namespace Engine\Behavior;
 
 use Engine\Api\Injector as ApiInjector;
+use Engine\Application;
 use Engine\Asset\Manager as AssetsManager;
-use Engine\Behaviour\DIBehaviour;
 use Engine\Cache\Dummy;
 use Engine\Cache\System;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
+use Engine\Exception;
 use Engine\Exception\PrettyExceptions;
+use Engine\Profiler;
 use Engine\Widget\WidgetCatalog;
 use Engine\Widget\WidgetData;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
@@ -62,13 +64,13 @@ use Phalcon\Text;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait ApplicationInitialization
+trait ApplicationBehavior
 {
     /**
      * Init logger.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -92,9 +94,9 @@ trait ApplicationInitialization
     /**
      * Init loader.
      *
-     * @param DIBehaviour|DI $di            Dependency Injection.
-     * @param Config         $config        Config object.
-     * @param EventsManager  $eventsManager Event manager.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
+     * @param EventsManager $eventsManager Event manager.
      *
      * @return Loader
      */
@@ -132,8 +134,8 @@ trait ApplicationInitialization
     /**
      * Init environment.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return Url
      */
@@ -188,7 +190,7 @@ trait ApplicationInitialization
      *
      * @return void
      */
-    protected function _attachEngineEvents($eventsManager, $config)
+    protected function _initPlugins($eventsManager, $config)
     {
         // Attach modules plugins events.
         $events = $config->events->toArray();
@@ -208,8 +210,8 @@ trait ApplicationInitialization
     /**
      * Init annotations.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -233,8 +235,8 @@ trait ApplicationInitialization
     /**
      * Init router.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return Router
      */
@@ -327,9 +329,9 @@ trait ApplicationInitialization
     /**
      * Init database.
      *
-     * @param DIBehaviour|DI $di            Dependency Injection.
-     * @param Config         $config        Config object.
-     * @param EventsManager  $eventsManager Event manager.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
+     * @param EventsManager $eventsManager Event manager.
      *
      * @return Pdo
      */
@@ -432,8 +434,8 @@ trait ApplicationInitialization
     /**
      * Init session.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return SessionAdapter
      */
@@ -454,8 +456,8 @@ trait ApplicationInitialization
     /**
      * Init cache.
      *
-     * @param DIBehaviour|DI $di     Dependency Injection.
-     * @param Config         $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -489,7 +491,7 @@ trait ApplicationInitialization
     /**
      * Init flash messages.
      *
-     * @param DIBehaviour|DI $di Dependency Injection.
+     * @param DIBehavior|DI $di Dependency Injection.
      *
      * @return void
      */
@@ -523,9 +525,9 @@ trait ApplicationInitialization
     /**
      * Initialize view.
      *
-     * @param DIBehaviour|DI $di            Dependency Injection.
-     * @param Config         $config        Config object.
-     * @param EventsManager  $eventsManager Event manager.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
+     * @param EventsManager $eventsManager Event manager.
      *
      * @return void
      */
@@ -540,7 +542,7 @@ trait ApplicationInitialization
     /**
      * Prepare widgets metadata for Engine.
      *
-     * @param DIBehaviour|DI $di Dependency injection.
+     * @param DIBehavior|DI $di Dependency injection.
      *
      * @return void
      */
@@ -574,7 +576,7 @@ trait ApplicationInitialization
     /**
      * Init engine.
      *
-     * @param DIBehaviour|DI $di Dependency Injection.
+     * @param DIBehavior|DI $di Dependency Injection.
      *
      * @return void
      */

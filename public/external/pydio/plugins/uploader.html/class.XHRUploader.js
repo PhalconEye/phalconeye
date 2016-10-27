@@ -338,7 +338,7 @@ Class.create("XHRUploader", {
 				}							
 			});
 		});
-		optionPane.getExistingBehaviour = function(){
+		optionPane.getExistingBehavior = function(){
 			var value;
 			optionPane.existingRadio.each(function(el){
 				if(el.checked) value = el.value;
@@ -795,7 +795,7 @@ Class.create("XHRUploader", {
 
         if(this.dataModel.fileNameExists(item.file.name, false, parentNode))
 		{
-			var behaviour = this.optionPane.getExistingBehaviour();
+			var behaviour = this.optionPane.getExistingBehavior();
 			if(behaviour == 'rename'){
 				auto_rename = true;
 			}else if(behaviour == 'alert'){
@@ -854,7 +854,7 @@ Class.create("XHRUploader", {
     	var auto_rename = false;
 		if(this.dataModel.fileNameExists(item.file.name))
 		{
-			var behaviour = this.optionPane.getExistingBehaviour();
+			var behaviour = this.optionPane.getExistingBehavior();
 			if(behaviour == 'rename'){
 				auto_rename = true;
 			}else if(behaviour == 'alert'){

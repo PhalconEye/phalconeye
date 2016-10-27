@@ -18,7 +18,7 @@
 
 namespace Engine\Db;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Exception as EngineException;
 use Phalcon\Annotations\Collection;
 use Phalcon\Db\AdapterInterface;
@@ -41,7 +41,7 @@ use Phalcon\Annotations\Reflection;
  */
 class Schema
 {
-    use DIBehaviour;
+    use DIBehavior;
 
     CONST
         /**

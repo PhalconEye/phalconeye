@@ -18,6 +18,7 @@
 
 namespace Engine;
 
+use Engine\Behavior\ApplicationBehavior;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Application as PhalconApplication;
@@ -71,7 +72,7 @@ class Application extends PhalconApplication
          */
         SYSTEM_MODULES = [self::CMS_MODULE_CORE, self::CMS_MODULE_USER];
 
-    use ApplicationInitialization;
+    use ApplicationBehavior;
 
     /**
      * Application configuration.
@@ -195,8 +196,7 @@ class Application extends PhalconApplication
         // Init base systems first.
         $this->_initLogger($di, $config);
         $this->_initLoader($di, $config, $eventsManager);
-
-        $this->_attachEngineEvents($eventsManager, $config);
+        $this->_initPlugins($eventsManager, $config);
 
         // Init services and engine system.
         foreach ($this->_loaders[$mode] as $service) {
@@ -313,7 +313,7 @@ class Application extends PhalconApplication
      *
      * @return void
      */
-    protected function _attachEngineEvents($eventsManager, $config)
+    protected function _initPlugins($eventsManager, $config)
     {
         // Attach modules plugins events.
         // @TODO: fix this after refactoring.

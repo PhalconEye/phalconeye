@@ -262,7 +262,7 @@ Class.create("Ajaxplorer", {
             for(var j=0;j<compRegistry.length;j++){
                 var obj = compRegistry[j];
                 if(Class.objectImplements(obj, "IFocusable")){
-                    obj.setFocusBehaviour();
+                    obj.setFocusBehavior();
                     this.registerFocusable(obj);
                 }
                 if(Class.objectImplements(obj, "IContextMenuable")){
@@ -403,7 +403,7 @@ Class.create("Ajaxplorer", {
         }
 		var obj = new ajxpClass($(ajxpId), ajxpOptions);
 		if(Class.objectImplements(obj, "IFocusable")){
-			obj.setFocusBehaviour();
+			obj.setFocusBehavior();
 			this.registerFocusable(obj);
 		}
 		if(Class.objectImplements(obj, "IContextMenuable")){

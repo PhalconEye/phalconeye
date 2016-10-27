@@ -22,7 +22,7 @@ use Core\Model\LanguageModel;
 use Core\Model\LanguageTranslationModel;
 use Core\Model\SettingsModel;
 use Engine\AbstractBootstrap;
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Config;
 use Engine\Translation\Db as TranslationDb;
 use Phalcon\DI;
@@ -52,8 +52,8 @@ class Bootstrap extends AbstractBootstrap
     /**
      * Bootstrap construction.
      *
-     * @param DIBehaviour|DI $di Dependency injection.
-     * @param Manager        $em Events manager object.
+     * @param DIBehavior|DI $di Dependency injection.
+     * @param Manager       $em Events manager object.
      */
     public function __construct($di, $em)
     {
@@ -99,8 +99,8 @@ class Bootstrap extends AbstractBootstrap
     /**
      * Init locale.
      *
-     * @param DIBehaviour|DI $di     Dependency injection.
-     * @param Config         $config Dependency injection.
+     * @param DIBehavior|DI $di     Dependency injection.
+     * @param Config        $config Dependency injection.
      *
      * @return void
      */

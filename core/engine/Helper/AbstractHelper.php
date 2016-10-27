@@ -18,7 +18,7 @@
 
 namespace Engine\Helper;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 use Phalcon\Tag;
@@ -33,7 +33,7 @@ use Phalcon\Tag;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  *
- * @method static DIBehaviour|Di getDi()
+ * @method static DIBehavior|Di getDi()
  */
 abstract class AbstractHelper extends Tag
 {

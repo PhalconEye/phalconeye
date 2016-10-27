@@ -18,7 +18,7 @@
 
 namespace Engine\Form\Element;
 
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Form\ElementInterface;
 
 /**

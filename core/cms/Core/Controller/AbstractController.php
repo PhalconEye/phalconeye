@@ -19,11 +19,11 @@
 
 namespace Core\Controller;
 
-use Core\Behaviour\JsTranslationBehaviour;
+use Core\Behavior\JsTranslationBehavior;
 use Core\Helper\RendererHelper;
 use Core\Model\PageModel;
 use Engine\Asset\Manager as AssetManager;
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
@@ -46,13 +46,13 @@ use Phalcon\Mvc\Controller as PhalconController;
  * @property \Engine\Asset\Manager      $assets
  * @property \Engine\Config             $config
  * @property \Phalcon\Translate\Adapter $i18n
- * @property DIBehaviour|DI             $di
+ * @property DIBehavior|DI              $di
  *
- * @method DIBehaviour|Di getDI()
+ * @method DIBehavior|Di getDI()
  */
 abstract class AbstractController extends PhalconController
 {
-    use JsTranslationBehaviour;
+    use JsTranslationBehavior;
 
     /**
      * Disable header rendering.

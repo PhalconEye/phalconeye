@@ -18,7 +18,7 @@
 
 namespace Core\Grid;
 
-use Engine\Behaviour\ViewBehaviour;
+use Engine\Behavior\ViewBehavior;
 use Engine\Grid\AbstractGrid;
 
 /**
@@ -34,7 +34,7 @@ use Engine\Grid\AbstractGrid;
  */
 abstract class CoreGrid extends AbstractGrid
 {
-    use ViewBehaviour;
+    use ViewBehavior;
 
     /**
      * Get grid view name.

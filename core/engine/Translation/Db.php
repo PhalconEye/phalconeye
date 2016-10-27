@@ -19,7 +19,7 @@
 namespace Engine\Translation;
 
 use Engine\Application;
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Column as PhalconColumn;
 use Phalcon\DiInterface;
@@ -41,8 +41,8 @@ use Phalcon\Translate\translateKey;
  */
 class Db implements AdapterInterface
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

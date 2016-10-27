@@ -20,10 +20,10 @@
 namespace Core\Form;
 
 use Engine\Form\AbstractForm;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Exception;
-use Engine\Form\Behaviour\ContainerBehaviour;
-use Engine\Form\Behaviour\FormBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
+use Engine\Form\Behavior\FormBehavior;
 use Engine\Form;
 use Phalcon\Filter;
 use Phalcon\Http\Request\FileInterface;

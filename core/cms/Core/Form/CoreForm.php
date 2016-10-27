@@ -19,7 +19,7 @@
 namespace Core\Form;
 
 use Engine\Form\AbstractForm;
-use Engine\Behaviour\ViewBehaviour;
+use Engine\Behavior\ViewBehavior;
 
 /**
  * Main core form.
@@ -40,7 +40,7 @@ class CoreForm extends AbstractForm
         LAYOUT_DEFAULT_PATH = 'partials/form/default';
 
     use EntityForm,
-        ViewBehaviour;
+        ViewBehavior;
 
     /**
      * Get layout view path.

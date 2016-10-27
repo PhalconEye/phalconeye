@@ -18,7 +18,7 @@
 
 namespace Engine\Widget;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 
 /**
@@ -33,8 +33,8 @@ use Phalcon\DI;
  */
 class Element
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**
@@ -54,9 +54,9 @@ class Element
     /**
      * Create widget element.
      *
-     * @param mixed          $id     Widget id in widgets table.
-     * @param array          $params Widgets params in page.
-     * @param DIBehaviour|Di $di     Dependency injection.
+     * @param mixed         $id     Widget id in widgets table.
+     * @param array         $params Widgets params in page.
+     * @param DIBehavior|Di $di     Dependency injection.
      */
     public function __construct($id, $params = [], $di = null)
     {

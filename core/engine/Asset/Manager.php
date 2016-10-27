@@ -20,7 +20,7 @@
 namespace Engine\Asset;
 
 use Engine\Asset\Css\Less;
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Utils\FileUtils;
 use Phalcon\Assets\Filters\Cssmin;
 use Phalcon\Assets\Filters\Jsmin;
@@ -58,8 +58,8 @@ class Manager extends AssetManager
          */
         DEFAULT_COLLECTION_CSS = 'css';
 
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

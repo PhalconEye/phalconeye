@@ -19,7 +19,7 @@
 namespace Engine\Navigation;
 
 /**
- * Item Container Behaviour
+ * Item Container Behavior
  *
  * @category  PhalconEye
  * @package   Engine

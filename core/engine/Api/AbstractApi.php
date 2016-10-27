@@ -18,7 +18,7 @@
 
 namespace Engine\Api;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 use Phalcon\DiInterface;
 
@@ -34,8 +34,8 @@ use Phalcon\DiInterface;
  */
 abstract class AbstractApi implements ApiInterface
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     /**

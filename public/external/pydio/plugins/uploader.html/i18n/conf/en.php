@@ -21,7 +21,7 @@
 $mess=array(
 "HTML Uploader" => "HTML Uploader",
 "Auto-switching HTML5 or IFrame uploader." => "Auto-switching HTML5 or IFrame uploader.",
-"Default Behaviour" => "Default Behaviour",
+"Default Behavior" => "Default Behavior",
 "Existing Files" => "Existing Files",
 "Inform the user or not if the file already exists (default behaviour, the user will be able to change this preference)" => "Inform the user or not if the file already exists (default behaviour, the user will be able to change this preference)",
 "Auto Start" => "Auto Start",

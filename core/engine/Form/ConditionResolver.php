@@ -18,10 +18,10 @@
 
 namespace Engine\Form;
 
-use Engine\Form\Behaviour\ContainerBehaviour;
+use Engine\Form\Behavior\ContainerBehavior;
 use Engine\Form;
-use Engine\Form\Behaviour\FormBehaviour;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Form\Behavior\FormBehavior;
+use Engine\Behavior\TranslationBehavior;
 use Phalcon\DI;
 use Phalcon\Filter;
 use Phalcon\Tag as Tag;

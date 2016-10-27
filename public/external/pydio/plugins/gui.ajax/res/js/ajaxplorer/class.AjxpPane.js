@@ -220,7 +220,7 @@ Class.create("AjxpPane", {
 	/**
 	 * Sets a listener when the htmlElement is focused to notify ajaxplorer object
 	 */
-	setFocusBehaviour : function(){
+	setFocusBehavior : function(){
 		this.htmlElement.observe("click", function(){
 			if(ajaxplorer) ajaxplorer.focusOn(this);
 		}.bind(this));

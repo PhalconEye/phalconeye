@@ -20,7 +20,7 @@
 namespace Engine\Form\Element;
 
 use Engine\Form\AbstractElement;
-use Engine\Behaviour\TranslationBehaviour;
+use Engine\Behavior\TranslationBehavior;
 use Engine\Form\ElementInterface;
 
 /**
@@ -36,7 +36,7 @@ use Engine\Form\ElementInterface;
  */
 class Heading extends AbstractElement implements ElementInterface
 {
-    use TranslationBehaviour;
+    use TranslationBehavior;
 
     /**
      * Get allowed options for this element.

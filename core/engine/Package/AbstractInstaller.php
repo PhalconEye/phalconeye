@@ -18,7 +18,7 @@
 
 namespace Engine;
 
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 
 /**
@@ -33,7 +33,7 @@ use Phalcon\DI;
  */
 abstract class AbstractInstaller
 {
-    use DIBehaviour;
+    use DIBehavior;
 
     /**
      * Used to install specific database entities or other specific action.

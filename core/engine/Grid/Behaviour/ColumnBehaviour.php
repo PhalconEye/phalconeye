@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\Grid\Behaviour;
+namespace Engine\Grid\Behavior;
 
 use Engine\Form\Element\Select;
 use Engine\Form\Element\Text;
@@ -29,13 +29,13 @@ use Phalcon\Validation\Message;
  * Grid columns trait.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behaviour
+ * @package   Engine\Form\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-trait ColumnBehaviour
+trait ColumnBehavior
 {
     /**
      * Grid columns.

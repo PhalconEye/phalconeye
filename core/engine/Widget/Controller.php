@@ -35,7 +35,7 @@ use Phalcon\Mvc\View;
  *
  * @property \Phalcon\Cache\Backend $cacheData
  *
- * @method \Engine\Behaviour\DIBehaviour getDI()
+ * @method \Engine\Behavior\DIBehavior getDI()
  */
 class Controller extends PhalconController
 {

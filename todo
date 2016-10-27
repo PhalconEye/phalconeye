@@ -1,8 +1,10 @@
-- move controllers from Core to Main
 - dynamic modules navigation in backoffice
-- cleanup package manager.
 - check that all type of resources can be overrided from app folder
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
 - composer stuff
 - fix installer + option for installing sample data.
 - missing widget check (when widget code removed but options left in content).
+
+- run profiler
+- create demo project
+- test everything

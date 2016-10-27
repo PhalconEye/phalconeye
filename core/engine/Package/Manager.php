@@ -19,7 +19,7 @@
 namespace Engine\Package;
 
 use Engine\Application;
-use Engine\Behaviour\DIBehaviour;
+use Engine\Behavior\DIBehavior;
 use Engine\Config;
 use Engine\Package\Exception\InvalidManifestException;
 use Engine\Package\Exception\PackageExistsException;
@@ -41,8 +41,8 @@ use Phalcon\Filter as PhalconFilter;
  */
 class Manager
 {
-    use DIBehaviour {
-        DIBehaviour::__construct as protected __DIConstruct;
+    use DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
     }
 
     const
@@ -82,7 +82,7 @@ class Manager
      *
      * @var array
      */
-    public static $allowedTypes = [
+    public static $ALLOWED_TYPES = [
         self::PACKAGE_TYPE_MODULE => 'Module',
         self::PACKAGE_TYPE_PLUGIN => 'Plugin',
         self::PACKAGE_TYPE_THEME => 'Theme',
@@ -141,10 +141,13 @@ class Manager
 
         if (self::PACKAGE_TYPE_THEME == $type) {
             $location = $location . $name;
-        } elseif (self::PACKAGE_TYPE_WIDGET == $type && !empty($data['module'])) {
+        } elseif (
+            (self::PACKAGE_TYPE_WIDGET == $type || self::PACKAGE_TYPE_PLUGIN == $type) &&
+            !empty($data['module'])
+        ) {
             $module = ucfirst($data['module']);
             $location = $locations[self::PACKAGE_TYPE_MODULE];
-            $location = $location . $module . DS . WidgetCatalog::WIDGET_DIRECTORY . DS . $nameUpper;
+            $location = $location . $module . DS . self::$ALLOWED_TYPES[$type] . DS . $nameUpper;
         } else {
             $location = $location . $nameUpper;
         }
@@ -184,7 +187,8 @@ class Manager
                 $this->createModule($data);
                 break;
             case Manager::PACKAGE_TYPE_WIDGET:
-                $this->createWidget($data);
+            case Manager::PACKAGE_TYPE_PLUGIN:
+                $this->createWidgetOrPlugin($data);
                 break;
         }
     }
@@ -205,15 +209,10 @@ class Manager
         $packageLocation = $this->getPackageLocation($data);
 
         $this->_processData($data);
-        $this->_validateData($data, $config);
+        $this->_validateData($data, $config, false);
         $this->_copyStructure($data, $packageLocation);
         $this->_replaceVariables($data, $packageLocation);
-
-        // Update packages config.
-        $existingPackages = $config->packages->{$data['type']}->toArray();
-        $existingPackages[] = $packageName;
-        $config->packages->{$data['type']} = $existingPackages;
-        $config->save(Config::CONFIG_SECTION_PACKAGES);
+        $this->_addPackageToConfig($packageName, $data, $config);
     }
 
     /**
@@ -225,48 +224,86 @@ class Manager
      *
      * @return void
      */
-    public function createWidget($data)
+    public function createWidgetOrPlugin($data)
     {
         $config = $this->getDI()->getConfig();
         $packageName = ucfirst($data['name']);
         $packageLocation = $this->getPackageLocation($data);
-        $isExternalWidget = empty($data['module']);
+        $isExternal = empty($data['module']);
+
         $this->_processData($data);
-
-        // Validate widget existence.
-        if (!$isExternalWidget &&
-            $this->getDI()->getWidgets()->has($data['module'] . WidgetCatalog::KEY_SEPARATOR . $data['nameUpper'])
-        ) {
-            throw new PackageExistsException("Package with that name already exists!");
-        } else {
-            $this->_validateData($data, $config);
-        }
-
+        $this->_validateData($data, $config, $isExternal);
         $this->_copyStructure($data, $packageLocation);
         $this->_replaceVariables($data, $packageLocation);
 
         // Update packages config if widget is external (not from module).
-        if ($isExternalWidget) {
-            $existingPackages = $config->packages->{$data['type']}->toArray();
-            $existingPackages[] = $packageName;
-            $config->packages->{$data['type']} = $existingPackages;
-            $config->save(Config::CONFIG_SECTION_PACKAGES);
+        if ($isExternal) {
+            $this->_addPackageToConfig($packageName, $data, $config);
         }
     }
 
     /**
-     * Validate data.
+     * Remove package from system.
      *
-     * @param array          $data   Package data.
-     * @param \Engine\Config $config Config.
+     * @param AbstractPackage $package Package object.
+     *
+     * @throws PackageException
+     * @return void
+     */
+    public function removePackage($package)
+    {
+        $fullName = ucfirst($package->name);
+        $packageData = $package->getData();
+
+        if ($package->type == self::PACKAGE_TYPE_THEME) {
+            $path = $this->getPackageLocation($package->type) . $package->name;
+        } elseif ($package->type == self::PACKAGE_TYPE_WIDGET && !empty($packageData['module'])) {
+            $path = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) .
+                ucfirst($packageData['module']) . '/Widget/' . $fullName;
+        } else {
+            $path = $this->getPackageLocation($package->type) . $fullName;
+        }
+
+        // Check package metadata.
+        $metadataFile = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES . '/' .
+            $this->_getPackageFullName($package) . '.json';
+        if (file_exists($metadataFile)) {
+            @unlink($metadataFile);
+        }
+
+        if ($package->type == self::PACKAGE_TYPE_THEME) {
+            $path = $this->getPackageLocation($package->type) . $package->name;
+        }
+
+        if (!is_dir($path)) {
+            throw new PackageException("Package '{$package->name}' not found in path '{$path}'.");
+        }
+        FileUtils::removeRecursive($path, true);
+    }
+
+
+    /**
+     * Validate data. Check that package doesn't exists.
+     *
+     * @param array          $data       Package data.
+     * @param \Engine\Config $config     Config.
+     * @param bool           $isExternal Is external plugin (outside of module).
      *
      * @throws PackageExistsException If package already exists.
      *
      * @return void
      */
-    private function _validateData($data, $config)
+    private function _validateData($data, $config, $isExternal)
     {
-        // Check that package doesn't exists.
+        if ($isExternal) {
+            if ($this->getDI()->getWidgets()->has($data['module'] . WidgetCatalog::KEY_SEPARATOR . $data['nameUpper'])
+            ) {
+                throw new PackageExistsException("Package with that name already exists!");
+            }
+
+            return;
+        }
+
         $existingPackages = $config->packages->{$data['type']}->toArray();
         if (in_array($data['name'], $existingPackages) || in_array($data['nameUpper'], $existingPackages)) {
             throw new PackageExistsException("Package with that name already exists!");
@@ -310,6 +347,23 @@ class Manager
     }
 
     /**
+     * Copy package structure.
+     *
+     * @param string         $value  Package data.
+     * @param array          $data   Package data.
+     * @param \Engine\Config $config Package location.
+     *
+     * @return void
+     */
+    private function _addPackageToConfig($value, $data, $config)
+    {
+        $existingPackages = $config->packages->{$data['type']}->toArray();
+        $existingPackages[] = $value;
+        $config->packages->{$data['type']} = $existingPackages;
+        $config->save(Config::CONFIG_SECTION_PACKAGES);
+    }
+
+    /**
      * Replace variables in files.
      *
      * @param array  $data            Package data.
@@ -342,45 +396,6 @@ class Manager
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
-    }
-
-    /**
-     * Remove package from system.
-     *
-     * @param AbstractPackage $package Package object.
-     *
-     * @throws PackageException
-     * @return void
-     */
-    public function removePackage($package)
-    {
-        $fullName = ucfirst($package->name);
-        $packageData = $package->getData();
-
-        if ($package->type == self::PACKAGE_TYPE_THEME) {
-            $path = $this->getPackageLocation($package->type) . $package->name;
-        } elseif ($package->type == self::PACKAGE_TYPE_WIDGET && !empty($packageData['module'])) {
-            $path = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) .
-                ucfirst($packageData['module']) . '/Widget/' . $fullName;
-        } else {
-            $path = $this->getPackageLocation($package->type) . $fullName;
-        }
-
-        // Check package metadata.
-        $metadataFile = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES . '/' .
-            $this->_getPackageFullName($package) . '.json';
-        if (file_exists($metadataFile)) {
-            @unlink($metadataFile);
-        }
-
-        if ($package->type == self::PACKAGE_TYPE_THEME) {
-            $path = $this->getPackageLocation($package->type) . $package->name;
-        }
-
-        if (!is_dir($path)) {
-            throw new PackageException("Package '{$package->name}' not found in path '{$path}'.");
-        }
-        FileUtils::removeRecursive($path, true);
     }
 
     /**

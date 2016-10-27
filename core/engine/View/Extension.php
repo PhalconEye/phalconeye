@@ -18,7 +18,7 @@
 
 namespace Engine\View;
 
-use Engine\Behaviour\ViewBehaviour;
+use Engine\Behavior\ViewBehavior;
 use Phalcon\DI;
 use Phalcon\Mvc\Router;
 
@@ -34,7 +34,7 @@ use Phalcon\Mvc\Router;
  */
 class Extension extends DI\Injectable
 {
-    use ViewBehaviour;
+    use ViewBehavior;
 
     /**
      * Compile functions for volt.

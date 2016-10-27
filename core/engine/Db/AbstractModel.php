@@ -37,7 +37,7 @@ use Phalcon\Mvc\Model\Query\Builder;
  * @method static findFirstById($id)
  * @method static findFirstByLanguage($name)
  *
- * @method \Engine\Behaviour\DIBehaviour|\Phalcon\DI getDI()
+ * @method \Engine\Behavior\DIBehavior|\Phalcon\DI getDI()
  */
 abstract class AbstractModel extends PhalconModel
 {

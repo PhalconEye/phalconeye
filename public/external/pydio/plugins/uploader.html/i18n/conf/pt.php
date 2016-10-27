@@ -21,7 +21,7 @@
 $mess=array(
 "HTML Uploader" => "Envio por HTML",
 "Auto-switching HTML5 or IFrame uploader." => "Ferramenta de Envio de ficheiros Auto-Manipulável por HTML5 ou IFrame.",
-"Default Behaviour" => "Comportamento Pré-Definido",
+"Default Behavior" => "Comportamento Pré-Definido",
 "Existing Files" => "Ficheiros Existentes",
 "Inform the user or not if the file already exists (default behaviour, the user will be able to change this preference)" => "Informar o utilizador ou não se um ficheiro já existe (comportamento pré definido, o utilizador tem a possibilidade de alterar esta preferência)",
 "Auto Start" => "Começar Automaticamente",

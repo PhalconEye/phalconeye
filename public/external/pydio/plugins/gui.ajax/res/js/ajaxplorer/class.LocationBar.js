@@ -282,7 +282,7 @@ Class.create("LocationBar", {
 	/**
 	 * Do nothing
 	 */
-	setFocusBehaviour : function(){},
+	setFocusBehavior : function(){},
 	/**
 	 * Focus the widget : select the input field
 	 */
