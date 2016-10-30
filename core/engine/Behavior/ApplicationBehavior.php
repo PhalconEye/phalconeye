@@ -27,12 +27,13 @@ use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception;
 use Engine\Exception\PrettyExceptions;
 use Engine\Profiler;
+use Engine\View;
 use Engine\Widget\WidgetCatalog;
 use Engine\Widget\WidgetData;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
 use Phalcon\Cache\Frontend\Data as CacheData;
-use Phalcon\Cache\Frontend\Output as CacheOutput;
 use Phalcon\Cache\Frontend\None as CacheNone;
+use Phalcon\Cache\Frontend\Output as CacheOutput;
 use Phalcon\Db\Adapter\Pdo;
 use Phalcon\Db\Profiler as DatabaseProfiler;
 use Phalcon\DI;
@@ -40,15 +41,15 @@ use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
-use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger;
+use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Mvc\Application as PhalconApplication;
 use Phalcon\Mvc\Model\Manager as ModelsManager;
 use Phalcon\Mvc\Model\MetaData\Strategy\Annotations as StrategyAnnotations;
 use Phalcon\Mvc\Model\Transaction\Manager as TxManager;
-use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Router;
+use Phalcon\Mvc\Router\Annotations as RouterAnnotations;
 use Phalcon\Mvc\Url;
 use Phalcon\Session\Adapter as SessionAdapter;
 use Phalcon\Session\Adapter\Files as SessionFiles;
@@ -69,8 +70,8 @@ trait ApplicationBehavior
     /**
      * Init logger.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return void
      */
@@ -94,8 +95,8 @@ trait ApplicationBehavior
     /**
      * Init loader.
      *
-     * @param DIBehavior|DI $di            Dependency Injection.
-     * @param Config        $config        Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return Loader
@@ -134,8 +135,8 @@ trait ApplicationBehavior
     /**
      * Init environment.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return Url
      */
@@ -186,7 +187,7 @@ trait ApplicationBehavior
      * Attach required events.
      *
      * @param EventsManager $eventsManager Events manager object.
-     * @param Config        $config        Application configuration.
+     * @param Config $config Application configuration.
      *
      * @return void
      */
@@ -210,8 +211,8 @@ trait ApplicationBehavior
     /**
      * Init annotations.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return void
      */
@@ -235,8 +236,8 @@ trait ApplicationBehavior
     /**
      * Init router.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return Router
      */
@@ -329,8 +330,8 @@ trait ApplicationBehavior
     /**
      * Init database.
      *
-     * @param DIBehavior|DI $di            Dependency Injection.
-     * @param Config        $config        Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return Pdo
@@ -434,8 +435,8 @@ trait ApplicationBehavior
     /**
      * Init session.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return SessionAdapter
      */
@@ -456,8 +457,8 @@ trait ApplicationBehavior
     /**
      * Init cache.
      *
-     * @param DIBehavior|DI $di     Dependency Injection.
-     * @param Config        $config Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      *
      * @return void
      */
@@ -525,8 +526,8 @@ trait ApplicationBehavior
     /**
      * Initialize view.
      *
-     * @param DIBehavior|DI $di            Dependency Injection.
-     * @param Config        $config        Config object.
+     * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config $config Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return void

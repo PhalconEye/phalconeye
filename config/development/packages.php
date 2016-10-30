@@ -29,7 +29,7 @@ return array (
   ),
   'plugin' => 
   array (
-    0 => 'Test',
+
   ),
   'theme' => 
   array (
