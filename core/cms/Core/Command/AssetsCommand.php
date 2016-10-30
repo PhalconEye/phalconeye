@@ -47,7 +47,7 @@ class AssetsCommand extends AbstractCommand implements CommandInterface
     public function installAction()
     {
         $assetsManager = new Manager($this->getDI(), false);
-        $assetsManager->installAssets(PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
+        $assetsManager->installAssets();
 
         print ConsoleUtils::success('Assets successfully installed.') . PHP_EOL;
     }

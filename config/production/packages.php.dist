@@ -25,7 +25,6 @@
 return array(
     'module' => array(0 => 'main'),
     'plugin' => array(),
-    'theme' => array(),
     'widget' =>
         array(
             0 => 'Demo',

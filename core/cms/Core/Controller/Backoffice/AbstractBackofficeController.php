@@ -87,7 +87,7 @@ abstract class AbstractBackofficeController extends AbstractController
      */
     protected function _clearCache()
     {
-        $this->app->clearCache(PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
+        $this->app->clearCache();
     }
 }
 

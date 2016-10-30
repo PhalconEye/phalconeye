@@ -29,10 +29,6 @@ return array (
   ),
   'plugin' => 
   array (
-
-  ),
-  'theme' => 
-  array (
   ),
   'widget' => 
   array (

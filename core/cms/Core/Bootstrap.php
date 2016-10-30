@@ -53,7 +53,7 @@ class Bootstrap extends AbstractBootstrap
      * Bootstrap construction.
      *
      * @param DIBehavior|DI $di Dependency injection.
-     * @param Manager       $em Events manager object.
+     * @param Manager $em Events manager object.
      */
     public function __construct($di, $em)
     {
@@ -90,17 +90,25 @@ class Bootstrap extends AbstractBootstrap
             $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
         }
 
-        // Install assets if required.
+        /**
+         * Set current theme.
+         */
+        $assets = $di->getAssets();
+        $assets->setTheme(SettingsModel::getValue('system', 'theme'));
+
+        /**
+         * Install assets if required.
+         */
         if ($config->application->debug) {
-            $di->get('assets')->installAssets(PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
+            $assets->installAssets();
         }
     }
 
     /**
      * Init locale.
      *
-     * @param DIBehavior|DI $di     Dependency injection.
-     * @param Config        $config Dependency injection.
+     * @param DIBehavior|DI $di Dependency injection.
+     * @param Config $config Dependency injection.
      *
      * @return void
      */

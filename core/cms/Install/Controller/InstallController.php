@@ -342,7 +342,7 @@ class InstallController extends AbstractController
         $packageManager->generateMetadata();
 
         $assetsManager = new AssetManager($this->getDI(), false);
-        $assetsManager->clear(true, PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
+        $assetsManager->clear(true);
 
         return $this->response->redirect();
     }

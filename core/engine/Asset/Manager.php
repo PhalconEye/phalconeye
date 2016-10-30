@@ -45,7 +45,12 @@ class Manager extends AssetManager
         /**
          * Assets path.
          */
-        ASSETS_PATH = '/assets/';
+        ASSETS_PATH = '/assets/',
+
+        /**
+         * Themes path.
+         */
+        THEMES_PATH = '/themes/';
 
     const
         /**
@@ -70,6 +75,13 @@ class Manager extends AssetManager
     protected $_config;
 
     /**
+     * Current theme name.
+     *
+     * @var string
+     */
+    protected $_theme;
+
+    /**
      * Inline <head> code.
      *
      * @var array
@@ -79,8 +91,8 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di      Dependency injection.
-     * @param bool        $prepare Prepare manager (install assets if in debug and create default collections).
+     * @param DiInterface $di Dependency injection.
+     * @param bool $prepare Prepare manager (install assets if in debug and create default collections).
      */
     public function __construct($di, $prepare = true)
     {
@@ -95,11 +107,9 @@ class Manager extends AssetManager
     /**
      * Install assets from all modules.
      *
-     * @param string $themeDirectory Theme directory.
-     *
      * @return void
      */
-    public function installAssets($themeDirectory = '')
+    public function installAssets()
     {
         $location = $this->_getLocation();
         $less = Less::factory();
@@ -108,6 +118,7 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Compile themes css.
         ///////////////////////////////////
+        $themeDirectory = $this->getThemeDirectory();
         if ($this->_config->installed && !empty($themeDirectory)) {
             $lessCompileFunction = $this->_config->application->assets->get('lessCompileAlways') ?
                 'compileFile' : 'checkedCompile';
@@ -171,12 +182,11 @@ class Manager extends AssetManager
     /**
      * Clear assets cache.
      *
-     * @param bool   $refresh        Install and compile new assets?
-     * @param string $themeDirectory Theme directory.
+     * @param bool $refresh Install and compile new assets?
      *
      * @return void
      */
-    public function clear($refresh = true, $themeDirectory = '')
+    public function clear($refresh = true)
     {
         $location = $this->_getLocation();
         $files = FileUtils::globRecursive($location, '*'); // get all file names
@@ -188,8 +198,38 @@ class Manager extends AssetManager
         }
 
         if ($refresh) {
-            $this->installAssets($themeDirectory);
+            $this->installAssets();
         }
+    }
+
+    /**
+     * Set current theme.
+     *
+     * @param string $theme Theme name.
+     */
+    public function setTheme($theme)
+    {
+        $this->_theme = $theme;
+    }
+
+    /**
+     * Get current theme name.
+     *
+     * @return string Current theme.
+     */
+    public function getTheme()
+    {
+        return $this->_theme;
+    }
+
+    /**
+     * Get current theme path.
+     *
+     * @return string
+     */
+    public function getThemeDirectory()
+    {
+        return PUBLIC_PATH . self::THEMES_PATH . $this->getTheme();
     }
 
     /**
@@ -256,7 +296,7 @@ class Manager extends AssetManager
      * Get file name by collection using pattern.
      *
      * @param Collection $collection Asset collection.
-     * @param string     $pattern    File name pattern.
+     * @param string $pattern File name pattern.
      *
      * @return string
      */

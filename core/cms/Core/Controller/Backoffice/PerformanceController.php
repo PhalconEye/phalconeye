@@ -73,7 +73,7 @@ class PerformanceController extends AbstractBackofficeController
 
         $data = $form->getValues();
         if (!empty($data['clear_cache']) && $data['clear_cache'] = 1) {
-            $this->app->clearCache(PUBLIC_PATH . '/themes/' . SettingsModel::getValue('system', 'theme'));
+            $this->app->clearCache();
             $this->flash->success('Cache cleared!');
             $form->setValue('clear_cache', null);
         }

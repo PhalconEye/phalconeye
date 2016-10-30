@@ -190,6 +190,9 @@ class Manager
             case Manager::PACKAGE_TYPE_PLUGIN:
                 $this->createWidgetOrPlugin($data);
                 break;
+            case Manager::PACKAGE_TYPE_THEME:
+                $this->createTheme($data);
+                break;
         }
     }
 
@@ -240,6 +243,29 @@ class Manager
         if ($isExternal) {
             $this->_addPackageToConfig($packageName, $data, $config);
         }
+    }
+
+    /**
+     * Create theme package.
+     *
+     * @param array $data Package data.
+     *
+     * @throws PackageExistsException If package already exists.
+     *
+     * @return void
+     */
+    public function createTheme($data)
+    {
+        $packageLocation = $this->getPackageLocation($data);
+
+        $themesPath = PUBLIC_PATH . \Engine\Asset\Manager::THEMES_PATH . $data['name'];
+        if (is_dir($themesPath)) {
+            throw new PackageExistsException("Package with that name already exists!");
+        }
+
+        $this->_processData($data);
+        $this->_copyStructure($data, $packageLocation);
+        $this->_replaceVariables($data, $packageLocation);
     }
 
     /**

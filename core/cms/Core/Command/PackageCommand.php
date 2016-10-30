@@ -100,6 +100,9 @@ class PackageCommand extends AbstractCommand implements CommandInterface
 
             case Manager::PACKAGE_TYPE_PLUGIN:
                 return $this->_collectDataForPlugin();
+
+            case Manager::PACKAGE_TYPE_THEME:
+                return $this->_collectDataForTheme();
         }
 
         return [];
@@ -159,6 +162,18 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     {
         $data = $this->_collectDataForWidget();
         $data['type'] = Manager::PACKAGE_TYPE_PLUGIN;
+        return $data;
+    }
+
+    /**
+     * Collect data for theme.
+     *
+     * @return array Collected data.
+     */
+    private function _collectDataForTheme()
+    {
+        $data = $this->_collectDataForModule();
+        $data['type'] = Manager::PACKAGE_TYPE_THEME;
         return $data;
     }
 }
