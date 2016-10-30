@@ -54,7 +54,7 @@ class Validation extends PhalconValidation
      * Create validation.
      *
      * @param ContainerBehavior $container  Form object.
-     * @param array|null         $validators prepared validators.
+     * @param array|null        $validators prepared validators.
      */
     public function __construct($container, $validators = null)
     {

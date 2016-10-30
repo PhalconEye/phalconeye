@@ -53,7 +53,7 @@ class Bootstrap extends AbstractBootstrap
      * Bootstrap construction.
      *
      * @param DIBehavior|DI $di Dependency injection.
-     * @param Manager $em Events manager object.
+     * @param Manager       $em Events manager object.
      */
     public function __construct($di, $em)
     {
@@ -107,8 +107,8 @@ class Bootstrap extends AbstractBootstrap
     /**
      * Init locale.
      *
-     * @param DIBehavior|DI $di Dependency injection.
-     * @param Config $config Dependency injection.
+     * @param DIBehavior|DI $di     Dependency injection.
+     * @param Config        $config Dependency injection.
      *
      * @return void
      */

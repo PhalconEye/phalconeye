@@ -95,22 +95,13 @@ class Manager
     protected $_packagesVersions = [];
 
     /**
-     * Installed packages.
-     *
-     * @var AbstractPackage[]
-     */
-    protected $_installedPackages = [];
-
-    /**
      * Create package manager.
      *
-     * @param AbstractPackage[] $packages Packages.
      * @param DI $di Dependency injection.
      */
-    public function __construct($packages = [], $di = null)
+    public function __construct($di = null)
     {
         $this->__DIConstruct($di);
-        $this->_installedPackages = $packages;
         if (!empty($packages)) {
             foreach ($packages as $package) {
                 $this->_packagesVersions[$package->type][$package->name] = $package->version;
