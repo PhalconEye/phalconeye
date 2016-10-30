@@ -21,9 +21,7 @@ namespace Engine\Package;
 use Engine\Application;
 use Engine\Behavior\DIBehavior;
 use Engine\Config;
-use Engine\Package\Exception\InvalidManifestException;
 use Engine\Package\Exception\PackageExistsException;
-use Engine\Package\Model\AbstractPackage;
 use Engine\Utils\FileUtils;
 use Engine\Widget\WidgetCatalog;
 use Phalcon\DI;
@@ -107,7 +105,7 @@ class Manager
      * Create package manager.
      *
      * @param AbstractPackage[] $packages Packages.
-     * @param DI                $di       Dependency injection.
+     * @param DI $di Dependency injection.
      */
     public function __construct($packages = [], $di = null)
     {
@@ -166,7 +164,7 @@ class Manager
         return [
             self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
             self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
-            self::PACKAGE_TYPE_THEME => PUBLIC_PATH . DS . 'themes' . DS,
+            self::PACKAGE_TYPE_THEME => $registry->directories->themes,
             self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets
         ];
     }
@@ -258,7 +256,7 @@ class Manager
     {
         $packageLocation = $this->getPackageLocation($data);
 
-        $themesPath = PUBLIC_PATH . \Engine\Asset\Manager::THEMES_PATH . $data['name'];
+        $themesPath = $this->getDI()->getRegistry()->directories->themes . $data['name'];
         if (is_dir($themesPath)) {
             throw new PackageExistsException("Package with that name already exists!");
         }
@@ -311,9 +309,9 @@ class Manager
     /**
      * Validate data. Check that package doesn't exists.
      *
-     * @param array          $data       Package data.
-     * @param \Engine\Config $config     Config.
-     * @param bool           $isExternal Is external plugin (outside of module).
+     * @param array $data Package data.
+     * @param \Engine\Config $config Config.
+     * @param bool $isExternal Is external plugin (outside of module).
      *
      * @throws PackageExistsException If package already exists.
      *
@@ -353,7 +351,7 @@ class Manager
     /**
      * Copy package structure.
      *
-     * @param array  $data            Package data.
+     * @param array $data Package data.
      * @param string $packageLocation Package location.
      *
      * @return void
@@ -375,8 +373,8 @@ class Manager
     /**
      * Copy package structure.
      *
-     * @param string         $value  Package data.
-     * @param array          $data   Package data.
+     * @param string $value Package data.
+     * @param array $data Package data.
      * @param \Engine\Config $config Package location.
      *
      * @return void
@@ -392,7 +390,7 @@ class Manager
     /**
      * Replace variables in files.
      *
-     * @param array  $data            Package data.
+     * @param array $data Package data.
      * @param string $packageLocation Package location.
      *
      * @return void
@@ -427,9 +425,9 @@ class Manager
     /**
      * Get package naming.
      *
-     * @param AbstractPackage $package       Package object.
-     * @param bool            $appendVersion Append version to end of file.
-     * @param string          $separator     Separator for words.
+     * @param AbstractPackage $package Package object.
+     * @param bool $appendVersion Append version to end of file.
+     * @param string $separator Separator for words.
      *
      * @return string
      */

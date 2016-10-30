@@ -45,12 +45,7 @@ class Manager extends AssetManager
         /**
          * Assets path.
          */
-        ASSETS_PATH = '/assets/',
-
-        /**
-         * Themes path.
-         */
-        THEMES_PATH = '/themes/';
+        ASSETS_PATH = '/assets/';
 
     const
         /**
@@ -229,7 +224,7 @@ class Manager extends AssetManager
      */
     public function getThemeDirectory()
     {
-        return PUBLIC_PATH . self::THEMES_PATH . $this->getTheme();
+        return $this->getDI()->getRegistry()->directories->themes . $this->getTheme();
     }
 
     /**

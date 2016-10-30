@@ -30,7 +30,7 @@
     </target>
 
     <target name="install">
-        <exec executable="php">
+        <exec executable="php" failonerror="true">
             <arg value="./composer.phar" />
             <arg value="install" />
         </exec>

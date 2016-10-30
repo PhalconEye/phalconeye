@@ -146,7 +146,7 @@ class Application extends PhalconApplication
                 'modules' => ROOT_PATH . '/app/modules/',
                 'plugins' => ROOT_PATH . '/app/plugins/',
                 'widgets' => ROOT_PATH . '/app/widgets/',
-                'libraries' => ROOT_PATH . '/app/libraries/'
+                'themes' => PUBLIC_PATH . '/themes/',
             ]
         );
 
