@@ -258,46 +258,6 @@ class Manager
     }
 
     /**
-     * Remove package from system.
-     *
-     * @param AbstractPackage $package Package object.
-     *
-     * @throws PackageException
-     * @return void
-     */
-    public function removePackage($package)
-    {
-        $fullName = ucfirst($package->name);
-        $packageData = $package->getData();
-
-        if ($package->type == self::PACKAGE_TYPE_THEME) {
-            $path = $this->getPackageLocation($package->type) . $package->name;
-        } elseif ($package->type == self::PACKAGE_TYPE_WIDGET && !empty($packageData['module'])) {
-            $path = $this->getPackageLocation(self::PACKAGE_TYPE_MODULE) .
-                ucfirst($packageData['module']) . '/Widget/' . $fullName;
-        } else {
-            $path = $this->getPackageLocation($package->type) . $fullName;
-        }
-
-        // Check package metadata.
-        $metadataFile = ROOT_PATH . Config::CONFIG_METADATA_PACKAGES . '/' .
-            $this->_getPackageFullName($package) . '.json';
-        if (file_exists($metadataFile)) {
-            @unlink($metadataFile);
-        }
-
-        if ($package->type == self::PACKAGE_TYPE_THEME) {
-            $path = $this->getPackageLocation($package->type) . $package->name;
-        }
-
-        if (!is_dir($path)) {
-            throw new PackageException("Package '{$package->name}' not found in path '{$path}'.");
-        }
-        FileUtils::removeRecursive($path, true);
-    }
-
-
-    /**
      * Validate data. Check that package doesn't exists.
      *
      * @param array $data Package data.
@@ -411,24 +371,5 @@ class Manager
             $file = file_get_contents($filename);
             file_put_contents($filename, str_replace($placeholders, $placeholdersValues, $file));
         }
-    }
-
-    /**
-     * Get package naming.
-     *
-     * @param AbstractPackage $package Package object.
-     * @param bool $appendVersion Append version to end of file.
-     * @param string $separator Separator for words.
-     *
-     * @return string
-     */
-    private function _getPackageFullName(AbstractPackage $package, $appendVersion = false, $separator = '-')
-    {
-        $data = [$package->type, $package->name];
-        if ($appendVersion) {
-            $data[] = $package->version;
-        }
-
-        return implode($separator, $data);
     }
 }
