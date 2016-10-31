@@ -66,8 +66,6 @@ class Less
      */
     public static function factory()
     {
-        require_once "lessc.inc.php";
-
         return new \lessc;
     }
 

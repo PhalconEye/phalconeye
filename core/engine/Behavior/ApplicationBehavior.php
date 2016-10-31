@@ -116,6 +116,7 @@ trait ApplicationBehavior
 
         $loader = new Loader();
         $loader->registerNamespaces($namespaces);
+        $loader->registerFiles([ROOT_PATH . DS . 'vendor' . DS . 'autoload.php']);
 
         if ($config->application->debug && $config->installed) {
             $loader->setEventsManager($eventsManager);
