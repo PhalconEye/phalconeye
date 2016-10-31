@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
@@ -44,25 +44,11 @@ class PackagesNavigation extends CoreNavigation
                 ['Modules', 'backoffice/packages', [
                     'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                 ]],
-                null,
-                ['Themes', 'backoffice/packages/themes', [
-                    'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
-                ]],
                 ['Widgets', 'backoffice/packages/widgets', [
                     'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
                 ]],
                 ['Plugins', 'backoffice/packages/plugins', [
                     'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
-                ]],
-                ['Libraries', 'backoffice/packages/libraries', [
-                    'prepend' => '<i class="glyphicon glyphicon-book"></i>'
-                ]],
-                null,
-                ['Upload', 'backoffice/packages/upload', [
-                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
-                ]],
-                ['Create new', 'backoffice/packages/create', [
-                    'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]],
             ]
         );

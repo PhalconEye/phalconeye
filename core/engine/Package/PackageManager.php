@@ -271,7 +271,7 @@ class PackageManager
                     $this->getType(),
                     $module->getName(),
                     null,
-                    $file->getPath() . $baseName
+                    $file->getPath() . DS . $baseName . DS
                 );
             }
         }
