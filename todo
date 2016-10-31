@@ -2,6 +2,7 @@
 - check that all type of resources can be overrided from app folder
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
 - composer stuff
+- install lessphp via composer
 - fix installer + option for installing sample data.
 - missing widget check (when widget code removed but options left in content).
 
