@@ -30,13 +30,6 @@
         </echo>
     </target>
 
-    <target name="install">
-        <exec executable="php" failonerror="true">
-            <arg value="./composer.phar"/>
-            <arg value="install"/>
-        </exec>
-    </target>
-
     <!-- clean - Deletes previously generated files under build/ and dist/ -->
     <target name="clean">
         <delete dir="${build.dir}"/>
@@ -114,7 +107,7 @@
     </target>
 
     <!-- check  -->
-    <target name="check" depends="install,phpmd,phpcs">
+    <target name="check" depends="phpmd,phpcs">
     </target>
 
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
