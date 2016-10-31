@@ -1,4 +1,3 @@
-- dynamic modules navigation in backoffice
 - check that all type of resources can be overrided from app folder
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
 - composer stuff

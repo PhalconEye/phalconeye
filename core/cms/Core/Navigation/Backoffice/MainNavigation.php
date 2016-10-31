@@ -22,7 +22,7 @@ namespace Core\Navigation\Backoffice;
 use Core\Model\PackageModel;
 use Core\Navigation\CoreNavigation;
 use Engine\Navigation\Item;
-use Engine\Package\PackageGenerator;
+use Engine\Package\PackageData;
 
 /**
  * Main Navigation.
@@ -122,35 +122,32 @@ class MainNavigation extends CoreNavigation
             ]
         );
 
-        // Dynamic modules
-        // @TODO: refactor
-//        $modules = PackageModel::findByType(Manager::PACKAGE_TYPE_MODULE, 1);
-//        if ($modules->count()) {
-//            $modulesMenuItem = null;
-//            foreach ($modules as $module) {
-//                if ($module->is_system) {
-//                    continue;
-//                }
-//
-//                if (!$modulesMenuItem) {
-//                    $modulesMenuItem = new Item('Modules');
-//                    $this->appendItem($modulesMenuItem);
-//                }
-//
-//                $modulesMenuItem->appendItem(
-//                    new Item(
-//                        $module->title,
-//                        'backoffice/module/' . $module->name,
-//                        [
-//                            'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
-//                        ]
-//                    )
-//                );
-//
-//                if ($activeItem == 'backoffice/module' && (string)$path[3] == $module->name) {
-//                    $this->setActiveItem('backoffice/module/' . $module->name);
-//                }
-//            }
-//        }
+        // Dynamic navigation based on modules.
+        $modules = $this->getDI()->getModules()->getPackages();
+        $modulesMenuItem = null;
+        foreach ($modules as $module) {
+            if ($module->isMetadata(PackageData::METADATA_IS_SYSTEM)) {
+                continue;
+            }
+
+            if (!$modulesMenuItem) {
+                $modulesMenuItem = new Item('Modules');
+                $this->appendItem($modulesMenuItem);
+            }
+
+            $modulesMenuItem->appendItem(
+                new Item(
+                    $module->getNameUpper(),
+                    'backoffice/module/' . $module->getName(),
+                    [
+                        'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
+                    ]
+                )
+            );
+
+            if ($activeItem == 'backoffice/module' && (string)$path[3] == $module->getName()) {
+                $this->setActiveItem('backoffice/module/' . $module->getName());
+            }
+        }
     }
 }
