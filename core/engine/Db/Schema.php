@@ -20,6 +20,7 @@ namespace Engine\Db;
 
 use Engine\Behavior\DIBehavior;
 use Engine\Exception as EngineException;
+use Engine\Package\PackageManager;
 use Phalcon\Annotations\Collection;
 use Phalcon\Db\AdapterInterface;
 use Phalcon\Db\Column;
@@ -175,15 +176,16 @@ class Schema
     public function getAllModels()
     {
         $modelsInfo = [];
-        $registry = $this->getDI()->get('registry');
-        foreach ($registry->modules as $module => $path) {
-            $module = ucfirst($module);
-            $modelsDirectory = $path . $module . '/Model';
-            foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
+        foreach ($this->getDI()->getModules()->getPackages() as $module) {
+            $modelsDirectory = $module->getPath() . 'Model' . DS;
+            foreach (glob($modelsDirectory . '*.php') as $modelPath) {
                 $modelsInfo[] = [
-                    'class' => '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath)),
+                    'class' => PackageManager::SEPARATOR_NS .
+                        $module->getNameUpper() .
+                        '\Model\\' .
+                        basename(str_replace('.php', '', $modelPath)),
                     'path' => $modelPath,
-                    'module' => $module
+                    'module' => $module->getNameUpper()
                 ];
             }
         }

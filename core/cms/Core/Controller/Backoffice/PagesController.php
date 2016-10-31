@@ -172,13 +172,13 @@ class PagesController extends AbstractBackofficeController
             return $this->response->redirect(['for' => "backoffice-pages"]);
         }
 
-        $widgets = $this->getDI()->getWidgets()->getAll();
-        $modules = array_keys($this->getDI()->getRegistry()->modules);
+        $widgets = $this->getDI()->getWidgets()->getPackages();
+        $modules = $this->getDI()->getModules();
         $bundlesWidgetsMetadata = [];
         /** @var WidgetData $widget */
         foreach ($widgets as $code => $widget) {
             $moduleName = $widget->getModule();
-            if (!in_array($moduleName, $modules)) {
+            if (!$modules->has($moduleName)) {
                 $moduleName = '_External_';
             } else {
                 $moduleName = ucfirst($moduleName);

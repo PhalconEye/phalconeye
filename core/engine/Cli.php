@@ -19,6 +19,8 @@
 namespace Engine;
 
 use Engine\Console\AbstractCommand;
+use Engine\Package\PackageData;
+use Engine\Package\PackageManager;
 use Engine\Utils\ConsoleUtils;
 use Phalcon\Text;
 
@@ -70,10 +72,10 @@ class Cli extends Application
         );
 
         // Get modules commands.
-        foreach ($this->getDI()->get('registry')->modules as $module => $path) {
-            $module = ucfirst($module);
-            $path = $path . $module . '/Command';
-            $namespace = $module . '\Command\\';
+        /** @var PackageData $module */
+        foreach ($this->getDI()->getModules()->getPackages() as $module) {
+            $path = $module->getPath() . 'Command';
+            $namespace = $module->getNamespace() . PackageManager::SEPARATOR_NS . 'Command\\';
             $this->_getCommandsFrom($path, $namespace);
         }
     }

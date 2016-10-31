@@ -22,6 +22,7 @@ namespace Core\Api;
 use Core\Model\AccessModel;
 use Engine\Api\AbstractApi;
 use Engine\Application;
+use Engine\Package\PackageManager;
 use Engine\Utils\FileUtils;
 use Phalcon\Acl\Adapter\Memory as AclMemory;
 use Phalcon\Acl\Resource as AclResource;
@@ -277,15 +278,13 @@ class AclApi extends AbstractApi
      */
     protected function _addResources($acl, $objects)
     {
-        $registry = $this->getDI()->get('registry');
-        foreach (array_keys($registry->modules) as $module) {
-            $module = ucfirst($module);
-            $modelsPath = $registry->directories->modules . $module . '/Model';
+        foreach ($this->getDI()->getModules()->getPackages() as $module) {
+            $modelsPath = $module->getPath() . 'Model';
             if (file_exists($modelsPath)) {
                 $files = FileUtils::globRecursive($modelsPath, '*.php');
                 foreach ($files as $file) {
-                    $modelName = str_replace([$modelsPath, '/', '.php'], ['', '\\', ''], $file);
-                    $modelClass = sprintf('\%s\Model%s', $module, ucfirst($modelName));
+                    $modelName = str_replace([$modelsPath, DS, '.php'], ['', PackageManager::SEPARATOR_NS, ''], $file);
+                    $modelClass = sprintf('\%s\Model%s', $module->getNameUpper(), ucfirst($modelName));
                     $object = $this->getObject($modelClass);
                     if ($object == null) {
                         continue;

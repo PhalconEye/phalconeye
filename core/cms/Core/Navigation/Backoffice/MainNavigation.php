@@ -22,7 +22,7 @@ namespace Core\Navigation\Backoffice;
 use Core\Model\PackageModel;
 use Core\Navigation\CoreNavigation;
 use Engine\Navigation\Item;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 
 /**
  * Main Navigation.

@@ -1,5 +1,5 @@
 <?php
-namespace %moduleNamespace%\Widget\%nameUpper%;
+namespace %moduleNamespace%Widget\%nameUpper%;
 
 use Core\Form\CoreForm;
 use Engine\Widget\Controller as WidgetController;

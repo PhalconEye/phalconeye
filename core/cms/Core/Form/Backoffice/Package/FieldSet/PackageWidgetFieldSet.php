@@ -20,7 +20,7 @@ namespace Core\Form\Backoffice\Package\FieldSet;
 
 use Core\Model\PackageModel;
 use Engine\Form\FieldSet;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 
 /**
  * Widget package fieldset.
@@ -42,7 +42,7 @@ class PackageWidgetFieldSet extends FieldSet
     public function initialize()
     {
         $this->setLegend('Widget information');
-        $modules = PackageModel::findByType(Manager::PACKAGE_TYPE_MODULE, true);
+        $modules = PackageModel::findByType(PackageGenerator::PACKAGE_TYPE_MODULE, true);
         $widgetModules = [null => 'No'];
         foreach ($modules as $module) {
             $widgetModules[$module->name] = $module->title;

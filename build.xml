@@ -1,6 +1,7 @@
 <project name="PhalconEye" basedir="." default="info">
 
     <property file="build.properties"/>
+    <import file="data/checkstyle/ant.xml"/>
 
     <target name="info">
         <echo>
@@ -31,8 +32,8 @@
 
     <target name="install">
         <exec executable="php" failonerror="true">
-            <arg value="./composer.phar" />
-            <arg value="install" />
+            <arg value="./composer.phar"/>
+            <arg value="install"/>
         </exec>
     </target>
 
@@ -45,20 +46,20 @@
     <target name="assets">
         <!-- Clear assets -->
         <delete>
-            <fileset dir="${public.dir}/assets" includes="**/*" />
-            <dirset dir="${public.dir}/assets" includes="**/*" />
+            <fileset dir="${public.dir}/assets" includes="**/*"/>
+            <dirset dir="${public.dir}/assets" includes="**/*"/>
         </delete>
 
         <exec executable="php">
-            <arg value="${public.dir}/index.php" />
-            <arg value="assets" />
-            <arg value="install" />
+            <arg value="${public.dir}/index.php"/>
+            <arg value="assets"/>
+            <arg value="install"/>
         </exec>
     </target>
 
 
     <!-- build - Prepares environment for distribution -->
-    <target name="build">
+    <target name="build" depends="check">
         <!-- Prepare structure for the build of the project -->
         <mkdir dir="${build.dir}"/>
         <mkdir dir="${build.dir}"/>
@@ -88,15 +89,15 @@
 
         <!-- Clear temp data -->
         <delete>
-            <fileset dir="${build.src.dir}/data" includes="**/*.php" />
-            <fileset dir="${build.src.dir}/data" includes="**/*.cache" />
-            <fileset dir="${build.src.dir}/data" includes="**/*.log" />
+            <fileset dir="${build.src.dir}/data" includes="**/*.php"/>
+            <fileset dir="${build.src.dir}/data" includes="**/*.cache"/>
+            <fileset dir="${build.src.dir}/data" includes="**/*.log"/>
         </delete>
-        <delete dir="${build.src.dir}/data/temp/packages" />
+        <delete dir="${build.src.dir}/data/temp/packages"/>
     </target>
 
     <!-- dist - Generates distributable package -->
-    <target name="dist" depends="check,assets">
+    <target name="dist" depends="build,assets">
         <mkdir dir="${dist.dir}"/>
         <tar destfile="${dist.dir}/${project.name}.tar.gz" basedir="${build.src.dir}" compression="gzip"
              longfile="gnu"/>
@@ -113,73 +114,25 @@
     </target>
 
     <!-- check  -->
-    <target name="check" depends="install,phpmd,phpcs"/>
+    <target name="check" depends="install,phpmd,phpcs">
+    </target>
 
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
-    <target name="phpmd" depends="build">
-        <exec executable="./vendor/bin/phpmd" failonerror="true">
-            <arg path="${check.dir}"/>
-            <arg value="text"/>
-            <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
-            <arg value="--exclude"/>
-            <arg value="${ignore.dir}"/>
-        </exec>
+    <target name="phpmd">
+        <phpmd directory="${basedir}"/>
     </target>
 
     <!-- phpcs - Detects standard violations on the code. -->
-    <target name="phpcs" depends="build">
-        <exec executable="./vendor/bin/phpcs" failonerror="true">
-            <arg value="--extensions=php"/>
-            <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
-            <arg value="--ignore=${ignore.dir}"/>
-            <arg path="${check.dir}"/>
-        </exec>
+    <target name="phpcs">
+        <phpcs directory="${basedir}"/>
     </target>
-
 
     <!-- analyze  -->
-    <target name="analyze" depends="phpcpd,pdepend,phpcb,phploc"/>
-
-    <!-- phpcpd - Detects copy/pastes in the code. -->
-    <target name="phpcpd" depends="build">
-        <exec executable="phpcpd">
-            <arg value="--log-pmd"/>
-            <arg value="${report.dir}/cpd.xml"/>
-            <arg path="${check.dir}"/>
-        </exec>
+    <target name="analyze" >
+        <phpcpd directory="${basedir}"/>
+        <pdepend directory="${basedir}"/>
+        <phpcb directory="${basedir}"/>
+        <phploc directory="${basedir}"/>
     </target>
 
-    <!-- pdepend - Calculates some code metrics using PHP Depend. -->
-    <target name="pdepend" depends="build">
-        <exec executable="pdepend">
-            <arg value="--jdepend-xml=${report.dir}/jdepend.xml"/>
-            <arg value="--jdepend-chart=${report.dir}/dependencies.svg"/>
-            <arg value="--overview-pyramid=${report.dir}/dependencies-pyramid.svg"/>
-            <arg value="--ignore=/${ignore.dir}"/>
-            <arg value="${check.dir}"/>
-        </exec>
-    </target>
-
-    <!-- phpcb - Generates a browsable report of code violations using PHP CodeBrowser. -->
-    <target name="phpcb" depends="build">
-        <exec executable="phpcb">
-            <arg value="--log"/>
-            <arg path="${report.dir}"/>
-            <arg value="--source"/>
-            <arg path="${check.dir}"/>
-            <arg value="--output"/>
-            <arg path="${report.dir}/code-browser"/>
-        </exec>
-    </target>
-
-    <!-- phploc - Calculates the size of the code using  phploc. -->
-    <target name="phploc" depends="build">
-        <exec executable="phploc">
-            <arg value="--log-csv"/>
-            <arg value="${report.dir}/phploc.csv"/>
-            <arg value="--exclude"/>
-            <arg value="${ignore.dir}"/>
-            <arg path="${check.dir}"/>
-        </exec>
-    </target>
 </project>

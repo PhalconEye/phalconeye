@@ -19,6 +19,7 @@
 namespace Engine;
 
 use Engine\Behavior\DIBehavior;
+use Engine\Package\PackageData;
 use Engine\Plugin\CacheAnnotation;
 use Engine\Plugin\DispatchErrorHandler;
 use Phalcon\Config as PhalconConfig;
@@ -107,13 +108,13 @@ abstract class AbstractBootstrap implements BootstrapInterface
     }
 
     /**
-     * Get current module directory.
+     * Get current module data.
      *
-     * @return string
+     * @return PackageData package data.
      */
-    public function getModuleDirectory()
+    public function getModuleData()
     {
-        return $this->getDI()->get('registry')->directories->modules . $this->_moduleName;
+        return $this->getDI()->getModules()->get(strtolower($this->getModuleName()));
     }
 
     /**

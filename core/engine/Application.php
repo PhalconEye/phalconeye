@@ -12,13 +12,15 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   +------------------------------------------------------------------------+
 */
 
 namespace Engine;
 
 use Engine\Behavior\ApplicationBehavior;
+use Engine\Package\PackageData;
+use Engine\Package\PackageManager;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Application as PhalconApplication;
@@ -89,8 +91,13 @@ class Application extends PhalconApplication
     private $_loaders =
         [
             self::MODE_NORMAL => [
+                'logger',
+                'loader',
                 'environment',
                 'cache',
+                'modules',
+                'loader',
+                'plugins',
                 'annotations',
                 'database',
                 'router',
@@ -101,14 +108,22 @@ class Application extends PhalconApplication
                 'engine'
             ],
             self::MODE_CONSOLE => [
+                'logger',
+                'loader',
                 'environment',
-                'database',
                 'cache',
+                'modules',
+                'plugins',
+                'database',
                 'widgets',
                 'engine'
             ],
             self::MODE_SESSION => [
+                'logger',
+                'loader',
                 'cache',
+                'modules',
+                'plugins',
                 'database',
                 'session'
             ],
@@ -149,23 +164,6 @@ class Application extends PhalconApplication
                 'themes' => PUBLIC_PATH . '/themes/',
             ]
         );
-
-        /**
-         * Collect modules.
-         */
-        $sysmodules = [
-            self::CMS_MODULE_CORE => $registry->directories->cms,
-            self::CMS_MODULE_USER => $registry->directories->cms
-        ];
-        $modules = array_fill_keys($this->_config->packages->module->toArray(), $registry->directories->modules);
-        $registry->offsetSet('sysmodules', $sysmodules);
-        $registry->offsetSet('modules', array_merge($sysmodules, $modules));
-
-        /**
-         * Collect widgets.
-         */
-        $registry->widgets = $this->_config->packages->widget->toArray();
-
         $di->set('registry', $registry);
 
         // Store config in the DI container.
@@ -192,11 +190,6 @@ class Application extends PhalconApplication
         $config = $this->_config;
         $eventsManager = new EventsManager();
         $this->setEventsManager($eventsManager);
-
-        // Init base systems first.
-        $this->_initLogger($di, $config);
-        $this->_initLoader($di, $config, $eventsManager);
-        $this->_initPlugins($eventsManager, $config);
 
         // Init services and engine system.
         foreach ($this->_loaders[$mode] as $service) {
@@ -300,32 +293,5 @@ class Application extends PhalconApplication
     public function isConsole()
     {
         return (php_sapi_name() == 'cli');
-    }
-
-
-    /**
-     * Attach required events.
-     *
-     * @param EventsManager $eventsManager Events manager object.
-     * @param Config        $config        Application configuration.
-     *
-     * @return void
-     */
-    protected function _initPlugins($eventsManager, $config)
-    {
-        // Attach modules plugins events.
-        // @TODO: fix this after refactoring.
-        $events = $config->packages->plugin->toArray();
-        $cache = [];
-        foreach ($events as $item) {
-            list ($class, $event) = explode('=', $item);
-            if (isset($cache[$class])) {
-                $object = $cache[$class];
-            } else {
-                $object = new $class();
-                $cache[$class] = $object;
-            }
-            $eventsManager->attach($event, $object);
-        }
     }
 }

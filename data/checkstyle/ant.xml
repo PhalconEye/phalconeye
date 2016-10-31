@@ -1,0 +1,85 @@
+<?xml version="1.0"?>
+<project name="ant" basedir=".">
+
+    <!-- phpmd - Analyzes the code to discover potential problems on it. -->
+    <macrodef name="phpmd">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="./vendor/bin/phpmd" failonerror="true">
+                <arg path="@{directory}"/>
+                <arg value="text"/>
+                <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
+                <arg value="--exclude"/>
+                <arg value="${ignore.dir}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- phpcs - Detects standard violations on the code. -->
+    <macrodef name="phpcs">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="./vendor/bin/phpcs" failonerror="true">
+                <arg value="--extensions=php"/>
+                <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
+                <arg value="--ignore=${ignore.dir}"/>
+                <arg path="@{directory}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- phpcpd - Detects copy/pastes in the code. -->
+    <macrodef name="phpcpd">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="phpcpd">
+                <arg value="--log-pmd"/>
+                <arg value="${report.dir}/cpd.xml"/>
+                <arg path="@{directory}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- pdepend - Calculates some code metrics using PHP Depend. -->
+    <macrodef name="pdepend">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="pdepend">
+                <arg value="--jdepend-xml=${report.dir}/jdepend.xml"/>
+                <arg value="--jdepend-chart=${report.dir}/dependencies.svg"/>
+                <arg value="--overview-pyramid=${report.dir}/dependencies-pyramid.svg"/>
+                <arg value="--ignore=/${ignore.dir}"/>
+                <arg value="@{directory}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- phpcb - Generates a browsable report of code violations using PHP CodeBrowser. -->
+    <macrodef name="phpcb">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="phpcb">
+                <arg value="--log"/>
+                <arg path="${report.dir}"/>
+                <arg value="--source"/>
+                <arg path="@{directory}"/>
+                <arg value="--output"/>
+                <arg path="${report.dir}/code-browser"/>
+            </exec>
+        </sequential>
+    </macrodef>
+
+    <!-- phploc - Calculates the size of the code using  phploc. -->
+    <macrodef name="phploc">
+        <attribute name="directory"/>
+        <sequential>
+            <exec executable="phploc">
+                <arg value="--log-csv"/>
+                <arg value="${report.dir}/phploc.csv"/>
+                <arg value="--exclude"/>
+                <arg value="${ignore.dir}"/>
+                <arg path="@{directory}"/>
+            </exec>
+        </sequential>
+    </macrodef>
+</project>

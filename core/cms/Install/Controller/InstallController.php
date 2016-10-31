@@ -21,12 +21,11 @@ namespace Install\Controller;
 use Core\Form\Install\Database as DatabaseForm;
 use Core\Form\Install\Finish as FinishForm;
 use Core\Model\PackageModel;
-use Core\Model\SettingsModel;
 use Engine\Asset\Manager as AssetManager;
 use Engine\Config;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Db\Schema;
-use Engine\Package\Manager as PackageManager;
+use Engine\Package\PackageManager;
 use Phalcon\Assets\Collection as AssetsCollection;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Http\ResponseInterface;
@@ -245,11 +244,11 @@ class InstallController extends AbstractController
 
                 // Run modules installation scripts.
                 $packageManager = new PackageManager([], $this->di);
-                foreach (array_keys($this->di->get('registry')->modules) as $moduleName) {
+                foreach ($this->di->getModules() as $module) {
                     $packageManager->runInstallScript(
                         new Config(
                             [
-                                'name' => $moduleName,
+                                'name' => $module->getName(),
                                 'type' => PackageManager::PACKAGE_TYPE_MODULE,
                                 'currentVersion' => '0',
                                 'isUpdate' => false

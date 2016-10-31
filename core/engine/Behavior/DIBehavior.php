@@ -45,13 +45,16 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Session\Adapter getSession()
  * @method \Phalcon\Registry getRegistry()
  * @method \Phalcon\Cache\BackendInterface getCacheData()
+ * @method \Phalcon\Loader getLoader()
  *
  * @method \Engine\Application getApp()
  * @method \Engine\Config getConfig()
  * @method \Engine\Asset\Manager getAssets()
  * @method \Engine\View getView()
  * @method \Engine\Profiler getProfiler()
- * @method \Engine\Widget\WidgetCatalog getWidgets()
+ * @method \Engine\Package\PackageManager getModules()
+ * @method \Engine\Package\PackageManager getWidgets()
+ * @method \Engine\Package\PackageManager getPlugins()
  */
 trait DIBehavior
 {

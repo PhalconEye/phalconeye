@@ -23,13 +23,12 @@ use Engine\Form\Element\Text;
 use Engine\Grid\AbstractGrid;
 use Engine\Grid\Exception;
 use Phalcon\Db\Column;
-use Phalcon\Validation\Message;
 
 /**
  * Grid columns trait.
  *
  * @category  PhalconEye
- * @package   Engine\Form\Behavior
+ * @package   Engine\Grid\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

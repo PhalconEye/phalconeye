@@ -19,6 +19,7 @@
 namespace Core\Command\Validation;
 
 use Engine\Behavior\DIBehavior;
+use Engine\Package\PackageData;
 use Phalcon\Di;
 use Phalcon\Validation;
 use Phalcon\Validation\Validator;
@@ -54,8 +55,7 @@ class WidgetModuleValidator extends Validator
     {
         $value = $validation->getValue($attribute);
         if (!empty($value)) {
-            $result = array_key_exists($value, $this->_di->getRegistry()->modules) &&
-                !array_key_exists($value, $this->_di->getRegistry()->sysmodules);
+            $result = $this->_exists($value);
 
             if (!$result) {
                 $validation->appendMessage(
@@ -67,5 +67,23 @@ class WidgetModuleValidator extends Validator
         }
 
         return true;
+    }
+
+    /**
+     * Check module exists in modules.
+     *
+     * @param string $module Module name.
+     *
+     * @return bool Check result.
+     */
+    protected function _exists($module)
+    {
+        foreach ($this->_di->getModules()->getPackages() as $moduleData) {
+            if (!$moduleData->isMetadata(PackageData::METADATA_IS_SYSTEM) && $moduleData->getName() == $module) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }

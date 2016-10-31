@@ -56,7 +56,10 @@ abstract class AbstractInstaller
      *
      * @return mixed 'string' (new version) if migration is not finished, 'null' if all updates were applied
      */
-    public abstract function update($currentVersion);
+    public function update($currentVersion = null)
+    {
+        $currentVersion = null;
+    }
 
     /**
      * Execute sql file.

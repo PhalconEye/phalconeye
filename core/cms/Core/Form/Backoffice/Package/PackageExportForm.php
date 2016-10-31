@@ -20,7 +20,7 @@ namespace Core\Form\Backoffice\Package;
 
 use Core\Form\CoreForm;
 use Core\Model\PackageModel;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 
 /**
  * Export package.
@@ -72,13 +72,13 @@ class PackageExportForm extends CoreForm
 
         $content = $this->addContentFieldSet();
 
-        if ($this->_exclude['type'] != Manager::PACKAGE_TYPE_LIBRARY) {
+        if ($this->_exclude['type'] != PackageGenerator::PACKAGE_TYPE_LIBRARY) {
             $query = $this->getDI()->get('modelsManager')->createBuilder()
                 ->from(['t' => '\Core\Model\PackageModel'])
-                ->where("t.type = :type:", ['type' => Manager::PACKAGE_TYPE_MODULE])
+                ->where("t.type = :type:", ['type' => PackageGenerator::PACKAGE_TYPE_MODULE])
                 ->andWhere("t.enabled = :enabled:", ['enabled' => true]);
 
-            if ($this->_exclude && $this->_exclude['type'] == Manager::PACKAGE_TYPE_MODULE) {
+            if ($this->_exclude && $this->_exclude['type'] == PackageGenerator::PACKAGE_TYPE_MODULE) {
                 $query->andWhere("t.name != :name:", ['name' => $this->_exclude['name']]);
             }
 
@@ -94,10 +94,10 @@ class PackageExportForm extends CoreForm
 
         $query = $this->getDI()->get('modelsManager')->createBuilder()
             ->from(['t' => '\Core\Model\PackageModel'])
-            ->where("t.type = :type:", ['type' => Manager::PACKAGE_TYPE_LIBRARY])
+            ->where("t.type = :type:", ['type' => PackageGenerator::PACKAGE_TYPE_LIBRARY])
             ->andWhere("t.enabled = :enabled:", ['enabled' => true]);
 
-        if ($this->_exclude && $this->_exclude['type'] == Manager::PACKAGE_TYPE_LIBRARY) {
+        if ($this->_exclude && $this->_exclude['type'] == PackageGenerator::PACKAGE_TYPE_LIBRARY) {
             $query->andWhere("t.name != :name:", ['name' => $this->_exclude['name']]);
         }
 
@@ -110,7 +110,7 @@ class PackageExportForm extends CoreForm
             ['using' => ['name', 'title']]
         );
 
-        if ($this->_package->type == Manager::PACKAGE_TYPE_MODULE) {
+        if ($this->_package->type == PackageGenerator::PACKAGE_TYPE_MODULE) {
             $content->addCheckbox('withTranslations', 'Export with translations', null, 1, true);
         }
     }

@@ -211,13 +211,11 @@ class Metadata implements StrategyInterface
     public function getAllModelsMetadata(DiInterface $di)
     {
         $models = [];
-        $registry = $di->get('registry');
-        foreach ($registry->modules as $module => $path) {
-            $module = ucfirst($module);
-            $modelsDirectory = $path . $module . '/Model';
-            foreach (glob($modelsDirectory . '/*.php') as $modelPath) {
+        foreach ($this->getDI()->getModules()->getPackages() as $module) {
+            $modelsDirectory = $module->getPath() . 'Model' . DS;
+            foreach (glob($modelsDirectory . '*.php') as $modelPath) {
                 $modelInfo = [];
-                $modelClass = '\\' . $module . '\Model\\' . basename(str_replace('.php', '', $modelPath));
+                $modelClass = '\\' . $module->getNameUpper() . '\Model\\' . basename(str_replace('.php', '', $modelPath));
                 $reflector = $di->get('annotations')->get($modelClass);
 
                 // Get table name.

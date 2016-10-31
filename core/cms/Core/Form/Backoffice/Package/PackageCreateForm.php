@@ -25,7 +25,8 @@ use Core\Model\WidgetModel as WidgetModel;
 use Engine\Config;
 use Engine\Db\AbstractModel;
 use Engine\Form\Validator\RegexValidator;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
+use Engine\Package\PackageManager;
 
 /**
  * Create package.
@@ -87,7 +88,7 @@ class PackageCreateForm extends CoreForm
     {
         $this->addContentFieldSet()
             ->addText('name', 'Name', 'Name must be in lowercase and contains only letters.')
-            ->addSelect('type', 'Package type', null, Manager::$ALLOWED_TYPES)
+            ->addSelect('type', 'Package type', null, PackageManager::$ALLOWED_TYPES)
             ->addText('title')
             ->addTextArea('description')
             ->addText('version', 'Version', 'Type package version. Ex.: 0.5.7')
@@ -166,7 +167,7 @@ class PackageCreateForm extends CoreForm
         }
 
         // Check package location.
-        $packageManager = new Manager();
+        $packageManager = new PackageGenerator();
         $path = $packageManager->getPackageLocation($data['type']);
         if (!is_writable($path)) {
             $this->addError('Can not create package. Package location isn\'t writable: ' . $path);

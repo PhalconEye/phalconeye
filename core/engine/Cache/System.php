@@ -38,8 +38,7 @@ class System
         CACHE_KEY_ROUTER_DATA = 'router_data',
 
         /**
-         * Widgets metadata, stored from modules.
+         * Packages data.
          */
-        CACHE_KEY_WIDGETS_METADATA = 'widgets_metadata';
-
+        CACHE_KEY_PACKAGES = 'packages_%s';
 }

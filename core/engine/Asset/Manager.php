@@ -21,6 +21,7 @@ namespace Engine\Asset;
 
 use Engine\Asset\Css\Less;
 use Engine\Behavior\DIBehavior;
+use Engine\Package\PackageData;
 use Engine\Utils\FileUtils;
 use Phalcon\Assets\Filters\Cssmin;
 use Phalcon\Assets\Filters\Jsmin;
@@ -128,16 +129,16 @@ class Manager extends AssetManager
         ///////////////////////////////////
         // Collect css/js/img from modules and widgets.
         ///////////////////////////////////
-        /** @var Registry $registry */
-        $registry = $this->getDI()->get('registry');
-        $items = array_merge(
-            $registry->modules,
-            array_fill_keys($registry->widgets, $registry->directories->widgets)
+        $packages = array_merge(
+            $this->getDI()->getWidgets()->getPackages(),
+            $this->getDI()->getModules()->getPackages()
         );
-        foreach ($items as $packageName => $sourcePath) {
+
+        /** @var PackageData $package */
+        foreach ($packages as $package) {
             // CSS
-            $assetsPath = $sourcePath . ucfirst($packageName) . '/Assets/';
-            $path = $location . 'css/' . $packageName . '/';
+            $assetsPath = $package->getPath() . '/Assets/';
+            $path = $location . 'css/' . $package->getName() . '/';
             FileUtils::createIfMissing($path);
             $cssFiles = FileUtils::globRecursive($assetsPath . 'css/*');
             $less->addImportDir($themeDirectory);
@@ -158,17 +159,17 @@ class Manager extends AssetManager
             }
 
             // JS
-            $path = $location . 'js/' . $packageName . '/';
+            $path = $location . 'js/' . $package->getName() . '/';
             FileUtils::createIfMissing($path);
             FileUtils::copyRecursive($assetsPath . 'js', $path, true);
 
             // IMAGES
-            $path = $location . 'img/' . $packageName . '/';
+            $path = $location . 'img/' . $package->getName() . '/';
             FileUtils::createIfMissing($path);
             FileUtils::copyRecursive($assetsPath . 'img', $path, true);
 
             // FONTS
-            $path = $location . 'fonts/' . $packageName . '/';
+            $path = $location . 'fonts/' . $package->getName() . '/';
             FileUtils::createIfMissing($path);
             FileUtils::copyRecursive($assetsPath . 'fonts', $path, true);
         }

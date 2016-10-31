@@ -95,9 +95,9 @@ class ModuleController extends AbstractBackofficeController
      */
     protected function _checkModuleExists($module)
     {
-        $modules = $this->getDI()->get('registry')->modules;
+        $modules = $this->getDI()->getModules();
 
-        if (!in_array($module, $modules)) {
+        if (!$modules->has($module)) {
             // todo: create DispatcherAdminException handler
             throw new DispatcherAdminException;
         }

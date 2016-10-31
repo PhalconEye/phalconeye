@@ -21,8 +21,9 @@ namespace Core\Command;
 use Core\Command\Validation\WidgetModuleValidator;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
+use Engine\Package\PackageManager;
 use Engine\Utils\ConsoleUtils;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 use Engine\Package\PackageException;
 use Phalcon\Validation\Validator\Regex;
 use Phalcon\Validation\Validator\StringLength;
@@ -57,7 +58,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
             return;
         }
 
-        $packageManager = new Manager();
+        $packageManager = new PackageGenerator();
         $data = $this->_collectData($type);
 
         try {
@@ -79,7 +80,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      */
     private function _checkType($type)
     {
-        return in_array($type, array_keys(Manager::$ALLOWED_TYPES));
+        return in_array($type, array_keys(PackageManager::$ALLOWED_TYPES));
     }
 
     /**
@@ -92,16 +93,16 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     private function _collectData($type)
     {
         switch ($type) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageManager::PACKAGE_TYPE_MODULE:
                 return $this->_collectDataForModule();
 
-            case Manager::PACKAGE_TYPE_WIDGET:
+            case PackageManager::PACKAGE_TYPE_WIDGET:
                 return $this->_collectDataForWidget();
 
-            case Manager::PACKAGE_TYPE_PLUGIN:
+            case PackageManager::PACKAGE_TYPE_PLUGIN:
                 return $this->_collectDataForPlugin();
 
-            case Manager::PACKAGE_TYPE_THEME:
+            case PackageManager::PACKAGE_TYPE_THEME:
                 return $this->_collectDataForTheme();
         }
 
@@ -115,7 +116,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      */
     private function _collectDataForModule()
     {
-        $data = ['type' => Manager::PACKAGE_TYPE_MODULE];
+        $data = ['type' => PackageManager::PACKAGE_TYPE_MODULE];
         $data['name'] = $this->_readline(
             "Package name: ",
             [
@@ -135,7 +136,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
      */
     private function _collectDataForWidget()
     {
-        $data = ['type' => Manager::PACKAGE_TYPE_WIDGET];
+        $data = ['type' => PackageManager::PACKAGE_TYPE_WIDGET];
         $data['name'] = $this->_readline(
             "Package name: ",
             [
@@ -161,7 +162,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     private function _collectDataForPlugin()
     {
         $data = $this->_collectDataForWidget();
-        $data['type'] = Manager::PACKAGE_TYPE_PLUGIN;
+        $data['type'] = PackageManager::PACKAGE_TYPE_PLUGIN;
         return $data;
     }
 
@@ -173,7 +174,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     private function _collectDataForTheme()
     {
         $data = $this->_collectDataForModule();
-        $data['type'] = Manager::PACKAGE_TYPE_THEME;
+        $data['type'] = PackageManager::PACKAGE_TYPE_THEME;
         return $data;
     }
 }

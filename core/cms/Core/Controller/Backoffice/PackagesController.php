@@ -33,7 +33,7 @@ use Core\Model\WidgetModel;
 use Core\Navigation\Backoffice\PackagesNavigation;
 use Engine\Db\Schema;
 use Engine\Exception;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 use Engine\Package\PackageException;
 
 
@@ -71,7 +71,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function indexAction()
     {
-        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_MODULE);
+        $this->view->packages = $this->_getPackages(PackageGenerator::PACKAGE_TYPE_MODULE);
     }
 
     /**
@@ -83,7 +83,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function themesAction()
     {
-        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_THEME);
+        $this->view->packages = $this->_getPackages(PackageGenerator::PACKAGE_TYPE_THEME);
     }
 
     /**
@@ -95,7 +95,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function widgetsAction()
     {
-        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_WIDGET);
+        $this->view->packages = $this->_getPackages(PackageGenerator::PACKAGE_TYPE_WIDGET);
     }
 
     /**
@@ -105,7 +105,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function pluginsAction()
     {
-        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_PLUGIN);
+        $this->view->packages = $this->_getPackages(PackageGenerator::PACKAGE_TYPE_PLUGIN);
     }
 
     /**
@@ -117,7 +117,7 @@ class PackagesController extends AbstractBackofficeController
      */
     public function librariesAction()
     {
-        $this->view->packages = $this->_getPackages(Manager::PACKAGE_TYPE_LIBRARY);
+        $this->view->packages = $this->_getPackages(PackageGenerator::PACKAGE_TYPE_LIBRARY);
     }
 
     /**
@@ -135,7 +135,7 @@ class PackagesController extends AbstractBackofficeController
             return;
         }
 
-        $packageManager = new Manager(PackageModel::find());
+        $packageManager = new PackageGenerator(PackageModel::find());
         $packageManager->clearTempDirectory();
 
         $packageFile = $this->request->getUploadedFiles();
@@ -172,7 +172,7 @@ class PackagesController extends AbstractBackofficeController
 
                 $redirect = null;
 
-                if ($manifest->type == Manager::PACKAGE_TYPE_MODULE) {
+                if ($manifest->type == PackageGenerator::PACKAGE_TYPE_MODULE) {
                     // Run module install script.
                     $newPackageVersion = $packageManager->runInstallScript($manifest);
                     $this->_clearCache();
@@ -255,25 +255,25 @@ class PackagesController extends AbstractBackofficeController
             $data['header'] = PHP_EOL . trim($data['header']) . PHP_EOL;
         }
 
-        $packageManager = new Manager();
+        $packageManager = new PackageGenerator();
         $packageManager->createPackage($data);
         $this->_enablePackageConfig($package);
         $this->_updateMetadata();
 
         switch ($package->type) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageGenerator::PACKAGE_TYPE_MODULE:
                 $return = 'backoffice-packages';
                 break;
-            case Manager::PACKAGE_TYPE_THEME:
+            case PackageGenerator::PACKAGE_TYPE_THEME:
                 $return = 'backoffice-packages-themes';
                 break;
-            case Manager::PACKAGE_TYPE_WIDGET:
+            case PackageGenerator::PACKAGE_TYPE_WIDGET:
                 $return = 'backoffice-packages-widgets';
                 break;
-            case Manager::PACKAGE_TYPE_PLUGIN:
+            case PackageGenerator::PACKAGE_TYPE_PLUGIN:
                 $return = 'backoffice-packages-plugins';
                 break;
-            case Manager::PACKAGE_TYPE_LIBRARY:
+            case PackageGenerator::PACKAGE_TYPE_LIBRARY:
                 $return = 'backoffice-packages-libraries';
                 break;
             default:
@@ -409,7 +409,7 @@ class PackagesController extends AbstractBackofficeController
         $this->hideFooter();
         $this->view->form = $form = new PackageExportForm($package, ['name' => $name, 'type' => $type]);
 
-        $skipForm = ($type == Manager::PACKAGE_TYPE_THEME);
+        $skipForm = ($type == PackageGenerator::PACKAGE_TYPE_THEME);
         if (!$skipForm && (!$this->request->isPost() || !$form->isValid())) {
             return;
         }
@@ -424,11 +424,11 @@ class PackagesController extends AbstractBackofficeController
              */
             if (!empty($dependencies['modules'])) {
                 foreach ($dependencies['modules'] as $dependency) {
-                    $depPackage = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $dependency);
+                    $depPackage = $this->_getPackage(PackageGenerator::PACKAGE_TYPE_MODULE, $dependency);
 
                     $dependenciesData[] = [
                         'name' => $dependency,
-                        'type' => Manager::PACKAGE_TYPE_MODULE,
+                        'type' => PackageGenerator::PACKAGE_TYPE_MODULE,
                         'version' => $depPackage->version,
                     ];
                 }
@@ -439,11 +439,11 @@ class PackagesController extends AbstractBackofficeController
              */
             if (!empty($dependencies['libraries'])) {
                 foreach ($dependencies['libraries'] as $dependency) {
-                    $depPackage = $this->_getPackage(Manager::PACKAGE_TYPE_LIBRARY, $dependency);
+                    $depPackage = $this->_getPackage(PackageGenerator::PACKAGE_TYPE_LIBRARY, $dependency);
 
                     $dependenciesData[] = [
                         'name' => $dependency,
-                        'type' => Manager::PACKAGE_TYPE_LIBRARY,
+                        'type' => PackageGenerator::PACKAGE_TYPE_LIBRARY,
                         'version' => $depPackage->version,
                     ];
                 }
@@ -451,7 +451,7 @@ class PackagesController extends AbstractBackofficeController
 
             $package->setDependencies($dependenciesData);
 
-            $packageManager = new Manager();
+            $packageManager = new PackageGenerator();
             $packageManager->exportPackage($package, ['withTranslations' => $form->getValue('withTranslations')]);
         }
     }
@@ -481,7 +481,7 @@ class PackagesController extends AbstractBackofficeController
             }
 
             try {
-                if ($package->type == Manager::PACKAGE_TYPE_MODULE) {
+                if ($package->type == PackageGenerator::PACKAGE_TYPE_MODULE) {
                     $installerClass = ucfirst($name) . '\Installer';
                     if (class_exists($installerClass)) {
                         $packageInstaller = new $installerClass($this->di, $name);
@@ -491,7 +491,7 @@ class PackagesController extends AbstractBackofficeController
                     }
                 }
 
-                $packageManager = new Manager();
+                $packageManager = new PackageGenerator();
                 $packageManager->removePackage($package);
                 $package->delete();
 
@@ -622,18 +622,18 @@ class PackagesController extends AbstractBackofficeController
     protected function _removePackageConfig($package)
     {
         switch ($package->type) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageGenerator::PACKAGE_TYPE_MODULE:
                 // remove widgets and settings
                 $this->db->delete(WidgetModel::getTableName(), 'module = ?', [$package->name]);
                 SettingsModel::factory($package->name)->delete();
                 break;
-            case Manager::PACKAGE_TYPE_WIDGET:
+            case PackageGenerator::PACKAGE_TYPE_WIDGET:
                 if ($widget = $package->getWidget()) {
                     $widget->delete();
                 }
                 break;
-            case Manager::PACKAGE_TYPE_THEME:
-            case Manager::PACKAGE_TYPE_PLUGIN:
+            case PackageGenerator::PACKAGE_TYPE_THEME:
+            case PackageGenerator::PACKAGE_TYPE_PLUGIN:
                 break;
         }
     }
@@ -648,7 +648,7 @@ class PackagesController extends AbstractBackofficeController
     protected function _enablePackageConfig(PackageModel $package)
     {
         switch ($package->type) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageGenerator::PACKAGE_TYPE_MODULE:
                 $data = $package->getData();
                 // Install widgets.
                 if (!empty($data['widgets'])) {
@@ -679,7 +679,7 @@ class PackagesController extends AbstractBackofficeController
                 // Enable module widgets.
                 $this->db->update(WidgetModel::getTableName(), ['enabled'], [1], "module = '{$package->name}'");
                 break;
-            case Manager::PACKAGE_TYPE_WIDGET:
+            case PackageGenerator::PACKAGE_TYPE_WIDGET:
                 if ($widget = $package->getWidget()) {
                     $widget->enabled = 1;
                     $widget->save();
@@ -711,11 +711,11 @@ class PackagesController extends AbstractBackofficeController
     protected function _disablePackageConfig(PackageModel $package)
     {
         switch ($package->type) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageGenerator::PACKAGE_TYPE_MODULE:
                 // Disable module widgets.
                 $this->db->update(WidgetModel::getTableName(), ['enabled'], [0], "module = '{$package->name}'");
                 break;
-            case Manager::PACKAGE_TYPE_WIDGET:
+            case PackageGenerator::PACKAGE_TYPE_WIDGET:
                 if ($widget = $package->getWidget()) {
                     $widget->enabled = 0;
                     $widget->save();
@@ -779,7 +779,7 @@ class PackagesController extends AbstractBackofficeController
                 'widget_id' => $widget->id
             ];
 
-            $module = $this->_getPackage(Manager::PACKAGE_TYPE_MODULE, $widget->module);
+            $module = $this->_getPackage(PackageGenerator::PACKAGE_TYPE_MODULE, $widget->module);
             $module->addData(
                 'widgets', [
                     'name' => $widget->name,
@@ -812,7 +812,7 @@ class PackagesController extends AbstractBackofficeController
      */
     protected function _updateMetadata()
     {
-        $packageManager = new Manager();
+        $packageManager = new PackageGenerator();
         $packageManager->generateMetadata(PackageModel::find());
     }
 }

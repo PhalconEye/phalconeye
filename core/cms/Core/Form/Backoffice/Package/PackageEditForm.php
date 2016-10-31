@@ -20,7 +20,7 @@ namespace Core\Form\Backoffice\Package;
 
 use Core\Model\PackageModel;
 use Engine\Form\Validator\RegexValidator;
-use Engine\Package\Manager;
+use Engine\Package\PackageGenerator;
 
 /**
  * Edit package.
@@ -57,7 +57,7 @@ class PackageEditForm extends PackageCreateForm
         }
 
         $this->addEntity($entity);
-        if ($entity->type == Manager::PACKAGE_TYPE_WIDGET) {
+        if ($entity->type == PackageGenerator::PACKAGE_TYPE_WIDGET) {
             $widget = $entity->getWidget();
             if ($widget->admin_form && $widget->admin_form != 'action') {
                 $this->setValue('form_class', $widget->admin_form);

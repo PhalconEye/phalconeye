@@ -23,9 +23,13 @@ use Engine\Application;
 use Engine\Asset\Manager as AssetsManager;
 use Engine\Cache\Dummy;
 use Engine\Cache\System;
+use Engine\Config;
 use Engine\Db\Model\Annotations\Initializer as ModelAnnotationsInitializer;
 use Engine\Exception;
 use Engine\Exception\PrettyExceptions;
+use Engine\Package\PackageData;
+use Engine\Package\PackageManager;
+use Engine\Plugin\PluginManager;
 use Engine\Profiler;
 use Engine\View;
 use Engine\Widget\WidgetCatalog;
@@ -70,8 +74,8 @@ trait ApplicationBehavior
     /**
      * Init logger.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -95,8 +99,8 @@ trait ApplicationBehavior
     /**
      * Init loader.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return Loader
@@ -104,15 +108,8 @@ trait ApplicationBehavior
     protected function _initLoader($di, $config, $eventsManager)
     {
         // Add all required namespaces and modules.
-        $registry = $di->get('registry');
+        $registry = $di->getRegistry();
         $namespaces = [];
-        $bootstraps = [];
-        foreach ($registry->modules as $module => $path) {
-            $moduleName = ucfirst($module);
-            $namespaces[$moduleName] = $path . $moduleName;
-            $bootstraps[$module] = $moduleName . '\Bootstrap';
-        }
-
         $namespaces['Engine'] = $registry->directories->engine;
         $namespaces['Plugin'] = $registry->directories->plugins;
         $namespaces['Widget'] = $registry->directories->widgets;
@@ -125,9 +122,7 @@ trait ApplicationBehavior
         }
 
         $loader->register();
-        $this->registerModules($bootstraps);
         $di->set('loader', $loader);
-
         return $loader;
     }
 
@@ -135,8 +130,8 @@ trait ApplicationBehavior
     /**
      * Init environment.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return Url
      */
@@ -184,35 +179,93 @@ trait ApplicationBehavior
     }
 
     /**
-     * Attach required events.
+     * Initialize modules.
      *
-     * @param EventsManager $eventsManager Events manager object.
-     * @param Config $config Application configuration.
+     * @param DIBehavior|DI $di Dependency Injection.
      *
-     * @return void
+     * @return PackageManager Package manager with loaded modules.
      */
-    protected function _initPlugins($eventsManager, $config)
+    protected function _initModules($di)
     {
-        // Attach modules plugins events.
-        $events = $config->events->toArray();
-        $cache = [];
-        foreach ($events as $item) {
-            list ($class, $event) = explode('=', $item);
-            if (isset($cache[$class])) {
-                $object = $cache[$class];
-            } else {
-                $object = new $class();
-                $cache[$class] = $object;
-            }
-            $eventsManager->attach($event, $object);
+        /**
+         * Collect modules.
+         */
+        $sysPath = $di->getRegistry()->directories->cms;
+        $modules = new PackageManager($di, PackageManager::PACKAGE_TYPE_MODULE);
+
+        // System modules first.
+        $sysmodules = [
+            self::CMS_MODULE_CORE => $sysPath,
+            self::CMS_MODULE_USER => $sysPath
+        ];
+        foreach ($sysmodules as $module => $path) {
+            $modules->add(
+                new PackageData(
+                    $module,
+                    PackageManager::PACKAGE_TYPE_MODULE,
+                    null,
+                    null,
+                    $path . ucfirst($module) . DS,
+                    [PackageData::METADATA_IS_SYSTEM => true]
+                )
+            );
         }
+
+        // Load custom modules.
+        $modules->load();
+        $di->set('modules', $modules);
+
+        // Add all required namespaces and modules to loader.
+        $loader = $di->getLoader();
+        $namespaces = [];
+        $bootstraps = [];
+        foreach ($modules->getPackages() as $module) {
+            $namespaces[$module->getNameUpper()] = $module->getPath();
+            $bootstraps[$module->getName()] = $module->getNamespace() . PackageManager::SEPARATOR_NS . 'Bootstrap';
+        }
+
+        $loader->registerNamespaces(array_merge($loader->getNamespaces(), $namespaces));
+        $this->registerModules($bootstraps);
+
+        return $modules;
+    }
+
+    /**
+     * Initialize plugins.
+     *
+     * @param DIBehavior|DI $di Dependency Injection.
+     *
+     * @return PackageManager Package manager with loaded plugins.
+     */
+    protected function _initPlugins($di)
+    {
+        $eventsManager = $di->getEventsManager();
+        $plugins = new PackageManager($di, PackageManager::PACKAGE_TYPE_PLUGIN);
+        $plugins->load();
+
+        foreach ($plugins->getPackages() as $package) {
+            $pluginClass = $package->getNamespace() . PackageManager::SEPARATOR_NS . $package->getTypeUpper();
+            $pluginObject = new $pluginClass();
+
+            $events = $package->getMetadata(PackageData::METADATA_EVENTS);
+            if (!empty($events) && is_array($events)) {
+                foreach ($events as $event) {
+                    $eventsManager->attach($event, $pluginObject);
+                }
+            } else {
+                $di->getLogger()->warning("Missing events for plugin: " . $pluginClass);
+            }
+        }
+
+        $di->set('plugins', $plugins);
+        return $plugins;
     }
 
     /**
      * Init annotations.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -236,8 +289,8 @@ trait ApplicationBehavior
     /**
      * Init router.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return Router
      */
@@ -273,9 +326,6 @@ trait ApplicationBehavior
         if ($config->application->debug || $router === null) {
             $saveToCache = ($router === null);
 
-            // Load all controllers of all modules for routing system.
-            $modules = $di->get('registry')->modules;
-
             // Use the annotations router.
             $router = new RouterAnnotations(true);
 
@@ -292,18 +342,16 @@ trait ApplicationBehavior
             $router->setDefaultAction("index");
 
             // Read the annotations from controllers.
-            foreach ($modules as $module => $path) {
-                $moduleName = ucfirst($module);
-                $moduleLowerName = strtolower($module);
+            foreach ($di->getModules()->getPackages() as $module) {
 
                 $scanDirectories = [
-                    $moduleName . '/Controller' => '\Controller\\',
-                    $moduleName . '/Controller/Backoffice' => '\Controller\\Backoffice\\'
+                    'Controller' => $module->getNamespace() . '\Controller\\',
+                    'Controller' . DS . 'Backoffice' => $module->getNamespace() . '\Controller\\Backoffice\\'
                 ];
 
                 foreach ($scanDirectories as $directory => $namespace) {
                     // Get all file names.
-                    $files = scandir($path . $directory);
+                    $files = scandir($module->getPath() . $directory);
 
                     // Iterate files.
                     foreach ($files as $file) {
@@ -313,8 +361,7 @@ trait ApplicationBehavior
                         $controllerFile = str_replace('Controller.php', '', $file);
 
                         // Front controllers.
-                        $controller = $moduleName . $namespace . $controllerFile;
-                        $router->addModuleResource($moduleLowerName, $controller);
+                        $router->addModuleResource($module->getName(), $namespace . $controllerFile);
                     }
                 }
             }
@@ -330,8 +377,8 @@ trait ApplicationBehavior
     /**
      * Init database.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return Pdo
@@ -435,8 +482,8 @@ trait ApplicationBehavior
     /**
      * Init session.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return SessionAdapter
      */
@@ -457,8 +504,8 @@ trait ApplicationBehavior
     /**
      * Init cache.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di     Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return void
      */
@@ -526,8 +573,8 @@ trait ApplicationBehavior
     /**
      * Initialize view.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
-     * @param Config $config Config object.
+     * @param DIBehavior|DI $di            Dependency Injection.
+     * @param Config        $config        Config object.
      * @param EventsManager $eventsManager Event manager.
      *
      * @return void
@@ -545,33 +592,15 @@ trait ApplicationBehavior
      *
      * @param DIBehavior|DI $di Dependency injection.
      *
-     * @return void
+     * @return PackageManager Package manager with loaded widgets.
      */
     protected function _initWidgets($di)
     {
-        $cache = $di->getCacheData();
-        $widgets = $cache->get(System::CACHE_KEY_WIDGETS_METADATA);
-        $widgetsCatalog = new WidgetCatalog();
+        $widgets = new PackageManager($di, PackageManager::PACKAGE_TYPE_WIDGET);
+        $widgets->load();
+        $di->setShared('widgets', $widgets);
 
-        if ($widgets === null) {
-            $widgets = [];
-
-            // Add external widgets.
-            foreach ($di->getRegistry()->widgets as $widget) {
-                $widgets[] = new WidgetData($widget, null, $di);
-            }
-
-            // Iterate through modules and get widgets.
-            foreach ($di->getRegistry()->modules as $module => $path) {
-                $widgets = array_merge($widgets, WidgetCatalog::getWidgetsFromModule($module, $path));
-            }
-
-            $cache->save(System::CACHE_KEY_WIDGETS_METADATA, $widgets, 0); // Unlimited.
-        }
-
-        // Collect widgets.
-        $widgetsCatalog->addAll($widgets);
-        $di->setShared('widgets', $widgetsCatalog);
+        return $widgets;
     }
 
     /**
@@ -583,12 +612,12 @@ trait ApplicationBehavior
      */
     protected function _initEngine($di)
     {
-        foreach (array_keys($di->get('registry')->modules) as $module) {
+        foreach ($di->getModules()->getPackages() as $module) {
             // Initialize module api.
             $di->setShared(
-                strtolower($module),
+                $module->getName(),
                 function () use ($module, $di) {
-                    return new ApiInjector($module, $di);
+                    return new ApiInjector($module->getName(), $di);
                 }
             );
         }

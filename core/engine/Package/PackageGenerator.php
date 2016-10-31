@@ -23,7 +23,6 @@ use Engine\Behavior\DIBehavior;
 use Engine\Config;
 use Engine\Package\Exception\PackageExistsException;
 use Engine\Utils\FileUtils;
-use Engine\Widget\WidgetCatalog;
 use Phalcon\DI;
 use Phalcon\Filter as PhalconFilter;
 
@@ -37,7 +36,7 @@ use Phalcon\Filter as PhalconFilter;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Manager
+class PackageGenerator
 {
     use DIBehavior {
         DIBehavior::__construct as protected __DIConstruct;
@@ -45,47 +44,9 @@ class Manager
 
     const
         /**
-         * Module package.
-         */
-        PACKAGE_TYPE_MODULE = 'module',
-
-        /**
-         * Plugin package.
-         */
-        PACKAGE_TYPE_PLUGIN = 'plugin',
-
-        /**
-         * Theme package.
-         */
-        PACKAGE_TYPE_THEME = 'theme',
-
-        /**
-         * Widget package.
-         */
-        PACKAGE_TYPE_WIDGET = 'widget';
-
-    const
-        /**
-         * Package manifest file name.
-         */
-        PACKAGE_MANIFEST_NAME = 'manifest.json',
-
-        /**
          * Packages structure location.
          */
         PACKAGE_STRUCTURE_LOCATION = ROOT_PATH . DS . 'core' . DS . 'engine' . DS . 'Package' . DS . 'Structure' . DS;
-
-    /**
-     * Allowed types of packages.
-     *
-     * @var array
-     */
-    public static $ALLOWED_TYPES = [
-        self::PACKAGE_TYPE_MODULE => 'Module',
-        self::PACKAGE_TYPE_PLUGIN => 'Plugin',
-        self::PACKAGE_TYPE_THEME => 'Theme',
-        self::PACKAGE_TYPE_WIDGET => 'Widget'
-    ];
 
     /**
      * Versions of each package.
@@ -128,15 +89,15 @@ class Manager
         $name = $data['name'];
         $nameUpper = ucfirst($name);
 
-        if (self::PACKAGE_TYPE_THEME == $type) {
+        if (PackageManager::PACKAGE_TYPE_THEME == $type) {
             $location = $location . $name;
         } elseif (
-            (self::PACKAGE_TYPE_WIDGET == $type || self::PACKAGE_TYPE_PLUGIN == $type) &&
+            (PackageManager::PACKAGE_TYPE_WIDGET == $type || PackageManager::PACKAGE_TYPE_PLUGIN == $type) &&
             !empty($data['module'])
         ) {
             $module = ucfirst($data['module']);
-            $location = $locations[self::PACKAGE_TYPE_MODULE];
-            $location = $location . $module . DS . self::$ALLOWED_TYPES[$type] . DS . $nameUpper;
+            $location = $locations[PackageManager::PACKAGE_TYPE_MODULE];
+            $location = $location . $module . DS . ucfirst($type) . DS . $nameUpper;
         } else {
             $location = $location . $nameUpper;
         }
@@ -153,10 +114,10 @@ class Manager
     {
         $registry = $this->getDI()->getRegistry();
         return [
-            self::PACKAGE_TYPE_MODULE => $registry->directories->modules,
-            self::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
-            self::PACKAGE_TYPE_THEME => $registry->directories->themes,
-            self::PACKAGE_TYPE_WIDGET => $registry->directories->widgets
+            PackageManager::PACKAGE_TYPE_MODULE => $registry->directories->modules,
+            PackageManager::PACKAGE_TYPE_PLUGIN => $registry->directories->plugins,
+            PackageManager::PACKAGE_TYPE_THEME => $registry->directories->themes,
+            PackageManager::PACKAGE_TYPE_WIDGET => $registry->directories->widgets
         ];
     }
 
@@ -172,14 +133,14 @@ class Manager
     public function createPackage($data)
     {
         switch ($data['type']) {
-            case Manager::PACKAGE_TYPE_MODULE:
+            case PackageManager::PACKAGE_TYPE_MODULE:
                 $this->createModule($data);
                 break;
-            case Manager::PACKAGE_TYPE_WIDGET:
-            case Manager::PACKAGE_TYPE_PLUGIN:
+            case PackageManager::PACKAGE_TYPE_WIDGET:
+            case PackageManager::PACKAGE_TYPE_PLUGIN:
                 $this->createWidgetOrPlugin($data);
                 break;
-            case Manager::PACKAGE_TYPE_THEME:
+            case PackageManager::PACKAGE_TYPE_THEME:
                 $this->createTheme($data);
                 break;
         }
@@ -260,9 +221,9 @@ class Manager
     /**
      * Validate data. Check that package doesn't exists.
      *
-     * @param array $data Package data.
-     * @param \Engine\Config $config Config.
-     * @param bool $isExternal Is external plugin (outside of module).
+     * @param array          $data       Package data.
+     * @param \Engine\Config $config     Config.
+     * @param bool           $isExternal Is external plugin (outside of module).
      *
      * @throws PackageExistsException If package already exists.
      *
@@ -270,8 +231,22 @@ class Manager
      */
     private function _validateData($data, $config, $isExternal)
     {
-        if ($isExternal) {
-            if ($this->getDI()->getWidgets()->has($data['module'] . WidgetCatalog::KEY_SEPARATOR . $data['nameUpper'])
+        $type = $data['type'];
+        if (!$isExternal) {
+            if (
+                PackageManager::PACKAGE_TYPE_WIDGET == $type &&
+                $this->getDI()->getWidgets()->has(
+                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['nameUpper']
+                )
+            ) {
+                throw new PackageExistsException("Package with that name already exists!");
+            }
+
+            if (
+                PackageManager::PACKAGE_TYPE_PLUGIN == $type &&
+                $this->getDI()->getPlugins()->has(
+                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['nameUpper']
+                )
             ) {
                 throw new PackageExistsException("Package with that name already exists!");
             }
@@ -279,7 +254,7 @@ class Manager
             return;
         }
 
-        $existingPackages = $config->packages->{$data['type']}->toArray();
+        $existingPackages = $config->packages->{$type}->toArray();
         if (in_array($data['name'], $existingPackages) || in_array($data['nameUpper'], $existingPackages)) {
             throw new PackageExistsException("Package with that name already exists!");
         }
@@ -292,17 +267,18 @@ class Manager
      *
      * @return void
      */
-    private function _processData($data)
+    private function _processData(&$data)
     {
         $data['defaultModuleUpper'] = ucfirst(Application::CMS_MODULE_CORE);
         $data['nameUpper'] = ucfirst($data['name']);
-        $data['moduleNamespace'] = !isset($data['module']) ? '' : ucfirst($data['module']);
+        $data['moduleNamespace'] = empty($data['module']) ?
+            '' : ucfirst($data['module']) . PackageManager::SEPARATOR_NS;
     }
 
     /**
      * Copy package structure.
      *
-     * @param array $data Package data.
+     * @param array  $data            Package data.
      * @param string $packageLocation Package location.
      *
      * @return void
@@ -324,8 +300,8 @@ class Manager
     /**
      * Copy package structure.
      *
-     * @param string $value Package data.
-     * @param array $data Package data.
+     * @param string         $value  Package data.
+     * @param array          $data   Package data.
      * @param \Engine\Config $config Package location.
      *
      * @return void
@@ -341,7 +317,7 @@ class Manager
     /**
      * Replace variables in files.
      *
-     * @param array $data Package data.
+     * @param array  $data            Package data.
      * @param string $packageLocation Package location.
      *
      * @return void

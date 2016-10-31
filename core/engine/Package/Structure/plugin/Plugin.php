@@ -1,5 +1,5 @@
 <?php
-namespace Plugin\%nameUpper%;
+namespace %moduleNamespace%Plugin\%nameUpper%;
 
 use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 
