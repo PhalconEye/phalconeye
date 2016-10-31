@@ -41,7 +41,7 @@ class ModuleController extends AbstractBackofficeController
         /**
          * Module config form namespace
          */
-        CONFIG_FORM_NS = '\Form\Backoffice\ConfigForm';
+        CONFIG_FORM_NS = '\Form\Backoffice\SettingsForm';
 
     /**
      * Index action.
