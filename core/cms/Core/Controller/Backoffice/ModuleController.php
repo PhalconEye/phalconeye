@@ -20,7 +20,6 @@ namespace Core\Controller\Backoffice;
 
 use Core\Form\CoreForm;
 use Core\Model\SettingsModel;
-use Engine\Exception;
 use Phalcon\Mvc\Dispatcher\Exception as DispatcherAdminException;
 
 /**
