@@ -10,5 +10,6 @@ return array (
   'widget' => 
   array (
     0 => 'Demo',
+    1 => 'Test',
   ),
 );

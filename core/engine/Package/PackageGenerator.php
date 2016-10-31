@@ -46,7 +46,7 @@ class PackageGenerator
         /**
          * Packages structure location.
          */
-        PACKAGE_STRUCTURE_LOCATION = ROOT_PATH . DS . 'core' . DS . 'engine' . DS . 'Package' . DS . 'Structure' . DS;
+        PACKAGE_TEMPLATES_LOCATION = ROOT_PATH . DS . 'core' . DS . 'templates' . DS;
 
     /**
      * Versions of each package.
@@ -290,7 +290,7 @@ class PackageGenerator
 
         // Copy package structure.
         FileUtils::copyRecursive(
-            self::PACKAGE_STRUCTURE_LOCATION . $data['type'],
+            self::PACKAGE_TEMPLATES_LOCATION . $data['type'],
             $packageLocation,
             false,
             ['.gitignore']
