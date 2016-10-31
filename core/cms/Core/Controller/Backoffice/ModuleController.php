@@ -66,7 +66,7 @@ class ModuleController extends AbstractBackofficeController
         $this->view->form = $form = new $configForm;
 
         if (!$form instanceof CoreForm) {
-            throw new Exception('Config form must be instance of CoreForm');
+            throw new \InvalidArgumentException('Config form must be instance of CoreForm');
         }
 
         if (!$this->request->isPost()) {
