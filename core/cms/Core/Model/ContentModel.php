@@ -19,7 +19,7 @@
 namespace Core\Model;
 
 use Engine\Db\AbstractModel;
-use Engine\Package\WidgetData;
+use Engine\Package\PackageData;
 
 /**
  * Content.
@@ -69,17 +69,6 @@ class ContentModel extends AbstractModel
      * @Column(type="text", nullable=false, column="params")
      */
     public $params;
-
-    /**
-     * Get widget data.
-     *
-     * @return WidgetData
-     */
-    public function getWidget() : WidgetData
-    {
-        // @TODO;
-        return null;
-    }
 
     /**
      * Method to set the value of field params.

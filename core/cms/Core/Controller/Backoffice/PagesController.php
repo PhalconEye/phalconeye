@@ -25,8 +25,8 @@ use Core\Form\Backoffice\Page\PageEditForm;
 use Core\Form\CoreForm;
 use Core\Model\PageModel;
 use Core\Navigation\Backoffice\PagesNavigation;
+use Engine\Package\PackageData;
 use Engine\Widget\Controller as WidgetController;
-use Engine\Widget\WidgetData;
 use Phalcon\Http\Response;
 use Phalcon\Http\ResponseInterface;
 use User\Model\RoleModel;
@@ -175,7 +175,7 @@ class PagesController extends AbstractBackofficeController
         $widgets = $this->getDI()->getWidgets()->getPackages();
         $modules = $this->getDI()->getModules();
         $bundlesWidgetsMetadata = [];
-        /** @var WidgetData $widget */
+        /** @var PackageData $widget */
         foreach ($widgets as $code => $widget) {
             $moduleName = $widget->getModule();
             if (!$modules->has($moduleName)) {
@@ -186,7 +186,7 @@ class PagesController extends AbstractBackofficeController
             $bundlesWidgetsMetadata[$moduleName][$code] = [
                 'widget_code' => $code,
                 'name' => $widget->getName(),
-                'description' => $widget->getMetadata(WidgetData::METADATA_DESCRIPTION),
+                'description' => $widget->getMetadata(PackageData::METADATA_DESCRIPTION),
             ];
         }
 

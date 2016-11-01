@@ -19,6 +19,7 @@
 namespace Engine\Widget;
 
 use Engine\Behavior\DIBehavior;
+use Engine\Package\PackageData;
 use Phalcon\DI;
 
 /**
@@ -40,7 +41,7 @@ class Element
     /**
      * Widget object.
      *
-     * @var WidgetData
+     * @var PackageData
      */
     protected $_widget;
 

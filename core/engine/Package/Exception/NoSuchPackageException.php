@@ -21,7 +21,7 @@ namespace Engine\Package\Exception;
 use Engine\Package\PackageException;
 
 /**
- * Invalid manifest exception.
+ * No such package in package manager.
  *
  * @category  PhalconEye
  * @package   Engine\Package\Exception
@@ -30,6 +30,6 @@ use Engine\Package\PackageException;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class InvalidManifestException extends PackageException
+class NoSuchPackageException extends PackageException
 {
 }

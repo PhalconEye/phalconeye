@@ -21,6 +21,7 @@ namespace Engine\Package;
 use Engine\Behavior\DIBehavior;
 use Engine\Cache\System;
 use Engine\Exception as EngineException;
+use Engine\Package\Exception\NoSuchPackageException;
 use Phalcon\Di;
 
 /**
@@ -190,7 +191,7 @@ class PackageManager
     public function get($key) : PackageData
     {
         if (!isset($this->_packages[$key])) {
-            throw new EngineException(sprintf('Package catalog has no package with id "%s".', $key));
+            throw new NoSuchPackageException(sprintf('Package catalog has no package with id "%s".', $key));
         }
 
         return $this->_packages[$key];

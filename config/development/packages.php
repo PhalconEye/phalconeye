@@ -2,13 +2,13 @@
 return array (
   'module' => 
   array (
-    0 => 'main'
+    0 => 'main',
   ),
   'plugin' => 
   array (
   ),
   'widget' => 
   array (
-    0 => 'Demo'
+    0 => 'Demo',
   ),
 );

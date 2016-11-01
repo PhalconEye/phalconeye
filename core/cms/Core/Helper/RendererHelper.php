@@ -110,6 +110,11 @@ class RendererHelper extends AbstractHelper
      */
     public function renderWidget($id, $params = [], $action = 'index')
     {
+        if (!$this->getDI()->getWidgets()->has($id)) {
+            $this->getDI()->getLogger()->warning("Missing widget with id: $id");
+            return '';
+        }
+
         if (!$this->widgetIsAllowed($params)) {
             return '';
         }
