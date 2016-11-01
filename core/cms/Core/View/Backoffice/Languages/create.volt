@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/backoffice.volt" %}
 
 {% block title %}{{ "Language Creation"|i18n }}{% endblock %}
 

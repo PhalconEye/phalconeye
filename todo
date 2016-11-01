@@ -1,8 +1,7 @@
-- check that all type of resources can be overrided from app folder
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
-- composer stuff
 - fix installer + option for installing sample data.
 
 - run profiler
 - create demo project
+- fix external modules (blog, theme, etc).
 - test everything

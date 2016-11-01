@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/backoffice.volt" %}
 
 {% block title %}{{ "Module settings"|i18n }}{% endblock %}
 

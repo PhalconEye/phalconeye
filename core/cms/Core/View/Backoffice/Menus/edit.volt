@@ -15,7 +15,7 @@
   +------------------------------------------------------------------------+
 #}
 
-{% extends "Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/backoffice.volt" %}
 
 {% block title %}{{ "Menu Editing"|i18n }}{% endblock %}
 

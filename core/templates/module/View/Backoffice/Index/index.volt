@@ -1,4 +1,4 @@
-{% extends "%defaultModuleUpper%/View/layouts/admin.volt" %}
+{% extends "%defaultModuleUpper%/View/layouts/backoffice.volt" %}
 
 {% block content %}
     Module %nameUpper% Backoffice Index

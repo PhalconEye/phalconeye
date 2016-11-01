@@ -1,4 +1,4 @@
-{% extends "Core/View/layouts/admin.volt" %}
+{% extends "Core/View/layouts/backoffice.volt" %}
 
 {% block content %}
     Module Main Backoffice Index
