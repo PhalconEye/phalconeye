@@ -20,6 +20,7 @@ namespace Engine\Db;
 
 use Engine\Behavior\DIBehavior;
 use Engine\Exception as EngineException;
+use Engine\Migration\Model\MigrationModel;
 use Engine\Package\PackageManager;
 use Phalcon\Annotations\Collection;
 use Phalcon\Db\AdapterInterface;
@@ -202,8 +203,8 @@ class Schema
     {
         return [
             [
-                'class' => '\Engine\Migration\Model\MigrationModel',
-                'path' => str_replace('|', DS, 'Engine|Migration|Model|MigrationModel.php')
+                'class' => MigrationModel::class,
+                'path' => (new \ReflectionClass(MigrationModel::class))->getFileName()
             ]
         ];
     }
