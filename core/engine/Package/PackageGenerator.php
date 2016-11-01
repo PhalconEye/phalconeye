@@ -328,19 +328,7 @@ class PackageGenerator
         $placeholders = array_keys($data);
         $placeholdersValues = array_values($data);
         foreach ($placeholders as $key => $placeholder) {
-            // Check header for comment block.
-            if (
-                $placeholder == 'header' &&
-                (
-                    strpos($placeholdersValues[$key], DS . '*') === false ||
-                    strpos($placeholdersValues[$key], '*/') === false
-                )
-            ) {
-                $placeholdersValues[$key] = '';
-            }
-
             $placeholders[$key] = '%' . $placeholder . '%';
-
         }
 
         foreach (FileUtils::globRecursive($packageLocation . DS, '*.*') as $filename) {

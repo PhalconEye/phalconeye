@@ -42,15 +42,40 @@ class MigrationCommand extends AbstractCommand implements CommandInterface
     /**
      * Migrate to new version.
      *
+     * @param string $module   Run migration for specific module.
+     * @param string $rollback Rollback mode. Allowed values: full, failed. Default: full.
+     *
      * @return void
      */
-    public function migrateAction()
+    public function migrateAction($module = null, $rollback = MigrationManager::ROLLBACK_MODE_FULL)
     {
+        if (!in_array($rollback, [MigrationManager::ROLLBACK_MODE_FULL, MigrationManager::ROLLBACK_MODE_FAILED])) {
+            print ConsoleUtils::errorLine("Bad rollback mode") . PHP_EOL;
+            return;
+        }
 
+        $migrationManager = new MigrationManager($this->getDI());
+        if (empty($module)) {
+            $result = $migrationManager->migrateAll($rollback);
+        } else {
+            if (!$this->getModules()->has($module)) {
+                print ConsoleUtils::errorLine("Module '$module' doesn't exist!") . PHP_EOL;
+                return;
+            }
+
+            $moduleData = $this->getModules()->get($module);
+            $result = $migrationManager->migrate($moduleData);
+        }
+
+        if ($result) {
+            print ConsoleUtils::successLine("All migrations applied!") . PHP_EOL;
+        } else {
+            print ConsoleUtils::errorLine("During migration was errors.") . PHP_EOL;
+        }
     }
 
     /**
-     * Migrate to new version.
+     * Get migration statuses for all modules.
      *
      * @param string $module Show status for that module.
      *
@@ -74,12 +99,12 @@ class MigrationCommand extends AbstractCommand implements CommandInterface
                 }
             }
         } else {
-            if (!$this->getDI()->getModules()->has($module)) {
+            if (!$this->getModules()->has($module)) {
                 print ConsoleUtils::errorLine("Module '$module' doesn't exist!") . PHP_EOL;
                 return;
             }
 
-            $moduleData = $this->getDI()->getModules()->get($module);
+            $moduleData = $this->getModules()->get($module);
             $result = $migrationManager->getMigrationsToMigrate($moduleData);
             if (empty($result)) {
                 print ConsoleUtils::successLine("Module '$module' is up to date") . PHP_EOL;

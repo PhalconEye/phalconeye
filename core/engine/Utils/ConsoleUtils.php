@@ -206,6 +206,35 @@ final class ConsoleUtils
     }
 
     /**
+     * Color style for error messages.
+     *
+     * @param string $msg Message to print.
+     *
+     * @return string
+     */
+    public static function error($msg)
+    {
+        $msg = 'Error: ' . $msg;
+        $space = strlen($msg) + 4;
+        $out = self::colorize(
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
+        );
+        $out .= PHP_EOL;
+
+        $out .= self::colorize(
+            '  ' . $msg . '  ', ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
+        );
+        $out .= PHP_EOL;
+
+        $out .= self::colorize(
+            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
+        );
+        $out .= PHP_EOL . PHP_EOL;
+
+        return $out;
+    }
+
+    /**
      * Colorizes the string using provided colors.
      *
      * @param string       $string String to colorize.

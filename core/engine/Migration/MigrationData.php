@@ -34,6 +34,7 @@ use Engine\Package\PackageManager;
 class MigrationData
 {
     private $_name;
+    private $_module;
     private $_class;
     private $_version;
     private $_path;
@@ -47,6 +48,7 @@ class MigrationData
     public function __construct($module, $path)
     {
         $this->_name = basename($path, ".php");
+        $this->_module = $module->getName();
         $this->_class = $module->getNamespace() . PackageManager::SEPARATOR_NS . MigrationManager::MIGRATION_NAME .
             PackageManager::SEPARATOR_NS . $this->_name;
         $this->_version = str_replace(MigrationManager::MIGRATION_NAME . '_', '', $this->_name);
@@ -61,6 +63,16 @@ class MigrationData
     public function getName()
     {
         return $this->_name;
+    }
+
+    /**
+     * Get migration module name.
+     *
+     * @return string
+     */
+    public function getModule()
+    {
+        return $this->_module;
     }
 
     /**

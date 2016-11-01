@@ -61,13 +61,16 @@ class MigrationModel extends AbstractModel
      *
      * @param string $module Module name.
      *
-     * @return \Phalcon\Mvc\Model\ResultsetInterface
+     * @return array
      */
-    public static function findModuleMigrations($module)
+    public static function findModuleMigratedVersion($module)
     {
-        return self::query()
-            ->columns(['version'])
-            ->where('module  = :module:', ['module' => $module])
-            ->execute();
+        return array_column(
+            self::query()
+                ->columns(['version'])
+                ->where('module  = :module:', ['module' => $module])
+                ->execute()->toArray(),
+            'version'
+        );
     }
 }

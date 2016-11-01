@@ -1,10 +1,10 @@
 <?php
 
-namespace %nameUpper%\Migration;
+namespace Core\Migration;
 
 use Engine\Migration\AbstractMigration;
 
-class %migrationClass% extends AbstractMigration
+class Migration_20161101_180641 extends AbstractMigration
 {
     function run()
     {

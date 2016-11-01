@@ -435,7 +435,7 @@ trait ApplicationBehavior
             );
 
             if ($profiler && $di->has('profiler')) {
-                $di->get('profiler')->setDbProfiler($profiler);
+                $di->getProfiler()->setDbProfiler($profiler);
             }
             $connection->setEventsManager($eventsManager);
         }

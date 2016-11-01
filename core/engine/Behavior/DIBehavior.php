@@ -99,4 +99,17 @@ trait DIBehavior
     {
         return $this->_di;
     }
+
+    /**
+     * Proxy to DI.
+     *
+     * @param string $methodName Method name.
+     * @param mixed  $args       Arguments.
+     *
+     * @return mixed DI method result.
+     */
+    public function __call($methodName, $args)
+    {
+        return call_user_func_array(array($this->_di, $methodName), $args);
+    }
 }
