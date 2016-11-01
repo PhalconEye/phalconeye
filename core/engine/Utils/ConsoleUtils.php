@@ -183,7 +183,7 @@ final class ConsoleUtils
      *
      * @return string
      */
-    public static function error($msg)
+    public static function errorLine($msg)
     {
         $msg = 'Error: ' . $msg;
         $space = strlen($msg) + 4;
@@ -274,7 +274,7 @@ final class ConsoleUtils
      *
      * @return string
      */
-    public static function success($msg)
+    public static function successLine($msg)
     {
         $msg = 'Success: ' . $msg;
         $space = strlen($msg) + 4;
@@ -303,9 +303,21 @@ final class ConsoleUtils
      *
      * @return string
      */
-    public static function warningLine($msg)
+    public static function warn($msg)
     {
-        return self::colorize($msg, ConsoleUtils::FG_RED, ConsoleUtils::AT_BOLD) . PHP_EOL . PHP_EOL;
+        return self::colorize($msg, ConsoleUtils::FG_RED, ConsoleUtils::AT_BOLD);
+    }
+
+    /**
+     * Get warning line message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function warnLine($msg)
+    {
+        return self::warn($msg) . PHP_EOL . PHP_EOL;
     }
 
     /**
@@ -383,7 +395,19 @@ final class ConsoleUtils
      */
     public static function text($msg)
     {
-        return self::colorize('  ' . $msg) . PHP_EOL . PHP_EOL;
+        return self::colorize('  ' . $msg);
+    }
+
+    /**
+     * Get just text line message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function textLine($msg)
+    {
+        return self::text($msg) . PHP_EOL . PHP_EOL;
     }
 
     /**

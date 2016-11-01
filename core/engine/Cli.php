@@ -130,7 +130,7 @@ class Cli extends Application
 
         // Installation is required.
         if (!$this->_config->installed) {
-            print ConsoleUtils::error('Please, install system first.') . PHP_EOL;
+            print ConsoleUtils::errorLine('Please, install system first.') . PHP_EOL;
             die();
         }
 
@@ -166,13 +166,13 @@ class Cli extends Application
         // Show exception with/without alternatives.
         $soundex = soundex($_SERVER['argv'][1]);
         if (isset($available[$soundex])) {
-            print ConsoleUtils::warningLine(
+            print ConsoleUtils::warnLine(
                 'Command "' . $_SERVER['argv'][1] .
                 '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
             );
             $this->printAvailableCommands();
         } else {
-            print ConsoleUtils::warningLine('Command "' . $_SERVER['argv'][1] . '" not found.');
+            print ConsoleUtils::warnLine('Command "' . $_SERVER['argv'][1] . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -232,7 +232,7 @@ class Cli extends Application
 
         $command = $this->_getRequiredCommand($_SERVER['argv'][2]);
         if (!$command) {
-            print ConsoleUtils::warningLine('Command "' . $_SERVER['argv'][2] . '" not found.');
+            print ConsoleUtils::warnLine('Command "' . $_SERVER['argv'][2] . '" not found.');
             return true;
         }
 

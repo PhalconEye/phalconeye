@@ -36,7 +36,7 @@ use Engine\Db\Schema;
  * @CommandName(['database', 'db'])
  * @CommandDescription('Database management.')
  */
-class Database extends AbstractCommand implements CommandInterface
+class DatabaseCommand extends AbstractCommand implements CommandInterface
 {
     /**
      * Update database schema according to models metadata.
@@ -51,7 +51,7 @@ class Database extends AbstractCommand implements CommandInterface
         $schema = new Schema($this->getDI());
         if ($model) {
             if (!class_exists($model)) {
-                print ConsoleUtils::error('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
+                print ConsoleUtils::errorLine('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
 
                 return;
             }
@@ -60,7 +60,7 @@ class Database extends AbstractCommand implements CommandInterface
                 print ConsoleUtils::head('Table update for model: ' . $model);
                 print ConsoleUtils::command('Executed queries:', $count, ConsoleUtils::FG_CYAN);
             } else {
-                print ConsoleUtils::success('Table is up to date');
+                print ConsoleUtils::successLine('Table is up to date');
             }
             print PHP_EOL;
         } else {
@@ -71,7 +71,7 @@ class Database extends AbstractCommand implements CommandInterface
                     print ConsoleUtils::command($model . ':', $count, ConsoleUtils::FG_CYAN);
                 }
             } else {
-                print ConsoleUtils::success('Database is up to date');
+                print ConsoleUtils::successLine('Database is up to date');
             }
             print PHP_EOL;
         }

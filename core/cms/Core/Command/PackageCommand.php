@@ -53,7 +53,7 @@ class PackageCommand extends AbstractCommand implements CommandInterface
     public function generateAction($type)
     {
         if (!$this->_checkType($type)) {
-            print ConsoleUtils::error("Wrong package type '$type'. Allowed types: module, plugin, widget, theme.") .
+            print ConsoleUtils::errorLine("Wrong package type '$type'. Allowed types: module, plugin, widget, theme.") .
                 PHP_EOL;
             return;
         }
@@ -64,11 +64,11 @@ class PackageCommand extends AbstractCommand implements CommandInterface
         try {
             $packageManager->createPackage($data);
         } catch (PackageException $ex) {
-            print ConsoleUtils::error($ex->getMessage()) . PHP_EOL;
+            print ConsoleUtils::errorLine($ex->getMessage()) . PHP_EOL;
             return;
         }
 
-        print PHP_EOL . ConsoleUtils::success("Package generation completed!") . PHP_EOL;
+        print PHP_EOL . ConsoleUtils::successLine("Package generation completed!") . PHP_EOL;
     }
 
     /**

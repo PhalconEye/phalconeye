@@ -190,7 +190,22 @@ class Schema
             }
         }
 
-        return $modelsInfo;
+        return array_merge($this->getEngineModels(), $modelsInfo);
+    }
+
+    /**
+     * Get models located in engine.
+     *
+     * @return array List of engine models.
+     */
+    public function getEngineModels()
+    {
+        return [
+            [
+                'class' => '\Engine\Migration\Model\MigrationModel',
+                'path' => str_replace('|', DS, 'Engine|Migration|Model|MigrationModel.php')
+            ]
+        ];
     }
 
     /**

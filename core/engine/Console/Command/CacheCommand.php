@@ -35,7 +35,7 @@ use Engine\Utils\ConsoleUtils;
  * @CommandName(['cache'])
  * @CommandDescription('Cache management.')
  */
-class Cache extends AbstractCommand implements CommandInterface
+class CacheCommand extends AbstractCommand implements CommandInterface
 {
     /**
      * Cleanup cache data.
@@ -46,6 +46,6 @@ class Cache extends AbstractCommand implements CommandInterface
     {
         $this->getDI()->get('app')->clearCache();
 
-        print ConsoleUtils::success('Cache successfully removed.') . PHP_EOL;
+        print ConsoleUtils::successLine('Cache successfully removed.') . PHP_EOL;
     }
 }

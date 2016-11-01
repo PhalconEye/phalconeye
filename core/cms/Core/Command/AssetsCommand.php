@@ -49,6 +49,6 @@ class AssetsCommand extends AbstractCommand implements CommandInterface
         $assetsManager = new Manager($this->getDI(), false);
         $assetsManager->installAssets();
 
-        print ConsoleUtils::success('Assets successfully installed.') . PHP_EOL;
+        print ConsoleUtils::successLine('Assets successfully installed.') . PHP_EOL;
     }
 }
