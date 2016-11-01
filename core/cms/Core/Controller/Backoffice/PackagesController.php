@@ -20,6 +20,8 @@
 namespace Core\Controller\Backoffice;
 
 use Core\Navigation\Backoffice\PackagesNavigation;
+use Engine\Package\PackageData;
+use Engine\Package\PackageManager;
 
 
 /**
@@ -81,73 +83,5 @@ class PackagesController extends AbstractBackofficeController
     {
         $this->view->packages = $this->getDI()->getPlugins()->getPackages();
         $this->view->pick('Packages/index', 'core', true);
-    }
-
-    /**
-     * Enable package.
-     *
-     * @param string $type   Package type.
-     * @param string $name   Package name.
-     * @param string $return Return to.
-     *
-     * @return mixed
-     *
-     * @Route(
-     * "/enable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
-     * methods={"GET"},
-     * name="backoffice-packages-enable"
-     * )
-     */
-    public function enableAction($type, $name, $return)
-    {
-        $this->view->disable();
-
-        $package = $this->_getPackage($type, $name);
-        if ($package && !$package->is_system) {
-            $package->enabled = 1;
-            $package->save();
-
-            $this->_enablePackageConfig($package);
-            $this->_updateMetadata();
-            $this->_clearCache();
-        }
-
-        return $this->response->redirect(['for' => $return]);
-    }
-
-    /**
-     * Disable package.
-     *
-     * @param string $type   Package type.
-     * @param string $name   Package name.
-     * @param string $return Return to.
-     *
-     * @return mixed
-     *
-     * @Route(
-     * "/disable/{type:[a-zA-Z0-9_-]+}/{name:[a-zA-Z0-9_-]+}/{return:[a-zA-Z0-9_-]+}",
-     * methods={"GET"},
-     * name="backoffice-packages-disable"
-     * )
-     */
-    public function disableAction($type, $name, $return)
-    {
-        $this->view->disable();
-
-        $package = $this->_getPackage($type, $name);
-        if ($package && !$package->is_system) {
-            if ($this->_hasDependencies($package)) {
-                return $this->response->redirect(['for' => $return]);
-            }
-
-            $package->enabled = 0;
-            $package->save();
-
-            $this->_disablePackageConfig($package);
-            $this->_updateMetadata();
-            $this->_clearCache();
-        }
-
-        return $this->response->redirect(['for' => $return]);
     }
 }

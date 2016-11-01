@@ -41,15 +41,6 @@
                             </div>
                             <div class="description">{{ package.getMetadata('description') }}</div>
                         </div>
-                        {% if not package.isMetadata('isSystem') %}
-                        <div class="package_options">
-                            {% if not package.isDisabled() %}
-                                {{ link_to(['for':'backoffice-packages-disable', 'type':package.getType(), 'name':package.getName(), 'return':'backoffice-packages'], 'Disable' |i18n, 'class': 'btn btn-warning') }}
-                            {% else %}
-                                {{ link_to(['for':'backoffice-packages-enable', 'type':package.getType(), 'name':package.getName(), 'return':'backoffice-packages'], 'Enable' |i18n, 'class': 'btn btn-success') }}
-                            {% endif %}
-                        </div>
-                        {% endif %}
                         <div class="clear"></div>
                     </li>
                 {% endfor %}
