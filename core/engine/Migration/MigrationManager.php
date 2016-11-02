@@ -92,7 +92,7 @@ class MigrationManager
         $result = true;
         $isConsole = $this->getApp()->isConsole();
         $migrations = $this->getMigrationsToMigrate($module);
-        $transaction = $this->getTraWorking under migrations system.nsactions()->get(false);
+        $transaction = $this->getTransactions()->get(false);
 
         /**
          * Start transaction if all migrations must be executed as one.
@@ -129,7 +129,10 @@ class MigrationManager
             try {
                 $migrationClass->run();
             } catch (\Exception $ex) {
-                $transaction->rollback();
+                try {
+                    $transaction->rollback();
+                } catch (\Exception $txFailed) {
+                }
                 $success = false;
             }
 

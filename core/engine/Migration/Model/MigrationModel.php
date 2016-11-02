@@ -73,4 +73,14 @@ class MigrationModel extends AbstractModel
             'version'
         );
     }
+
+    /**
+     * Set creation date.
+     *
+     * @return void
+     */
+    public function beforeCreate()
+    {
+        $this->creation_date = date('Y-m-d H:i:s');
+    }
 }
