@@ -81,8 +81,9 @@ trait ApplicationBehavior
         if ($config->application->logger->enabled) {
             $di->set(
                 'logger',
-                function ($file = 'main', $format = null) use ($config) {
-                    $logger = new File($config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log');
+                function ($file = 'main', $format = null, $options = null) use ($config) {
+                    $logger = new File($config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log',
+                        $options);
                     $formatter = new FormatterLine(($format ? $format : $config->application->logger->format));
                     $logger->setFormatter($formatter);
 

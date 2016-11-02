@@ -28,7 +28,7 @@ use Phalcon\Mvc\Model\TransactionInterface;
 
 /**
  * Migration manager. Allows to migrate DATA to new version.
- * Use this only to migrate data. If you want to update database schema - use @see \Engine\Db\Schema.
+ * Use this only to migrate data. If you want to update database schema - @see \Engine\Db\Schema.
  *
  * @category  PhalconEye
  * @package   Engine
@@ -106,12 +106,14 @@ class MigrationManager
             /** @var AbstractMigration $migrationClass */
             $migrationClass = $migration->getClass();
             $migrationClass = new $migrationClass();
+            $migrationName = "{$module->getNameUpper()}/{$migration->getName()}";
+            $this->getLogger()->info('[MIGRATION] ---> ' . $migrationName);
 
             /**
              * Show some info if running from console.
              */
             if ($isConsole) {
-                print ConsoleUtils::text("{$module->getNameUpper()}/{$migration->getName()}: ");
+                print ConsoleUtils::text("$migrationName: ");
             }
 
             /**
@@ -134,6 +136,9 @@ class MigrationManager
                 } catch (\Exception $txFailed) {
                 }
                 $success = false;
+                $errorMessage = $ex->getMessage() . ': ' . PHP_EOL . $ex->getTraceAsString();
+                $this->getLogger()->error($errorMessage);
+                $this->getLogger('migrations')->error($errorMessage);
             }
 
             $result &= $success;
