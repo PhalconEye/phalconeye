@@ -6,7 +6,7 @@
         <attribute name="directory"/>
         <sequential>
             <exec executable="php" failonerror="true">
-                <arg path="./data/checkstyle/phpmd/bin/phpmd.phar"/>
+                <arg path="${checkstyle-rules.dir}/phpmd/bin/phpmd.phar"/>
                 <arg path="@{directory}"/>
                 <arg value="text"/>
                 <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
@@ -21,7 +21,7 @@
         <attribute name="directory"/>
         <sequential>
             <exec executable="php" failonerror="true">
-                <arg value="./data/checkstyle/phpcs/bin/phpcs.phar"/>
+                <arg value="${checkstyle-rules.dir}/phpcs/bin/phpcs.phar"/>
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
