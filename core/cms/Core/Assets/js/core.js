@@ -58,12 +58,14 @@
     };
 
     var PhalconEye = ns('PhalconEye');
+    var body = $('body');
     PhalconEye.ns = ns;
-    PhalconEye.debug = $('body').data('debug');
-    PhalconEye.baseUrl = function (path) {
-        return $('body').data('baseUrl') + path;
+    PhalconEye.debug = body.data('debug');
+    PhalconEye.baseUrl = body.data('baseUrl');
+    PhalconEye.url = function (path) {
+        return PhalconEye.baseUrl + path;
     };
-    CKEDITOR_BASEPATH = PhalconEye.baseUrl('assets/libs/ckeditor/');
+    CKEDITOR_BASEPATH = PhalconEye.url('assets/libs/ckeditor/');
 
     //////////////////////////
     // Public methods.

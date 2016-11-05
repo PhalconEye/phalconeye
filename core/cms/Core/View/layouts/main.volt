@@ -37,7 +37,7 @@
     {%- endblock -%}
 
 </head>
-<body data-base-url="{{ url() }}" data-debug="{{ config.application.debug }}">
+<body data-base-url="{{ config.application.baseUrl }}" data-debug="{{ config.application.debug }}">
 <div id="wrapper">
 
     <header>
