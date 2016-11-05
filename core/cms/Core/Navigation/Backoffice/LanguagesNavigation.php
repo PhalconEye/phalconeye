@@ -41,11 +41,11 @@ class LanguagesNavigation extends CoreNavigation
     {
         $this->setItems(
             [
-                ['Browse', 'backoffice/languages', [
+                ['Browse', ['for' => 'backoffice-languages'], [
                     'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                 ]],
                 null,
-                ['Create new', 'backoffice/languages/create', [
+                ['Create new', ['for' => 'backoffice-languages-create'], [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]]
             ]

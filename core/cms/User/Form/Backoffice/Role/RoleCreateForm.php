@@ -69,6 +69,6 @@ class RoleCreateForm extends CoreForm
 
         $this->addFooterFieldSet()
             ->addButton('create')
-            ->addButtonLink('cancel', 'Cancel', ['for' => 'backoffice-users-roles']);
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'backoffice-roles']);
     }
 }

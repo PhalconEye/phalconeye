@@ -180,7 +180,7 @@ class UsersController extends AbstractBackofficeController
      *
      * @return void
      *
-     * @Get("/roles", name="backoffice-users-roles")
+     * @Get("/roles", name="backoffice-roles")
      */
     public function rolesAction()
     {
@@ -217,7 +217,7 @@ class UsersController extends AbstractBackofficeController
         }
         $this->flashSession->success('New object created successfully!');
 
-        return $this->response->redirect(['for' => 'backoffice-users-roles']);
+        return $this->response->redirect(['for' => 'backoffice-roles']);
     }
 
     /**
@@ -233,7 +233,7 @@ class UsersController extends AbstractBackofficeController
     {
         $item = RoleModel::findFirst($id);
         if (!$item) {
-            return $this->response->redirect(['for' => 'backoffice-users-roles']);
+            return $this->response->redirect(['for' => 'backoffice-roles']);
         }
 
         $form = new RoleEditForm($item);
@@ -255,7 +255,7 @@ class UsersController extends AbstractBackofficeController
 
         $this->flashSession->success('Object saved!');
 
-        return $this->response->redirect(['for' => 'backoffice-users-roles']);
+        return $this->response->redirect(['for' => 'backoffice-roles']);
     }
 
     /**
@@ -285,6 +285,6 @@ class UsersController extends AbstractBackofficeController
             }
         }
 
-        return $this->response->redirect(['for' => 'backoffice-users-roles']);
+        return $this->response->redirect(['for' => 'backoffice-roles']);
     }
 }

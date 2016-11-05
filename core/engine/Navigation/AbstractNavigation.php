@@ -19,7 +19,6 @@
 namespace Engine\Navigation;
 
 use Engine\Behavior\DIBehavior;
-use Phalcon\DI;
 use Phalcon\DiInterface;
 
 /**

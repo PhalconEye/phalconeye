@@ -31,7 +31,7 @@ use Core\Model\SettingsModel;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  *
- * @RoutePrefix("/backoffice/settings", name="backoffice-settings")
+ * @RoutePrefix("/backoffice/settings")
  */
 class SettingsController extends AbstractBackofficeController
 {
@@ -40,7 +40,7 @@ class SettingsController extends AbstractBackofficeController
      *
      * @return void
      *
-     * @Route("/", methods={"GET", "POST"}, name="backoffice-settings-general")
+     * @Route("/", methods={"GET", "POST"}, name="backoffice-settings")
      */
     public function indexAction()
     {

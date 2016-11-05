@@ -19,6 +19,9 @@
 
 namespace Engine\Navigation;
 
+use Engine\Behavior\DIBehavior;
+use Phalcon\DiInterface;
+
 /**
  * Navigation Item
  *
@@ -32,7 +35,10 @@ namespace Engine\Navigation;
  */
 class Item implements \IteratorAggregate, \Countable
 {
-    use ItemsContainer;
+    use ItemsContainer,
+        DIBehavior {
+        DIBehavior::__construct as protected __DIConstruct;
+    }
 
     /** @var NavigationInterface|Item|null * */
     protected $_parentContainer = null;
@@ -63,14 +69,20 @@ class Item implements \IteratorAggregate, \Countable
     /**
      * Constructor
      *
-     * @param string $label      Link name
-     * @param mixed  $link       Optional link target
-     * @param array  $options    Item options
-     * @param array  $attributes Item Link attributes
+     * @param string                 $label      Link name
+     * @param mixed                  $link       Optional link target
+     * @param array                  $options    Item options
+     * @param array                  $attributes Item Link attributes
+     * @param DIBehavior|DiInterface $di         Dependency injection.
      */
-    public function __construct($label = '', $link = null, $options = [], $attributes = [])
+    public function __construct($label = '', $link = null, $options = [], $attributes = [], $di = null)
     {
+        $this->__DIConstruct($di);
         $this->_label = $label;
+
+        if ($link != null && (is_array($link) || preg_match(AbstractNavigation::ITEM_LINK_PATTERN, $link) === 0)) {
+            $link = $this->getUrl()->get($link);
+        }
         $this->_link = $link;
 
         foreach ($options as $name => $value) {

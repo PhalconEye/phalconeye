@@ -41,17 +41,17 @@ class UsersNavigation extends CoreNavigation
     {
         $this->setItems(
             [
-                ['Users', 'backoffice/users', [
+                ['Users', ['for' => 'backoffice-users'], [
                     'prepend' => '<i class="glyphicon glyphicon-user"></i>'
                 ]],
-                ['Roles', 'backoffice/users/roles', [
+                ['Roles', ['for' => 'backoffice-roles'], [
                     'prepend' => '<i class="glyphicon glyphicon-share"></i>'
                 ]],
                 null,
-                ['Create new user', 'backoffice/users/create', [
+                ['Create new user', ['for' => 'backoffice-users-create'], [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]],
-                ['Create new role', 'backoffice/users/roles-create', [
+                ['Create new role', ['for' => 'backoffice-roles-create'], [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]],
             ]

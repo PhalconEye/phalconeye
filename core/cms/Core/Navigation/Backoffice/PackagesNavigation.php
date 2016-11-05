@@ -41,13 +41,13 @@ class PackagesNavigation extends CoreNavigation
     {
         $this->setItems(
             [
-                ['Modules', 'backoffice/packages', [
+                ['Modules', ['for' => 'backoffice-packages'], [
                     'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'
                 ]],
-                ['Widgets', 'backoffice/packages/widgets', [
+                ['Widgets', ['for' => 'backoffice-packages-widgets'], [
                     'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
                 ]],
-                ['Plugins', 'backoffice/packages/plugins', [
+                ['Plugins', ['for' => 'backoffice-packages-plugins'], [
                     'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
                 ]],
             ]

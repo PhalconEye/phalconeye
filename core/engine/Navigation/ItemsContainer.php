@@ -86,7 +86,7 @@ trait ItemsContainer
                 $itemOptions = isset($item[2]) ? $item[2] : [];
                 $itemAttributes = isset($item[3]) ? $item[3] : [];
 
-                $item = new Item($itemLabel, $itemLink, $itemOptions, $itemAttributes);
+                $item = new Item($itemLabel, $itemLink, $itemOptions, $itemAttributes, $this->getDI());
             } elseif (($item instanceof Item) == false) {
                 throw new \InvalidArgumentException('Trying to append invalid Item');
             }

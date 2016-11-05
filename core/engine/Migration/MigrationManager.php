@@ -127,22 +127,9 @@ class MigrationManager
             /**
              * Migrate.
              */
-            $success = true;
             try {
                 $migrationClass->run();
-            } catch (\Exception $ex) {
-                try {
-                    $transaction->rollback();
-                } catch (\Exception $txFailed) {
-                }
-                $success = false;
-                $errorMessage = $ex->getMessage() . ': ' . PHP_EOL . $ex->getTraceAsString();
-                $this->getLogger()->error($errorMessage);
-                $this->getLogger('migrations')->error($errorMessage);
-            }
 
-            $result &= $success;
-            if ($success) {
                 /**
                  * Show some info if running from console.
                  */
@@ -161,7 +148,15 @@ class MigrationManager
                 if (self::ROLLBACK_MODE_FAILED == $rollback) {
                     $transaction->commit();
                 }
-            } else {
+
+                $result &= true;
+            } catch (\Exception $ex) {
+                try {
+                    $transaction->rollback();
+                } catch (\Exception $txFailed) {
+                    // Silent.
+                }
+
                 /**
                  * Show some info if running from console.
                  */
@@ -181,6 +176,11 @@ class MigrationManager
 
                     return false;
                 }
+
+                $errorMessage = $ex->getMessage() . ': ' . PHP_EOL . $ex->getTraceAsString();
+                $this->getLogger()->error($errorMessage);
+                $this->getLogger('migrations')->error($errorMessage);
+                $result &= false;
             }
         }
 
@@ -244,9 +244,12 @@ class MigrationManager
         foreach ($this->getModules()->getPackages() as $module) {
             $migrations = $this->_getModuleMigrations($module);
             $migratedVersions = MigrationModel::findModuleMigratedVersion($module->getName());
-            $existingVersions = array_map(function ($item) {
-                return $item->getVersion();
-            }, $migrations);
+            $existingVersions = array_map(
+                function ($item) {
+                    return $item->getVersion();
+                },
+                $migrations
+            );
 
             $result[$module->getName()] = count(array_diff($existingVersions, $migratedVersions));
         }
@@ -270,7 +273,8 @@ class MigrationManager
             $migrations,
             function ($item) use ($migratedVersions) {
                 return !in_array($item->getVersion(), $migratedVersions);
-            });
+            }
+        );
     }
 
     /**

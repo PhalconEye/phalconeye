@@ -51,7 +51,7 @@ class MainNavigation extends CoreNavigation
             ]
         );
 
-        parent::__construct($di = null);
+        parent::__construct($di);
     }
 
     /**
@@ -72,7 +72,7 @@ class MainNavigation extends CoreNavigation
         $this->appendItem(
             new Item(
                 'Dashboard',
-                'backoffice',
+                ['for' => 'backoffice-home'],
                 [
                     'prepend' => '<i class="glyphicon glyphicon-home"></i>'
                 ]
@@ -84,22 +84,22 @@ class MainNavigation extends CoreNavigation
 
         $mangeItem->setItems(
             [
-                ['Users and Roles', 'backoffice/users', [
+                ['Users and Roles', ['for' => 'backoffice-users'], [
                     'prepend' => '<i class="glyphicon glyphicon-user"></i>'
                 ]],
-                ['Pages', 'backoffice/pages', [
+                ['Pages', ['for' => 'backoffice-pages'], [
                     'prepend' => '<i class="glyphicon glyphicon-list-alt"></i>'
                 ]],
-                ['Menus', 'backoffice/menus', [
+                ['Menus', ['for' => 'backoffice-menus'], [
                     'prepend' => '<i class="glyphicon glyphicon-th-list"></i>'
                 ]],
-                ['Languages', 'backoffice/languages', [
+                ['Languages', ['for' => 'backoffice-languages'], [
                     'prepend' => '<i class="glyphicon glyphicon-globe"></i>'
                 ]],
-                ['Files', 'backoffice/files', [
+                ['Files', ['for' => 'backoffice-files'], [
                     'prepend' => '<i class="glyphicon glyphicon-file"></i>'
                 ]],
-                ['Packages', 'backoffice/packages', [
+                ['Packages', ['for' => 'backoffice-packages'], [
                     'prepend' => '<i class="glyphicon glyphicon-th"></i>'
                 ]]
             ]
@@ -110,13 +110,13 @@ class MainNavigation extends CoreNavigation
 
         $settingsItem->setItems(
             [
-                ['System', 'backoffice/settings', [
+                ['System', ['for' => 'backoffice-settings'], [
                     'prepend' => '<i class="glyphicon glyphicon-cog"></i>'
                 ]],
-                ['Performance', 'backoffice/performance', [
+                ['Performance', ['for' => 'backoffice-performance'], [
                     'prepend' => '<i class="glyphicon glyphicon-signal"></i>'
                 ]],
-                ['Access Rights', 'backoffice/access', [
+                ['Access Rights', ['for' => 'backoffice-access'], [
                     'prepend' => '<i class="glyphicon glyphicon-lock"></i>'
                 ]]
             ]

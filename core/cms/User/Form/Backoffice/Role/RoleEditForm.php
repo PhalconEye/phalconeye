@@ -45,6 +45,6 @@ class RoleEditForm extends RoleCreateForm
         $this->getFieldSet(self::FIELDSET_FOOTER)
             ->clearElements()
             ->addButton('save')
-            ->addButtonLink('cancel', 'Cancel', ['for' => 'backoffice-users-roles']);
+            ->addButtonLink('cancel', 'Cancel', ['for' => 'backoffice-roles']);
     }
 }

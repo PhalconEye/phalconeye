@@ -203,8 +203,8 @@ class Schema
     {
         return [
             [
-                'class' => MigrationModel::class,
-                'path' => (new \ReflectionClass(MigrationModel::class))->getFileName()
+                'class' => MigrationModel::CLASS,
+                'path' => (new \ReflectionClass(MigrationModel::CLASS))->getFileName()
             ]
         ];
     }

@@ -41,11 +41,11 @@ class MenusNavigation extends CoreNavigation
     {
         $this->setItems(
             [
-                ['Browse', 'backoffice/menus', [
+                ['Browse', ['for' => 'backoffice-menus'], [
                     'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                 ]],
                 null,
-                ['Create new', 'backoffice/menus/create', [
+                ['Create new', ['for' => 'backoffice-menus-create'], [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]]
             ]

@@ -41,11 +41,11 @@ class PagesNavigation extends CoreNavigation
     {
         $this->setItems(
             [
-                ['Browse', 'backoffice/pages', [
+                ['Browse', ['for' => 'backoffice-pages'], [
                     'prepend' => '<i class="glyphicon glyphicon-list"></i>'
                 ]],
                 null,
-                ['Create new', 'backoffice/pages/create', [
+                ['Create new', ['for' => 'backoffice-pages-create'], [
                     'prepend' => '<i class="glyphicon glyphicon-plus-sign"></i>'
                 ]]
             ]

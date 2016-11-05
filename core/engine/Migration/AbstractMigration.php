@@ -38,7 +38,7 @@ abstract class AbstractMigration
      *
      * @return mixed
      */
-    abstract function run();
+    public abstract function run();
 
     /**
      * Execute sql file.
@@ -59,6 +59,8 @@ abstract class AbstractMigration
 
     /**
      * Execute sql query.
+     *
+     * @param string $query SQL query.
      *
      * @return void
      */

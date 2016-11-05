@@ -109,11 +109,6 @@ class CoreNavigation extends AbstractNavigation implements NavigationInterface
 
         // Item own options
         if (!empty($link)) {
-
-            if (is_array($link) || preg_match(static::ITEM_LINK_PATTERN, $link) === 0) {
-                $link = $this->getDI()->get('url')->get($link);
-            }
-
             $attributes['href'] = $link;
         }
 
