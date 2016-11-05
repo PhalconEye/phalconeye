@@ -112,12 +112,12 @@
 
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
     <target name="phpmd">
-        <phpmd directory="."/>
+        <phpmd directory="${basedir}"/>
     </target>
 
     <!-- phpcs - Detects standard violations on the code. -->
     <target name="phpcs">
-        <phpcs directory="."/>
+        <phpcs directory="${basedir}"/>
     </target>
 
     <!-- analyze  -->
