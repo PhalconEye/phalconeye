@@ -5,7 +5,8 @@
     <macrodef name="phpmd">
         <attribute name="directory"/>
         <sequential>
-            <exec executable="./data/checkstyle/phpmd/bin/phpmd.phar" failonerror="true">
+            <exec executable="php" failonerror="true">
+                <arg path="./data/checkstyle/phpmd/bin/phpmd.phar"/>
                 <arg path="@{directory}"/>
                 <arg value="text"/>
                 <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
@@ -19,7 +20,8 @@
     <macrodef name="phpcs">
         <attribute name="directory"/>
         <sequential>
-            <exec executable="./data/checkstyle/phpcs/bin/phpcs.phar" failonerror="true">
+            <exec executable="php" failonerror="true">
+                <arg value="./data/checkstyle/phpcs/bin/phpcs.phar"/>
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
