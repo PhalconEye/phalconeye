@@ -108,7 +108,7 @@
 
     <!-- check  -->
     <target name="fix-ci-permissions" >
-        <chmod file="${basedir}" mode="777"/>
+        <chmod file="${basedir}" perm="777"/>
     </target>
 
     <!-- check  -->
