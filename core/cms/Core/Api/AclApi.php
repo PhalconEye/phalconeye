@@ -293,15 +293,15 @@ class AclApi extends AbstractApi
                     $objects[$modelClass]['actions'] = $object->actions;
                     $objects[$modelClass]['options'] = $object->options;
                 }
-
-                // Add objects to resources.
-                foreach ($objects as $key => $object) {
-                    if (empty($object['actions'])) {
-                        $object['actions'] = [];
-                    }
-                    $acl->addResource($key, $object['actions']);
-                }
             }
+        }
+
+        // Add objects to resources.
+        foreach ($objects as $key => $object) {
+            if (empty($object['actions'])) {
+                $object['actions'] = [];
+            }
+            $acl->addResource($key, $object['actions']);
         }
 
         return $objects;
