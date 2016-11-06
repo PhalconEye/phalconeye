@@ -5,7 +5,6 @@
     <macrodef name="phpmd">
         <attribute name="directory"/>
         <sequential>
-            <echo>@{directory}</echo>
             <exec executable="php" failonerror="true">
                 <arg path="${checkstyle-rules.dir}/phpmd/bin/phpmd.phar"/>
                 <arg path="@{directory}"/>
@@ -21,13 +20,13 @@
     <macrodef name="phpcs">
         <attribute name="directory"/>
         <sequential>
-            <echo>@{directory}</echo>
             <exec executable="php" failonerror="true">
                 <arg value="${checkstyle-rules.dir}/phpcs/bin/phpcs.phar"/>
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
                 <arg path="@{directory}"/>
+                <arg value="-v"/>
             </exec>
         </sequential>
     </macrodef>
