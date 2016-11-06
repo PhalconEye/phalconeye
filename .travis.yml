@@ -5,6 +5,7 @@ php:
 
 script:
   - ant check
+  - find . -type f -name "*.php" | wc -l
   - strace ./data/checkstyle/phpcs/bin/phpcs.phar --extensions=php --ignore=build,core/templates,data,config,public,vendor --standard=./data/checkstyle/phpcs/PhalconEye ./core
 
 notifications:
