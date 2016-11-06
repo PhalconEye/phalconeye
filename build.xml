@@ -107,13 +107,6 @@
     </target>
 
     <!-- check  -->
-    <target name="fix-ci-permissions" >
-        <exec executable="chmod" dir="${basedir}" failonerror="true">
-            <arg line="-R 0777 ." />
-        </exec>
-    </target>
-
-    <!-- check  -->
     <target name="check" depends="phpmd,phpcs">
     </target>
 

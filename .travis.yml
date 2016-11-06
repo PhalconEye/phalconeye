@@ -3,8 +3,11 @@ language: php
 php:
   - 7.0.11
 
+before_script:
+  - install --mode 0755 data/checkstyle/phpcs/bin/phpcs.phar $PWD/bin/phpcs
+
 script:
-  - ant fix-ci-permissions check
+  - ant check
 
 notifications:
   email:
