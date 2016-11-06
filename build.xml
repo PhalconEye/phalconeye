@@ -108,7 +108,9 @@
 
     <!-- check  -->
     <target name="fix-ci-permissions" >
-        <chmod file="${basedir}" perm="777"/>
+        <exec executable="chmod" dir="${basedir}" failonerror="true">
+            <arg line="-R 0777 ." />
+        </exec>
     </target>
 
     <!-- check  -->
