@@ -106,10 +106,6 @@
         </exec>
     </target>
 
-    <target name="ci">
-        <ci/>
-    </target>
-
     <!-- check  -->
     <target name="check" depends="phpmd,phpcs">
     </target>

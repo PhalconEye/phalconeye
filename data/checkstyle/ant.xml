@@ -1,26 +1,6 @@
 <?xml version="1.0"?>
 <project name="ant" basedir=".">
 
-    <macrodef name="ci">
-        <sequential>
-            <exec executable="./vendor/bin/phpmd" failonerror="true">
-                <arg path="."/>
-                <arg value="text"/>
-                <arg path="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
-                <arg value="--exclude"/>
-                <arg value="${ignore.dir}"/>
-            </exec>
-
-            <exec executable="./vendor/bin/phpcs" failonerror="true">
-                <arg value="--extensions=php"/>
-                <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
-                <arg value="--ignore=${ignore.dir}"/>
-                <arg path="."/>
-                <arg value="-p"/>
-            </exec>
-        </sequential>
-    </macrodef>
-
     <!-- phpmd - Analyzes the code to discover potential problems on it. -->
     <macrodef name="phpmd">
         <attribute name="directory"/>
