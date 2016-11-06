@@ -25,7 +25,8 @@
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
-                <arg path="@{directory}/core"/>
+                <arg path="@{directory}/core/cms"/>
+                <arg value="-v"/>
                 <arg value="-p"/>
             </exec>
         </sequential>
