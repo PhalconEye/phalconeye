@@ -106,6 +106,10 @@
         </exec>
     </target>
 
+    <target name="ci">
+        <ci directory="${basedir}"/>
+    </target>
+
     <!-- check  -->
     <target name="check" depends="phpmd,phpcs">
     </target>

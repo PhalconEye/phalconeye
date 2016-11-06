@@ -3,10 +3,15 @@ language: php
 php:
   - 7.0.11
 
-before_script: phpenv config-add myconfig.ini
+before_script:
+  - pyrus install http://phptal.org/latest.tar.gz
+  - pear install pear/PHP_CodeSniffer
+  - pear channel-discover pear.phpmd.org
+  - pear install phpmd/PHP_PMD
+  - phpenv rehash
 
 script:
-  - ant check
+  - ant ci
 
 notifications:
   email:
