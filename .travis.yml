@@ -3,9 +3,10 @@ language: php
 php:
   - 7.0.11
 
+before_script: phpenv config-add myconfig.ini
+
 script:
   - ant check
-  - strace -e open,access ./data/checkstyle/phpcs/bin/phpcs.phar --extensions=php --ignore=build,core/templates,data,config,public,vendor --standard=./data/checkstyle/phpcs/PhalconEye ./core
 
 notifications:
   email:
