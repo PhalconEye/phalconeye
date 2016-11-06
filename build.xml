@@ -107,6 +107,11 @@
     </target>
 
     <!-- check  -->
+    <target name="fix-ci-permissions" >
+        <chmod file="${basedir}" mode="777"/>
+    </target>
+
+    <!-- check  -->
     <target name="check" depends="phpmd,phpcs">
     </target>
 
