@@ -25,6 +25,8 @@
                 <arg value="@{directory}"/>
             </exec>
 
+            <exec executable="whoami"/>
+
             <exec executable="php" failonerror="true">
                 <arg value="${checkstyle-rules.dir}/phpcs/bin/phpcs.phar"/>
                 <arg value="--extensions=php"/>
