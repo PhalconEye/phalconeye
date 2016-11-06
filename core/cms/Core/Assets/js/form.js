@@ -90,6 +90,10 @@
                 });
             },
 
+            _selectorEscape: function(expression) {
+                return expression.replace(/[ !"#$%&'()*+,.\/:;<=>?@\[\\\]^`{|}~]/g, '\\$&');
+            },
+
             /**
              * Switch element visibility.
              *
@@ -130,7 +134,7 @@
                     }
 
                     if (!element) {
-                        element = $('#' + value, 'form');
+                        element = $('#' + $this._selectorEscape(value), 'form');
                         if (element) {
                             element.change(function () {
                                 $this._switchElement(item, condition);
@@ -161,7 +165,7 @@
 
                 $.each(condition.split(':'), function (index, item) {
                     if (!element && (!(item in $this._comparison) && !(item in $this._operator))) {
-                        element = $('#' + item, 'form');
+                        element = $('#' + $this._selectorEscape(item), 'form');
                     }
 
                     if (element && !currentValue) {
@@ -170,6 +174,10 @@
 
                     // Everything ready to get comparison.
                     if (currentComparison) {
+                        if (currentOperator === $this._operator['or'] && result) {
+                            return;
+                        }
+
                         if (currentOperator) {
                             result = currentOperator(result, currentComparison(currentValue, item));
                         }
