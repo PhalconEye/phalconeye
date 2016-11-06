@@ -2,10 +2,9 @@
 <project name="ant" basedir=".">
 
     <macrodef name="ci">
-        <attribute name="directory"/>
         <sequential>
             <exec executable="./vendor/bin/phpmd" failonerror="true">
-                <arg path="@{directory}"/>
+                <arg path="."/>
                 <arg value="text"/>
                 <arg path="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
                 <arg value="--exclude"/>
@@ -16,7 +15,7 @@
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
-                <arg path="@{directory}"/>
+                <arg path="."/>
                 <arg value="-p"/>
             </exec>
         </sequential>

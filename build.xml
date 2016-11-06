@@ -107,7 +107,7 @@
     </target>
 
     <target name="ci">
-        <ci directory="${basedir}"/>
+        <ci/>
     </target>
 
     <!-- check  -->
