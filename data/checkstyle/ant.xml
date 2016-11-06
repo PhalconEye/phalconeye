@@ -9,7 +9,7 @@
                 <arg path="${checkstyle-rules.dir}/phpmd/bin/phpmd.phar"/>
                 <arg path="@{directory}"/>
                 <arg value="text"/>
-                <arg value="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
+                <arg path="${checkstyle-rules.dir}/phpmd/ruleset.xml"/>
                 <arg value="--exclude"/>
                 <arg value="${ignore.dir}"/>
             </exec>
@@ -21,15 +21,12 @@
         <attribute name="directory"/>
         <sequential>
             <exec executable="php" failonerror="true">
-                <arg value="${checkstyle-rules.dir}/phpcs/bin/phpcs.phar"/>
+                <arg path="${checkstyle-rules.dir}/phpcs/bin/phpcs.phar"/>
                 <arg value="--extensions=php"/>
                 <arg value="--standard=${checkstyle-rules.dir}/phpcs/PhalconEye"/>
                 <arg value="--ignore=${ignore.dir}"/>
-                <arg value="--severity=1"/>
-                <arg value="--error-severity=1"/>
-                <arg value="--warning-severity=1"/>
-                <arg value="@{directory}"/>
-                <arg value="-v"/>
+                <arg path="@{directory}/core"/>
+                <arg value="-p"/>
             </exec>
         </sequential>
     </macrodef>
