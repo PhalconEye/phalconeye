@@ -4,11 +4,8 @@ php:
   - 7.0.11
 
 before_script:
-  - pyrus install http://phptal.org/latest.tar.gz
-  - pear install pear/PHP_CodeSniffer
-  - pear channel-discover pear.phpmd.org
-  - pear install phpmd/PHP_PMD
-  - phpenv rehash
+  - composer require phpmd/phpmd
+  - composer require squizlabs/php_codesniffer
 
 script:
   - ant ci
