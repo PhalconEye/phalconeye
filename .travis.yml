@@ -1,12 +1,10 @@
 language: php
 
 php:
-  - 7.0.11
+  - 7.0.12
 
 script:
   - ant check
-  - find ./core -type f -name "*.php" | wc -l
-  - strace ./data/checkstyle/phpcs/bin/phpcs.phar --extensions=php --ignore=build,core/templates,data,config,public,vendor --standard=./data/checkstyle/phpcs/PhalconEye ./core
 
 notifications:
   email:
