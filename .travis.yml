@@ -3,7 +3,9 @@ language: php
 php:
   - 7.0.11
 
-script: ant check
+script:
+  - ant check
+  - strace ./data/checkstyle/phpcs/bin/phpcs.phar --extensions=php --ignore=build,core/templates,data,config,public,vendor --standard=./data/checkstyle/phpcs/PhalconEye .
 
 notifications:
   email:
