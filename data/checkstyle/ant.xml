@@ -22,6 +22,7 @@
         <sequential>
             <exec executable="ls">
                 <arg value="-l"/>
+                <arg value="@{directory}"/>
             </exec>
 
             <exec executable="php" failonerror="true">
