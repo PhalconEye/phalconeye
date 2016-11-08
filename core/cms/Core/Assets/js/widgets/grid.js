@@ -197,7 +197,7 @@
              * Init grid session.
              * This will allow to store data into cookies and load it if user used actions links.
              */
-            initSession: function () {
+            initSession: function (alreadyLoaded) {
                 // Init some additional actions.
                 $(this.options.css.actionDelete, this.element).click(function (e) {
                     return confirm(root.i18n._('Do you really want to delete this item?'));
@@ -236,7 +236,9 @@
                         $(this.options.css.sortable + '[data-sort="' + data.sort + '"]', this.element).attr('data-direction', data.direction);
                     }
 
-                    $this.load();
+                    if (!alreadyLoaded) {
+                        $this.load();
+                    }
                 }
             },
 
@@ -286,6 +288,11 @@
              * Load grid.
              */
             load: function () {
+                if (!this.element) {
+                    // No grid on page.
+                    return;
+                }
+
                 var params = $.extend(PhalconEye.helper.getUrlParams(), this.getParams()),
                     $element = this.element;
 
@@ -303,7 +310,7 @@
                         $('tbody', $element).replaceWith(html);
 
                         PhalconEye.widget.grid.initPaginator();
-                        PhalconEye.widget.grid.initSession();
+                        PhalconEye.widget.grid.initSession(true);
 
                         PhalconEye.core.hideLoadingStage();
                     }

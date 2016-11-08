@@ -18,6 +18,7 @@
 <script type="text/javascript">
     var hideModal = function () {
         PhalconEye.widget.modal.hide();
+        PhalconEye.widget.grid.load();
         {% if reload is defined %}
         window.location.reload();
         {% endif %}
