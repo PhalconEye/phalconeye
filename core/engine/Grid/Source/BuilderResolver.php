@@ -110,9 +110,9 @@ class BuilderResolver extends AbstractResolver
                     $bindType = [$alias => $column[AbstractGrid::COLUMN_PARAM_TYPE]];
                 }
                 if ($conditionLike) {
-                    $source->where($name . ' LIKE :' . $alias . ':', [$alias => '%' . $data[$name] . '%'], $bindType);
+                    $source->andWhere($name . ' LIKE :' . $alias . ':', [$alias => '%' . $data[$name] . '%'], $bindType);
                 } else {
-                    $source->where($name . ' = :' . $alias . ':', [$alias => $data[$name]], $bindType);
+                    $source->andWhere($name . ' = :' . $alias . ':', [$alias => $data[$name]], $bindType);
                 }
             }
         }
