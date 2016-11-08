@@ -44,11 +44,24 @@
                     'flag': value ? 1 : 0
                 },
                 dataType: 'json'
-            }).always(function() {
+            }).always(function () {
                 root.core.hideLoadingStage();
             });
-
         });
+
+        // Update monitoring data and trigger update.
+        var dashboard = $('.dashboard');
+        setInterval(function () {
+            $.ajax({
+                url: dashboard.data('url'),
+                type: 'get',
+                dataType: 'json',
+                success: function (data) {
+                    dashboard.trigger('monitoring', data);
+                }
+            });
+
+        }, 1000);
     });
 }(window, jQuery, PhalconEye));
 

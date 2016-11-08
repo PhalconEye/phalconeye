@@ -96,6 +96,7 @@ class CoreNavigation extends AbstractNavigation implements NavigationInterface
     /**
      * Build link attributes
      *
+     * @param Item $item Instance
      *
      * @return array
      */

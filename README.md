@@ -41,6 +41,7 @@ Third Party
 * CKEditor: http://ckeditor.com/ (GPL, LGPL and MPL)
 * Pydio: http://pyd.io/ (Affero GPL)
 * lessphp: http://leafo.net/lessphp/ (GPL3/MIT)
+* highstock: http://www.highcharts.com/products/highstock (Attribution-NonCommercial 3.0 Unported)
 
 License
 -------

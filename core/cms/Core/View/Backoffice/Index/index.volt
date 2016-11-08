@@ -21,29 +21,34 @@
 
 {% block head %}
     {{ helper('assets').addJs('application/js/core/backoffice/dashboard.js') }}
+    {{ helper('assets').addJs('application/js/core/backoffice/dashboard/cpu.js') }}
+    {{ helper('assets').addJs('application/js/core/backoffice/dashboard/memory.js') }}
+    {{ helper('assets').addJs('libs/highstock/js/highstock.js') }}
 {% endblock %}
 
 {% block content %}
-    <div class="dashboard">
+    <div class="dashboard" data-url="{{ url(['for' : 'backoffice-monitoring']) }}">
 
         <main>
             <h1>{{ 'Dashboard' |i18n }}</h1>
-            Some activity here... imagine it =)... coming soon (maybe in 0.5.0)...
+            <div id="monitoring-cpu" style="height: 400px; min-width: 310px"></div>
+            <div id="monitoring-memory" style="height: 400px; min-width: 310px"></div>
         </main>
 
         <aside>
             <div>
                 <h4>{{ 'Debug mode'|i18n }}</h4>
-                <input name="debug" type="checkbox" data-href="{{ url(['for':'backoffice-mode'])}}" {% if debug %}checked{% endif %}>
+                <input name="debug" type="checkbox" data-href="{{ url(['for':'backoffice-mode']) }}"
+                       {% if debug %}checked{% endif %}>
             </div>
             <div>
                 <h4>{{ 'Profiler'|i18n }}</h4>
-                <input name="profiler" type="checkbox" data-href="{{ url(['for':'backoffice-profiler'])}}" {% if profiler %}checked{%
-                endif %}>
+                <input name="profiler" type="checkbox" data-href="{{ url(['for':'backoffice-profiler']) }}"
+                       {% if profiler %}checked{% endif %}>
             </div>
             <hr>
             <div>
-                <a href="{{ url(['for':'backoffice-clear'])}}" class="btn btn-primary">{{ 'Clear cache'|i18n }}</a>
+                <a href="{{ url(['for':'backoffice-clear']) }}" class="btn btn-primary">{{ 'Clear cache'|i18n }}</a>
             </div>
         </aside>
 

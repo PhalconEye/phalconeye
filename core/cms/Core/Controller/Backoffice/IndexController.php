@@ -47,6 +47,24 @@ class IndexController extends AbstractBackofficeController
     }
 
     /**
+     * Get data about current cpu usage.
+     *
+     * @return void
+     *
+     * @Get("/monitoring", name="backoffice-monitoring")
+     */
+    public function cpuAction()
+    {
+        $data = [
+            'cpu' => $this->_getCpuUsage(),
+            'memory' => $this->_getMemoryUsage()
+        ];
+
+        $this->view->disable();
+        $this->response->setContent(json_encode($data))->send();
+    }
+
+    /**
      * Action for mode changing.
      *
      * @return void
@@ -89,6 +107,67 @@ class IndexController extends AbstractBackofficeController
         $this->_clearCache();
         $this->flashSession->success('Cache cleared!');
         $this->response->redirect(['for' => 'backoffice-home']);
+    }
+
+    /**
+     * Get current CPU usage.
+     *
+     * @return int
+     */
+    protected function _getCpuUsage()
+    {
+        if (stristr(PHP_OS, 'win')) {
+            // @TODO: test on windows.
+            $wmi = new \COM("Winmgmts://");
+            $server = $wmi->execquery("SELECT LoadPercentage FROM Win32_Processor");
+
+            $cpu_num = 0;
+            $load_total = 0;
+
+            foreach ($server as $cpu) {
+                $cpu_num++;
+                $load_total += $cpu->loadpercentage;
+            }
+
+            return (int)(round($load_total / $cpu_num) * 100);
+        } else {
+            $cpuinfo = file_get_contents('/proc/cpuinfo');
+            preg_match_all('/^processor/m', $cpuinfo, $matches);
+            $cpuCount = count($matches[0]);
+
+            $sys_load = sys_getloadavg();
+            return (int)($sys_load[0] / $cpuCount * 100);
+        }
+    }
+
+
+    /**
+     * Get current memory usage and total.
+     *
+     * @return array
+     */
+    protected function _getMemoryUsage()
+    {
+        $result = [];
+        if (stristr(PHP_OS, 'win')) {
+            // @TODO: implement for windows.
+            $result['total'] = 0;
+            $result['used'] = 0;
+        } else {
+            $data = explode("\n", file_get_contents("/proc/meminfo"));
+            $meminfo = array();
+            foreach ($data as $line) {
+                if (empty($line)) {
+                    continue;
+                }
+                list($key, $val) = explode(":", $line);
+                $meminfo[$key] = (int)trim($val);
+            }
+            $result['total'] = (int)($meminfo['MemTotal'] / 1024);
+            $result['usage'] = (int)(($meminfo['MemTotal'] - $meminfo['MemFree']) / 1024);
+        }
+
+        return $result;
     }
 }
 
