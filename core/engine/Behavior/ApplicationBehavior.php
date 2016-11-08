@@ -392,16 +392,7 @@ trait ApplicationBehavior
 
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
         /** @var Pdo $connection */
-        $connection = new $adapter(
-            [
-                "host" => $config->database->host,
-                "port" => $config->database->port,
-                "username" => $config->database->username,
-                "password" => $config->database->password,
-                "dbname" => $config->database->dbname,
-            ]
-        );
-
+        $connection = new $adapter($config->database->toArray());
         $isDebug = $config->application->debug;
         $isProfiler = $config->application->profiler;
         if ($isDebug || $isProfiler) {
