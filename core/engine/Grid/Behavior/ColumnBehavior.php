@@ -141,7 +141,7 @@ trait ColumnBehavior
     {
         return array_merge(
             [
-                AbstractGrid::COLUMN_PARAM_LABEL => $this->_($label),
+                AbstractGrid::COLUMN_PARAM_LABEL => $label,
                 AbstractGrid::COLUMN_PARAM_TYPE => Column::BIND_PARAM_INT,
                 AbstractGrid::COLUMN_PARAM_FILTER => true,
                 AbstractGrid::COLUMN_PARAM_SORTABLE => true
