@@ -19,31 +19,33 @@
 
 {% block title %}{{ "Edit Access"|i18n }}{% endblock %}
 {% block content %}
-<div class="span12">
-    <div class="row-fluid">
-        <div class="access_edit_header">
-            <h2><a href="{{ url(['for': 'backoffice-access']) }}">{{ "Access Rights" |i18n }}</a>
-                > {{ 'Editing access rights of "%currentObject%", for:' |i18n(['currentObject':currentObject]) }}</h2>
-            <div class="current_role">
+    <div class="span12">
+        <div class="row-fluid">
+            <div class="access_edit_header">
+                <h2><a href="{{ url(['for': 'backoffice-access']) }}">{{ "Access Rights" |i18n }}</a>
+                    &gt; {{ 'Editing access rights of "%currentObject%", for:'|e |i18n(['currentObject':currentObject]) }}
+                </h2>
+                <div class="current_role">
 
-                <div class="btn-group">
-                    <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
-                        {{ currentRole.name }}
-                        <span class="caret"></span>
-                    </a>
-                    <ul class="dropdown-menu">
-                        {% for role in roles %}
-                            {% if currentRole.id == role.id %} {% continue %} {% endif %}
-                            <li><a href="javascript:;" onclick="window.location.href += '&role={{ role.id }}';">{{ role.name }}</a></li>
-                        {% endfor %}
-                    </ul>
+                    <div class="btn-group">
+                        <a class="btn btn-info dropdown-toggle" data-toggle="dropdown" href="#">
+                            {{ currentRole.name }}
+                            <span class="caret"></span>
+                        </a>
+                        <ul class="dropdown-menu">
+                            {% for role in roles %}
+                                {% if currentRole.id == role.id %} {% continue %} {% endif %}
+                                <li><a href="javascript:;"
+                                       onclick="window.location.href += '&role={{ role.id }}';">{{ role.name }}</a></li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+
                 </div>
-
+                <div class="clear"></div>
             </div>
-            <div class="clear"></div>
+            {{ form.render() }}
         </div>
-        {{ form.render() }}
     </div>
-</div>
 {% endblock %}
 
