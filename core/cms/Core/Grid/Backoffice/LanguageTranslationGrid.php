@@ -71,13 +71,12 @@ class LanguageTranslationGrid extends CoreGrid
         $showUntranslated = (bool)$this->getDI()->getRequest()->get('untranslated', 'int', 0);
 
         if ($showUntranslated) {
-            $builder->where("original = translated");
+            $builder->andWhere("checked = 0");
         }
 
         if ($search = $this->getDI()->getRequest()->get('search')) {
             $builder
-                ->where("original LIKE '%{$search}%'")
-                ->orWhere("translated LIKE '%{$search}%'");
+                ->andWhere("original LIKE '%{$search}%' OR translated LIKE '%{$search}%'");
         }
 
         return $builder;
