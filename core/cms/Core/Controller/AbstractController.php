@@ -19,11 +19,11 @@
 
 namespace Core\Controller;
 
-use Core\Behavior\JsTranslationBehavior;
 use Core\Helper\RendererHelper;
 use Core\Model\PageModel;
 use Engine\Asset\Manager as AssetManager;
 use Engine\Behavior\DIBehavior;
+use Engine\Behavior\JsTranslationBehavior;
 use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;

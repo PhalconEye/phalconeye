@@ -3,7 +3,6 @@
 - check asset requests to index.php
 - check database initializaiton charset.
 - add admin user to core data.
-- move JsTranslationBehavior
 - compiled assets strategy.
 - check assets installation without initialization.
 

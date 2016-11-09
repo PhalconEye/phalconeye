@@ -16,9 +16,8 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Behavior;
+namespace Engine\Behavior;
 
-use Engine\AbstractHelper;
 use Engine\Helper\I18nHelper;
 
 /**
