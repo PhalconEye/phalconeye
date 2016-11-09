@@ -27,6 +27,11 @@ if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
     error_reporting(E_ALL);
 }
 
+if (APPLICATION_STAGE == APPLICATION_STAGE_PRODUCTION) {
+    header_remove('X-Powered-By');
+    error_reporting(E_ALL ^ E_NOTICE);
+}
+
 /**
  * Versions.
  */

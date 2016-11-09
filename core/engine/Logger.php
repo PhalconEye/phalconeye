@@ -44,6 +44,6 @@ class Logger extends Adapter\File
             $message = $exception->getMessage();
         }
 
-        parent::error($message . ': ' . PHP_EOL . $exception->getTraceAsString());
+        parent::error(get_class($exception) . PHP_EOL . $message . ': ' . PHP_EOL . $exception->getTraceAsString());
     }
 }

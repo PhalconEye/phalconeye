@@ -1,7 +1,3 @@
---
--- Dumping data for table `content`
---
-
 INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_code`, `widget_order`, `layout`, `params`) VALUES
 (1, 1, 'core|Header', 1, 'middle', '{"logo":"assets\\/application\\/img\\/module\\/core\\/pe_logo_white.png","show_title":null,"show_auth":"1","roles":null,"content_id":"9"}'),
 (2, 1, 'core|Menu', 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null,"content_id":"10"}'),
@@ -14,17 +10,11 @@ INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_code`, `widget_order`, `l
 (9, 3, 'core|HtmlBlock', 1, 'right', '{"title":"TOP 10 Robots","html_en":"<ul style=\\"list-style:square\\">\\r\\n  <li>Marvin<\\/li>\\r\\n  <li>Optimus Prime<\\/li>\\r\\n  <li>Wall-E<\\/li>\\r\\n  <li>C-3PO<\\/li>\\r\\n  <li>R2D2<\\/li>\\r\\n  <li>Johnny 5<\\/li>\\r\\n  <li>Daimos<\\/li>\\r\\n  <li>Sonny<\\/li>\\r\\n  <li>Josef<\\/li> \\r\\n  <li>Ratchet<\\/li>\\r\\n<\\/ul>","roles":null,"content_id":"9"}'),
 (10, 3, 'core|HtmlBlock', 2, 'right', '{"title":"Latest Parts","html_en":"<ul style=\\"list-style:square\\">\\r\\n\\t<li>Jet-Pack<\\/li>\\r\\n\\t<li>LIDAR A\\/V Sensor<\\/li>\\r\\n\\t<li>Global SatNav<\\/li>\\r\\n\\t<li>Hydraulic Effector<\\/li>\\r\\n\\t<li>UltraSonic Aerial<\\/li>\\r\\n\\t<li>HC-500 Tracked ATR Platform<\\/li>\\r\\n\\t<li>Tactical KIT X4<\\/li>\\r\\n\\t<li>Carbon-Fibre Body<\\/li>\\r\\n<\\/ul>\\r\\n","roles":null,"content_id":"10"}'),
 (13, 4, 'Demo', 0, 'middle', '[]');
-
---
--- Dumping data for table `menus`
---
+--END
 
 INSERT IGNORE INTO `menus` (`id`, `name`) VALUES
 (1, 'Default menu');
-
---
--- Dumping data for table `menu_items`
---
+--END
 
 INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id`, `url`, `onclick`, `target`, `tooltip`, `tooltip_position`, `icon`, `icon_position`, `languages`, `roles`, `is_enabled`, `item_order`) VALUES
 (1, 'Home', 1, NULL, NULL, '/', NULL, NULL, NULL, 'top', 'files/PE_logo.png', 'left', NULL, NULL, 1, 0),
@@ -33,3 +23,4 @@ INSERT IGNORE INTO `menu_items` (`id`, `title`, `menu_id`, `parent_id`, `page_id
 (4, 'Github', 1, NULL, NULL, 'https://github.com/lantian/PhalconEye', NULL, '_blank', '<p><b><span style="color:#FF0000;">G</span>it<span style="color:#FF0000;">H</span>ub Page</b></p>\r\n', 'right', 'files/github.png', 'left', NULL, NULL, 1, 2),
 (5, 'Control elements', 1, 2, NULL, 'page/forms#color', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 1),
 (6, 'File elements', 1, 2, NULL, 'page/forms#scheme', NULL, NULL, NULL, 'top', NULL, 'left', NULL, NULL, 1, 2);
+--END

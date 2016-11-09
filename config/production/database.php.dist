@@ -29,4 +29,5 @@ return array (
   'username' => 'root',
   'password' => '',
   'dbname' => 'phalconeye',
+  'charset' => 'utf8',
 );

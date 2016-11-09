@@ -25,11 +25,11 @@ use Engine\Exception as EngineException;
 use Engine\Migration\Model\MigrationModel;
 use Engine\Package\PackageManager;
 use Phalcon\Annotations\Collection;
+use Phalcon\Annotations\Reflection;
 use Phalcon\Db\Column;
 use Phalcon\Db\Index;
 use Phalcon\Db\Reference;
 use Phalcon\Mvc\Model\MetaData as PhalconMetadata;
-use Phalcon\Annotations\Reflection;
 
 /**
  * Schema updater.
@@ -81,7 +81,12 @@ class SchemaUpdater
         /**
          * Data file template.
          */
-        DATA_FILE_TEMPLATE = 'Assets/sql/%s.sql';
+        DATA_FILE_TEMPLATE = 'Assets/sql/%s.sql',
+
+        /**
+         * Determines end of query in data files.
+         */
+        SQL_QUERY_END = '--END';
 
     private $_schemaName;
 
@@ -588,7 +593,18 @@ class SchemaUpdater
         $transaction->begin();
 
         try {
-            $this->getDb()->execute(file_get_contents($file));
+            // Separate sql file on queries.
+            // This is required for errors catching.
+            // See https://bugs.php.net/bug.php?id=61613.
+            $queries = explode(self::SQL_QUERY_END, file_get_contents($file));
+            foreach ($queries as $query) {
+                $query = trim($query);
+                if (empty($query)) {
+                    continue;
+                }
+                $this->getDb()->execute($query);
+            }
+
             $transaction->commit();
         } catch (\Exception $ex) {
             try {
