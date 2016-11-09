@@ -215,7 +215,7 @@ class Metadata implements StrategyInterface
             $modelsDirectory = $module->getPath() . 'Model' . DS;
             foreach (glob($modelsDirectory . '*.php') as $modelPath) {
                 $modelInfo = [];
-                $modelClass = '\\' . $module->getNameUpper() . '\Model\\' . basename(str_replace('.php', '', $modelPath));
+                $modelClass = '\\' . $module->getName() . '\Model\\' . basename(str_replace('.php', '', $modelPath));
                 $reflector = $di->get('annotations')->get($modelClass);
 
                 // Get table name.

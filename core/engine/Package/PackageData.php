@@ -55,7 +55,6 @@ class PackageData
         METADATA_EVENTS = 'events';
 
     private $_name;
-    private $_nameUpper;
     private $_type;
     private $_typeUpper;
     private $_namespace;
@@ -77,22 +76,20 @@ class PackageData
     public function __construct($name, $type, $module, $di = null, $path = null, $metadata = [])
     {
         $this->_name = $name;
-        $this->_nameUpper = ucfirst($name);
         $this->_type = $type;
         $this->_typeUpper = ucfirst($type);
         $this->_module = $module;
-        $this->_moduleUpper = !empty($module) ? ucfirst($module) : null;
         $this->_path = $path;
         $this->_metadata = $metadata;
 
 
         if (PackageManager::PACKAGE_TYPE_MODULE == $type) {
-            $this->_namespace = $this->_nameUpper;
+            $this->_namespace = $this->_name;
         } else {
-            $this->_namespace = $this->_typeUpper . PackageManager::SEPARATOR_NS . $this->_nameUpper;
+            $this->_namespace = $this->_typeUpper . PackageManager::SEPARATOR_NS . $this->_name;
 
             if (!empty($this->_module)) {
-                $this->_namespace = $this->_moduleUpper . PackageManager::SEPARATOR_NS . $this->_namespace;
+                $this->_namespace = $this->_module . PackageManager::SEPARATOR_NS . $this->_namespace;
             }
         }
 
@@ -112,16 +109,6 @@ class PackageData
     public function getName()
     {
         return $this->_name;
-    }
-
-    /**
-     * Get upper name (first latter is capital).
-     *
-     * @return string Upper name.
-     */
-    public function getNameUpper(): string
-    {
-        return $this->_nameUpper;
     }
 
     /**
@@ -160,16 +147,6 @@ class PackageData
     public function getModule()
     {
         return $this->_module;
-    }
-
-    /**
-     * Get module name starting from capital letter.
-     *
-     * @return string Module name.
-     */
-    public function getModuleUpper()
-    {
-        return $this->_moduleUpper;
     }
 
     /**
@@ -251,7 +228,7 @@ class PackageData
                 $packagePath = $module->getPath() . $this->getTypeUpper();
             }
         }
-        $packagePath .= $this->getNameUpper() . DS;
+        $packagePath .= $this->getName() . DS;
 
         return $packagePath;
     }

@@ -55,7 +55,7 @@ class ModuleController extends AbstractBackofficeController
     {
         $this->_checkModuleExists($module);
 
-        $configForm = ucfirst($module) . self::CONFIG_FORM_NS;
+        $configForm = $module . self::CONFIG_FORM_NS;
 
         if (!class_exists($configForm)) {
             return;

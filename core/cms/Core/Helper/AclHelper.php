@@ -47,7 +47,7 @@ class AclHelper extends AbstractHelper
         $viewer = UserModel::getViewer();
 
         return $this->getDI()
-            ->get('core')
+            ->get('Core')
             ->acl()
             ->isAllowed($viewer->getRole()->name, $resource, $action) == PhalconAcl::ALLOW;
     }
@@ -65,7 +65,7 @@ class AclHelper extends AbstractHelper
         $viewer = UserModel::getViewer();
 
         return $this->getDI()
-            ->get('core')
+            ->get('Core')
             ->acl()
             ->getAllowedValue($resource, $viewer->getRole(), $valueName);
     }

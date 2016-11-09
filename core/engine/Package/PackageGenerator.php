@@ -87,19 +87,16 @@ class PackageGenerator
 
         $location = str_replace('/', DS, $locations[$type]);
         $name = $data['name'];
-        $nameUpper = ucfirst($name);
 
-        if (PackageManager::PACKAGE_TYPE_THEME == $type) {
-            $location = $location . $name;
-        } elseif (
+        if (
             (PackageManager::PACKAGE_TYPE_WIDGET == $type || PackageManager::PACKAGE_TYPE_PLUGIN == $type) &&
             !empty($data['module'])
         ) {
-            $module = ucfirst($data['module']);
+            $module = $data['module'];
             $location = $locations[PackageManager::PACKAGE_TYPE_MODULE];
-            $location = $location . $module . DS . ucfirst($type) . DS . $nameUpper;
+            $location = $location . $module . DS . ucfirst($type) . DS . $name;
         } else {
-            $location = $location . $nameUpper;
+            $location = $location . $name;
         }
 
         return $location;
@@ -157,12 +154,13 @@ class PackageGenerator
      */
     public function createModule($data)
     {
+        $this->_processData($data);
+
         $config = $this->getDI()->getConfig();
         $packageName = $data['name'];
         $packageLocation = $this->getPackageLocation($data);
 
-        $this->_processData($data);
-        $this->_validateData($data, $config, false);
+        $this->_validateData($data, $config, true);
         $this->_copyStructure($data, $packageLocation);
         $this->_replaceVariables($data, $packageLocation);
         $this->_addPackageToConfig($packageName, $data, $config);
@@ -179,12 +177,13 @@ class PackageGenerator
      */
     public function createWidgetOrPlugin($data)
     {
+        $this->_processData($data);
+
         $config = $this->getDI()->getConfig();
-        $packageName = ucfirst($data['name']);
+        $packageName = $data['name'];
         $packageLocation = $this->getPackageLocation($data);
         $isExternal = empty($data['module']);
 
-        $this->_processData($data);
         $this->_validateData($data, $config, $isExternal);
         $this->_copyStructure($data, $packageLocation);
         $this->_replaceVariables($data, $packageLocation);
@@ -206,16 +205,16 @@ class PackageGenerator
      */
     public function createTheme($data)
     {
-        $packageLocation = $this->getPackageLocation($data);
-
-        $themesPath = $this->getDI()->getRegistry()->directories->themes . $data['name'];
-        if (is_dir($themesPath)) {
-            throw new PackageExistsException("Package with that name already exists!");
-        }
-
         $this->_processData($data);
+
+        $config = $this->getDI()->getConfig();
+        $packageLocation = $this->getPackageLocation($data);
+        $packageName = $data['name'];
+
+        $this->_validateData($data, $config, true);
         $this->_copyStructure($data, $packageLocation);
         $this->_replaceVariables($data, $packageLocation);
+        $this->_addPackageToConfig($packageName, $data, $config);
     }
 
     /**
@@ -236,7 +235,7 @@ class PackageGenerator
             if (
                 PackageManager::PACKAGE_TYPE_WIDGET == $type &&
                 $this->getDI()->getWidgets()->has(
-                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['nameUpper']
+                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['name']
                 )
             ) {
                 throw new PackageExistsException("Package with that name already exists!");
@@ -245,7 +244,7 @@ class PackageGenerator
             if (
                 PackageManager::PACKAGE_TYPE_PLUGIN == $type &&
                 $this->getDI()->getPlugins()->has(
-                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['nameUpper']
+                    $data['module'] . PackageManager::SEPARATOR_MODULE . $data['name']
                 )
             ) {
                 throw new PackageExistsException("Package with that name already exists!");
@@ -255,7 +254,7 @@ class PackageGenerator
         }
 
         $existingPackages = $config->packages->{$type}->toArray();
-        if (in_array($data['name'], $existingPackages) || in_array($data['nameUpper'], $existingPackages)) {
+        if (in_array($data['name'], $existingPackages) || in_array($data['name'], $existingPackages)) {
             throw new PackageExistsException("Package with that name already exists!");
         }
     }
@@ -269,10 +268,9 @@ class PackageGenerator
      */
     private function _processData(&$data)
     {
-        $data['defaultModuleUpper'] = ucfirst(Application::CMS_MODULE_CORE);
-        $data['nameUpper'] = ucfirst($data['name']);
-        $data['moduleNamespace'] = empty($data['module']) ?
-            '' : ucfirst($data['module']) . PackageManager::SEPARATOR_NS;
+        $data['name'] = ucfirst($data['name']);
+        $data['defaultModule'] = Application::CMS_MODULE_CORE;
+        $data['moduleNamespace'] = empty($data['module']) ? '' : $data['module'] . PackageManager::SEPARATOR_NS;
     }
 
     /**

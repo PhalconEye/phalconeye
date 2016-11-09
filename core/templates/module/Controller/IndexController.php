@@ -1,7 +1,7 @@
 <?php
-namespace %nameUpper%\Controller;
+namespace %name%\Controller;
 
-use %defaultModuleUpper%\Controller\AbstractController;
+use %defaultModule%\Controller\AbstractController;
 
 /**
  * Index controller.

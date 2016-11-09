@@ -62,7 +62,7 @@ class PageModel extends AbstractModel
         /**
          * Layout icon path
          */
-        LAYOUT_ICON_PATH = 'assets/application/img/module/core/backoffice/content/',
+        LAYOUT_ICON_PATH = 'assets/application/img/module/Core/backoffice/content/',
 
         /**
          * Icon extension name.

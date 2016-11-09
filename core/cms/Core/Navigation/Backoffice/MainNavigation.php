@@ -137,7 +137,7 @@ class MainNavigation extends CoreNavigation
 
             $modulesMenuItem->appendItem(
                 new Item(
-                    $module->getNameUpper(),
+                    $module->getName(),
                     'backoffice/module/' . $module->getName(),
                     [
                         'prepend' => '<i class="glyphicon glyphicon-th-large"></i>'

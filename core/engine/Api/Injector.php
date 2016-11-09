@@ -68,7 +68,7 @@ class Injector
      */
     public function __call($name, $arguments)
     {
-        $apiClassName = sprintf('%s\Api\%sApi', ucfirst($this->_moduleName), ucfirst($name));
+        $apiClassName = sprintf('%s\Api\%sApi', $this->_moduleName, ucfirst($name));
         $di = $this->getDI();
 
         if (!$di->has($apiClassName)) {

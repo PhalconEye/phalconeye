@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Engine\View\Plugin;
+namespace Engine\Plugin;
 
 use Engine\Exception;
 use Engine\Profiler;

@@ -56,7 +56,7 @@
 
 .bx-wrapper .bx-loading {
   min-height: 50px;
-  background: url(/assets/application/img/module/core/loader/black.gif) center center no-repeat #fff;
+  background: url(/assets/application/img/module/Core/loader/black.gif) center center no-repeat #fff;
   height: 100%;
   width: 100%;
   position: absolute;

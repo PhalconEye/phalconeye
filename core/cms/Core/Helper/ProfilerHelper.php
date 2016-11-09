@@ -381,7 +381,7 @@ class ProfilerHelper extends AbstractHelper
             $html = $this->_viewRenderElement('Total count', $totalSqlStatements, null, true);
             $html .= $this->_viewRenderElement(
                 'Total time',
-                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4),
+                round($dbProfiler->getTotalElapsedSeconds() * 1000, 4) . ' ms',
                 null,
                 true
             );

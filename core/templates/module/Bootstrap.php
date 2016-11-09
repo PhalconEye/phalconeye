@@ -1,15 +1,15 @@
 <?php
-namespace %nameUpper%;
+namespace %name%;
 
 use Engine\AbstractBootstrap;
 
 /**
- * Bootstrap for %nameUpper%.
+ * Bootstrap for %name%.
  *
  * @category PhalconEye\Module
- * @package  %nameUpper%
+ * @package  %name%
  */
 class Bootstrap extends AbstractBootstrap
 {
-    protected $_moduleName = "%nameUpper%";
+    protected $_moduleName = "%name%";
 }

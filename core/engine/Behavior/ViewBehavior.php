@@ -61,7 +61,7 @@ trait ViewBehavior
             $backofficePath = 'Backoffice/';
         }
 
-        return ucfirst($module) . '/View/' . $backofficePath . $viewPath;
+        return $module . '/View/' . $backofficePath . $viewPath;
     }
 
     /**

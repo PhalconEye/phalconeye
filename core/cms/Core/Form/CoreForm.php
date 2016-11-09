@@ -49,7 +49,7 @@ class CoreForm extends AbstractForm
      */
     public function getLayoutView()
     {
-        return $this->resolveView(self::LAYOUT_DEFAULT_PATH, 'core');
+        return $this->resolveView(self::LAYOUT_DEFAULT_PATH, 'Core');
     }
 
     /**

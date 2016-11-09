@@ -1,6 +1,6 @@
 <?php
 
-namespace %nameUpper%\Migration;
+namespace %name%\Migration;
 
 use Engine\Migration\AbstractMigration;
 

@@ -1,7 +1,7 @@
 <?php
-namespace %nameUpper%\Controller\Backoffice;
+namespace %name%\Controller\Backoffice;
 
-use %defaultModuleUpper%\Controller\Backoffice\AbstractBackofficeController;
+use %defaultModule%\Controller\Backoffice\AbstractBackofficeController;
 
 /**
  * Backoffice Index controller.

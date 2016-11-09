@@ -21,7 +21,7 @@ namespace Engine;
 use Engine\Behavior\DIBehavior;
 use Engine\Behavior\ViewBehavior;
 use Engine\View\Extension;
-use Engine\View\Plugin\ViewPlugin;
+use Engine\Plugin\ViewPlugin;
 use Phalcon\Cache\BackendInterface;
 use Phalcon\Events\Manager;
 use Phalcon\Mvc\View as PhalconView;

@@ -87,7 +87,7 @@ class Bootstrap extends AbstractBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
+        $this->getEventsManager()->attach('dispatch', $di->get('Core')->acl());
 
         /**
          * Install assets if required.

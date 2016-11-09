@@ -1,11 +1,11 @@
 <?php
-namespace %moduleNamespace%Widget\%nameUpper%;
+namespace %moduleNamespace%Widget\%name%;
 
 use Core\Form\CoreForm;
 use Engine\Widget\Controller as WidgetController;
 
 /**
- * Widget %nameUpper%.
+ * Widget %name%.
  *
  * @category PhalconEye\Widget
  * @package  Widget

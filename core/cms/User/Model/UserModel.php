@@ -151,7 +151,7 @@ class UserModel extends AbstractModel
     public static function getViewer()
     {
         if (null === self::$_viewer) {
-            $identity = DI::getDefault()->get('core')->auth()->getIdentity();
+            $identity = DI::getDefault()->get('Core')->auth()->getIdentity();
             if ($identity) {
                 self::$_viewer = self::findFirst($identity);
             }

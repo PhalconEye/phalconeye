@@ -1,10 +1,10 @@
 <?php
-namespace %moduleNamespace%Plugin\%nameUpper%;
+namespace %moduleNamespace%Plugin\%name%;
 
 use Phalcon\Mvc\User\Plugin as PhalconPlugin;
 
 /**
- * Plugin %nameUpper%.
+ * Plugin %name%.
  *
  * @category PhalconEye\Package
  * @package  Plugin

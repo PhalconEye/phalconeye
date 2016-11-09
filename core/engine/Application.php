@@ -41,17 +41,12 @@ class Application extends PhalconApplication
         /**
          * Default module.
          */
-        CMS_MODULE_CORE = 'core',
+        CMS_MODULE_CORE = 'Core',
 
         /**
          * User module.
          */
-        CMS_MODULE_USER = 'user',
-
-        /**
-         * Installation module.
-         */
-        CMS_MODULE_INSTALL = 'install',
+        CMS_MODULE_USER = 'User',
 
         /**
          * Normal run mode
@@ -90,43 +85,43 @@ class Application extends PhalconApplication
     private $_loaders =
         [
             self::MODE_NORMAL => [
-                'logger',
-                'loader',
-                'environment',
-                'cache',
-                'modules',
-                'loader',
-                'plugins',
-                'annotations',
-                'database',
-                'router',
-                'session',
-                'flash',
-                'view',
-                'widgets',
-                'themes',
-                'engine'
+                'Logger',
+                'Loader',
+                'Environment',
+                'Cache',
+                'Modules',
+                'Loader',
+                'Plugins',
+                'Annotations',
+                'Database',
+                'Router',
+                'Session',
+                'Flash',
+                'View',
+                'Widgets',
+                'Themes',
+                'Engine'
             ],
             self::MODE_CONSOLE => [
-                'logger',
-                'loader',
-                'environment',
-                'cache',
-                'modules',
-                'plugins',
-                'database',
-                'widgets',
-                'themes',
-                'engine'
+                'Logger',
+                'Loader',
+                'Environment',
+                'Cache',
+                'Modules',
+                'Plugins',
+                'Database',
+                'Widgets',
+                'Themes',
+                'Engine'
             ],
             self::MODE_SESSION => [
-                'logger',
-                'loader',
-                'cache',
-                'modules',
-                'plugins',
-                'database',
-                'session'
+                'Logger',
+                'Loader',
+                'Cache',
+                'Modules',
+                'Plugins',
+                'Database',
+                'Session'
             ],
         ];
 
@@ -190,10 +185,9 @@ class Application extends PhalconApplication
 
         // Init services and engine system.
         foreach ($this->_loaders[$mode] as $service) {
-            $serviceName = ucfirst($service);
-            $eventsManager->fire('init:before' . $serviceName, null);
-            $result = $this->{'_init' . $serviceName}($di, $config, $eventsManager);
-            $eventsManager->fire('init:after' . $serviceName, $result);
+            $eventsManager->fire('init:before' . $service, null);
+            $result = $this->{'_init' . $service}($di, $config, $eventsManager);
+            $eventsManager->fire('init:after' . $service, $result);
         }
 
         $di->setShared('eventsManager', $eventsManager);

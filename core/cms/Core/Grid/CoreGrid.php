@@ -43,7 +43,7 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getLayoutView()
     {
-        return $this->resolveView('partials/grid/layout', 'core');
+        return $this->resolveView('partials/grid/layout', 'Core');
     }
 
     /**
@@ -53,7 +53,7 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getItemView()
     {
-        return $this->resolveView('partials/grid/item', 'core');
+        return $this->resolveView('partials/grid/item', 'Core');
     }
 
     /**
@@ -63,6 +63,6 @@ abstract class CoreGrid extends AbstractGrid
      */
     public function getTableBodyView()
     {
-        return $this->resolveView('partials/grid/body', 'core');
+        return $this->resolveView('partials/grid/body', 'Core');
     }
 }

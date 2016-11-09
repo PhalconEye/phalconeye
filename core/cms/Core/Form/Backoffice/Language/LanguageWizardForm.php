@@ -59,7 +59,7 @@ class LanguageWizardForm extends CoreForm
                 [
                     'class' => 'form-control textarea-readonly',
                     'readonly' => 'readonly',
-                    'style' => "background: url('/assets/application/img/module/core/loader/black.gif')
+                    'style' => "background: url('/assets/application/img/module/Core/loader/black.gif')
                                 #E0E0E0 no-repeat center center !important;"
                 ]
             );

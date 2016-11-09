@@ -23,10 +23,8 @@
 */
 
 return array(
-    'module' => array(0 => 'main'),
+    'module' => array(0 => 'Main'),
     'plugin' => array(),
-    'widget' =>
-        array(
-            0 => 'Demo',
-        )
+    'theme' => array (0 => 'Default', 1 => 'Light'),
+    'widget' => array(0 => 'Demo')
 );

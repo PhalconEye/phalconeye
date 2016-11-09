@@ -317,11 +317,11 @@ class SchemaUpdater
             foreach (glob($modelsDirectory . '*.php') as $modelPath) {
                 $modelsInfo[] = [
                     'class' => PackageManager::SEPARATOR_NS .
-                        $module->getNameUpper() .
+                        $module->getName() .
                         '\Model\\' .
                         basename(str_replace('.php', '', $modelPath)),
                     'path' => $modelPath,
-                    'module' => $module->getNameUpper()
+                    'module' => $module->getName()
                 ];
             }
         }

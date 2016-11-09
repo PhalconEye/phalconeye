@@ -45,6 +45,6 @@ class TextForm extends CoreForm
      */
     public function getLayoutView()
     {
-        return $this->resolveView(self::LAYOUT_TEXT_PATH, 'core');
+        return $this->resolveView(self::LAYOUT_TEXT_PATH, 'Core');
     }
 }

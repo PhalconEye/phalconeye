@@ -186,7 +186,7 @@ class AclApi extends AbstractApi
     {
         $object = new \stdClass();
         $object->name = $objectName;
-        $object->module = ucfirst(Application::CMS_MODULE_CORE);
+        $object->module = Application::CMS_MODULE_CORE;
         $object->actions = [];
         $object->options = [];
 
@@ -284,7 +284,7 @@ class AclApi extends AbstractApi
                 $files = FileUtils::globRecursive($modelsPath, '*.php');
                 foreach ($files as $file) {
                     $modelName = str_replace([$modelsPath, DS, '.php'], ['', PackageManager::SEPARATOR_NS, ''], $file);
-                    $modelClass = sprintf('\%s\Model%s', $module->getNameUpper(), ucfirst($modelName));
+                    $modelClass = sprintf('\%s\Model%s', $module->getName(), ucfirst($modelName));
                     $object = $this->getObject($modelClass);
                     if ($object == null) {
                         continue;

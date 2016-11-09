@@ -20,10 +20,10 @@
 {% block title %}Admin panel{% endblock %}
 
 {% block head %}
-    {{ helper('assets').addJs('application/js/module/core/backoffice/dashboard.js') }}
-    {{ helper('assets').addJs('application/js/module/core/backoffice/dashboard/cpu.js') }}
-    {{ helper('assets').addJs('application/js/module/core/backoffice/dashboard/memory.js') }}
-    {{ helper('assets').addJs('libs/highstock/js/highstock.js') }}
+    {{ helper('Assets').addJs('application/js/module/Core/backoffice/dashboard.js') }}
+    {{ helper('Assets').addJs('application/js/module/Core/backoffice/dashboard/cpu.js') }}
+    {{ helper('Assets').addJs('application/js/module/Core/backoffice/dashboard/memory.js') }}
+    {{ helper('Assets').addJs('libs/highstock/js/highstock.js') }}
 {% endblock %}
 
 {% block content %}

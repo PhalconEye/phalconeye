@@ -55,7 +55,7 @@ class DispatchErrorHandler extends PhalconPlugin
             $dispatcher->forward(
                 [
                     'module' => EngineApplication::CMS_MODULE_CORE,
-                    'namespace' => ucfirst(EngineApplication::CMS_MODULE_CORE) . '\Controller',
+                    'namespace' => EngineApplication::CMS_MODULE_CORE . '\Controller',
                     'controller' => 'Error',
                     'action' => 'show404'
                 ]
@@ -74,7 +74,7 @@ class DispatchErrorHandler extends PhalconPlugin
         $dispatcher->forward(
             [
                 'module' => EngineApplication::CMS_MODULE_CORE,
-                'namespace' => ucfirst(EngineApplication::CMS_MODULE_CORE) . '\Controller',
+                'namespace' => EngineApplication::CMS_MODULE_CORE . '\Controller',
                 'controller' => 'Error',
                 'action' => 'show500'
             ]

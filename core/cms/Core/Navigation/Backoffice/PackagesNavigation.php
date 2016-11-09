@@ -47,6 +47,9 @@ class PackagesNavigation extends CoreNavigation
                 ['Widgets', ['for' => 'backoffice-packages-widgets'], [
                     'prepend' => '<i class="glyphicon glyphicon-tags"></i>'
                 ]],
+                ['Themes', ['for' => 'backoffice-packages-themes'], [
+                    'prepend' => '<i class="glyphicon glyphicon-leaf"></i>'
+                ]],
                 ['Plugins', ['for' => 'backoffice-packages-plugins'], [
                     'prepend' => '<i class="glyphicon glyphicon-resize-full"></i>'
                 ]],

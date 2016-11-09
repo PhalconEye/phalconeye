@@ -71,7 +71,20 @@ class PackagesController extends AbstractBackofficeController
     public function widgetsAction()
     {
         $this->view->packages = $this->getDI()->getWidgets()->getPackages();
-        $this->view->pick('Packages/index', 'core', true);
+        $this->view->pick('Packages/index', 'Core', true);
+    }
+
+    /**
+     * Themes action.
+     *
+     * @return void
+     *
+     * @Route("/themes", methods={"GET"}, name="backoffice-packages-themes")
+     */
+    public function themesAction()
+    {
+        $this->view->packages = $this->getDI()->getThemes()->getPackages();
+        $this->view->pick('Packages/index', 'Core', true);
     }
 
     /**
@@ -82,6 +95,6 @@ class PackagesController extends AbstractBackofficeController
     public function pluginsAction()
     {
         $this->view->packages = $this->getDI()->getPlugins()->getPackages();
-        $this->view->pick('Packages/index', 'core', true);
+        $this->view->pick('Packages/index', 'Core', true);
     }
 }

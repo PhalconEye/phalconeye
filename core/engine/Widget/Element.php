@@ -83,7 +83,7 @@ class Element
 
         $widgetName = $this->_widget->getName();
         if ($this->_widget->getModule() !== null) {
-            $widgetModule = ucfirst($this->_widget->getModule());
+            $widgetModule = $this->_widget->getModule();
             $controllerClass = "\\{$widgetModule}\\Widget\\{$widgetName}\\Controller";
         } else {
             $widgetModule = null;

@@ -201,7 +201,7 @@ class Db implements AdapterInterface
     {
         $trace = debug_backtrace();
         $scope = Application::CMS_MODULE_CORE;
-        $skipScopes = ['Engine', 'Phalcon', ucfirst(Application::CMS_MODULE_CORE)];
+        $skipScopes = ['Engine', 'Phalcon', Application::CMS_MODULE_CORE];
         $viewSeparator = $this->getDI()->getConfig()->application->view->compiledSeparator;
 
         foreach ($trace as $item) {

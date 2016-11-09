@@ -54,17 +54,15 @@ abstract class AbstractHelper extends Tag
      * @param string             $module   Module name.
      *
      * @return $this
-     * @throws Exception
+     * @throws \Exception
      */
-    public static function getInstance($nameOrDI, $module = 'engine')
+    public static function getInstance($nameOrDI, $module = 'Engine')
     {
         if ($nameOrDI instanceof DiInterface) {
             $di = $nameOrDI;
             $helperClassName = get_called_class();
         } else {
             $di = DI::getDefault();
-            $nameOrDI = ucfirst($nameOrDI);
-            $module = ucfirst($module);
             $helperClassName = sprintf('%s\Helper\%sHelper', $module, $nameOrDI);
         }
 

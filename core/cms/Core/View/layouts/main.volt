@@ -19,7 +19,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>{{ helper('setting', 'core').get('title', '') }} | {% block title %}{% endblock %}</title>
+    <title>{{ helper('Setting', 'Core').get('title', '') }} | {% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="generator" content="PhalconEye - Open Source Content Management System">
@@ -29,7 +29,7 @@
     {{ assets.outputInline(assets.collection('inlineCss'), 'css') }}
 
     <script type="text/javascript">
-        {{ helper('i18n').render() }}
+        {{ helper('I18n').render() }}
     </script>
 
     {%- block head -%}
@@ -70,6 +70,6 @@
 
 {{ assets.outputJs() }}
 {{ assets.outputInline(assets.collection('inlineJs'), 'js') }}
-{{ helper('profiler', 'core').render() }}
+{{ helper('Profiler', 'Core').render() }}
 </body>
 </html>

@@ -180,8 +180,6 @@ class PagesController extends AbstractBackofficeController
             $moduleName = $widget->getModule();
             if (!$modules->has($moduleName)) {
                 $moduleName = '_External_';
-            } else {
-                $moduleName = ucfirst($moduleName);
             }
             $bundlesWidgetsMetadata[$moduleName][$code] = [
                 'widget_code' => $code,
@@ -271,7 +269,7 @@ class PagesController extends AbstractBackofficeController
         $widgetName = $widgetMetadata->getName();
         $widgetModuleName = '';
         if ($widgetMetadata->getModule() !== null) {
-            $widgetModuleName = ucfirst($widgetMetadata->getModule());
+            $widgetModuleName = $widgetMetadata->getModule();
             $widgetClass = '\\' . $widgetModuleName . '\Widget\\' . $widgetName . '\Controller';
         } else {
             $widgetClass = '\Widget\\' . $widgetName . '\Controller';

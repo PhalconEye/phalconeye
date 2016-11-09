@@ -42,7 +42,7 @@ class AccessGrid extends CoreGrid
      */
     public function getSource()
     {
-        $coreApi = $this->getDI()->get('core');
+        $coreApi = $this->getDI()->get('Core');
         $resources = $coreApi->acl()->getResources();
         $objects = [];
 

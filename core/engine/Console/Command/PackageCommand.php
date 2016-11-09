@@ -120,11 +120,9 @@ class PackageCommand extends AbstractCommand implements CommandInterface
         $data['name'] = $this->_readline(
             "Package name: ",
             [
-                new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3]),
-                new Regex(['message' => 'Name must be in lowercase, only letters.', 'pattern' => '/^[a-z]+$/'])
+                new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3])
             ]
         );
-        $data['nameUpper'] = ucfirst($data['name']);
 
         return $data;
     }
@@ -143,7 +141,6 @@ class PackageCommand extends AbstractCommand implements CommandInterface
                 new StringLength(['messageMinimum' => 'Name is too short. Minimum length is 3.', "min" => 3])
             ]
         );
-        $data['nameUpper'] = ucfirst($data['name']);
         $data['module'] = $this->_readline(
             "Module name (leave empty for external package): ",
             [

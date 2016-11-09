@@ -29,6 +29,7 @@ use Engine\Exception;
 use Engine\Exception\PrettyExceptions;
 use Engine\Package\PackageData;
 use Engine\Package\PackageManager;
+use Engine\Plugin\DatabaseProfilerPlugin;
 use Engine\Profiler;
 use Engine\View;
 use Phalcon\Annotations\Adapter\Memory as AnnotationsMemory;
@@ -42,7 +43,6 @@ use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Flash\Direct as FlashDirect;
 use Phalcon\Flash\Session as FlashSession;
 use Phalcon\Loader;
-use Phalcon\Logger;
 use Phalcon\Logger\Adapter\File;
 use Phalcon\Logger\Formatter\Line as FormatterLine;
 use Phalcon\Mvc\Application as PhalconApplication;
@@ -155,7 +155,7 @@ trait ApplicationBehavior
 
                 if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
                     $p = new PrettyExceptions($di);
-                    $p->setBaseUri('assets/application/js/module/core/pretty-exceptions/');
+                    $p->setBaseUri('assets/application/js/module/Core/pretty-exceptions/');
                     return $p->handleException($e);
                 }
 
@@ -182,7 +182,7 @@ trait ApplicationBehavior
     /**
      * Initialize modules.
      *
-     * @param DIBehavior|DI $di Dependency Injection.
+     * @param DIBehavior|DI $di     Dependency Injection.
      * @param Config        $config Config object.
      *
      * @return PackageManager Package manager with loaded modules.
@@ -212,7 +212,7 @@ trait ApplicationBehavior
                     PackageManager::PACKAGE_TYPE_MODULE,
                     null,
                     null,
-                    $path . ucfirst($module) . DS,
+                    $path . $module . DS,
                     [PackageData::METADATA_IS_SYSTEM => true]
                 )
             );
@@ -227,7 +227,7 @@ trait ApplicationBehavior
         $namespaces = [];
         $bootstraps = [];
         foreach ($modules->getPackages() as $module) {
-            $namespaces[$module->getNameUpper()] = $module->getPath();
+            $namespaces[$module->getName()] = $module->getPath();
             $bootstraps[$module->getName()] = $module->getNamespace() . PackageManager::SEPARATOR_NS . 'Bootstrap';
         }
 
@@ -320,7 +320,7 @@ trait ApplicationBehavior
             }
 
             $router->setDefaultModule(Application::CMS_MODULE_CORE);
-            $router->setDefaultNamespace(ucfirst(Application::CMS_MODULE_CORE) . '\Controller');
+            $router->setDefaultNamespace(Application::CMS_MODULE_CORE . '\Controller');
             $router->setDefaultController("Index");
             $router->setDefaultAction("index");
 
@@ -374,54 +374,19 @@ trait ApplicationBehavior
 
         /** @var Pdo $connection */
         $connection = new $adapter($options);
-        $isDebug = $config->application->debug;
-        $isProfiler = $config->application->profiler;
-        if ($isDebug || $isProfiler) {
-            // Attach logger & profiler.
-            $logger = null;
-            $profiler = null;
-
-            if ($isDebug) {
-                $logger = new File($config->application->logger->path . "db.log");
-            }
-            if ($isProfiler) {
-                $profiler = new DatabaseProfiler();
-            }
-
-            $eventsManager->attach(
-                'db',
-                function ($event, $connection) use ($logger, $profiler) {
-                    if ($event->getType() == 'beforeQuery') {
-                        $statement = $connection->getSQLStatement();
-                        if ($logger) {
-                            $logger->log($statement, Logger::INFO);
-                        }
-                        if ($profiler) {
-                            $profiler->startProfile($statement);
-                        }
-                    }
-                    if ($event->getType() == 'afterQuery') {
-                        // Stop the active profile.
-                        if ($profiler) {
-                            $profiler->stopProfile();
-                        }
-                    }
-                }
-            );
-
-            if ($profiler && $di->has('profiler')) {
-                $di->getProfiler()->setDbProfiler($profiler);
-            }
-            $connection->setEventsManager($eventsManager);
-        }
-
         $initialized = count($connection->listTables()) > 0;
         if (!$initialized && !$this->isConsole()) {
             die("System isn't initialized");
         }
 
-        $di->getRegistry()->offsetSet('initialized', $initialized);
         $di->set('db', $connection);
+        $di->getRegistry()->offsetSet('initialized', $initialized);
+
+        if ($config->application->debug || $config->application->profiler) {
+            $eventsManager->attach('db', new DatabaseProfilerPlugin());
+            $connection->setEventsManager($eventsManager);
+        }
+
         $di->setShared(
             'modelsManager',
             function () use ($config, $eventsManager) {

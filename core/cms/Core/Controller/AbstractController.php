@@ -170,7 +170,7 @@ abstract class AbstractController extends PhalconController
         $this->view->content = $content;
         $this->view->page = $page;
 
-        $this->view->pick('layouts/page', 'core', true);
+        $this->view->pick('layouts/page', 'Core', true);
     }
 
     /**
@@ -212,7 +212,7 @@ abstract class AbstractController extends PhalconController
         $this->view->setIsBackoffice(false);
         $this->view->setVars($params, false);
         $this->view->hideSave = true;
-        $this->view->pick('partials/modal', 'core', true);
+        $this->view->pick('partials/modal', 'Core', true);
     }
 
     /**
@@ -237,25 +237,25 @@ abstract class AbstractController extends PhalconController
                 ->addJs('libs/jquery/jquery-2.1.0.js')
                 ->addJs('libs/jquery/jquery-ui-1.10.4.js')
                 ->addJs('libs/jquery/jquery.cookie.js')
-                ->addJs('application/js/module/core/core.js')
-                ->addJs('application/js/module/core/i18n.js')
-                ->addJs('application/js/module/core/form.js')
-                ->addJs('application/js/module/core/form/dynamic-field.js')
-                ->addJs('application/js/module/core/form/remote-file.js')
-                ->addJs('application/js/module/core/widgets/grid.js')
-                ->addJs('application/js/module/core/widgets/autocomplete.js')
-                ->addJs('application/js/module/core/widgets/modal.js')
-                ->addJs('application/js/module/core/widgets/ckeditor.js')
+                ->addJs('application/js/module/Core/core.js')
+                ->addJs('application/js/module/Core/i18n.js')
+                ->addJs('application/js/module/Core/form.js')
+                ->addJs('application/js/module/Core/form/dynamic-field.js')
+                ->addJs('application/js/module/Core/form/remote-file.js')
+                ->addJs('application/js/module/Core/widgets/grid.js')
+                ->addJs('application/js/module/Core/widgets/autocomplete.js')
+                ->addJs('application/js/module/Core/widgets/modal.js')
+                ->addJs('application/js/module/Core/widgets/ckeditor.js')
         );
 
         if ($this->di->has('profiler')) {
             $this->di->get('assets')
                 ->collection(AssetManager::DEFAULT_COLLECTION_CSS)
-                ->addCss('application/css/module/core/profiler.css');
+                ->addCss('application/css/module/Core/profiler.css');
 
             $this->di->get('assets')
                 ->collection(AssetManager::DEFAULT_COLLECTION_JS)
-                ->addCss('application/js/module/core/profiler.js');
+                ->addCss('application/js/module/Core/profiler.js');
         }
 
         $this->addDefaultJsTranslations();
@@ -296,7 +296,7 @@ abstract class AbstractController extends PhalconController
         }
 
         return $renderer->renderContent(
-            PageModel::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'core')
+            PageModel::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'Core')
         );
     }
 
@@ -318,7 +318,7 @@ abstract class AbstractController extends PhalconController
         }
 
         return $renderer->renderContent(
-            PageModel::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'core')
+            PageModel::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'Core')
         );
     }
 }

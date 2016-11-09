@@ -76,8 +76,7 @@ class SettingSystemForm extends CoreForm
     {
         $themes = [];
         foreach ($this->getThemes()->getPackages() as $package) {
-            $entry = $package->getName();
-            $themes[$entry] = ucfirst($entry);
+            $themes[$package->getName()] = $package->getName();
         }
 
         return $themes;

@@ -34,7 +34,7 @@
                 {% for package in packages %}
                     <li {% if package.isDisabled() %}class="disabled"{% endif %}>
                         <div class="package_info">
-                            <h3>{{ package.getNameUpper() }} <span>v.{{ package.getMetadata('version') }}</span></h3>
+                            <h3>{{ package.getName() }} <span>v.{{ package.getMetadata('version') }}</span></h3>
 
                             <div class="author">{{ package.getMetadata('author')|e }}</div>
                             <div class="website"><a href="{{ package.getMetadata('website') }}">{{ package.getMetadata('website') }}</a>

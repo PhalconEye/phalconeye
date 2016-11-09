@@ -30,14 +30,14 @@
 
 {% block content %}
 
-    {{ partial(resolveView("partials/layout", 'core'), ['page': page, 'content': content]) }}
+    {{ partial(resolveView("partials/layout", 'Core'), ['page': page, 'content': content]) }}
 
     {#ACL Examples#}
-    {#{% if helper('acl', 'core').isAllowed('\Core\Model\Page', 'show_views') %}#}
+    {#{% if helper('Acl', 'Core').isAllowed('\Core\Model\Page', 'show_views') %}#}
         {#<div class="page_views">{{ 'View count:'|i18n }}{{ page.view_count }}</div>#}
     {#{% endif %}#}
 
-    {#{{ helper('acl', 'core').getAllowed('\Core\Model\Page', 'page_footer') }}#}
+    {#{{ helper('Acl', 'Core').getAllowed('\Core\Model\Page', 'page_footer') }}#}
 
 
     <div class="clear"></div>

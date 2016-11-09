@@ -35,12 +35,12 @@
 
     {% if show_auth is 1 %}
         <div class="header_auth">
-        {% if not helper('user', 'user').isUser() %}
+        {% if not helper('User', 'User').isUser() %}
             <a href="{{ url(['for': 'login']) }}">{{ 'Login' |i18n }}</a>
             <a href="{{ url(['for': 'register']) }}">{{ 'Register' |i18n }}</a>
         {% else %}
-            <span>{{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}</span>
-            {% if helper('acl', 'core').isAllowed('BackofficeArea', 'access') %}
+            <span>{{ 'Welcome, ' |i18n }}{{ helper('User', 'User').current().username }}</span>
+            {% if helper('Acl', 'Core').isAllowed('BackofficeArea', 'access') %}
                 <a href="{{ url(['for': 'backoffice-home']) }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
             <a href="{{ url(['for': 'logout']) }}">{{ 'Logout' |i18n }}</a>

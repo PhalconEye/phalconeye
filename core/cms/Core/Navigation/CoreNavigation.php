@@ -60,7 +60,7 @@ class CoreNavigation extends AbstractNavigation implements NavigationInterface
      */
     public function getLayoutView()
     {
-        return $this->resolveView('partials/navigation/layout', 'core');
+        return $this->resolveView('partials/navigation/layout', 'Core');
     }
 
     /**

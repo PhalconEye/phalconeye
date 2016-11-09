@@ -106,7 +106,7 @@ class MigrationManager
             /** @var AbstractMigration $migrationClass */
             $migrationClass = $migration->getClass();
             $migrationClass = new $migrationClass();
-            $migrationName = "{$module->getNameUpper()}/{$migration->getName()}";
+            $migrationName = "{$module->getName()}/{$migration->getName()}";
             $this->getLogger()->info('[MIGRATION] ---> ' . $migrationName);
 
             /**
@@ -214,8 +214,8 @@ class MigrationManager
         $migrationPath = $module->getPath() . self::MIGRATION_PATH;
         $migrationFile = $migrationPath . $migrationName . self::MIGRATION_SUFFIX;
 
-        $placeholders = ['%migrationClass%', '%nameUpper%'];
-        $placeholdersValues = [$migrationName, $module->getNameUpper()];
+        $placeholders = ['%migrationClass%', '%name%'];
+        $placeholdersValues = [$migrationName, $module->getName()];
 
         $migrationContent = str_replace(
             $placeholders,
