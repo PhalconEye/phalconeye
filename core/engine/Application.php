@@ -19,8 +19,7 @@
 namespace Engine;
 
 use Engine\Behavior\ApplicationBehavior;
-use Engine\Package\PackageData;
-use Engine\Package\PackageManager;
+use Engine\Behavior\DIBehavior;
 use Phalcon\DI;
 use Phalcon\Events\Manager as EventsManager;
 use Phalcon\Mvc\Application as PhalconApplication;
@@ -146,11 +145,6 @@ class Application extends PhalconApplication
          */
         $this->_config = Config::factory();
 
-        if (!$this->_config->installed) {
-            define('CHECK_REQUIREMENTS', true);
-            require_once(PUBLIC_PATH . '/requirements.php');
-        }
-
         /**
          * Setup Registry.
          */
@@ -187,6 +181,7 @@ class Application extends PhalconApplication
         }
 
         // Set application main objects.
+        /** @var DIBehavior $di */
         $di = $this->_dependencyInjector;
         $di->setShared('app', $this);
         $config = $this->_config;

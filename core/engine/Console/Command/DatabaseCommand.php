@@ -20,8 +20,12 @@ namespace Engine\Console\Command;
 
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
+use Engine\Console\ConsoleLogger;
+use Engine\Db\Data\UpdateData;
+use Engine\Db\Data\UpdateStatementData;
+use Engine\Db\SchemaUpdater;
 use Engine\Utils\ConsoleUtils;
-use Engine\Db\Schema;
+use Phalcon\Validation\Validator\Identical;
 
 /**
  * Database command.
@@ -39,41 +43,165 @@ use Engine\Db\Schema;
 class DatabaseCommand extends AbstractCommand implements CommandInterface
 {
     /**
+     * Initialize system: create schema, import core data, import sample data (if required).
+     *
+     * @param bool $importCoreData   Import core data from all modules.
+     * @param bool $importSampleData Import sample data from all modules.
+     * @param bool $confirm          Confirm initialization.
+     */
+    public function initializeAction(
+        bool $importCoreData = true,
+        bool $importSampleData = false,
+        bool $confirm = false
+    )
+    {
+        $this->_initLogger();
+        if (!$confirm) {
+            $this->_readline(
+                "Write confirmation (type 'initialization'): ",
+                [
+                    new Identical(['value' => 'initialization'])
+                ]
+            );
+        }
+
+        // Test requirements.
+        define('CHECK_REQUIREMENTS', true);
+        require_once(PUBLIC_PATH . '/requirements.php');
+
+        $schema = new SchemaUpdater($this->getDI(), $this->getConfig()->database->dbname);
+        $result = $schema->initialize($importCoreData, $importSampleData);
+        $this->_printUpdateData($result);
+    }
+
+    /**
      * Update database schema according to models metadata.
      *
-     * @param string|null $model   Model name to update. Example: \Test\Model\Class.
-     * @param bool        $cleanup Cleanup database? Drop not related tables.
+     * @param string|null $model Model name to update. Example: \\Test\\Model\\ClassModel.
      *
      * @return void
      */
-    public function updateAction($model = null, $cleanup = false)
+    public function updateAction($model = null)
     {
-        $schema = new Schema($this->getDI());
-        if ($model) {
-            if (!class_exists($model)) {
-                print ConsoleUtils::errorLine('Model with class "' . $model . '" doesn\'t exists.') . PHP_EOL;
-
-                return;
-            }
-            $count = current($schema->updateTable($model));
-            if ($count) {
-                print ConsoleUtils::head('Table update for model: ' . $model);
-                print ConsoleUtils::command('Executed queries:', $count, ConsoleUtils::FG_CYAN);
-            } else {
-                print ConsoleUtils::successLine('Table is up to date');
-            }
-            print PHP_EOL;
-        } else {
-            $queriesCount = $schema->updateDatabase($cleanup);
-            if (!empty($queriesCount)) {
-                print ConsoleUtils::head('Database update:');
-                foreach ($queriesCount as $model => $count) {
-                    print ConsoleUtils::command($model . ':', $count, ConsoleUtils::FG_CYAN);
-                }
-            } else {
-                print ConsoleUtils::successLine('Database is up to date');
-            }
-            print PHP_EOL;
+        $this->_initLogger();
+        if (!$this->getRegistry()->initialized) {
+            print ConsoleUtils::errorLine("System isn't initialized");
+            return;
         }
+
+        $schema = new SchemaUpdater($this->getDI(), $this->getConfig()->database->dbname);
+
+        if (!$model) {
+            $result = $schema->update();
+        } else {
+            $result = $schema->updateTable($model);
+        }
+
+        $this->_printUpdateData($result);
+    }
+
+    /**
+     * Cleanup database schema according to models metadata.
+     *
+     * @return void
+     */
+    public function cleanupAction()
+    {
+        $this->_initLogger();
+        if (!$this->getRegistry()->initialized) {
+            print ConsoleUtils::errorLine("System isn't initialized");
+            return;
+        }
+
+        $schema = new SchemaUpdater($this->getDI(), $this->getConfig()->database->dbname);
+        $result = $schema->cleanupDatabase();
+        $this->_printUpdateData($result);
+    }
+
+    /**
+     * Print update data.
+     *
+     * @param UpdateData[]|string $data Update data to print.
+     */
+    protected function _printUpdateData($data)
+    {
+        if (is_string($data)) {
+            print ConsoleUtils::errorLine($data);
+            print PHP_EOL;
+            return;
+        }
+
+        $allStatementsCount = 0;
+        $allFailedCount = 0;
+
+        foreach ($data as $item) {
+            $allStatementsCount += $item->getExecutedCount();
+            $allFailedCount += $item->getFailedCount();
+        }
+
+        if ($allStatementsCount == 0) {
+            print ConsoleUtils::successLine('Up to date');
+        } else {
+            print ConsoleUtils::command(
+                'Executed statements:',
+                $allStatementsCount,
+                ConsoleUtils::FG_LIGHT_CYAN,
+                ConsoleUtils::FG_GREEN,
+                50
+            );
+            foreach ($data as $table => $item) {
+                if ($item->getExecutedCount() == 0) {
+                    continue;
+                }
+                print ConsoleUtils::command(
+                    $table . ':',
+                    $item->getExecutedCount(),
+                    ConsoleUtils::FG_LIGHT_GREEN,
+                    ConsoleUtils::FG_GREEN,
+                    50
+                );
+            }
+
+            if ($allFailedCount > 0) {
+                print PHP_EOL;
+                print ConsoleUtils::command(
+                    'Failed statements:',
+                    $allFailedCount,
+                    ConsoleUtils::FG_RED,
+                    ConsoleUtils::FG_GREEN,
+                    50
+                );
+
+                foreach ($data as $table => $item) {
+                    /** @var UpdateStatementData $stmt */
+                    foreach ($item->getStatements() as $stmt) {
+                        if ($stmt->getFailedCount() == 0) {
+                            continue;
+                        }
+
+                        print ConsoleUtils::command(
+                            $table . ':' .
+                            ConsoleUtils::text('') . '[' . ucfirst(substr($stmt->getObj(), 0, 1)) . ']->' .
+                            $stmt->getStmt
+                            (),
+                            $stmt->getFailedCount(),
+                            ConsoleUtils::FG_LIGHT_RED,
+                            ConsoleUtils::FG_GREEN,
+                            50
+                        );
+                    }
+                }
+            }
+        }
+
+        print PHP_EOL;
+    }
+
+    /**
+     * Initialize console logger.
+     */
+    private function _initLogger()
+    {
+        $this->getDI()->setShared('logger', new ConsoleLogger($this->getLogger()));
     }
 }

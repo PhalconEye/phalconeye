@@ -95,7 +95,7 @@ class MigrationCommand extends AbstractCommand implements CommandInterface
                 if ($count > 0) {
                     print ConsoleUtils::warn($count) . PHP_EOL;
                 } else {
-                    print ConsoleUtils::info('up to date', false, 0) . PHP_EOL;
+                    print ConsoleUtils::infoSpecial('up to date', false, 0) . PHP_EOL;
                 }
             }
         } else {

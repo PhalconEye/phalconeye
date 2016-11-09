@@ -55,11 +55,6 @@ class Config extends PhalconConfig
         CONFIG_DEFAULT_LOCALE = 'en_US',
 
         /**
-         * Application metadata.
-         */
-        CONFIG_METADATA_APP = '/data/app.php',
-
-        /**
          * Packages metadata location.
          */
         CONFIG_METADATA_PACKAGES = '/data/packages',
@@ -189,16 +184,6 @@ class Config extends PhalconConfig
             $data = include_once($file);
             $config->offsetSet(basename($file, ".php"), $data);
         }
-
-        $appPath = ROOT_PATH . self::CONFIG_METADATA_APP;
-
-        if (!file_exists($appPath)) {
-            $config->offsetSet('installed', false);
-            return $config;
-        }
-
-        $data = include_once($appPath);
-        $config->merge(new Config($data, $stage));
 
         return $config;
     }

@@ -134,7 +134,7 @@ class MigrationManager
                  * Show some info if running from console.
                  */
                 if ($isConsole) {
-                    print ConsoleUtils::info("OK", false, 0) . PHP_EOL;
+                    print ConsoleUtils::infoSpecial("OK", false, 0) . PHP_EOL;
                 }
 
                 /**
@@ -161,7 +161,7 @@ class MigrationManager
                  * Show some info if running from console.
                  */
                 if ($isConsole) {
-                    print ConsoleUtils::warn("FAILED", false, 0) . PHP_EOL;
+                    print ConsoleUtils::error("FAILED", false, 0) . PHP_EOL;
                 }
 
                 /**
@@ -177,9 +177,8 @@ class MigrationManager
                     return false;
                 }
 
-                $errorMessage = $ex->getMessage() . ': ' . PHP_EOL . $ex->getTraceAsString();
-                $this->getLogger()->error($errorMessage);
-                $this->getLogger('migrations')->error($errorMessage);
+                $this->getLogger()->exception($ex);
+                $this->getLogger('migrations')->exception($ex);
                 $result &= false;
             }
         }

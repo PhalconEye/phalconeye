@@ -40,7 +40,7 @@
             <a href="{{ url(['for': 'register']) }}">{{ 'Register' |i18n }}</a>
         {% else %}
             <span>{{ 'Welcome, ' |i18n }}{{ helper('user', 'user').current().username }}</span>
-            {% if helper('acl', 'core').isAllowed('AdminArea', 'access') %}
+            {% if helper('acl', 'core').isAllowed('BackofficeArea', 'access') %}
                 <a href="{{ url(['for': 'backoffice-home']) }}">{{ 'Admin panel' |i18n }}</a>
             {% endif %}
             <a href="{{ url(['for': 'logout']) }}">{{ 'Logout' |i18n }}</a>

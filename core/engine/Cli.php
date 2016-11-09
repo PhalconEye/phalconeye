@@ -116,8 +116,8 @@ class Cli extends Application
      */
     public function getOutput()
     {
-        print ConsoleUtils::info('================================================================', true, 0);
-        print ConsoleUtils::info(
+        print ConsoleUtils::infoSpecial('================================================================', true, 0);
+        print ConsoleUtils::infoSpecial(
             "
            ___  __       __              ____
           / _ \/ / ___ _/ _______  ___  / ____ _____
@@ -126,13 +126,7 @@ class Cli extends Application
                                           /___/
                                           Commands Manager", false, 1
         );
-        print ConsoleUtils::info('================================================================', false, 2);
-
-        // Installation is required.
-        if (!$this->_config->installed) {
-            print ConsoleUtils::errorLine('Please, install system first.') . PHP_EOL;
-            die();
-        }
+        print ConsoleUtils::infoSpecial('================================================================', false, 2);
 
         // Not arguments?
         if (!isset($_SERVER['argv'][1])) {
@@ -147,7 +141,13 @@ class Cli extends Application
 
         // Try to dispatch the command.
         if ($cmd = $this->_getRequiredCommand()) {
-            return $cmd->dispatch();
+            try {
+                return $cmd->dispatch();
+            } catch (\Exception $ex) {
+                print ConsoleUtils::errorLine($ex->getMessage());
+                $this->getDI()->getLogger()->exception($ex);
+                return '';
+            }
         }
 
         // Check for alternatives.
@@ -166,13 +166,13 @@ class Cli extends Application
         // Show exception with/without alternatives.
         $soundex = soundex($_SERVER['argv'][1]);
         if (isset($available[$soundex])) {
-            print ConsoleUtils::warnLine(
+            print ConsoleUtils::errorLine(
                 'Command "' . $_SERVER['argv'][1] .
                 '" not found. Did you mean: ' . join(' or ', $available[$soundex]) . '?'
             );
             $this->printAvailableCommands();
         } else {
-            print ConsoleUtils::warnLine('Command "' . $_SERVER['argv'][1] . '" not found.');
+            print ConsoleUtils::errorLine('Command "' . $_SERVER['argv'][1] . '" not found.');
             $this->printAvailableCommands();
         }
     }
@@ -232,7 +232,7 @@ class Cli extends Application
 
         $command = $this->_getRequiredCommand($_SERVER['argv'][2]);
         if (!$command) {
-            print ConsoleUtils::warnLine('Command "' . $_SERVER['argv'][2] . '" not found.');
+            print ConsoleUtils::errorLine('Command "' . $_SERVER['argv'][2] . '" not found.');
             return true;
         }
 

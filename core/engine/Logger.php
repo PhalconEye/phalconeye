@@ -12,54 +12,38 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   +------------------------------------------------------------------------+
 */
 
-namespace Install\Form\Install;
+namespace Engine;
 
-use Core\Form\CoreForm;
+use Phalcon\Logger\Adapter;
 
 /**
- * Installation database form.
+ * Logger wrapper.
  *
  * @category  PhalconEye
- * @package   Core\Form\Install
+ * @package   Engine
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Database extends CoreForm
+class Logger extends Adapter\File
 {
     /**
-     * Setup form.
+     * Log exception with message.
      *
-     * @return void
+     * @param \Exception  $exception Exception object.
+     * @param string|null $message   Message text. If empty - message from exception will be taken.
      */
-    public function initialize()
+    public function exception(\Exception $exception, $message = null)
     {
-        $this->setTitle('Database settings');
+        if (empty($message)) {
+            $message = $exception->getMessage();
+        }
 
-        $this->addContentFieldSet()
-            ->addSelect(
-                'adapter',
-                'Database adapter',
-                null,
-                [
-                    'Mysql' => 'MySQL',
-                    'Oracle' => 'Oracle',
-                    'Postgresql' => 'PostgreSQL',
-                    'Sqlite' => 'SQLite'
-                ],
-                'Mysql'
-            )
-            ->addText('host', 'Database host', null, 'localhost')
-            ->addText('port', 'Database port', null, '3306')
-            ->addText('username', 'Username', null, 'root')
-            ->addPassword('password')
-            ->addText('dbname', 'Database name', null, 'phalconeye');
-
-        $this->addFooterFieldSet()->addButton('next');
+        parent::error($message . ': ' . PHP_EOL . $exception->getTraceAsString());
     }
 }

@@ -121,19 +121,6 @@ class Manager extends AssetManager
         $lessCompileFunction = $this->_config->application->assets->lessCompileAlways ?
             'compileFile' : 'checkedCompile';
 
-//        ///////////////////////////////////
-//        // Compile themes css.
-//        ///////////////////////////////////
-//        $themeDirectory = $this->getThemeDirectory();
-//        if ($this->_config->installed && !empty($themeDirectory)) {
-//            $themeFiles = glob($themeDirectory . '/*.less');
-//            FileUtils::createIfMissing($location . 'css/theme/');
-//            foreach ($themeFiles as $file) {
-//                $newFileName = $location . 'css/theme/' . basename($file, '.less') . '.css';
-//                $less->{$lessCompileFunction}($file, $newFileName);
-//            }
-//        }
-
 
         $packages = array_merge(
             $this->getDI()->getWidgets()->getPackages(),

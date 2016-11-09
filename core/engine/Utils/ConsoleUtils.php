@@ -34,6 +34,8 @@
 
 namespace Engine\Utils;
 
+use Phalcon\Logger;
+
 /**
  * Console utils.
  *
@@ -177,6 +179,41 @@ final class ConsoleUtils
     ];
 
     /**
+     * Log by logger type.
+     *
+     * @param int    $type Message type.
+     * @param string $msg  Message.
+     *
+     * @return string
+     */
+    public static function log($type, $msg)
+    {
+        switch ($type) {
+            case Logger::SPECIAL:
+            case Logger::CUSTOM:
+            case Logger::DEBUG:
+                return static::debug($msg);
+                break;
+            case Logger::INFO:
+                return static::info($msg);
+                break;
+            case Logger::NOTICE:
+            case Logger::WARNING:
+                return static::warn($msg);
+                break;
+            case Logger::ERROR:
+            case Logger::ALERT:
+            case Logger::CRITICAL:
+            case Logger::EMERGENCE:
+            case Logger::EMERGENCY:
+                return static::error($msg);
+                break;
+        }
+
+        return '';
+    }
+
+    /**
      * Color style for error messages.
      *
      * @param string $msg Message to print.
@@ -214,24 +251,7 @@ final class ConsoleUtils
      */
     public static function error($msg)
     {
-        $msg = 'Error: ' . $msg;
-        $space = strlen($msg) + 4;
-        $out = self::colorize(
-            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
-        );
-        $out .= PHP_EOL;
-
-        $out .= self::colorize(
-            '  ' . $msg . '  ', ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
-        );
-        $out .= PHP_EOL;
-
-        $out .= self::colorize(
-            str_pad(' ', $space), ConsoleUtils::FG_WHITE, ConsoleUtils::AT_BOLD, ConsoleUtils::BG_RED
-        );
-        $out .= PHP_EOL . PHP_EOL;
-
-        return $out;
+        return self::colorize($msg, ConsoleUtils::FG_RED, ConsoleUtils::AT_BOLD);
     }
 
     /**
@@ -326,7 +346,7 @@ final class ConsoleUtils
     }
 
     /**
-     * Get warning line message.
+     * Get warning message.
      *
      * @param string $msg Message text.
      *
@@ -334,7 +354,7 @@ final class ConsoleUtils
      */
     public static function warn($msg)
     {
-        return self::colorize($msg, ConsoleUtils::FG_RED, ConsoleUtils::AT_BOLD);
+        return self::colorize($msg, ConsoleUtils::FG_BROWN, ConsoleUtils::AT_BOLD);
     }
 
     /**
@@ -350,6 +370,54 @@ final class ConsoleUtils
     }
 
     /**
+     * Get debug message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function debug($msg)
+    {
+        return self::colorize($msg, ConsoleUtils::FG_LIGHT_CYAN, ConsoleUtils::AT_BOLD);
+    }
+
+    /**
+     * Get debug line message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function debugLine($msg)
+    {
+        return self::debug($msg) . PHP_EOL . PHP_EOL;
+    }
+
+    /**
+     * Get info message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function info($msg)
+    {
+        return self::colorize($msg, ConsoleUtils::FG_GREEN, ConsoleUtils::AT_BOLD);
+    }
+
+    /**
+     * Get info line message.
+     *
+     * @param string $msg Message text.
+     *
+     * @return string
+     */
+    public static function infoLine($msg)
+    {
+        return self::info($msg) . PHP_EOL . PHP_EOL;
+    }
+
+    /**
      * Get info line message.
      *
      * @param string $msg             Message text.
@@ -359,7 +427,7 @@ final class ConsoleUtils
      *
      * @return string
      */
-    public static function info($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtils::FG_GREEN)
+    public static function infoSpecial($msg, $lineBefore = true, $afterLinesCount = 2, $color = ConsoleUtils::FG_GREEN)
     {
         $out = '';
         if ($lineBefore) {
@@ -392,10 +460,11 @@ final class ConsoleUtils
     /**
      * Get command line message.
      *
-     * @param string $cmd          Message text.
-     * @param string $comment      Comment text.
-     * @param int    $commentColor Comment text color.
-     * @param int    $cmdColor     Comment text color.
+     * @param string $cmd           Message text.
+     * @param string $comment       Comment text.
+     * @param int    $commentColor  Comment text color.
+     * @param int    $cmdColor      Comment text color.
+     * @param int    $startPosition Start position of a comment.
      *
      * @return string
      */
@@ -403,11 +472,11 @@ final class ConsoleUtils
         $cmd,
         $comment = '',
         $commentColor = ConsoleUtils::FG_BROWN,
-        $cmdColor = ConsoleUtils::FG_GREEN
+        $cmdColor = ConsoleUtils::FG_GREEN,
+        $startPosition = self::COMMENT_START_POSITION
     )
     {
         $messageLength = strlen($cmd) + 3;
-        $startPosition = self::COMMENT_START_POSITION;
 
         return self::colorize('  ' . $cmd, $cmdColor) .
         self::tab($startPosition, $messageLength) .

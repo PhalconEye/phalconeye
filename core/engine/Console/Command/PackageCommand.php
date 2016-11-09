@@ -16,9 +16,9 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Core\Command;
+namespace Engine\Console\Command;
 
-use Core\Command\Validation\WidgetModuleValidator;
+use Engine\Console\Command\Validation\WidgetModuleValidator;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
 use Engine\Package\PackageManager;
