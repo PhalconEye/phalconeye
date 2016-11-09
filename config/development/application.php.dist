@@ -53,6 +53,7 @@ return array (
   ),
   'assets' =>
   array (
+    'theme' => 'Default',
     'local' => 'assets/application/',
     'remote' => false,
     'lifetime' => 0,

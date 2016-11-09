@@ -79,7 +79,7 @@ class CkEditor extends TextArea implements ElementInterface
      */
     public function render()
     {
-        $this->getDI()->get('assets')->addJs('application/js/core/widgets/ckeditor.js');
+        $this->getDI()->get('assets')->addJs('application/js/module/core/widgets/ckeditor.js');
         return parent::render();
     }
 }

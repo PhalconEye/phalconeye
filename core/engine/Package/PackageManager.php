@@ -125,6 +125,7 @@ class PackageManager
         $cacheKey = sprintf(System::CACHE_KEY_PACKAGES, $this->getType());
         $cachedPackages = $cache->get($cacheKey);
         if (!empty($cachedPackages)) {
+            $this->_packages = $cachedPackages;
             return;
         }
 

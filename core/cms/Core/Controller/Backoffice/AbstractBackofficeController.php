@@ -71,7 +71,7 @@ abstract class AbstractBackofficeController extends AbstractController
                 ->addCss('libs/bootstrap/css/bootstrap.css')
                 ->addCss('libs/bootstrap/css/bootstrap-switch.css')
                 ->addCss('libs/jquery/jquery-ui.css')
-                ->addCss('application/css/core/backoffice/main.css')
+                ->addCss('application/css/module/core/backoffice/main.css')
         );
 
         $this->assets->get(AssetManager::DEFAULT_COLLECTION_JS)

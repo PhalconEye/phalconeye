@@ -20,9 +20,9 @@
 {% block title %}{{ "Manage menu"|i18n }}{% endblock %}
 
 {% block head %}
-    {{ helper('assets').addJs('application/js/core/backoffice/menu.js') }}
-    {{ helper('assets').addJs('application/js/core/widgets/modal.js') }}
-    {{ helper('assets').addJs('application/js/core/widgets/ckeditor.js') }}
+    {{ helper('assets').addJs('application/js/module/core/backoffice/menu.js') }}
+    {{ helper('assets').addJs('application/js/module/core/widgets/modal.js') }}
+    {{ helper('assets').addJs('application/js/module/core/widgets/ckeditor.js') }}
 
     <script type="text/javascript">
         var menuItemsData = {

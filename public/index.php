@@ -16,7 +16,7 @@
   +------------------------------------------------------------------------+
 */
 
-require_once "init.php";
+require_once "../init.php";
 require_once ROOT_PATH . "/core/engine/Config.php";
 require_once ROOT_PATH . "/core/engine/Exception.php";
 require_once ROOT_PATH . "/core/engine/Behavior/ApplicationBehavior.php";

@@ -16,9 +16,8 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Core\Command;
+namespace Engine\Console\Command;
 
-use Core\Model\SettingsModel;
 use Engine\Asset\Manager;
 use Engine\Console\AbstractCommand;
 use Engine\Console\CommandInterface;
@@ -46,9 +45,20 @@ class AssetsCommand extends AbstractCommand implements CommandInterface
      */
     public function installAction()
     {
-        $assetsManager = new Manager($this->getDI(), false);
-        $assetsManager->installAssets();
-
+        $this->getAssets()->installAssets();
         print ConsoleUtils::successLine('Assets successfully installed.') . PHP_EOL;
+    }
+
+    /**
+     * Clear assets folder.
+     *
+     * @param bool $refresh Install new assets after clear.
+     *
+     * @return void
+     */
+    public function clearAction($refresh = false)
+    {
+        $this->getAssets()->clear($refresh);
+        print ConsoleUtils::successLine('Assets successfully cleared.') . PHP_EOL;
     }
 }

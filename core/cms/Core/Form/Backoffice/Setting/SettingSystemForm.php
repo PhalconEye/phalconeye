@@ -53,7 +53,7 @@ class SettingSystemForm extends CoreForm
 
         $this->addContentFieldSet()
             ->addText('title', 'Site name', null, SettingsModel::getValue('system', 'title', ''))
-            ->addSelect('theme', 'Theme', null, $this->_getThemeOptions(), SettingsModel::getValue('system', 'theme'))
+            ->addSelect('theme', 'Theme', null, $this->_getThemeOptions(), '@TODO')
             ->addSelect(
                 'default_language',
                 'Default language',

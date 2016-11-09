@@ -1,6 +1,8 @@
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
 - fix installer + option for installing sample data.
 - check database initializaiton charset.
+- compiled assets strategy.
+- check assets installation without initialization.
 
 - run profiler
 - create demo project

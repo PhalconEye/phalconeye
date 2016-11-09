@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   | Author: Piotr Gasiorowski <p.gasiorowski@vipserv.org>                  |
   +------------------------------------------------------------------------+
 */
@@ -22,13 +22,13 @@ namespace Engine\Asset;
 use Engine\Asset\Css\Less;
 use Engine\Behavior\DIBehavior;
 use Engine\Package\PackageData;
+use Engine\Package\PackageManager;
 use Engine\Utils\FileUtils;
 use Phalcon\Assets\Filters\Cssmin;
 use Phalcon\Assets\Filters\Jsmin;
 use Phalcon\Assets\Manager as AssetManager;
 use Phalcon\Config;
 use Phalcon\DiInterface;
-use Phalcon\Registry;
 
 /**
  * Assets manager.
@@ -44,9 +44,14 @@ class Manager extends AssetManager
 {
     const
         /**
-         * Assets path.
+         * Assets destination path in public folder.
          */
-        ASSETS_PATH = '/assets/';
+        ASSETS_PUBLIC_PATH = DS . 'assets' . DS,
+
+        /**
+         * Assets original path in packages.
+         */
+        ASSETS_PACKAGE_PATH = 'Assets' . DS;
 
     const
         /**
@@ -58,6 +63,12 @@ class Manager extends AssetManager
          * CSS default collection name.
          */
         DEFAULT_COLLECTION_CSS = 'css';
+
+    const
+        DIRECTORY_CSS = 'css',
+        DIRECTORY_JS = 'js',
+        DIRECTORY_IMG = 'img',
+        DIRECTORY_FONTS = 'fonts';
 
     use DIBehavior {
         DIBehavior::__construct as protected __DIConstruct;
@@ -87,17 +98,14 @@ class Manager extends AssetManager
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di      Dependency injection.
-     * @param bool        $prepare Prepare manager (install assets if in debug and create default collections).
+     * @param DiInterface $di Dependency injection.
      */
-    public function __construct($di, $prepare = true)
+    public function __construct($di)
     {
         $this->__DIConstruct($di);
         $this->_config = $di->getConfig();
-        if ($prepare) {
-            $this->set(self::DEFAULT_COLLECTION_CSS, $this->getEmptyCssCollection());
-            $this->set(self::DEFAULT_COLLECTION_JS, $this->getEmptyJsCollection());
-        }
+        $this->set(self::DEFAULT_COLLECTION_CSS, $this->getEmptyCssCollection());
+        $this->set(self::DEFAULT_COLLECTION_JS, $this->getEmptyJsCollection());
     }
 
     /**
@@ -110,68 +118,77 @@ class Manager extends AssetManager
         $location = $this->_getLocation();
         $less = Less::factory();
         $less->setVariables(['baseUrl' => "'" . $this->_config->application->baseUrl . "'"]);
+        $lessCompileFunction = $this->_config->application->assets->lessCompileAlways ?
+            'compileFile' : 'checkedCompile';
 
-        ///////////////////////////////////
-        // Compile themes css.
-        ///////////////////////////////////
-        $themeDirectory = $this->getThemeDirectory();
-        if ($this->_config->installed && !empty($themeDirectory)) {
-            $lessCompileFunction = $this->_config->application->assets->get('lessCompileAlways') ?
-                'compileFile' : 'checkedCompile';
-            $themeFiles = glob($themeDirectory . '/*.less');
-            FileUtils::createIfMissing($location . 'css/');
-            foreach ($themeFiles as $file) {
-                $newFileName = $location . 'css/' . basename($file, '.less') . '.css';
-                $less->{$lessCompileFunction}($file, $newFileName);
-            }
-        }
+//        ///////////////////////////////////
+//        // Compile themes css.
+//        ///////////////////////////////////
+//        $themeDirectory = $this->getThemeDirectory();
+//        if ($this->_config->installed && !empty($themeDirectory)) {
+//            $themeFiles = glob($themeDirectory . '/*.less');
+//            FileUtils::createIfMissing($location . 'css/theme/');
+//            foreach ($themeFiles as $file) {
+//                $newFileName = $location . 'css/theme/' . basename($file, '.less') . '.css';
+//                $less->{$lessCompileFunction}($file, $newFileName);
+//            }
+//        }
 
-        ///////////////////////////////////
-        // Collect css/js/img from modules and widgets.
-        ///////////////////////////////////
+
         $packages = array_merge(
             $this->getDI()->getWidgets()->getPackages(),
-            $this->getDI()->getModules()->getPackages()
+            $this->getDI()->getModules()->getPackages(),
+            $this->getDI()->getThemes()->getPackages()
         );
 
         /** @var PackageData $package */
         foreach ($packages as $package) {
-            // CSS
-            $assetsPath = $package->getPath() . '/Assets/';
-            $path = $location . 'css/' . $package->getName() . '/';
+            $assetsPath = $package->getPath();
+
+            if ($package->getType() != PackageManager::PACKAGE_TYPE_THEME) {
+                $assetsPath .= self::ASSETS_PACKAGE_PATH;
+            }
+
+            if (!is_dir($assetsPath)) {
+                continue;
+            }
+
+            ///////////////////////////////////
+            // Compile and/or copy CSS files.
+            ///////////////////////////////////
+            $path = $location . self::DIRECTORY_CSS . DS . $package->getType() . DS . $package->getName() . DS;
             FileUtils::createIfMissing($path);
-            $cssFiles = FileUtils::globRecursive($assetsPath . 'css/*');
-            $less->addImportDir($themeDirectory);
+            $cssFiles = FileUtils::globRecursive($assetsPath . self::DIRECTORY_CSS . DS . '*');
+            $less->addImportDir($this->getThemeDirectory());
             foreach ($cssFiles as $file) {
                 if (!is_file($file)) {
                     continue;
                 }
                 $fileName = basename($file);
-                $fileNameWithoutExt = basename($file, '.less');
-                $additionalPath = str_replace($fileName, '', str_replace($assetsPath . 'css/', '', $file));
-                if (pathinfo($file, PATHINFO_EXTENSION) == 'less') {
+                $fileNameWithoutExt = basename($file, '.' . Less::FILE_EXTENSION);
+                $additionalPath = str_replace(
+                    $fileName,
+                    '',
+                    str_replace($assetsPath . self::DIRECTORY_CSS . DS, '', $file)
+                );
+                if (pathinfo($file, PATHINFO_EXTENSION) == Less::FILE_EXTENSION) {
                     FileUtils::createIfMissing($path . $additionalPath);
-                    $newFileName = $path . $additionalPath . $fileNameWithoutExt . '.css';
-                    $less->checkedCompile($file, $newFileName);
+                    $newFileName = $path . $additionalPath . $fileNameWithoutExt . '.' . self::DIRECTORY_CSS;
+                    $less->{$lessCompileFunction}($file, $newFileName);
                 } else {
                     copy($file, $path . $additionalPath . $fileName);
                 }
             }
 
-            // JS
-            $path = $location . 'js/' . $package->getName() . '/';
-            FileUtils::createIfMissing($path);
-            FileUtils::copyRecursive($assetsPath . 'js', $path, true);
-
-            // IMAGES
-            $path = $location . 'img/' . $package->getName() . '/';
-            FileUtils::createIfMissing($path);
-            FileUtils::copyRecursive($assetsPath . 'img', $path, true);
-
-            // FONTS
-            $path = $location . 'fonts/' . $package->getName() . '/';
-            FileUtils::createIfMissing($path);
-            FileUtils::copyRecursive($assetsPath . 'fonts', $path, true);
+            ///////////////////////////////////
+            // Copy other folders.
+            ///////////////////////////////////
+            $directories = [self::DIRECTORY_JS, self::DIRECTORY_IMG, self::DIRECTORY_FONTS];
+            foreach ($directories as $directory) {
+                $path = $location . $directory . DS . $package->getType() . DS . $package->getName() . DS;
+                FileUtils::createIfMissing($path);
+                FileUtils::copyRecursive($assetsPath . $directory, $path, true);
+            }
         }
     }
 
@@ -185,13 +202,17 @@ class Manager extends AssetManager
     public function clear($refresh = true)
     {
         $location = $this->_getLocation();
-        $files = FileUtils::globRecursive($location, '*'); // get all file names
-        // iterate files
+
+        $it = new \RecursiveDirectoryIterator($location, \RecursiveDirectoryIterator::SKIP_DOTS);
+        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
         foreach ($files as $file) {
-            if (is_file($file)) {
-                @unlink($file); // delete file
+            if ($file->isDir()) {
+                @rmdir($file->getRealPath());
+            } else {
+                @unlink($file->getRealPath());
             }
         }
+        @rmdir($location);
 
         if ($refresh) {
             $this->installAssets();

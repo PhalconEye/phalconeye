@@ -41,7 +41,7 @@
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
         <a class="brand" href="{{ url("backoffice") }}">
-            <img alt="Phalcon Eye" src="{{ url('assets/application/img/core/pe_logo_white.png') }}"/>
+            <img alt="Phalcon Eye" src="{{ url('assets/application/img/module/core/pe_logo_white.png') }}"/>
         </a>
 
         <div class="nav-collapse">

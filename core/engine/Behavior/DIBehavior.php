@@ -54,6 +54,7 @@ use Phalcon\DiInterface;
  * @method \Engine\Profiler getProfiler()
  * @method \Engine\Package\PackageManager getModules()
  * @method \Engine\Package\PackageManager getWidgets()
+ * @method \Engine\Package\PackageManager getThemes()
  * @method \Engine\Package\PackageManager getPlugins()
  */
 trait DIBehavior

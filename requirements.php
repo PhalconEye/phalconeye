@@ -12,13 +12,9 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   +------------------------------------------------------------------------+
 */
-
-if (!defined('CHECK_REQUIREMENTS')) {
-    die('Access denied!');
-}
 
 if (version_compare(phpversion(), PHP_VERSION_REQUIRED, '<')) {
     printf('PHP %s is required, you have %s.', PHP_VERSION_REQUIRED, phpversion());

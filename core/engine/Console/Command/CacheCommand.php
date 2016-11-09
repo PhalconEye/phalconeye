@@ -38,11 +38,11 @@ use Engine\Utils\ConsoleUtils;
 class CacheCommand extends AbstractCommand implements CommandInterface
 {
     /**
-     * Cleanup cache data.
+     * Clear cache data.
      *
      * @return void
      */
-    public function cleanupAction()
+    public function clearAction()
     {
         $this->getDI()->get('app')->clearCache();
 

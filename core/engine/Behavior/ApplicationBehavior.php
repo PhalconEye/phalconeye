@@ -155,7 +155,7 @@ trait ApplicationBehavior
 
                 if (APPLICATION_STAGE == APPLICATION_STAGE_DEVELOPMENT) {
                     $p = new PrettyExceptions($di);
-                    $p->setBaseUri('assets/application/js/core/pretty-exceptions/');
+                    $p->setBaseUri('assets/application/js/module/core/pretty-exceptions/');
                     return $p->handleException($e);
                 }
 
@@ -183,11 +183,17 @@ trait ApplicationBehavior
      * Initialize modules.
      *
      * @param DIBehavior|DI $di Dependency Injection.
+     * @param Config        $config Config object.
      *
      * @return PackageManager Package manager with loaded modules.
      */
-    protected function _initModules($di)
+    protected function _initModules($di, $config)
     {
+        // Prepare assets manager.
+        $assets = new AssetsManager($di);
+        $assets->setTheme($config->application->assets->theme);
+        $di->setShared('assets', $assets);
+
         /**
          * Collect modules.
          */
@@ -576,9 +582,6 @@ trait ApplicationBehavior
      */
     protected function _initView($di, $config, $eventsManager)
     {
-        /*************************************************/
-        //  Initialize view.
-        /*************************************************/
         $di->setShared('view', View::factory($di, $config, null, $eventsManager));
     }
 
@@ -596,6 +599,22 @@ trait ApplicationBehavior
         $di->setShared('widgets', $widgets);
 
         return $widgets;
+    }
+
+    /**
+     * Prepare themes metadata for Engine.
+     *
+     * @param DIBehavior|DI $di Dependency injection.
+     *
+     * @return PackageManager Package manager with loaded widgets.
+     */
+    protected function _initThemes($di)
+    {
+        $themes = new PackageManager($di, PackageManager::PACKAGE_TYPE_THEME);
+        $themes->load();
+        $di->setShared('themes', $themes);
+
+        return $themes;
     }
 
     /**
@@ -623,6 +642,5 @@ trait ApplicationBehavior
                 return new TxManager();
             }
         );
-        $di->setShared('assets', new AssetsManager($di));
     }
 }

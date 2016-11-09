@@ -67,7 +67,7 @@ class Collection extends PhalconCollection
      */
     public function addCss($path, $local = null, $filter = true, $attributes = null)
     {
-        $path = Manager::ASSETS_PATH . $path;
+        $path = Manager::ASSETS_PUBLIC_PATH . $path;
 
         if (!$this->_config->application->debug) {
             $path = PUBLIC_PATH . $path;
@@ -89,7 +89,7 @@ class Collection extends PhalconCollection
      */
     public function addJs($path, $local = null, $filter = true, $attributes = null)
     {
-        $path = Manager::ASSETS_PATH . $path;
+        $path = Manager::ASSETS_PUBLIC_PATH . $path;
 
         if (!$this->_config->application->debug) {
             $path = PUBLIC_PATH . $path;

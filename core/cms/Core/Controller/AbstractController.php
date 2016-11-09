@@ -222,12 +222,13 @@ abstract class AbstractController extends PhalconController
      */
     protected function _setupAssets()
     {
+        $theme = $this->assets->getTheme();
         $this->assets->set(
             AssetManager::DEFAULT_COLLECTION_CSS,
             $this->assets->getEmptyCssCollection()
                 ->addCss('libs/jquery/jquery-ui.css')
-                ->addCss('application/css/constants.css')
-                ->addCss('application/css/theme.css')
+                ->addCss("application/css/theme/$theme/constants.css")
+                ->addCss("application/css/theme/$theme/theme.css")
         );
 
         $this->assets->set(
@@ -236,25 +237,25 @@ abstract class AbstractController extends PhalconController
                 ->addJs('libs/jquery/jquery-2.1.0.js')
                 ->addJs('libs/jquery/jquery-ui-1.10.4.js')
                 ->addJs('libs/jquery/jquery.cookie.js')
-                ->addJs('application/js/core/core.js')
-                ->addJs('application/js/core/i18n.js')
-                ->addJs('application/js/core/form.js')
-                ->addJs('application/js/core/form/dynamic-field.js')
-                ->addJs('application/js/core/form/remote-file.js')
-                ->addJs('application/js/core/widgets/grid.js')
-                ->addJs('application/js/core/widgets/autocomplete.js')
-                ->addJs('application/js/core/widgets/modal.js')
-                ->addJs('application/js/core/widgets/ckeditor.js')
+                ->addJs('application/js/module/core/core.js')
+                ->addJs('application/js/module/core/i18n.js')
+                ->addJs('application/js/module/core/form.js')
+                ->addJs('application/js/module/core/form/dynamic-field.js')
+                ->addJs('application/js/module/core/form/remote-file.js')
+                ->addJs('application/js/module/core/widgets/grid.js')
+                ->addJs('application/js/module/core/widgets/autocomplete.js')
+                ->addJs('application/js/module/core/widgets/modal.js')
+                ->addJs('application/js/module/core/widgets/ckeditor.js')
         );
 
         if ($this->di->has('profiler')) {
             $this->di->get('assets')
                 ->collection(AssetManager::DEFAULT_COLLECTION_CSS)
-                ->addCss('application/css/core/profiler.css');
+                ->addCss('application/css/module/core/profiler.css');
 
             $this->di->get('assets')
                 ->collection(AssetManager::DEFAULT_COLLECTION_JS)
-                ->addCss('application/js/core/profiler.js');
+                ->addCss('application/js/module/core/profiler.js');
         }
 
         $this->addDefaultJsTranslations();

@@ -21,7 +21,8 @@ namespace Engine;
 use Engine\Behavior\DIBehavior;
 use Engine\Behavior\ViewBehavior;
 use Engine\View\Extension;
-use Phalcon\DI;
+use Engine\View\Plugin\ViewPlugin;
+use Phalcon\Cache\BackendInterface;
 use Phalcon\Events\Manager;
 use Phalcon\Mvc\View as PhalconView;
 use Phalcon\Mvc\View\Engine\Volt;
@@ -46,6 +47,13 @@ class View extends PhalconView
      * @var bool
      */
     protected $_finalView = false;
+
+    /**
+     * Current view that is rendering.
+     *
+     * @var string|null
+     */
+    protected $_currentView = null;
 
     /**
      * Create view instance.
@@ -82,34 +90,25 @@ class View extends PhalconView
             $view->setViewsDir($viewsDirectory);
         }
 
+        $di->getRegistry()->offsetSet('viewRendered', []);
         // Attach a listener for type "view".
         if ($em) {
-            $em->attach(
-                "view",
-                function ($event, $view) use ($di, $config) {
-                    if ($config->application->profiler && $di->has('profiler')) {
-                        if ($event->getType() == 'beforeRender') {
-                            $di->get('profiler')->start();
-                        }
-                        if ($event->getType() == 'afterRender') {
-                            $di->get('profiler')->stop($view->getActiveRenderPath(), 'view');
-                        }
-                    }
-                    if ($event->getType() == 'notFoundView') {
-                        $notFound = $view->getActiveRenderPath();
-                        if (is_array($notFound)) {
-                            $notFound = implode(", ", $notFound);
-                        }
-
-                        throw new Exception('View not found - "' . $notFound . '"');
-                    }
-                }
-            );
+            $em->attach('view', new ViewPlugin());
             $view->setEventsManager($em);
         }
 
         return $view;
     }
+
+    /**
+     * {@inheritdoc}
+     */
+    protected function _engineRender($engines, $viewPath, $silence, $mustClean, BackendInterface $cache = null)
+    {
+        $this->_currentView = $viewPath;
+        parent::_engineRender($engines, $viewPath, $silence, $mustClean, $cache);
+    }
+
 
     /**
      * Pick view to render.
@@ -137,7 +136,14 @@ class View extends PhalconView
     public function restoreViewDir()
     {
         $registry = $this->getDI()->getRegistry();
-        return $this->setViewsDir([$registry->directories->cms, $registry->directories->modules]);
+        $theme = $this->getDI()->getAssets()->getTheme();
+        return $this->setViewsDir(
+            [
+                $registry->directories->themes . $theme . DS . 'views',
+                $registry->directories->modules,
+                $registry->directories->cms
+            ]
+        );
     }
 
     /**
@@ -163,4 +169,28 @@ class View extends PhalconView
         );
     }
 
+    /**
+     * Current view that is rendering.
+     *
+     * @return null|string
+     */
+    public function getCurrentView()
+    {
+        return $this->_currentView;
+    }
+
+    /**
+     * Get current rendering path.
+     *
+     * @return string
+     */
+    public function getCurrentPath()
+    {
+        $path = $this->getActiveRenderPath();
+        if (is_array($path) && !empty($path)) {
+            return $path[0];
+        }
+
+        return $path;
+    }
 }

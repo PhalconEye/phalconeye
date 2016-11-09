@@ -30,6 +30,8 @@ namespace Engine\Asset\Css;
  */
 class Less
 {
+    const FILE_EXTENSION = 'less';
+
     /**
      * Less compiler.
      *

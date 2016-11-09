@@ -91,16 +91,10 @@ class Bootstrap extends AbstractBootstrap
         }
 
         /**
-         * Set current theme.
-         */
-        $assets = $di->getAssets();
-        $assets->setTheme(SettingsModel::getValue('system', 'theme'));
-
-        /**
          * Install assets if required.
          */
         if ($config->application->debug) {
-            $assets->installAssets();
+            $di->getAssets()->installAssets();
         }
     }
 

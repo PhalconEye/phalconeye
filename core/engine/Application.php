@@ -105,6 +105,7 @@ class Application extends PhalconApplication
                 'flash',
                 'view',
                 'widgets',
+                'themes',
                 'engine'
             ],
             self::MODE_CONSOLE => [
@@ -116,6 +117,7 @@ class Application extends PhalconApplication
                 'plugins',
                 'database',
                 'widgets',
+                'themes',
                 'engine'
             ],
             self::MODE_SESSION => [
@@ -161,7 +163,7 @@ class Application extends PhalconApplication
                 'modules' => ROOT_PATH . '/app/modules/',
                 'plugins' => ROOT_PATH . '/app/plugins/',
                 'widgets' => ROOT_PATH . '/app/widgets/',
-                'themes' => PUBLIC_PATH . '/themes/',
+                'themes' => ROOT_PATH . '/app/themes/',
             ]
         );
         $di->set('registry', $registry);
