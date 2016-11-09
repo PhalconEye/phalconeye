@@ -16,7 +16,7 @@
  +------------------------------------------------------------------------+
 */
 
-namespace Core\Command\Validation;
+namespace Engine\Console\Command\Validation;
 
 use Engine\Behavior\DIBehavior;
 use Engine\Package\PackageData;

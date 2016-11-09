@@ -237,7 +237,7 @@ abstract class AbstractCommand implements CommandInterface
         $commandName = $this->getName();
         if ($action) {
             if (empty($this->_actions[$action])) {
-                print ConsoleUtils::warnLine("Action '$action' not found in this command.");
+                print ConsoleUtils::errorLine("Action '$action' not found in this command.");
                 return;
             }
 
@@ -394,9 +394,12 @@ abstract class AbstractCommand implements CommandInterface
                 if (empty($matches[4])) {
                     $this->_parameters[$matches[2]] = true;
                     $withoutValue[] = $matches[2];
+                } else if ($this->_isBoolean($matches[4])) {
+                    $this->_parameters[$matches[2]] = filter_var($matches[4], FILTER_VALIDATE_BOOLEAN);
                 } else {
                     $this->_parameters[$matches[2]] = $matches[4];
                 }
+
             } else {
                 throw new CommandsException("Invalid script parameter '$argv'.");
             }
@@ -581,5 +584,18 @@ abstract class AbstractCommand implements CommandInterface
         }
 
         return $paramsMetadata;
+    }
+
+    /**
+     * Check if value is boolean.
+     *
+     * @param string $string Possible boolean.
+     *
+     * @return bool
+     */
+    private function _isBoolean($string)
+    {
+        $string = strtolower($string);
+        return (in_array($string, array("true", "false", "1", "0", "yes", "no"), true));
     }
 }

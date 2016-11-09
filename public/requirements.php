@@ -34,14 +34,14 @@ if (php_sapi_name() !== 'cli' && function_exists('apache_get_modules') && !in_ar
 }
 
 $checkPath = array(
-    $this->_config->application->assets->local,
-    $this->_config->application->logger->path,
-    $this->_config->application->cache->get('cacheDir') ? $this->_config->application->cache->cacheDir : null,
-    $this->_config->application->view->compiledPath,
-    $this->_config->application->metadata->metaDataDir,
-    $this->_config->application->annotations->annotationsDir,
-    ROOT_PATH . '/app/var/cache/languages/',
-    ROOT_PATH . '/app/var/temp'
+    PUBLIC_PATH . '/' . $this->getConfig()->application->assets->local,
+    $this->getConfig()->application->logger->path,
+    $this->getConfig()->application->cache->get('cacheDir') ? $this->getConfig()->application->cache->cacheDir : null,
+    $this->getConfig()->application->view->compiledPath,
+    $this->getConfig()->application->metadata->metaDataDir,
+    $this->getConfig()->application->annotations->annotationsDir,
+    ROOT_PATH . '/data/cache/languages/',
+    ROOT_PATH . '/data/temp'
 );
 
 $GLOBALS['PATH_REQUIREMENTS'] = $checkPath;
@@ -54,7 +54,7 @@ foreach ($checkPath as $path) {
     }
     $is_writable = is_writable($path);
     if (!$is_writable) {
-        echo "{$path} isn't writable.</br>";
+        echo "{$path} isn't writable.</br>" . PHP_EOL;
     }
 
     $allPassed = $allPassed && $is_writable;

@@ -70,9 +70,9 @@ class AclApi extends AbstractApi
 
     const
         /**
-         * Admin area name in ACL.
+         * Backoffice area name in ACL.
          */
-        ACL_ADMIN_AREA = 'AdminArea';
+        ACL_BACKOFFICE_AREA = 'BackofficeArea';
 
     /**
      * Acl adapter.
@@ -104,16 +104,16 @@ class AclApi extends AbstractApi
                 }
 
                 // Defining admin area.
-                $adminArea = new AclResource(self::ACL_ADMIN_AREA);
+                $backofficeArea = new AclResource(self::ACL_BACKOFFICE_AREA);
                 $roleAdmin = RoleModel::getRoleByType(self::DEFAULT_ROLE_ADMIN);
 
                 // Add "admin area" resource.
-                $acl->addResource($adminArea, "access");
-                $acl->allow($roleAdmin->name, self::ACL_ADMIN_AREA, 'access');
+                $acl->addResource($backofficeArea, "access");
+                $acl->allow($roleAdmin->name, self::ACL_BACKOFFICE_AREA, 'access');
 
                 // Getting objects that is in acl.
                 // Looking for all models in modelsDir and check @Acl annotation.
-                $objects = $this->_addResources($acl, [self::ACL_ADMIN_AREA => ['actions' => ['access']]]);
+                $objects = $this->_addResources($acl, [self::ACL_BACKOFFICE_AREA => ['actions' => ['access']]]);
 
                 // Load from database.
                 $access = AccessModel::find();
@@ -190,7 +190,7 @@ class AclApi extends AbstractApi
         $object->actions = [];
         $object->options = [];
 
-        if ($objectName == self::ACL_ADMIN_AREA) {
+        if ($objectName == self::ACL_BACKOFFICE_AREA) {
             $object->actions = ['access'];
 
             return $object;
@@ -256,7 +256,7 @@ class AclApi extends AbstractApi
         // Check admin area.
         if (
             Text::endsWith($dispatcher->getNamespaceName(), 'Backoffice', true) &&
-            $acl->isAllowed($viewer->getRole()->name, self::ACL_ADMIN_AREA, 'access') != PhalconAcl::ALLOW
+            $acl->isAllowed($viewer->getRole()->name, self::ACL_BACKOFFICE_AREA, 'access') != PhalconAcl::ALLOW
         ) {
             $this->getDI()->getEventsManager()->fire(
                 'dispatch:beforeException',

@@ -71,12 +71,13 @@ class Bootstrap extends AbstractBootstrap
     public function afterEngine()
     {
         $di = $this->getDI();
+        if (!$di->getRegistry()->initialized) {
+            return;
+        }
+
         $config = $this->getConfig();
 
         $this->_initI18n($di, $config);
-        if (!$config->installed) {
-            return;
-        }
 
         // Remove profiler for non-user.
         if (!UserModel::getViewer()->id) {
@@ -86,9 +87,7 @@ class Bootstrap extends AbstractBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        if ($config->installed) {
-            $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
-        }
+        $this->getEventsManager()->attach('dispatch', $di->get('core')->acl());
 
         /**
          * Set current theme.
@@ -114,38 +113,36 @@ class Bootstrap extends AbstractBootstrap
      */
     protected function _initI18n($di, $config)
     {
-        if ($di->get('app')->isConsole()) {
+        if ($di->getApp()->isConsole()) {
             return;
         }
 
         $languageObject = null;
-        if (!$di->get('session')->has('language')) {
+        if (!$di->getSession()->has('language')) {
             /** @var LanguageModel $languageObject */
-            if ($config->installed) {
-                $language = SettingsModel::getValue('system', 'default_language');
-                if ($language == 'auto') {
-                    $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-                    $languageObject = LanguageModel::findFirst(
-                        "language = '" . $locale . "' OR locale = '" . $locale . "'"
-                    );
-                } else {
-                    $languageObject = LanguageModel::findFirst("language = '" . $language . "'");
-                }
+            $language = SettingsModel::getValue('system', 'default_language');
+            if ($language == 'auto') {
+                $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
+                $languageObject = LanguageModel::findFirst(
+                    "language = '" . $locale . "' OR locale = '" . $locale . "'"
+                );
+            } else {
+                $languageObject = LanguageModel::findFirst("language = '" . $language . "'");
             }
 
             if ($languageObject) {
-                $di->get('session')->set('language', $languageObject->language);
-                $di->get('session')->set('locale', $languageObject->locale);
+                $di->getSession()->set('language', $languageObject->language);
+                $di->getSession()->set('locale', $languageObject->locale);
             } else {
-                $di->get('session')->set('language', Config::CONFIG_DEFAULT_LANGUAGE);
-                $di->get('session')->set('locale', Config::CONFIG_DEFAULT_LOCALE);
+                $di->getSession()->set('language', Config::CONFIG_DEFAULT_LANGUAGE);
+                $di->getSession()->set('locale', Config::CONFIG_DEFAULT_LOCALE);
             }
         }
 
-        $language = $di->get('session')->get('language');
+        $language = $di->getSession()->get('language');
         $translate = null;
 
-        if (!$config->application->debug || !$config->installed) {
+        if (!$config->application->debug) {
             $messages = [];
             $directory = $config->application->languages->cacheDir;
             $extension = ".php";

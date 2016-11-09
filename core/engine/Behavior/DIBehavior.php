@@ -35,7 +35,6 @@ use Phalcon\DiInterface;
  * @method \Phalcon\Mvc\Url getUrl()
  * @method \Phalcon\Mvc\Router getRouter()
  * @method \Phalcon\Mvc\Model\Manager getModelsManager()
- * @method \Phalcon\Logger\Adapter getLogger($file = 'main', $format = null, $options = null)
  * @method \Phalcon\Http\Request getRequest()
  * @method \Phalcon\Http\Response getResponse()
  * @method \Phalcon\Annotations\Adapter getAnnotations()
@@ -49,6 +48,7 @@ use Phalcon\DiInterface;
  *
  * @method \Engine\Application getApp()
  * @method \Engine\Config getConfig()
+ * @method \Engine\Logger getLogger($file = 'main', $format = null, $options = null)
  * @method \Engine\Asset\Manager getAssets()
  * @method \Engine\View getView()
  * @method \Engine\Profiler getProfiler()

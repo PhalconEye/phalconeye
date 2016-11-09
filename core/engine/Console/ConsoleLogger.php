@@ -16,44 +16,69 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Install;
+namespace Engine\Console;
 
-use Engine\AbstractBootstrap;
-use Phalcon\DiInterface;
-use Phalcon\Events\Manager;
+use Engine\Logger;
+use Engine\Utils\ConsoleUtils;
 
 /**
- * Install Bootstrap.
+ * Console logger. Wrapper for default logger.
  *
  * @category  PhalconEye
- * @package   Core
+ * @package   Engine\Console
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Bootstrap extends AbstractBootstrap
+class ConsoleLogger extends Logger
 {
-    /**
-     * Current module name.
-     *
-     * @var string
-     */
-    protected $_moduleName = __NAMESPACE__;
+    private $_logger;
 
     /**
-     * Bootstrap construction.
+     * ConsoleLogger constructor.
      *
-     * @param DiInterface $di Dependency injection.
-     * @param Manager     $em Events manager object.
+     * @param Logger $logger Parent logger.
      */
-    public function __construct($di, $em)
+    public function __construct(Logger $logger)
     {
-        parent::__construct($di, $em);
+        $this->_logger = $logger;
+    }
 
-        /**
-         * Attach this bootstrap for all application initialization events.
-         */
-        $em->attach('init', $this);
+    /**
+     * {@inheritdoc}
+     */
+    public function log($type, $message = null, array $context = null)
+    {
+        $this->_logger->log($type, $message, $context);
+        $this->_log($type, $message);
+    }
+
+    /**
+     * Log to console.
+     *
+     * @param int    $type    Message type.
+     * @param string $message Message to log.
+     */
+    private function _log($type, $message)
+    {
+        print ConsoleUtils::log($type, $message) . PHP_EOL;
+    }
+
+    /**
+     * Proxy to original logger.
+     *
+     * @param string $methodName Method name.
+     * @param mixed  $args       Arguments.
+     *
+     * @return mixed DI method result.
+     */
+    public function __call($methodName, $args)
+    {
+        if ($methodName == 'log') {
+            return call_user_func_array(array($this, $methodName), $args);
+        }
+
+        return call_user_func_array(array($this->_logger, $methodName), $args);
     }
 }

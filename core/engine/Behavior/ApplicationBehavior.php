@@ -82,7 +82,7 @@ trait ApplicationBehavior
             $di->set(
                 'logger',
                 function ($file = 'main', $format = null, $options = null) use ($config) {
-                    $logger = new File(
+                    $logger = new \Engine\Logger(
                         $config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log',
                         $options
                     );
@@ -118,7 +118,7 @@ trait ApplicationBehavior
         $loader->registerNamespaces($namespaces);
         $loader->registerFiles([ROOT_PATH . DS . 'vendor' . DS . 'autoload.php']);
 
-        if ($config->application->debug && $config->installed) {
+        if ($config->application->debug) {
             $loader->setEventsManager($eventsManager);
         }
 
@@ -163,7 +163,7 @@ trait ApplicationBehavior
             }
         );
 
-        if ($config->application->profiler && $config->installed) {
+        if ($config->application->profiler) {
             $profiler = new Profiler();
             $di->set('profiler', $profiler);
         }
@@ -297,30 +297,6 @@ trait ApplicationBehavior
      */
     protected function _initRouter($di, $config)
     {
-        $defaultModuleName = ucfirst(Application::CMS_MODULE_CORE);
-
-        // Check installation.
-        if (!$config->installed) {
-            $router = new RouterAnnotations(false);
-
-            // Use $_SERVER['REQUEST_URI'] (NGINX)
-            if (!isset($_GET['_url'])) {
-                $router->setUriSource(Router::URI_SOURCE_SERVER_REQUEST_URI);
-                // Remove extra slashes from url
-                $router->removeExtraSlashes(true);
-            }
-
-            $router->setDefaultModule(Application::CMS_MODULE_CORE);
-            $router->setDefaultNamespace($defaultModuleName . '\Controller');
-            $router->setDefaultController("Install");
-            $router->setDefaultAction("index");
-            $router->addModuleResource(Application::CMS_MODULE_CORE, $defaultModuleName . '\Controller\Install');
-            $di->set('installationRequired', true);
-            $di->set('router', $router);
-
-            return;
-        }
-
         $cacheData = $di->get('cacheData');
         $router = $cacheData->get(System::CACHE_KEY_ROUTER_DATA);
 
@@ -386,10 +362,6 @@ trait ApplicationBehavior
      */
     protected function _initDatabase($di, $config, $eventsManager)
     {
-        if (!$config->installed) {
-            return;
-        }
-
         $adapter = '\Phalcon\Db\Adapter\Pdo\\' . $config->database->adapter;
         $options = $config->database->toArray();
         unset($options['adapter']);
@@ -437,6 +409,12 @@ trait ApplicationBehavior
             $connection->setEventsManager($eventsManager);
         }
 
+        $initialized = count($connection->listTables()) > 0;
+        if (!$initialized && !$this->isConsole()) {
+            die("System isn't initialized");
+        }
+
+        $di->getRegistry()->offsetSet('initialized', $initialized);
         $di->set('db', $connection);
         $di->setShared(
             'modelsManager',

@@ -1,6 +1,9 @@
 - update system + check schema update flow + provide feature to drop outdated fields and relations.
 - fix installer + option for installing sample data.
+- check asset requests to index.php
 - check database initializaiton charset.
+- add admin user to core data.
+- move JsTranslationBehavior
 
 - run profiler
 - create demo project

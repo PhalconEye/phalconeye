@@ -68,7 +68,7 @@ class SettingPerformanceForm extends CoreForm
             /**
              * File options
              */
-            ->addText('cacheDir', 'Files location', null, ROOT_PATH . '/app/var/cache/data/')
+            ->addText('cacheDir', 'Files location', null, ROOT_PATH . '/data/cache/data/')
 
             /**
              * Memcached options.
