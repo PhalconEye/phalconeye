@@ -67,7 +67,7 @@ class DatabaseCommand extends AbstractCommand implements CommandInterface
 
         // Test requirements.
         define('CHECK_REQUIREMENTS', true);
-        require_once(PUBLIC_PATH . '/requirements.php');
+        require_once(ROOT_PATH . '/requirements.php');
 
         $schema = new SchemaUpdater($this->getDI(), $this->getConfig()->database->dbname);
         $result = $schema->initialize($importCoreData, $importSampleData);
