@@ -53,7 +53,7 @@ class SettingSystemForm extends CoreForm
 
         $this->addContentFieldSet()
             ->addText('title', 'Site name', null, SettingsModel::getValue('system', 'title', ''))
-            ->addSelect('theme', 'Theme', null, $this->_getThemeOptions(), '@TODO')
+            ->addSelect('theme', 'Theme', null, $this->_getThemeOptions(), $this->getAssets()->getTheme())
             ->addSelect(
                 'default_language',
                 'Default language',
@@ -75,10 +75,8 @@ class SettingSystemForm extends CoreForm
     protected function _getThemeOptions()
     {
         $themes = [];
-        foreach (scandir(PUBLIC_PATH . self::THEMES_DIR) as $entry) {
-            if ($entry == '.' || $entry == '..') {
-                continue;
-            }
+        foreach ($this->getThemes()->getPackages() as $package) {
+            $entry = $package->getName();
             $themes[$entry] = ucfirst($entry);
         }
 

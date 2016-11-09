@@ -52,6 +52,13 @@ class SettingsController extends AbstractBackofficeController
         }
 
         foreach ($form->getValues() as $key => $value) {
+            if ($key == 'theme') {
+                $config = $this->getDI()->getConfig();
+                $config->application->assets->offsetSet('theme', $value);
+                $config->save();
+                continue;
+            }
+
             SettingsModel::setValue('system', $key, $value);
         }
 
