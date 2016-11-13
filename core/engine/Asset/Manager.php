@@ -51,22 +51,35 @@ class Manager extends AssetManager
         /**
          * Assets original path in packages.
          */
-        ASSETS_PACKAGE_PATH = 'Assets' . DS;
+        ASSETS_PACKAGE_PATH = 'Assets' . DS,
+
+        /**
+         * Assets original path in packages.
+         */
+        ASSETS_APPLICATION_PATH = DS . 'application' . DS,
+
+        /**
+         * Assets original path in packages.
+         */
+        ASSETS_COMPILED_PATH = DS . 'compiled' . DS,
+
+        ASSETS_TYPE_CSS = 'css',
+        ASSETS_TYPE_JS = 'js';
 
     const
         /**
          * Javascript default collection name.
          */
-        DEFAULT_COLLECTION_JS = 'js',
+        DEFAULT_COLLECTION_JS = self::ASSETS_TYPE_JS,
 
         /**
          * CSS default collection name.
          */
-        DEFAULT_COLLECTION_CSS = 'css';
+        DEFAULT_COLLECTION_CSS = self::ASSETS_TYPE_CSS;
 
     const
-        DIRECTORY_CSS = 'css',
-        DIRECTORY_JS = 'js',
+        DIRECTORY_CSS = self::ASSETS_TYPE_CSS,
+        DIRECTORY_JS = self::ASSETS_TYPE_JS,
         DIRECTORY_IMG = 'img',
         DIRECTORY_FONTS = 'fonts';
 
@@ -94,6 +107,13 @@ class Manager extends AssetManager
      * @var array
      */
     protected $_inline = [];
+
+    /**
+     * Currently in compilation mode?
+     *
+     * @var bool
+     */
+    protected $_inCompilation = false;
 
     /**
      * Initialize assets manager.
@@ -177,6 +197,8 @@ class Manager extends AssetManager
                 FileUtils::copyRecursive($assetsPath . $directory, $path, true);
             }
         }
+
+        FileUtils::createIfMissing(PUBLIC_PATH . self::ASSETS_PUBLIC_PATH . 'compiled');
     }
 
     /**
@@ -188,18 +210,27 @@ class Manager extends AssetManager
      */
     public function clear($refresh = true)
     {
-        $location = $this->_getLocation();
+        $locations = [
+            $this->_getLocation(),
+            $this->_getLocation(null, self::ASSETS_COMPILED_PATH)
+        ];
 
-        $it = new \RecursiveDirectoryIterator($location, \RecursiveDirectoryIterator::SKIP_DOTS);
-        $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
-        foreach ($files as $file) {
-            if ($file->isDir()) {
-                @rmdir($file->getRealPath());
-            } else {
-                @unlink($file->getRealPath());
+        foreach ($locations as $location) {
+            if (!is_dir($location)) {
+                continue;
             }
+
+            $it = new \RecursiveDirectoryIterator($location, \RecursiveDirectoryIterator::SKIP_DOTS);
+            $files = new \RecursiveIteratorIterator($it, \RecursiveIteratorIterator::CHILD_FIRST);
+            foreach ($files as $file) {
+                if ($file->isDir()) {
+                    @rmdir($file->getRealPath());
+                } else {
+                    @unlink($file->getRealPath());
+                }
+            }
+            @rmdir($location);
         }
-        @rmdir($location);
 
         if ($refresh) {
             $this->installAssets();
@@ -243,27 +274,7 @@ class Manager extends AssetManager
      */
     public function getEmptyJsCollection()
     {
-        $collection = new Collection($this->_di);
-        $collection
-            ->setTargetPath(PUBLIC_PATH . "/assets/compiled.js")
-            ->setTargetUri("assets/compiled.js?_=" . time());
-
-        $remote = $this->_config->application->assets->get('remote');
-        if ($remote) {
-            $collection
-                ->setPrefix($remote)
-                ->setLocal(false);
-        } else {
-            $collection->setLocal(true);
-        }
-
-        if (!$this->_config->application->debug) {
-            $collection
-                ->addFilter(new Jsmin())
-                ->join(true);
-        }
-
-        return $collection;
+        return $this->_getCollectionFor(self::ASSETS_TYPE_JS);
     }
 
     /**
@@ -273,27 +284,7 @@ class Manager extends AssetManager
      */
     public function getEmptyCssCollection()
     {
-        $collection = new Collection($this->_di);
-        $collection
-            ->setTargetPath(PUBLIC_PATH . "/assets/compiled.css")
-            ->setTargetUri("assets/compiled.css?_=" . time());
-
-        $remote = $this->_config->application->assets->get('remote');
-        if ($remote) {
-            $collection
-                ->setPrefix($remote)
-                ->setLocal(false);
-        } else {
-            $collection->setLocal(true);
-        }
-
-        if (!$this->_config->application->debug) {
-            $collection
-                ->addFilter(new Cssmin())
-                ->join(true);
-        }
-
-        return $collection;
+        return $this->_getCollectionFor(self::ASSETS_TYPE_CSS);
     }
 
     /**
@@ -310,20 +301,88 @@ class Manager extends AssetManager
     }
 
     /**
+     * Get empty collection.
+     *
+     * @return Collection
+     */
+    protected function _getEmptyCollection()
+    {
+        $collection = new Collection($this->getDI());
+        $remote = $this->_config->application->assets->get('remote');
+        if ($remote) {
+            $collection
+                ->setPrefix($remote)
+                ->setLocal(false);
+        } else {
+            $collection->setLocal(true);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Get collection for type.
+     *
+     * @param string $type Asset type.
+     *
+     * @return Collection
+     */
+    protected function _getCollectionFor($type)
+    {
+        $collection = $this->_getEmptyCollection();
+        $url = $this->getDI()->getRouter()->getRewriteUri();
+        $hash = md5(ASSETS_VERSION . '_' . $this->getTheme() . '_' . $url);
+
+        $collection
+            ->setTargetPath(PUBLIC_PATH . self::ASSETS_PUBLIC_PATH . "compiled" . DS . "$hash.$type")
+            ->setTargetUri("assets/compiled/$hash.$type?_=" . ASSETS_VERSION);
+
+        if (!$this->_config->application->debug) {
+            $collection
+                ->addFilter($this->_getDefaultFilterFor($type))
+                ->join(true);
+        }
+
+        return $collection;
+    }
+
+    /**
+     * Get default filter for collection of specific type.
+     *
+     * @param string $type Asset type.
+     *
+     * @return null|Cssmin|Jsmin
+     */
+    protected function _getDefaultFilterFor($type)
+    {
+        switch ($type) {
+            case self::ASSETS_TYPE_CSS:
+                return new Cssmin();
+
+            case self::ASSETS_TYPE_JS:
+                return new Jsmin();
+        }
+
+        return null;
+    }
+
+    /**
      * Get location according to params.
      * Without params - just full path to assets directory.
      *
-     * @param null|string $filename Filename append to assets path.
+     * @param null|string $filename  Filename append to assets path.
+     * @param string      $directory Directory in assets.
      *
      * @return string
      */
-    protected function _getLocation($filename = null)
+    protected function _getLocation($filename = null, $directory = self::ASSETS_APPLICATION_PATH)
     {
-        $location = PUBLIC_PATH . '/' . $this->_config->application->assets->get('local');
+        $location = PUBLIC_PATH . DS . 'assets' . $directory;
+
         if (!$filename) {
             return $location;
         }
 
-        return $location . '/' . $filename;
+        return $location . DS . $filename;
     }
 }

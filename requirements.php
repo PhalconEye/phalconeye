@@ -30,7 +30,7 @@ if (php_sapi_name() !== 'cli' && function_exists('apache_get_modules') && !in_ar
 }
 
 $checkPath = array(
-    PUBLIC_PATH . '/' . $this->getConfig()->application->assets->local,
+    PUBLIC_PATH . '/assets',
     $this->getConfig()->application->logger->path,
     $this->getConfig()->application->cache->get('cacheDir') ? $this->getConfig()->application->cache->cacheDir : null,
     $this->getConfig()->application->view->compiledPath,

@@ -1,8 +1,5 @@
-- update composer installer - remove ucfirst.
-- compiled assets strategy.
-
+- fix external modules (blog, theme, etc).
 - run profiler
 - create demo project
-- fix external modules (blog, theme, etc).
 - test everything
 - fix Travis CI

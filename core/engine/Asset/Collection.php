@@ -16,10 +16,11 @@
   +------------------------------------------------------------------------+
 */
 
-namespace engine\Asset;
+namespace Engine\Asset;
 
 use Engine\Behavior\DIBehavior;
 use Phalcon\Assets\Collection as PhalconCollection;
+use Phalcon\DiInterface;
 
 /**
  * Assets collection.
@@ -47,7 +48,7 @@ class Collection extends PhalconCollection
     /**
      * Initialize assets manager.
      *
-     * @param DiInterface $di Dependency injection.
+     * @param DIBehavior|DiInterface $di Dependency injection.
      */
     public function __construct($di)
     {
