@@ -72,6 +72,15 @@ class DatabaseCommand extends AbstractCommand implements CommandInterface
         $schema = new SchemaUpdater($this->getDI(), $this->getConfig()->database->dbname);
         $result = $schema->initialize($importCoreData, $importSampleData);
         $this->_printUpdateData($result);
+
+        // Install assets.
+        print ConsoleUtils::info('================================================================') . PHP_EOL;
+        print ConsoleUtils::info("| Installing assets") . PHP_EOL;
+        print ConsoleUtils::info('================================================================') . PHP_EOL;
+        $this->getAssets()->installAssets();
+        print ConsoleUtils::info('Done!') . PHP_EOL;
+
+        print  PHP_EOL . ConsoleUtils::successLine('Initialization completed') . PHP_EOL;
     }
 
     /**
@@ -98,6 +107,7 @@ class DatabaseCommand extends AbstractCommand implements CommandInterface
         }
 
         $this->_printUpdateData($result);
+        print PHP_EOL . ConsoleUtils::successLine('Update Completed') . PHP_EOL;
     }
 
     /**
