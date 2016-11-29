@@ -255,21 +255,21 @@ class Application extends PhalconApplication
         };
 
         // Clear files cache.
-        if (isset($config->application->cache->cacheDir)) {
-            $deleteFiles(glob($config->application->cache->cacheDir . '*'));
+        if (isset($config->core->cache->cacheDir)) {
+            $deleteFiles(glob($config->core->cache->cacheDir . '*'));
         }
 
         // Clear view cache.
-        $deleteFiles(glob($config->application->view->compiledPath . '*'));
+        $deleteFiles(glob($config->core->view->compiledPath . '*'));
 
         // Clear metadata cache.
-        if ($config->application->metadata && $config->application->metadata->metaDataDir) {
-            $deleteFiles(glob($config->application->metadata->metaDataDir . '*'));
+        if ($config->core->metadata && $config->core->metadata->metaDataDir) {
+            $deleteFiles(glob($config->core->metadata->metaDataDir . '*'));
         }
 
         // Clear annotations cache.
-        if ($config->application->annotations && $config->application->annotations->annotationsDir) {
-            $deleteFiles(glob($config->application->annotations->annotationsDir . '*'));
+        if ($config->core->annotations && $config->core->annotations->annotationsDir) {
+            $deleteFiles(glob($config->core->annotations->annotationsDir . '*'));
         }
 
         // Clear assets.

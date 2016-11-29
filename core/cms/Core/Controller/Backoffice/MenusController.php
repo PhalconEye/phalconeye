@@ -390,7 +390,7 @@ class MenusController extends AbstractBackofficeController
     protected function _clearMenuCache()
     {
         $cache = $this->getDI()->get('cacheOutput');
-        $prefix = $this->config->application->cache->prefix;
+        $prefix = $this->config->core->cache->prefix;
         $widgetKeys = $cache->queryKeys($prefix . WidgetController::CACHE_PREFIX);
         foreach ($widgetKeys as $key) {
             $cache->delete(str_replace($prefix, '', $key));

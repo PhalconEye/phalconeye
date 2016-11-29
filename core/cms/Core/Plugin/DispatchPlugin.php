@@ -49,7 +49,7 @@ class DispatchPlugin extends PhalconPlugin
      */
     public function beforeDispatchLoop(Event $event)
     {
-        if (!$this->getDI()->getConfig()->application->languages->languageInUrl) {
+        if (!$this->getDI()->getConfig()->core->languages->languageInUrl) {
             return true;
         }
 

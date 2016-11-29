@@ -1,6 +1,3 @@
-- separate configs
-- on initialize create configs if missing.
-
 - fix external modules (blog, theme, etc).
 - run profiler
 - create demo project

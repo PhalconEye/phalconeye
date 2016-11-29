@@ -137,8 +137,8 @@ class Manager extends AssetManager
     {
         $location = $this->_getLocation();
         $less = Less::factory();
-        $less->setVariables(['baseUrl' => "'" . $this->_config->application->baseUrl . "'"]);
-        $lessCompileFunction = $this->_config->application->assets->lessCompileAlways ?
+        $less->setVariables(['baseUrl' => "'" . $this->_config->core->baseUrl . "'"]);
+        $lessCompileFunction = $this->_config->core->assets->lessCompileAlways ?
             'compileFile' : 'checkedCompile';
 
 
@@ -308,7 +308,7 @@ class Manager extends AssetManager
     protected function _getEmptyCollection()
     {
         $collection = new Collection($this->getDI());
-        $remote = $this->_config->application->assets->get('remote');
+        $remote = $this->_config->core->assets->get('remote');
         if ($remote) {
             $collection
                 ->setPrefix($remote)

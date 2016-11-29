@@ -438,7 +438,7 @@ class LanguagesController extends AbstractBackofficeController
         // Dump all data from database to files with native php array.
         try {
             $languages = LanguageModel::find();
-            $directory = $this->config->application->languages->cacheDir;
+            $directory = $this->config->core->languages->cacheDir;
 
             foreach ($languages as $language) {
                 $file = $directory . '../languages/' . $language->language . '.php';

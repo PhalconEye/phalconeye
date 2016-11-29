@@ -15,63 +15,17 @@
 */
 
 /**
-* WARNING
-*
-* Manual changes to this file may cause a malfunction of the system.
-* Be careful when changing settings!
-*
-*/
+ * WARNING
+ *
+ * Manual changes to this file may cause a malfunction of the system.
+ * Be careful when changing settings!
+ *
+ * Contains settings that can be changed in runtime.
+ *
+ */
 
-return array (
-  'debug' => false,
-  'profiler' => true,
-  'baseUrl' => '/',
-  'staticUrl' => '/',
-  'cache' =>
-  array (
-    'lifetime' => '86400',
-    'prefix' => 'pe_',
-    'adapter' => 'File',
-    'cacheDir' => ROOT_PATH . '/data/cache/data/',
-  ),
-  'logger' =>
-  array (
-    'enabled' => true,
-    'path' => ROOT_PATH . '/data/logs/',
-    'format' => '[%date%][%type%] %message%',
-  ),
-  'view' =>
-  array (
-    'compiledPath' => ROOT_PATH . '/data/cache/view/',
-    'compiledExtension' => '.php',
-    'compiledSeparator' => '_',
-    'compileAlways' => true,
-  ),
-  'session' =>
-  array (
-    'adapter' => 'Files',
-    'uniqueId' => 'PhalconEye_',
-  ),
-  'assets' =>
-  array (
+return array(
+    'debug' => true,
+    'profiler' => true,
     'theme' => 'Default',
-    'remote' => false,
-    'lifetime' => 0,
-    'lessCompileAlways' => true,
-  ),
-  'metadata' =>
-  array (
-    'adapter' => 'Files',
-    'metaDataDir' => ROOT_PATH . '/data/cache/metadata/',
-  ),
-  'annotations' =>
-  array (
-    'adapter' => 'Files',
-    'annotationsDir' => ROOT_PATH . '/data/cache/annotations/',
-  ),
-  'languages' =>
-  array (
-    'languageInUrl' => false,
-    'cacheDir' => ROOT_PATH . '/data/cache/languages/',
-  ),
 );

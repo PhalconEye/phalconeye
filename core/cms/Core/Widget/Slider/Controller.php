@@ -117,7 +117,7 @@ class Controller extends WidgetController
         ];
 
         // View parameters
-        $this->view->baseUrl   = $config->application->baseUrl;
+        $this->view->baseUrl   = $config->core->baseUrl;
         $this->view->title     = (string) $this->getParam('title');
         $this->view->height    = (int) $this->getParam('height');
         $this->view->slider_id = (int) $this->getParam('content_id');

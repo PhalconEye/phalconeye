@@ -202,7 +202,7 @@ class DatabaseTranslations implements AdapterInterface
         $trace = debug_backtrace();
         $scope = Application::CMS_MODULE_CORE;
         $skipScopes = ['Engine', 'Phalcon', Application::CMS_MODULE_CORE];
-        $viewSeparator = $this->getDI()->getConfig()->application->view->compiledSeparator;
+        $viewSeparator = $this->getDI()->getConfig()->core->view->compiledSeparator;
 
         foreach ($trace as $item) {
             // First try detect by view file.

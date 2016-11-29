@@ -207,7 +207,7 @@ class I18nApi extends AbstractApi
     protected function _setBaseUrl(string $language)
     {
         $config = $this->getDI()->getConfig();
-        if ($config->application->languages->languageInUrl) {
+        if ($config->core->languages->languageInUrl) {
             $this->getUrl()->setBaseUri($config->application->baseUrl . $language . '/');
         }
     }
@@ -222,7 +222,7 @@ class I18nApi extends AbstractApi
     protected function _loadFromFiles(string $language) : NativeArray
     {
         $messages = [];
-        $directory = $this->getConfig()->application->languages->cacheDir;
+        $directory = $this->getConfig()->core->languages->cacheDir;
         $extension = ".php";
         $languageFile = '';
 

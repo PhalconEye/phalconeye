@@ -48,9 +48,9 @@ class PerformanceController extends AbstractBackofficeController
         $form = new SettingPerformanceForm();
         $this->view->form = $form;
 
-        $cacheData = $this->config->application->cache->toArray();
+        $cacheData = $this->config->core->cache->toArray();
 
-        switch ($this->config->application->cache->adapter) {
+        switch ($this->config->core->cache->adapter) {
             case "File":
                 $cacheData['adapter'] = 0;
                 break;
@@ -102,7 +102,7 @@ class PerformanceController extends AbstractBackofficeController
                 break;
         }
 
-        $this->config->application->cache = new Config($cacheData);
+        $this->config->core->cache = new Config($cacheData);
         $this->config->save();
         $this->flash->success('Settings saved!');
     }

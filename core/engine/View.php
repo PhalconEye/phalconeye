@@ -72,10 +72,10 @@ class View extends PhalconView
         $volt = new Volt($view, $di);
         $volt->setOptions(
             [
-                'compiledPath' => $config->application->view->compiledPath,
-                'compiledExtension' => $config->application->view->compiledExtension,
-                'compiledSeparator' => $config->application->view->compiledSeparator,
-                'compileAlways' => $config->application->debug && $config->application->view->compileAlways
+                'compiledPath' => $config->core->view->compiledPath,
+                'compiledExtension' => $config->core->view->compiledExtension,
+                'compiledSeparator' => $config->core->view->compiledSeparator,
+                'compileAlways' => $config->application->debug && $config->core->view->compileAlways
             ]
         );
 

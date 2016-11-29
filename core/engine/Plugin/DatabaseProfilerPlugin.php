@@ -56,7 +56,7 @@ class DatabaseProfilerPlugin extends PhalconPlugin
         }
 
         if ($config->application->debug) {
-            $this->_logger = new File($config->application->logger->path . "db.log");
+            $this->_logger = new File($config->core->logger->path . "db.log");
         }
     }
 

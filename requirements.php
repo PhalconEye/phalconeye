@@ -31,11 +31,11 @@ if (php_sapi_name() !== 'cli' && function_exists('apache_get_modules') && !in_ar
 
 $checkPath = array(
     PUBLIC_PATH . '/assets',
-    $this->getConfig()->application->logger->path,
-    $this->getConfig()->application->cache->get('cacheDir') ? $this->getConfig()->application->cache->cacheDir : null,
-    $this->getConfig()->application->view->compiledPath,
-    $this->getConfig()->application->metadata->metaDataDir,
-    $this->getConfig()->application->annotations->annotationsDir,
+    $this->getConfig()->core->logger->path,
+    $this->getConfig()->core->cache->get('cacheDir') ? $this->getConfig()->core->cache->cacheDir : null,
+    $this->getConfig()->core->view->compiledPath,
+    $this->getConfig()->core->metadata->metaDataDir,
+    $this->getConfig()->core->annotations->annotationsDir,
     ROOT_PATH . '/data/cache/languages/',
     ROOT_PATH . '/data/temp'
 );

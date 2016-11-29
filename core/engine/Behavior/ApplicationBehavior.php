@@ -78,15 +78,15 @@ trait ApplicationBehavior
      */
     protected function _initLogger($di, $config)
     {
-        if ($config->application->logger->enabled) {
+        if ($config->core->logger->enabled) {
             $di->set(
                 'logger',
                 function ($file = 'main', $format = null, $options = null) use ($config) {
                     $logger = new \Engine\Logger(
-                        $config->application->logger->path . APPLICATION_STAGE . '.' . $file . '.log',
+                        $config->core->logger->path . APPLICATION_STAGE . '.' . $file . '.log',
                         $options
                     );
-                    $formatter = new FormatterLine(($format ? $format : $config->application->logger->format));
+                    $formatter = new FormatterLine(($format ? $format : $config->core->logger->format));
                     $logger->setFormatter($formatter);
 
                     return $logger;
@@ -173,8 +173,8 @@ trait ApplicationBehavior
          * application
          */
         $url = new Url();
-        $url->setBaseUri($config->application->baseUrl);
-        $url->setStaticBaseUri($config->application->staticUrl);
+        $url->setBaseUri($config->core->baseUrl);
+        $url->setStaticBaseUri($config->core->staticUrl);
         $di->set('url', $url);
 
         return $url;
@@ -192,7 +192,7 @@ trait ApplicationBehavior
     {
         // Prepare assets manager.
         $assets = new AssetsManager($di);
-        $assets->setTheme($config->application->assets->theme);
+        $assets->setTheme($config->application->theme);
         $di->setShared('assets', $assets);
 
         /**
@@ -282,9 +282,9 @@ trait ApplicationBehavior
         $di->setShared(
             'annotations',
             function () use ($config) {
-                if (!$config->application->debug && isset($config->application->annotations)) {
-                    $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->application->annotations->adapter;
-                    $adapter = new $annotationsAdapter($config->application->annotations->toArray());
+                if (!$config->application->debug && isset($config->core->annotations)) {
+                    $annotationsAdapter = '\Phalcon\Annotations\Adapter\\' . $config->core->annotations->adapter;
+                    $adapter = new $annotationsAdapter($config->core->annotations->toArray());
                 } else {
                     $adapter = new AnnotationsMemory();
                 }
@@ -407,10 +407,10 @@ trait ApplicationBehavior
         $di->setShared(
             'modelsMetadata',
             function () use ($config) {
-                if (!$config->application->debug && isset($config->application->metadata)) {
-                    $metaDataConfig = $config->application->metadata;
+                if (!$config->application->debug && isset($config->core->metadata)) {
+                    $metaDataConfig = $config->core->metadata;
                     $metadataAdapter = '\Phalcon\Mvc\Model\Metadata\\' . $metaDataConfig->adapter;
-                    $metaData = new $metadataAdapter($config->application->metadata->toArray());
+                    $metaData = new $metadataAdapter($config->core->metadata->toArray());
                 } else {
                     $metaData = new \Phalcon\Mvc\Model\MetaData\Memory();
                 }
@@ -434,11 +434,11 @@ trait ApplicationBehavior
      */
     protected function _initSession($di, $config)
     {
-        if (!isset($config->application->session)) {
+        if (!isset($config->core->session)) {
             $session = new SessionFiles();
         } else {
-            $adapterClass = 'Phalcon\Session\Adapter\\' . $config->application->session->adapter;
-            $session = new $adapterClass($config->application->session->toArray());
+            $adapterClass = 'Phalcon\Session\Adapter\\' . $config->core->session->adapter;
+            $session = new $adapterClass($config->core->session->toArray());
         }
 
         $session->start();
@@ -458,9 +458,9 @@ trait ApplicationBehavior
     {
         if (!$config->application->debug) {
             // Get the parameters.
-            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->application->cache->adapter;
-            $frontEndOptions = ['lifetime' => $config->application->cache->lifetime];
-            $backEndOptions = $config->application->cache->toArray();
+            $cacheAdapter = '\Phalcon\Cache\Backend\\' . $config->core->cache->adapter;
+            $frontEndOptions = ['lifetime' => $config->core->cache->lifetime];
+            $backEndOptions = $config->core->cache->toArray();
             $frontOutputCache = new CacheOutput($frontEndOptions);
             $frontDataCache = new CacheData($frontEndOptions);
             $cacheOutputAdapter = new $cacheAdapter($frontOutputCache, $backEndOptions);
