@@ -21,10 +21,11 @@ namespace Core;
 use Core\Model\LanguageModel;
 use Core\Model\LanguageTranslationModel;
 use Core\Model\SettingsModel;
+use Core\Plugin\DispatchPlugin;
 use Engine\AbstractBootstrap;
 use Engine\Behavior\DIBehavior;
 use Engine\Config;
-use Engine\Translation\Db as TranslationDb;
+use Engine\Translation\DatabaseTranslations as TranslationDb;
 use Phalcon\DI;
 use Phalcon\Events\Manager;
 use Phalcon\Translate\Adapter\NativeArray as TranslateArray;
@@ -75,9 +76,9 @@ class Bootstrap extends AbstractBootstrap
             return;
         }
 
-        $config = $this->getConfig();
-
-        $this->_initI18n($di, $config);
+        // Initialize i18n.
+        $coreApi = $di->get('Core');
+        $coreApi->i18n()->init();
 
         // Remove profiler for non-user.
         if (!UserModel::getViewer()->id) {
@@ -87,95 +88,15 @@ class Bootstrap extends AbstractBootstrap
         /**
          * Listening to events in the dispatcher using the Acl.
          */
-        $this->getEventsManager()->attach('dispatch', $di->get('Core')->acl());
+        $eventsManager = $this->getEventsManager();
+        $eventsManager->attach('dispatch', $coreApi->acl());
+        $eventsManager->attach("dispatch:beforeDispatchLoop", new DispatchPlugin());
 
         /**
          * Install assets if required.
          */
-        if ($config->application->debug) {
+        if ($this->getConfig()->application->debug) {
             $di->getAssets()->installAssets();
         }
-    }
-
-    /**
-     * Init locale.
-     *
-     * @param DIBehavior|DI $di     Dependency injection.
-     * @param Config        $config Dependency injection.
-     *
-     * @return void
-     */
-    protected function _initI18n($di, $config)
-    {
-        if ($di->getApp()->isConsole()) {
-            return;
-        }
-
-        $languageObject = null;
-        if (!$di->getSession()->has('language')) {
-            /** @var LanguageModel $languageObject */
-            $language = SettingsModel::getValue('system', 'default_language');
-            if ($language == 'auto') {
-                $locale = \Locale::acceptFromHttp($_SERVER["HTTP_ACCEPT_LANGUAGE"]);
-                $languageObject = LanguageModel::findFirst(
-                    "language = '" . $locale . "' OR locale = '" . $locale . "'"
-                );
-            } else {
-                $languageObject = LanguageModel::findFirst("language = '" . $language . "'");
-            }
-
-            if ($languageObject) {
-                $di->getSession()->set('language', $languageObject->language);
-                $di->getSession()->set('locale', $languageObject->locale);
-            } else {
-                $di->getSession()->set('language', Config::CONFIG_DEFAULT_LANGUAGE);
-                $di->getSession()->set('locale', Config::CONFIG_DEFAULT_LOCALE);
-            }
-        }
-
-        $language = $di->getSession()->get('language');
-        $translate = null;
-
-        if (!$config->application->debug) {
-            $messages = [];
-            $directory = $config->application->languages->cacheDir;
-            $extension = ".php";
-
-            if (file_exists($directory . $language . $extension)) {
-                require $directory . $language . $extension;
-            } else {
-                if (file_exists($directory . Config::CONFIG_DEFAULT_LANGUAGE . $extension)) {
-                    // fallback to default
-                    require $directory . Config::CONFIG_DEFAULT_LANGUAGE . $extension;
-                }
-            }
-
-            $translate = new TranslateArray(
-                [
-                    "content" => $messages
-                ]
-            );
-        } else {
-            if (!$languageObject) {
-                $languageObject = LanguageModel::findFirst(
-                    [
-                        'conditions' => 'language = :language:',
-                        'bind' => (
-                        [
-                            "language" => $language
-                        ]
-                        )
-                    ]
-                );
-
-                if (!$languageObject) {
-                    $languageObject = LanguageModel::findFirst("language = '" . Config::CONFIG_DEFAULT_LANGUAGE . "'");
-                }
-            }
-
-            $translate = new TranslationDb($di, $languageObject->getId(), new LanguageTranslationModel());
-        }
-
-        $di->set('i18n', $translate);
     }
 }

@@ -21,7 +21,7 @@
     <title>{% block title %}{% endblock %}</title>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon" />
+    <link href="{{ static_url('favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
 
     {{ assets.outputCss() }}
     {{ assets.outputInline(assets.collection('inlineCss'), 'css') }}
@@ -36,12 +36,13 @@
 
 </head>
 
-<body data-base-url="{{ url() }}" data-debug="{{ config.application.debug }}">
+<body data-base-url="{{ config.application.baseUrl }}" data-static-url="{{ config.application.staticUrl }}"
+      data-debug="{{ config.application.debug }}">
 
 <div class="navbar navbar_panel">
     <div class="navbar-inner">
         <a class="brand" href="{{ url("backoffice") }}">
-            <img alt="Phalcon Eye" src="{{ url('assets/application/img/module/Core/pe_logo_white.png') }}"/>
+            <img alt="Phalcon Eye" src="{{ static_url('assets/application/img/module/Core/pe_logo_white.png') }}"/>
         </a>
 
         <div class="nav-collapse">

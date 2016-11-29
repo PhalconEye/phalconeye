@@ -18,6 +18,7 @@
 
 namespace Core\Widget\HtmlBlock;
 
+use Core\Api\I18nApi;
 use Core\Form\CoreForm;
 use Core\Model\LanguageModel;
 use Core\Model\SettingsModel;
@@ -43,13 +44,10 @@ class Controller extends WidgetController
      */
     public function indexAction()
     {
-        $this->view->title = $this->getParam('title');
-        $currentLanguage = $this->session->get('language');
-        $defaultLanguage = SettingsModel::getValue('system', 'default_language');
-
-        if (!$defaultLanguage || $defaultLanguage == 'auto') {
-            $defaultLanguage = Config::CONFIG_DEFAULT_LANGUAGE;
-        }
+        /** @var I18nApi $i18nApi */
+        $i18nApi = $this->getDI()->get('Core')->i18n();
+        $currentLanguage = $i18nApi->getLanguage();
+        $defaultLanguage = $i18nApi->getDefaultLanguage();
 
         $html = $this->getParam('html_' . $currentLanguage);
         if (empty($html)) {
@@ -60,6 +58,7 @@ class Controller extends WidgetController
             }
         }
 
+        $this->view->title = $this->getParam('title');
         $this->view->html = $html;
     }
 

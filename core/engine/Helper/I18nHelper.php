@@ -22,7 +22,7 @@ namespace Engine\Helper;
  * Javascript translator helper.
  *
  * @category  PhalconEye
- * @package   Core\Helper
+ * @package   Engine\Helper
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

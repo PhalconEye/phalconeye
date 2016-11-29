@@ -22,6 +22,7 @@ use Core\Grid\CoreGrid;
 use Core\Model\PageModel;
 use Engine\Grid\GridItem;
 use Phalcon\Db\Column;
+use Phalcon\Di;
 use Phalcon\Mvc\Model\Query\Builder;
 
 /**
@@ -92,8 +93,8 @@ class PageGrid extends CoreGrid
                 [
                     self::COLUMN_PARAM_FILTER => false,
                     self::COLUMN_PARAM_OUTPUT_LOGIC =>
-                        function (GridItem $item, $di) {
-                            $url = $di->get('url')->get($item->getObject()->getLayoutIcon());
+                        function (GridItem $item, Di $di) {
+                            $url = $di->getUrl()->getStatic($item->getObject()->getLayoutIcon());
                             return sprintf('<img alt="" src="%s"/>', $url);
                         }
                 ]

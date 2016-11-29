@@ -26,6 +26,7 @@ return array (
     'debug' => false,
     'profiler' => false,
     'baseUrl' => '/',
+    'staticUrl' => '/',
     'cache' =>
         array (
             'lifetime' => '86400',
@@ -70,6 +71,7 @@ return array (
         ),
     'languages' =>
         array(
+            'languageInUrl' => false,
             'cacheDir' => ROOT_PATH . '/data/cache/languages/',
         ),
 );

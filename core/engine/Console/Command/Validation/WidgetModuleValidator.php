@@ -28,7 +28,7 @@ use Phalcon\Validation\Validator;
  * Module existence validation for widget in module.
  *
  * @category  PhalconEye
- * @package   Core\Commands\Validation
+ * @package   Engine\Console\Command\Validation
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

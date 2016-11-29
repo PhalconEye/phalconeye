@@ -18,6 +18,7 @@
 
 namespace Core\Controller;
 
+use Core\Api\I18nApi;
 use Core\Model\LanguageModel;
 
 /**
@@ -55,9 +56,8 @@ class IndexController extends AbstractController
     protected function _checkLanguage()
     {
         $language = preg_replace("/[^A-Za-z0-9?!]/", '', $this->request->get('lang', 'string'));
-        if ($language && $languageObject = LanguageModel::findFirst("language = '" . $language . "'")) {
-            $this->di->get('session')->set('language', $languageObject->language);
-            $this->di->get('session')->set('locale', $languageObject->locale);
+        if (!empty($language)) {
+            $this->getDI()->get('Core')->i18n()->setLanguage($language);
         }
     }
 }

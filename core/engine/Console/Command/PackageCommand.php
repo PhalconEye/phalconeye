@@ -32,7 +32,7 @@ use Phalcon\Validation\Validator\StringLength;
  * Package command.
  *
  * @category  PhalconEye
- * @package   Core\Commands
+ * @package   Engine\Console\Command
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

@@ -36,7 +36,7 @@ use Phalcon\Mvc\User\Plugin as PhalconPlugin;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class DispatchErrorHandler extends PhalconPlugin
+class DispatchErrorPlugin extends PhalconPlugin
 {
     /**
      * Before exception is happening.

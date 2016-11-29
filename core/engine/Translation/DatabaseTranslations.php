@@ -12,7 +12,7 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   +------------------------------------------------------------------------+
 */
 
@@ -39,7 +39,7 @@ use Phalcon\Translate\translateKey;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class Db implements AdapterInterface
+class DatabaseTranslations implements AdapterInterface
 {
     use DIBehavior {
         DIBehavior::__construct as protected __DIConstruct;

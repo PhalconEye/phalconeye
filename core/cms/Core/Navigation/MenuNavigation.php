@@ -118,7 +118,12 @@ class MenuNavigation extends CoreNavigation
 
                 $navItem->setOption(
                     ($item->icon_position == MenuItemModel::ITEM_ICON_POSITION_LEFT ? 'prepend' : 'append'),
-                    sprintf(static::ITEM_ICON_TEMPLATE, $item->icon_position, $item->title, $url->get($item->icon))
+                    sprintf(
+                        static::ITEM_ICON_TEMPLATE,
+                        $item->icon_position,
+                        $item->title,
+                        $url->getStatic($item->icon)
+                    )
                 );
             }
 

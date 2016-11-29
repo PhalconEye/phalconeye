@@ -62,10 +62,11 @@
     PhalconEye.ns = ns;
     PhalconEye.debug = body.data('debug');
     PhalconEye.baseUrl = body.data('baseUrl');
-    PhalconEye.url = function (path) {
-        return PhalconEye.baseUrl + path;
+    PhalconEye.staticUrl = body.data('staticUrl');
+    PhalconEye.url = function (path, isStatic) {
+        return (isStatic ? PhalconEye.staticUrl : PhalconEye.baseUrl) + path;
     };
-    CKEDITOR_BASEPATH = PhalconEye.url('assets/libs/ckeditor/');
+    CKEDITOR_BASEPATH = PhalconEye.url('assets/libs/ckeditor/', true);
 
     //////////////////////////
     // Public methods.

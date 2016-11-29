@@ -174,6 +174,7 @@ trait ApplicationBehavior
          */
         $url = new Url();
         $url->setBaseUri($config->application->baseUrl);
+        $url->setStaticBaseUri($config->application->staticUrl);
         $di->set('url', $url);
 
         return $url;

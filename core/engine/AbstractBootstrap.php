@@ -21,7 +21,7 @@ namespace Engine;
 use Engine\Behavior\DIBehavior;
 use Engine\Package\PackageData;
 use Engine\Plugin\CacheAnnotation;
-use Engine\Plugin\DispatchErrorHandler;
+use Engine\Plugin\DispatchErrorPlugin;
 use Phalcon\Config as PhalconConfig;
 use Phalcon\DiInterface;
 use Phalcon\Events\Manager;
@@ -96,7 +96,7 @@ abstract class AbstractBootstrap implements BootstrapInterface
         /*************************************************/
         //  Initialize dispatcher.
         /*************************************************/
-        $eventsManager->attach("dispatch:beforeException", new DispatchErrorHandler());
+        $eventsManager->attach("dispatch:beforeException", new DispatchErrorPlugin());
         if (!$config->application->debug) {
             $eventsManager->attach('dispatch:beforeExecuteRoute', new CacheAnnotation());
         }

@@ -44,7 +44,7 @@ class AuthApi extends AbstractApi
     public function __construct(DiInterface $di, $arguments)
     {
         parent::__construct($di, $arguments);
-        $this->_identity = $this->getDI()->get('session')->get('identity', 0);
+        $this->_identity = $this->getSession()->get('identity', 0);
     }
 
     /**
@@ -57,7 +57,7 @@ class AuthApi extends AbstractApi
     public function authenticate($identity)
     {
         $this->_identity = $identity;
-        $this->getDI()->get('session')->set('identity', $identity);
+        $this->getSession()->set('identity', $identity);
     }
 
     /**
@@ -68,7 +68,7 @@ class AuthApi extends AbstractApi
     public function clearAuth()
     {
         $this->_identity = 0;
-        $this->getDI()->get('session')->set('identity', 0);
+        $this->getSession()->set('identity', 0);
     }
 
     /**

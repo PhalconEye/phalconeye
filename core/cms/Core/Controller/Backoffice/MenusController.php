@@ -216,9 +216,14 @@ class MenusController extends AbstractBackofficeController
 
         // Clear url type.
         if ($form->getValue('url_type') == 0) {
-            $item->pageId = null;
+            $item->page_id = null;
         } else {
             $item->url = null;
+        }
+
+        if ($item->page_id != null) {
+            $page = PageModel::findFirst($item->page_id);
+            $item->page_url = $page->url;
         }
 
         // Set proper order.
@@ -281,9 +286,14 @@ class MenusController extends AbstractBackofficeController
 
         // Clear url type.
         if ($form->getValue('url_type') == 0) {
-            $item->pageId = null;
+            $item->page_id = null;
         } else {
             $item->url = null;
+        }
+
+        if ($item->page_id != null) {
+            $page = PageModel::findFirst($item->page_id);
+            $item->page_url = $page->url;
         }
 
         $item->save();

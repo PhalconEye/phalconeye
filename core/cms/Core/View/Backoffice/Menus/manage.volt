@@ -50,7 +50,7 @@
     <div class="span12">
         <div class="menu_manage_header">
             <h3>
-                <a href="{{ url("admin/menus") }}">{{ "Menus" |i18n }}</a> >
+                <a href="{{ url(['for':'backoffice-menus']) }}">{{ "Menus" |i18n }}</a> >
                 {% if parent is defined %}
                     {% for p in parents %}
                         <a href="{{ url(['for':'backoffice-menus-manage']) }}{{ menu.id }}{% if p.parent_id is not null %}?parent_id={{ p.parent_id }}{% endif %}"

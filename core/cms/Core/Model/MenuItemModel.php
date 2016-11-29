@@ -123,6 +123,11 @@ class MenuItemModel extends AbstractModel
     public $page_id = null;
 
     /**
+     * @Column(type="string", nullable=true, column="page_url", size="100")
+     */
+    public $page_url = null;
+
+    /**
      * @Column(type="string", nullable=true, column="url", size="255")
      */
     public $url = null;
@@ -277,8 +282,8 @@ class MenuItemModel extends AbstractModel
      */
     public function getHref()
     {
-        if ($this->page_id) {
-            return "page/{$this->page_id}";
+        if ($this->page_url) {
+            return $this->getDI()->getUrl()->get(['for' => 'page', 'url' => $this->page_url]);
         }
 
         if ($this->url) {
@@ -307,8 +312,8 @@ class MenuItemModel extends AbstractModel
             return false;
         }
 
-        $valid = true;
-        $language = $this->getDI()->get('session')->get('language', 'en');
+        $valid = true;;
+        $language = $this->getDI()->get('Core')->i18n()->getLanguage();
         $languages = $this->getLanguages();
 
         if (!empty($languages)) {

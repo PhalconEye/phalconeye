@@ -95,7 +95,7 @@ class Controller extends WidgetController
             $key .= RoleModel::getRoleByType(AclApi::DEFAULT_ROLE_GUEST)->type;
         }
 
-        $key .= '_' . $this->getDI()->getSession()->get('language');
+        $key .= '_' . $this->getDI()->get('Core')->i18n()->getLanguage();
 
         return $key;
     }

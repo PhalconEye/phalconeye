@@ -85,7 +85,7 @@ class MenuItemCreateForm extends CoreForm
                 null,
                 [],
                 [
-                    'data-link' => $this->getDI()->getUrl()->get('admin/pages/suggest'),
+                    'data-link' => $this->getDI()->getUrl()->get(['for' => 'backoffice-pages-suggest']),
                     'data-target' => '#page_id',
                     'data-widget' => 'autocomplete',
                     'autocomplete' => 'off'

@@ -23,7 +23,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="generator" content="PhalconEye - Open Source Content Management System">
-    <link href="favicon.ico" rel="shortcut icon" type="image/x-icon"/>
+    <link href="{{ static_url('favicon.ico') }}" rel="shortcut icon" type="image/x-icon"/>
 
     {{ assets.outputCss() }}
     {{ assets.outputInline(assets.collection('inlineCss'), 'css') }}
@@ -37,7 +37,8 @@
     {%- endblock -%}
 
 </head>
-<body data-base-url="{{ config.application.baseUrl }}" data-debug="{{ config.application.debug }}">
+<body data-base-url="{{ config.application.baseUrl }}" data-static-url="{{ config.application.staticUrl }}"
+      data-debug="{{ config.application.debug }}">
 <div id="wrapper">
 
     <header>

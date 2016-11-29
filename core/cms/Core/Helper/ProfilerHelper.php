@@ -277,7 +277,7 @@ class ProfilerHelper extends AbstractHelper
         $html .= $this->_viewRenderElement('Controller', ucfirst($router->getControllerName()));
         $html .= $this->_viewRenderElement('Action', ucfirst($router->getActionName()));
         if ($router->getMatchedRoute()) {
-            $html .= $this->_viewRenderElement('Matched Route', ucfirst($router->getMatchedRoute()->getName()));
+            $html .= $this->_viewRenderElement('Matched Route', $router->getMatchedRoute()->getName());
         }
 
         return $html;

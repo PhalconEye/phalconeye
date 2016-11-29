@@ -24,7 +24,7 @@ use Engine\Helper\I18nHelper;
  * Js translations.
  *
  * @category  PhalconEye
- * @package   Core\Controller\Traits
+ * @package   Engine\Behavior
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License

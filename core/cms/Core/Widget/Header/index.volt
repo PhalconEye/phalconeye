@@ -24,7 +24,7 @@
         <div class="header_logo">
             <a href="{{ url() }}">
                 {% if not(logo is empty) %}
-                <img alt='{{ site_title }}' src="{{ url(logo) }}"/>
+                <img alt='{{ site_title }}' src="{{ static_url(logo) }}"/>
                 {% endif %}
                 {% if show_title is 1 %}
                 <h1>{{ site_title }}</h1>

@@ -394,11 +394,6 @@ class LanguagesController extends AbstractBackofficeController
         $form = new LanguageItemEditForm($item);
         $this->view->form = $form;
 
-        $data = [
-            'language_id' => $this->request->get('language_id'),
-        ];
-
-        $form->setValues($data);
         if (!$this->request->isPost() || !$form->isValid()) {
             return;
         }

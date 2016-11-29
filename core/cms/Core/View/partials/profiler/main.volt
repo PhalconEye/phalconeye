@@ -24,7 +24,7 @@
 {{ partial("Core/View/partials/profiler/window", ['name':'errors', 'title':'Errors', 'content':htmlErrors]) }}
 
 <div class="profiler">
-    <div data-window="config" class="item"><img alt="Phalcon Eye Profiler" src="{{ url('favicon.ico') }}"/></div>
+    <div data-window="config" class="item"><img alt="Phalcon Eye Profiler" src="{{ static_url('favicon.ico') }}"/></div>
     <div data-window="router" class="item">{{ handlerValues['router'] }}</div>
     <div data-window="memory" class="item item-right item-memory {{ handlerValues['memory']['class'] }}">{{ handlerValues['memory']['value'] }}
         kb

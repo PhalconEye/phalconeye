@@ -18,9 +18,7 @@
 
 namespace Core\Form\Backoffice\Language;
 
-use Engine\Db\AbstractModel;
-use Engine\Form\Behavior\FieldSetBehavior;
-use Engine\Form\Form;
+use Core\Model\LanguageTranslationModel;
 
 /**
  * Edit language item.
@@ -37,11 +35,12 @@ class LanguageItemEditForm extends LanguageItemCreateForm
     /**
      * Create form.
      *
-     * @param AbstractModel $entity Entity object.
+     * @param LanguageTranslationModel $entity Entity object.
      */
-    public function __construct(AbstractModel $entity = null)
+    public function __construct(LanguageTranslationModel $entity = null)
     {
         parent::__construct($entity);
         $this->setValue('checked', 1);
+        $this->setValue('language_id', $entity->getLanguage()->getId());
     }
 }
