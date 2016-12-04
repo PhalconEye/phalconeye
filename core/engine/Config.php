@@ -12,8 +12,9 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   | Author: Piotr Gasiorowski <piotr.gasiorowski@vipserv.org>              |
+  | Author: Serghei Iakovlev <serghei@phalconphp.com>                      |
   +------------------------------------------------------------------------+
 */
 
@@ -27,6 +28,7 @@ use Phalcon\Config as PhalconConfig;
  * @category  PhalconEye
  * @package   Engine
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
+ * @author    Serghei Iakovlev <serghei@phalconphp.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
@@ -100,22 +102,18 @@ class Config extends PhalconConfig
      *
      * @return Config
      */
-    public static function factory($stage = null)
+    public static function factory($stage = APPLICATION_STAGE)
     {
-        if (!$stage) {
-            $stage = APPLICATION_STAGE;
+        if ($stage == APPLICATION_STAGE_DEVELOPMENT) {
+            return self::_getConfiguration($stage);
         }
 
-        if ($stage == APPLICATION_STAGE_DEVELOPMENT) {
-            $config = self::_getConfiguration($stage);
-        } else {
-            if (file_exists(self::CONFIG_CACHE_PATH)) {
-                $config = new Config(include_once(self::CONFIG_CACHE_PATH), $stage);
-            } else {
-                $config = self::_getConfiguration($stage);
-                $config->refreshCache();
-            }
+        if (file_exists(self::CONFIG_CACHE_PATH)) {
+            return new Config(include_once(self::CONFIG_CACHE_PATH), $stage);
         }
+
+        $config = self::_getConfiguration($stage);
+        $config->refreshCache();
 
         return $config;
     }
