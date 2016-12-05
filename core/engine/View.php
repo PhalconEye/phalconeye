@@ -39,14 +39,21 @@ use Phalcon\Mvc\View\Engine\Volt;
  */
 class View extends PhalconView
 {
+    const
+        PATH_VIEW = 'View',
+        PATH_WIDGET = 'Widget',
+        PATH_BACKOFFICE = 'Backoffice',
+        PATH_THEME_VIEWS = 'views';
+
     use ViewBehavior;
 
     /**
-     * Last picked view was final?
+     * View must be searched in current module?
+     * Null -- search everywhere.
      *
-     * @var bool
+     * @var null
      */
-    protected $_finalView = false;
+    protected $_currentModule = null;
 
     /**
      * Current view that is rendering.
@@ -54,6 +61,13 @@ class View extends PhalconView
      * @var string|null
      */
     protected $_currentView = null;
+
+    /**
+     * Flag will be true if view was manually picked.
+     *
+     * @var bool
+     */
+    protected $_viewPicked = false;
 
     /**
      * Create view instance.
@@ -82,7 +96,7 @@ class View extends PhalconView
         $compiler = $volt->getCompiler();
         $compiler->addExtension(new Extension());
         $view
-            ->restoreViewDir()
+            ->restoreViewDirectories()
             ->registerEngines([".volt" => $volt])
             ->setRenderLevel(View::LEVEL_ACTION_VIEW);
 
@@ -109,41 +123,22 @@ class View extends PhalconView
         parent::_engineRender($engines, $viewPath, $silence, $mustClean, $cache);
     }
 
-
     /**
      * Pick view to render.
      *
-     * @param array|string $renderView View to render.
-     * @param string|null  $module     Specify module.
-     * @param bool|null    $finalView  This view will be final in pick process.
+     * @param array|string $renderView  View to render.
+     * @param string|null  $module      Specify module.
+     * @param bool         $resolveView Resolve this view to module?
      *
      * @return $this
      */
-    public function pick($renderView, $module = null, $finalView = null)
+    public function pick($renderView, $module = null, $resolveView = true)
     {
-        if ($finalView !== null) {
-            $this->_finalView = $finalView;
+        $this->_viewPicked = true;
+        if ($resolveView) {
+            $renderView = $this->resolveView($renderView, $module != null ? $module : $this->getCurrentModule());
         }
-
-        parent::pick($this->resolveView($renderView, $module));
-    }
-
-    /**
-     * Restore basic view directory.
-     *
-     * @return $this
-     */
-    public function restoreViewDir()
-    {
-        $registry = $this->getDI()->getRegistry();
-        $theme = $this->getDI()->getAssets()->getTheme();
-        return $this->setViewsDir(
-            [
-                $registry->directories->themes . $theme . DS . 'views',
-                $registry->directories->modules,
-                $registry->directories->cms
-            ]
-        );
+        parent::pick($renderView);
     }
 
     /**
@@ -156,7 +151,7 @@ class View extends PhalconView
      */
     public function pickDefaultView()
     {
-        if ($this->_finalView) {
+        if ($this->_viewPicked) {
             return $this;
         }
 
@@ -167,6 +162,44 @@ class View extends PhalconView
             $dispatcher->getControllerName() . '/' . $dispatcher->getActionName(),
             $router->getModuleName()
         );
+    }
+
+    /**
+     * Restore basic view directories.
+     *
+     * @return \Phalcon\Mvc\View|View
+     */
+    public function restoreViewDirectories()
+    {
+        $registry = $this->getDI()->getRegistry();
+        $theme = $this->getDI()->getAssets()->getTheme();
+        return $this->setViewsDir(
+            [
+                $registry->directories->themes . $theme . DS . self::PATH_THEME_VIEWS,
+                $registry->directories->modules,
+                $registry->directories->cms
+            ]
+        );
+    }
+
+    /**
+     * Set current module.
+     *
+     * @param string $currentModule Current module name.
+     */
+    public function setCurrentModule($currentModule)
+    {
+        $this->_currentModule = $currentModule;
+    }
+
+    /**
+     * Get current module.
+     *
+     * @return string
+     */
+    public function getCurrentModule()
+    {
+        return $this->_currentModule;
     }
 
     /**

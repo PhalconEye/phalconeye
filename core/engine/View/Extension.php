@@ -65,21 +65,6 @@ class Extension extends DI\Injectable
                 $resolvedArgs = explode(',', $arguments);
                 $resolvedArgs[1] = trim(str_replace(["'", '"'], ['', ''], $resolvedArgs[1]));
                 return $resolvedArgs[0] . ' instanceof ' . $resolvedArgs[1];
-
-            case 'resolveView':
-
-                if (isset($params[1])) {
-                    $value = $this->resolveView($params[0]['expr']['value'], $params[1]['expr']['value']);
-                } else {
-                    $value = $this->resolveView(
-                        $params[0]['expr']['value'],
-                        $this->getDI()->getRouter()->getModuleName()
-                    );
-                }
-                return "'" . $value . "'";
-
-                $arguments = str_replace($params[0]['expr']['value'], $value, $arguments);
-                return '$this->partial(' . $arguments . ')';
         }
     }
 

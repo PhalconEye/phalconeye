@@ -21,10 +21,10 @@ namespace Core\Controller;
 
 use Core\Helper\RendererHelper;
 use Core\Model\PageModel;
+use Engine\Application;
 use Engine\Asset\Manager as AssetManager;
 use Engine\Behavior\DIBehavior;
 use Engine\Behavior\JsTranslationBehavior;
-use Phalcon\Db\Column;
 use Phalcon\DI;
 use Phalcon\Mvc\Controller as PhalconController;
 
@@ -99,78 +99,6 @@ abstract class AbstractController extends PhalconController
         if ($this->di->has('profiler')) {
             $this->profiler->stop(get_called_class(), 'controller');
         }
-
-        $this->view->pickDefaultView();
-    }
-
-    /**
-     * Render some content from database layout.
-     *
-     * @param null|string $url        Url definition of page.
-     * @param null|string $controller Related controller name.
-     * @param null|string $type       Page type.
-     *
-     * @return mixed
-     */
-    public function renderContent($url = null, $controller = null, $type = null)
-    {
-        $page = null;
-        if ($url !== null) {
-            $page = PageModel::find(
-                [
-                    'conditions' => 'url=:url1: OR url=:url2: OR id = :url3:',
-                    'bind' => ["url1" => $url, "url2" => '/' . $url, "url3" => $url],
-                    'bindTypes' => [
-                        "url1" => Column::BIND_PARAM_STR,
-                        "url2" => Column::BIND_PARAM_STR,
-                        "url3" => Column::BIND_PARAM_INT
-                    ]
-                ]
-            )->getFirst();
-
-        } elseif ($controller !== null) {
-            $page = PageModel::find(
-                [
-                    'conditions' => 'controller=:controller:',
-                    'bind' => ["controller" => $controller],
-                    'bindTypes' => ["controller" => Column::BIND_PARAM_STR]
-                ]
-            )->getFirst();
-        } elseif ($type !== null) {
-            $page = PageModel::find(
-                [
-                    'conditions' => 'type=:type:',
-                    'bind' => ["type" => $type],
-                    'bindTypes' => ["type" => Column::BIND_PARAM_STR]
-                ]
-            )->getFirst();
-        }
-
-
-        if (!$page || !$page->isAllowed()) {
-            $this->dispatcher->forward(
-                [
-                    'controller' => 'Error',
-                    'action' => 'show404'
-                ]
-            );
-
-            return;
-        }
-
-        // Resort content by sides.
-        $content = [];
-        $renderer = RendererHelper::getInstance($this->getDI());
-        foreach ($page->getWidgets() as $widget) {
-            $content[$widget->layout][] = $renderer->renderWidgetId($widget->widget_code, $widget->getParams());
-        }
-
-        $this->renderParts($renderer);
-
-        $this->view->content = $content;
-        $this->view->page = $page;
-
-        $this->view->pick('layouts/page', 'Core', true);
     }
 
     /**
@@ -212,7 +140,7 @@ abstract class AbstractController extends PhalconController
         $this->view->setIsBackoffice(false);
         $this->view->setVars($params, false);
         $this->view->hideSave = true;
-        $this->view->pick('partials/modal', 'Core', true);
+        $this->view->pick('partials/modal', Application::CMS_MODULE_CORE);
     }
 
     /**
@@ -296,7 +224,7 @@ abstract class AbstractController extends PhalconController
         }
 
         return $renderer->renderContent(
-            PageModel::PAGE_TYPE_HEADER, $this->view->resolveView("partials/layout", 'Core')
+            PageModel::PAGE_TYPE_HEADER, 'layouts/page/' . PageModel::LAYOUT_MIDDLE, Application::CMS_MODULE_CORE
         );
     }
 
@@ -318,7 +246,7 @@ abstract class AbstractController extends PhalconController
         }
 
         return $renderer->renderContent(
-            PageModel::PAGE_TYPE_FOOTER, $this->view->resolveView("partials/layout", 'Core')
+            PageModel::PAGE_TYPE_FOOTER, 'layouts/page/' . PageModel::LAYOUT_MIDDLE, Application::CMS_MODULE_CORE
         );
     }
 }

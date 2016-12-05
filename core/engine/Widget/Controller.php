@@ -121,7 +121,7 @@ class Controller extends PhalconController
         $this->dispatcher = $this->di->get('dispatcher');
         $this->cacheData = $this->di->get('cacheData');
 
-        if ($this->_widgetName !== null) {
+        if ($action !== null && $this->_widgetName !== null) {
             /** @var \Engine\View $view */
             $this->view = $view = $this->di->get('view');
             $view
@@ -133,12 +133,13 @@ class Controller extends PhalconController
             $viewPath = null;
             if ($this->_widgetModule !== null) {
                 // Widget from module.
-                $viewPath = $this->_widgetModule . '/Widget/' . $this->_widgetName . '/' . $action;
+                $viewPath = $this->_widgetModule . DS . \Engine\View::PATH_WIDGET . DS . $this->_widgetName . DS .
+                    $action;
             } else {
                 // External widget.
-                $viewPath = '../widgets/' . $this->_widgetName . '/' . $action;
+                $viewPath = $this->getDI()->getRegistry()->directories->widgets . $this->_widgetName . DS . $action;
             }
-            $view->pick($viewPath);
+            $view->pick($viewPath, null, false);
         }
 
         // run init function
@@ -237,7 +238,7 @@ class Controller extends PhalconController
      *
      * @return null|string|Form
      */
-    public function getAdminForm()
+    public function getBackofficeForm()
     {
         return null;
     }

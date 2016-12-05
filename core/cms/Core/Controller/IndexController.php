@@ -33,19 +33,21 @@ use Core\Model\LanguageModel;
  *
  * @RoutePrefix("/", name="home")
  */
-class IndexController extends AbstractController
+class IndexController extends PageController
 {
     /**
      * Home action.
+     *
+     * @param string $url Url path.
      *
      * @return void
      *
      * @Route("/", methods={"GET"}, name="home")
      */
-    public function indexAction()
+    public function indexAction($url = 'home')
     {
         $this->_checkLanguage();
-        $this->renderContent(null, null, 'home');
+        $this->renderPage(null, null, $url);
     }
 
     /**

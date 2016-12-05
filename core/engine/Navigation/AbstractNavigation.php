@@ -203,19 +203,14 @@ abstract class AbstractNavigation implements NavigationInterface, \IteratorAggre
 
         // Locate active Item
         $this->locateActiveItem($this->_activeItem);
-
-        /** @var \Engine\View $view */
-        $view = $di->get('view');
-
-        ob_start();
-        $view->partial(
+        $view = $di->getView();
+        $html = $view->getPartial(
             $viewName,
             [
                 'id' => $this->getId(),
                 'navigation' => $this,
             ]
         );
-        $html = ob_get_clean();
 
         if ($di->getRequest()->isAjax()) {
             $view->setContent($html);

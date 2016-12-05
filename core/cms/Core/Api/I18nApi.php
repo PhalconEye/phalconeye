@@ -192,8 +192,7 @@ class I18nApi extends AbstractApi
         if (!$this->getConfig()->application->debug) {
             $translate = $this->_loadFromFiles($language);
         } else {
-            $language = $this->findLanguage($language);
-            $translate = new DatabaseTranslations($this->getDI(), $language->getId(), new LanguageTranslationModel());
+            $translate = $this->_loadFromDatabase($language);
         }
 
         $this->getDI()->setShared('i18n', $translate);
@@ -210,6 +209,22 @@ class I18nApi extends AbstractApi
         if ($config->core->languages->languageInUrl) {
             $this->getUrl()->setBaseUri($config->application->baseUrl . $language . '/');
         }
+    }
+
+    /**
+     * Load translations from database.
+     *
+     * @param string $language Language name.
+     *
+     * @return DatabaseTranslations
+     */
+    protected function _loadFromDatabase(string $language) : DatabaseTranslations
+    {
+        $language = $this->findLanguage($language);
+        if (!$language) {
+            $language = $this->findLanguage($this->getDefaultLanguage());
+        }
+        return new DatabaseTranslations($this->getDI(), $language->getId(), new LanguageTranslationModel());
     }
 
     /**

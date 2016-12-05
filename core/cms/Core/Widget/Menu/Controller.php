@@ -103,7 +103,7 @@ class Controller extends WidgetController
     /**
      * {@inheritdoc}
      */
-    public function getAdminForm()
+    public function getBackofficeForm()
     {
         return new WidgetMenuForm();
     }

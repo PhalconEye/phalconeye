@@ -16,54 +16,29 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Grid;
+namespace Engine\Form\Element;
 
-use Engine\Application;
-use Engine\Behavior\ViewBehavior;
-use Engine\Grid\AbstractGrid;
+use Engine\Form\ElementInterface;
 
 /**
- * Core grid.
- * It defines base grid views.
+ * Form element - Number input.
  *
  * @category  PhalconEye
- * @package   Core\Controller\Grid\Admin
+ * @package   Engine\Form\Element
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-abstract class CoreGrid extends AbstractGrid
+class Number extends AbstractInput implements ElementInterface
 {
-    use ViewBehavior;
-
     /**
-     * Get grid view name.
+     * Get this input element type.
      *
      * @return string
      */
-    public function getLayoutView()
+    public function getInputType()
     {
-        return $this->resolveView('partials/grid/layout', Application::CMS_MODULE_CORE);
-    }
-
-    /**
-     * Get grid item view name.
-     *
-     * @return string
-     */
-    public function getItemView()
-    {
-        return $this->resolveView('partials/grid/item', Application::CMS_MODULE_CORE);
-    }
-
-    /**
-     * Get grid table body view name.
-     *
-     * @return string
-     */
-    public function getTableBodyView()
-    {
-        return $this->resolveView('partials/grid/body', Application::CMS_MODULE_CORE);
+        return 'number';
     }
 }

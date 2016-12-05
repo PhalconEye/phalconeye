@@ -126,11 +126,11 @@ class Controller extends WidgetController
     }
 
     /**
-     * Action for management from admin panel.
+     * Action for management from backoffice panel.
      *
      * @return CoreForm
      */
-    public function adminAction()
+    public function backofficeAction()
     {
         $form = new CoreForm();
 
@@ -154,7 +154,7 @@ class Controller extends WidgetController
         $form->addContentFieldSet('Advanced')
             ->addText('height', 'Height', 'Force height of the slider (in px)')
             ->addText('duration', 'Duration', 'Duration between slides (in ms)', static::DEFAULT_DURATION)
-            ->addText('speed', 'Speed', 'Spped of slides (in ms)', static::DEFAULT_SPEED)
+            ->addText('speed', 'Speed', 'Speed of slides (in ms)', static::DEFAULT_SPEED)
             ->addCheckbox('auto', 'Auto', 'Slides will automatically transition', 1, true)
             ->addCheckbox('auto_hover', 'Auto Hover', 'Auto show will pause when mouse hovers over slider', 1, true)
             ->addCheckbox('controls', 'Controls', 'Next and Prev controls will be added', 1, true)
@@ -169,9 +169,9 @@ class Controller extends WidgetController
     /**
      * {@inheritdoc}
      */
-    public function getAdminForm()
+    public function getBackofficeForm()
     {
-        return 'admin';
+        return 'backoffice';
     }
 
     /**

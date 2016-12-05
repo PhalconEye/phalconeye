@@ -16,54 +16,89 @@
   +------------------------------------------------------------------------+
 */
 
-namespace Core\Grid;
+namespace Engine\Package;
 
-use Engine\Application;
-use Engine\Behavior\ViewBehavior;
-use Engine\Grid\AbstractGrid;
+use Engine\Behavior\DIBehavior;
+use Engine\Cache\System;
+use Engine\Exception as EngineException;
+use Engine\Package\Exception\NoSuchPackageException;
+use Phalcon\Di;
 
 /**
- * Core grid.
- * It defines base grid views.
+ * Reverse iterator.
  *
- * @category  PhalconEye
- * @package   Core\Controller\Grid\Admin
+ * @category  PhalconEye\Engine
+ * @package   Engine
  * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
  * @copyright 2013-2016 PhalconEye Team
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-abstract class CoreGrid extends AbstractGrid
+class PackageReverseIterator implements \Iterator
 {
-    use ViewBehavior;
+    /**
+     * Packages.
+     *
+     * @var array Packages.
+     */
+    protected $_packages = [];
 
     /**
-     * Get grid view name.
+     * PackageReverseIterator constructor.
      *
-     * @return string
+     * @param array $packages
      */
-    public function getLayoutView()
+    public function __construct(array $packages)
     {
-        return $this->resolveView('partials/grid/layout', Application::CMS_MODULE_CORE);
+        $this->_packages = $packages;
     }
 
     /**
-     * Get grid item view name.
+     * Get current package.
      *
-     * @return string
+     * @return PackageData
      */
-    public function getItemView()
+    public function current()
     {
-        return $this->resolveView('partials/grid/item', Application::CMS_MODULE_CORE);
+        return current($this->_packages);
     }
 
     /**
-     * Get grid table body view name.
+     * Get next package.
+     *
+     * @return PackageData
+     */
+    public function next()
+    {
+        return prev($this->_packages);
+    }
+
+    /**
+     * Get package key.
      *
      * @return string
      */
-    public function getTableBodyView()
+    public function key()
     {
-        return $this->resolveView('partials/grid/body', Application::CMS_MODULE_CORE);
+        return key($this->_packages);
+    }
+
+    /**
+     * Check current key is valid.
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        $key = $this->key();
+        return ($key !== NULL && $key !== FALSE);
+    }
+
+    /**
+     * Reset iterator state.
+     */
+    public function rewind()
+    {
+        end($this->_packages);
     }
 }

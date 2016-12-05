@@ -53,15 +53,17 @@ trait ElementsBehavior
     /**
      * Html element.
      *
-     * @param string     $name    Element name.
-     * @param mixed|null $value   Element value.
-     * @param bool|array $partial Value is partial path? This also used as partial variables.
+     * @param string     $name       Element name.
+     * @param mixed|null $value      Element value.
+     * @param bool|array $partial    Value is partial path? This also used as partial variables.
+     * @param array      $options    Element options.
+     * @param array      $attributes Element attributes.
      *
      * @return $this
      */
-    public function addHtml($name, $value = null, $partial = false)
+    public function addHtml($name, $value = null, $partial = false, array $options = [], array $attributes = [])
     {
-        $element = new Form\Element\Html($name);
+        $element = new Form\Element\Html($name, $options, $attributes);
         if ($partial !== false) {
             if (!is_array($partial)) {
                 $partial = ['form' => $this];
@@ -171,6 +173,43 @@ trait ElementsBehavior
     )
     {
         $element = new Form\Element\Text($name, $options, $attributes);
+
+        if (!$label) {
+            $label = ucfirst($name);
+        }
+
+        $element
+            ->setOption('label', $label)
+            ->setOption('description', $description)
+            ->setValue($value);
+
+        $this->add($element);
+
+        return $this;
+    }
+
+    /**
+     * Text element.
+     *
+     * @param string      $name        Element name.
+     * @param string|null $label       Element label.
+     * @param string|null $description Element description.
+     * @param mixed|null  $value       Element value.
+     * @param array       $options     Element options.
+     * @param array       $attributes  Element attributes.
+     *
+     * @return $this
+     */
+    public function addNumber(
+        $name,
+        $label = null,
+        $description = null,
+        $value = null,
+        array $options = [],
+        array $attributes = []
+    )
+    {
+        $element = new Form\Element\Number($name, $options, $attributes);
 
         if (!$label) {
             $label = ucfirst($name);

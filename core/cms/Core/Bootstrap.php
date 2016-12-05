@@ -90,7 +90,7 @@ class Bootstrap extends AbstractBootstrap
          */
         $eventsManager = $this->getEventsManager();
         $eventsManager->attach('dispatch', $coreApi->acl());
-        $eventsManager->attach("dispatch:beforeDispatchLoop", new DispatchPlugin());
+        $eventsManager->attach("dispatch", new DispatchPlugin());
 
         /**
          * Install assets if required.

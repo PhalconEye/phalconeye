@@ -20,6 +20,7 @@
 namespace Core\Controller\Backoffice;
 
 use Core\Navigation\Backoffice\PackagesNavigation;
+use Engine\Application;
 use Engine\Package\PackageData;
 use Engine\Package\PackageManager;
 
@@ -71,7 +72,7 @@ class PackagesController extends AbstractBackofficeController
     public function widgetsAction()
     {
         $this->view->packages = $this->getDI()->getWidgets()->getPackages();
-        $this->view->pick('Packages/index', 'Core', true);
+        $this->view->pick('Packages/index', Application::CMS_MODULE_CORE);
     }
 
     /**
@@ -84,7 +85,7 @@ class PackagesController extends AbstractBackofficeController
     public function themesAction()
     {
         $this->view->packages = $this->getDI()->getThemes()->getPackages();
-        $this->view->pick('Packages/index', 'Core', true);
+        $this->view->pick('Packages/index', Application::CMS_MODULE_CORE);
     }
 
     /**
@@ -95,6 +96,6 @@ class PackagesController extends AbstractBackofficeController
     public function pluginsAction()
     {
         $this->view->packages = $this->getDI()->getPlugins()->getPackages();
-        $this->view->pick('Packages/index', 'Core', true);
+        $this->view->pick('Packages/index', Application::CMS_MODULE_CORE);
     }
 }

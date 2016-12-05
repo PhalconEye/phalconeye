@@ -45,18 +45,19 @@ class PageModel extends AbstractModel
         /**
          * Layout types.
          */
-        LAYOUT_RIGHT_MIDDLE_LEFT = 'right_middle_left',
-        LAYOUT_MIDDLE_LEFT = 'middle_left',
-        LAYOUT_RIGHT_MIDDLE = 'right_middle',
+        LAYOUT_LEFT_MIDDLE = 'left_middle',
+        LAYOUT_LEFT_MIDDLE_BOTTOM = 'left_middle_bottom',
+        LAYOUT_LEFT_MIDDLE_RIGHT = 'left_middle_right',
+        LAYOUT_LEFT_MIDDLE_RIGHT_BOTTOM = 'left_middle_right_bottom',
         LAYOUT_MIDDLE = 'middle',
-        LAYOUT_TOP_RIGHT_MIDDLE_LEFT = 'top_right_middle_left',
-        LAYOUT_TOP_MIDDLE_LEFT = 'top_middle_left',
-        LAYOUT_TOP_RIGHT_MIDDLE = 'top_right_middle',
+        LAYOUT_MIDDLE_BOTTOM = 'middle_bottom',
+        LAYOUT_MIDDLE_RIGHT = 'middle_right',
+        LAYOUT_MIDDLE_RIGHT_BOTTOM = 'middle_right_bottom',
+        LAYOUT_TOP_LEFT_MIDDLE = 'top_left_middle',
+        LAYOUT_TOP_LEFT_MIDDLE_RIGHT = 'top_left_middle_right',
+        LAYOUT_TOP_LEFT_MIDDLE_RIGHT_BOTTOM = 'top_left_middle_right_bottom',
         LAYOUT_TOP_MIDDLE = 'top_middle',
-        LAYOUT_RIGHT_MIDDLE_LEFT_BOTTOM = 'right_middle_left_bottom',
-        LAYOUT_MIDDLE_LEFT_BOTTOM = 'middle_left_bottom',
-        LAYOUT_RIGHT_MIDDLE_BOTTOM = 'right_middle_bottom',
-        LAYOUT_MIDDLE_BOTTOM = 'middle_bottom';
+        LAYOUT_TOP_MIDDLE_RIGHT = 'top_middle_right';
 
     const
         /**
@@ -132,6 +133,16 @@ class PageModel extends AbstractModel
      * @Column(type="string", nullable=false, column="layout", size="50")
      */
     public $layout = self::LAYOUT_MIDDLE;
+
+    /**
+     * @Column(type="boolean", nullable=false, column="use_dynamic_layout")
+     */
+    public $use_dynamic_layout = false;
+
+    /**
+     * @Column(type="integer", nullable=true, column="cache_lifetime")
+     */
+    public $cache_lifetime = null;
 
     /**
      * @Column(type="string", nullable=true, column="controller", size="50")

@@ -280,11 +280,11 @@ class PagesController extends AbstractBackofficeController
         $widgetController->setDefaults($widgetName, $widgetModuleName, $widgetParams);
 
         // building widget form
-        $adminForm = $widgetController->getAdminForm();
+        $adminForm = $widgetController->getBackofficeForm();
         if (empty($adminForm)) {
             $form->addText('title');
         } elseif (is_string($adminForm)) {
-            $widgetController->prepare();
+            $widgetController->prepare(null);
             $form = $widgetController->{$adminForm . 'Action'}();
         } else {
             $form = $adminForm;
@@ -316,7 +316,6 @@ class PagesController extends AbstractBackofficeController
             $this->view->form = $form;
             $this->view->id = $id;
             $this->view->name = $widgetMetadata->getName();
-            $this->view->setIsBackoffice(true);
 
             return;
         }

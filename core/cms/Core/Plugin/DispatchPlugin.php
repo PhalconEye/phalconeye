@@ -84,6 +84,14 @@ class DispatchPlugin extends PhalconPlugin
     }
 
     /**
+     * Set current module for views after dispatching.
+     */
+    public function beforeExecuteRoute()
+    {
+        $this->getDI()->getView()->setCurrentModule($this->getDI()->getRouter()->getModuleName());
+    }
+
+    /**
      * Get language from url.
      *
      * @param string $url Url with language: /en/some/page.

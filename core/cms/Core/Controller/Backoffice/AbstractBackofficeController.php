@@ -89,5 +89,15 @@ abstract class AbstractBackofficeController extends AbstractController
     {
         $this->app->clearCache();
     }
+
+    /**
+     * After route execution.
+     *
+     * @return void
+     */
+    public function afterExecuteRoute()
+    {
+        $this->view->pickDefaultView();
+    }
 }
 

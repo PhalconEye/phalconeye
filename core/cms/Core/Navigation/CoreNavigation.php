@@ -19,6 +19,7 @@
 
 namespace Core\Navigation;
 
+use Engine\Application;
 use Engine\Behavior\ViewBehavior;
 use Engine\Navigation\Item;
 use Engine\Navigation\NavigationInterface;
@@ -60,7 +61,7 @@ class CoreNavigation extends AbstractNavigation implements NavigationInterface
      */
     public function getLayoutView()
     {
-        return $this->resolveView('partials/navigation/layout', 'Core');
+        return $this->resolveView('partials/navigation/layout', Application::CMS_MODULE_CORE);
     }
 
     /**

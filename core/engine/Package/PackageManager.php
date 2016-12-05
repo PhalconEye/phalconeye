@@ -34,7 +34,7 @@ use Phalcon\Di;
  * @license   New BSD License
  * @link      http://phalconeye.com/
  */
-class PackageManager
+class PackageManager implements \Iterator
 {
     const
         /**
@@ -209,6 +209,16 @@ class PackageManager
     }
 
     /**
+     * Get reverse iterator.
+     *
+     * @return PackageReverseIterator
+     */
+    public function getReverseIterator()
+    {
+        return new PackageReverseIterator($this->_packages);
+    }
+
+    /**
      * Get handled type.
      *
      * @return string Package type name that current manager is handling.
@@ -228,6 +238,55 @@ class PackageManager
     public function has($key) : bool
     {
         return isset($this->_packages[$key]);
+    }
+
+    /**
+     * Get current package.
+     *
+     * @return PackageData
+     */
+    public function current()
+    {
+        return current($this->_packages);
+    }
+
+    /**
+     * Get next package.
+     *
+     * @return PackageData
+     */
+    public function next()
+    {
+        return next($this->_packages);
+    }
+
+    /**
+     * Get package key.
+     *
+     * @return string
+     */
+    public function key()
+    {
+        return key($this->_packages);
+    }
+
+    /**
+     * Check current key is valid.
+     *
+     * @return bool
+     */
+    public function valid()
+    {
+        $key = key($this->_packages);
+        return ($key !== NULL && $key !== FALSE);
+    }
+
+    /**
+     * Reset iterator state.
+     */
+    public function rewind()
+    {
+        reset($this->_packages);
     }
 
     /**

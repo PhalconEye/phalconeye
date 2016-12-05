@@ -1,5 +1,4 @@
-<?php
-/*
+{#
   +------------------------------------------------------------------------+
   | PhalconEye CMS                                                         |
   +------------------------------------------------------------------------+
@@ -12,39 +11,28 @@
   | obtain it through the world-wide-web, please send an email             |
   | to license@phalconeye.com so we can send you a copy immediately.       |
   +------------------------------------------------------------------------+
-  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                 |
+  | Author: Ivan Vorontsov <lantian.ivan@gmail.com>                        |
   +------------------------------------------------------------------------+
-*/
+#}
 
-namespace Core\Form;
+{# <header> #}
+{# -------- #}
+{#|     |  |#}
+{#|     |  |#}
+{#|     |  |#}
+{# -------- #}
+{# <footer> #}
 
-/**
- * Main text form.
- *
- * @category  PhalconEye
- * @package   Core\Form
- * @author    Ivan Vorontsov <lantian.ivan@gmail.com>
- * @copyright 2013-2016 PhalconEye Team
- * @license   New BSD License
- * @link      http://phalconeye.com/
- */
-class TextForm extends CoreForm
-{
-    const
-        /**
-         * Default layout path.
-         */
-        LAYOUT_TEXT_PATH = 'partials/form/text';
+{# MIDDLE #}
+<section class="content-left">
+    {% for widget in content["middle"] %}
+        {{ widget }}
+    {% endfor %}
+</section>
 
-    use EntityForm;
-
-    /**
-     * Get layout view path.
-     *
-     * @return string
-     */
-    public function getLayoutView()
-    {
-        return self::LAYOUT_TEXT_PATH;
-    }
-}
+{# RIGHT #}
+<aside class="content-right">
+    {% for widget in content["right"] %}
+        {{ widget }}
+    {% endfor %}
+</aside>

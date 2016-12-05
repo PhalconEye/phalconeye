@@ -45,11 +45,12 @@ class RendererHelper extends AbstractHelper
      *
      * @param string $pageType Page type.
      * @param string $layout   Use layout to render.
+     * @param string $module   Module to use for rendering.
      *
      * @throws \Engine\Exception
      * @return mixed
      */
-    public function renderContent($pageType, $layout = null)
+    public function renderContent($pageType, $layout = null, $module = null)
     {
         $content = '';
         $page = PageModel::findFirst(
@@ -94,7 +95,7 @@ class RendererHelper extends AbstractHelper
 
         $view->content = $content;
         $view->page = $page;
-        $view->pick($layout);
+        $view->pick($layout, $module);
         $view->getRender(null, null);
         return $view->getContent();
     }

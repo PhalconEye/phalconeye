@@ -12,9 +12,7 @@ INSERT IGNORE INTO `access` (`object`, `action`, `role_id`, `value`) VALUES
 
 INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywords`, `layout`, `controller`, `roles`, `view_count`) VALUES
 (1, 'Header', 'header', NULL, 'Header content', '', 'middle', NULL, NULL, 0),
-(2, 'Footer', 'footer', NULL, 'Footer content', '', 'middle', NULL, NULL, 0),
-(3, 'Home', 'home', '/', 'Home Page', '', 'top_right_middle_left', NULL, NULL, 0),
-(4, 'Forms', NULL, 'forms', 'Test Page', NULL, 'middle', NULL, NULL, 0);
+(2, 'Footer', 'footer', NULL, 'Footer content', '', 'middle', NULL, NULL, 0);
 --END
 
 INSERT IGNORE INTO `languages` (`id`, `name`, `language`, `locale`, `icon`) VALUES

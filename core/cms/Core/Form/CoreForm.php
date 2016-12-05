@@ -18,6 +18,7 @@
 
 namespace Core\Form;
 
+use Engine\Application;
 use Engine\Form\AbstractForm;
 use Engine\Behavior\ViewBehavior;
 
@@ -49,7 +50,7 @@ class CoreForm extends AbstractForm
      */
     public function getLayoutView()
     {
-        return $this->resolveView(self::LAYOUT_DEFAULT_PATH, 'Core');
+        return $this->resolveView(self::LAYOUT_DEFAULT_PATH, Application::CMS_MODULE_CORE);
     }
 
     /**

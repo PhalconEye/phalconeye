@@ -1,3 +1,8 @@
+INSERT IGNORE INTO `pages` (`id`, `title`, `type`, `url`, `description`, `keywords`, `layout`, `controller`, `roles`, `view_count`) VALUES
+(3, 'Home', 'home', '/', 'Home Page', '', 'top_left_middle_right', NULL, NULL, 0),
+(4, 'Forms', NULL, 'forms', 'Test Page', NULL, 'middle', NULL, NULL, 0);
+--END
+
 INSERT IGNORE INTO `content` (`id`, `page_id`, `widget_code`, `widget_order`, `layout`, `params`) VALUES
 (1, 1, 'Core|Header', 1, 'middle', '{"logo":"assets\\/application\\/img\\/module\\/Core\\/pe_logo_white.png","show_title":null,"show_auth":"1","roles":null,"content_id":"9"}'),
 (2, 1, 'Core|Menu', 2, 'middle', '{"title":"","class":"","menu":"Default menu","menu_id":"1","roles":null,"content_id":"10"}'),

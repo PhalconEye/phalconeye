@@ -78,6 +78,11 @@ class PageCreateForm extends CoreForm
             )
             ->addTextArea('description')
             ->addTextArea('keywords')
+            ->addCheckbox('use_dynamic_layout', 'Use dynamic layout', 'Columns will be calculated during rendering 
+            process. Otherwise columns are defined and if widgets are missing from some column - it still will be 
+            visible.', 1, false, 0)
+            ->addNumber('cache_lifetime', 'Cache', 'Life time (in seconds) of this page in cache. If missing - no 
+        cache.')
             ->addTextArea(
                 'controller',
                 'Controller',

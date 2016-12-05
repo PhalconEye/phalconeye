@@ -128,7 +128,7 @@ abstract class AbstractGrid implements GridInterface
          */
         if ($this->getDI()->getRequest()->isAjax()) {
             $view
-                ->restoreViewDir()
+                ->restoreViewDirectories()
                 ->disable();
             $this->_response = $this->getDI()->getResponse();
             $this->_response->setContent($this->render($this->getTableBodyView()));

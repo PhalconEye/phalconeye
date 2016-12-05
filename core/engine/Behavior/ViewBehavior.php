@@ -18,10 +18,9 @@
 
 namespace Engine\Behavior;
 
-use Engine\Behavior\DIBehavior;
-use Phalcon\DI;
+use Engine\Application;
+use Engine\View;
 use Phalcon\Mvc\View as PhalconView;
-use Phalcon\Mvc\View\Engine\Volt;
 
 /**
  * View behavior.
@@ -45,23 +44,39 @@ trait ViewBehavior
     /**
      * Resolve view path.
      *
-     * @param string $viewPath Path to view.
-     * @param null   $module   Module name.
+     * @param string      $viewPath Path to view.
+     * @param string|null $module   Module name.
      *
      * @return string
      */
     public function resolveView($viewPath, $module = null)
     {
-        if (!$module) {
-            return $viewPath;
-        }
-
-        $backofficePath = '';
         if ($this->isBackoffice()) {
-            $backofficePath = 'Backoffice/';
+            $viewPath = View::PATH_BACKOFFICE . DS . $viewPath;
         }
 
-        return $module . '/View/' . $backofficePath . $viewPath;
+        if (!empty($module)) {
+            return $module . DS . View::PATH_VIEW . DS . $viewPath;
+        }
+
+        return $viewPath;
+    }
+
+    /**
+     * Resolve view path.
+     *
+     * @param string $viewPath Path to view.
+     * @param string $module   Module name.
+     *
+     * @return string
+     */
+    public function resolvePartial($viewPath, $module = Application::CMS_MODULE_CORE)
+    {
+        if (!empty($module)) {
+            return $module . DS . View::PATH_VIEW . DS . $viewPath;
+        }
+
+        return $viewPath;
     }
 
     /**
