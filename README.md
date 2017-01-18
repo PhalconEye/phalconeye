@@ -5,7 +5,6 @@ Phalcon Eye - CMS based on Phalcon PHP Framework (https://github.com/phalcon/cph
 
 * Version: 0.4.1
 * Requirements: PHP >= 5.4, Phalcon = 1.3.0, mod_rewrite, zlib, mbstring, mcrypt, iconv, gd, fileinfo, zip
-* Website: http://phalconeye.com/
 
 Installation
 ------------
@@ -26,7 +25,6 @@ Contribution
 Feel free to contribute.
 
 * Found a bug? Try to find it in issue tracker https://github.com/PhalconEye/cms/issues ... If this bug is missing - you can add an issue about it.
-* Want to discuss? Visit http://forum.phalconeye.com/ and create topic that is interesting for you.
 * Can/want/like develop? Create pull request and we will check it in nearest time! Just don't forget to check code styling (you can run it via command "ant check") and please don't miss file and class headers (also add yourself as an author if you have changed something).
 
 Coding Style [![Build Status](https://secure.travis-ci.org/PhalconEye/cms.png?branch=master)](http://travis-ci.org/PhalconEye/cms)
